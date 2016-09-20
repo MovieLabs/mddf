@@ -5,4 +5,4 @@
  * @author pgj
  *
  */
-package com.movielabs.mddflib;
+package com.movielabs.mddflib.xml;

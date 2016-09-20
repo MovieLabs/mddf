@@ -35,16 +35,22 @@ import org.w3c.dom.Text;
 
 import com.movielabs.mddflib.AvailsSheet;
 import com.movielabs.mddflib.ISO639_2_Code;
-import com.movielabs.mddflib.Movie.COL;
 
 /**
- * * Code and functionality formerly in SheetRow
+ * Code and functionality formerly in SheetRow. The XML generated reflects a
+ * "best effort" in that there is no guarantee that it is valid.
+ * <p>
+ * This class is intended to have a low footprint in terms of memory usage so as
+ * to facilitate processing of sheets with large row counts. Note that Excel
+ * 2010 supports up to 1,048,576 rows.
+ * </p>
  * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public abstract class RowToXmlHelper {
+public  class RowToXmlHelper {
 
+	private static final String MISSING = "--FUBAR (missing)";
 	protected int row;
 	protected String shortDesc = ""; // default
 	protected Document dom;
@@ -54,10 +60,13 @@ public abstract class RowToXmlHelper {
 	/**
 	 * @param fields
 	 */
-	RowToXmlHelper(AvailsSheet sheet, int row) {
+	RowToXmlHelper(AvailsSheet sheet, int row, String desc) {
 		super();
 		this.sheet = sheet;
 		this.row = row;
+		if (desc != null) {
+			this.shortDesc = desc;
+		}
 
 	}
 
@@ -68,35 +77,43 @@ public abstract class RowToXmlHelper {
 
 		// ALID
 		String value = sheet.getColumnData("Avail/AvailID", row);
-		avail.appendChild(mALID(value));
+		if (isSpecified(value)) {
+			avail.appendChild(mALID(value));
+		}
 
 		// Disposition
 		value = sheet.getColumnData("Disposition/EntryType", row);
-		avail.appendChild(mDisposition(value));
+		if (isSpecified(value)) {
+			avail.appendChild(mDisposition(value));
+		}
 
 		// Licensor
 		value = sheet.getColumnData("Avail/DisplayName", row);
-		avail.appendChild(mPublisher("Licensor", value, true));
+		if (isSpecified(value)) {
+			avail.appendChild(mPublisher("Licensor", value));
+		}
 
 		// Service Provider (OPTIONAL)
 		value = sheet.getColumnData("Avail/ServiceProvider", row);
-		e = mPublisher("ServiceProvider", value, false);
-		if (e != null) {
-			avail.appendChild(e);
+		if (isSpecified(value)) {
+			avail.appendChild(mPublisher("ServiceProvider", value));
 		}
 
 		// AvailType (e.g., 'single' for a Movie)
-		avail.appendChild(mGenericElement("AvailType", availType, true));
+		avail.appendChild(mGenericElement("AvailType", availType));
 
 		// ShortDescription
 		// XXX Doc says optional, schema says mandatory
-		if ((e = mGenericElement("ShortDescription", shortDesc, true)) != null)
+		if (isSpecified(shortDesc)) {
+			e = mGenericElement("ShortDescription", shortDesc);
 			avail.appendChild(e);
-
+		}
 		// Asset
 		value = sheet.getColumnData("AvailAsset/WorkType", row);
-		if ((e = mAssetHeader(value)) != null)
+		if (isSpecified(value)) {
+			e = mAssetHeader(value);
 			avail.appendChild(e);
+		}
 
 		// Transaction
 		if ((e = mTransactionHeader()) != null)
@@ -104,38 +121,31 @@ public abstract class RowToXmlHelper {
 
 		// Exception Flag
 		value = sheet.getColumnData("Avail/ExceptionFlag", row);
-		e = mExceptionFlag(value);
-		if (e != null)
+		if (isSpecified(value)) {
+			e = mExceptionFlag(value);
 			avail.appendChild(e);
+		}
 
 		return avail;
 	}
 
 	/**
-	 * Create an Avails Licensor XML element with a md:DisplayName element
-	 * child, and populate thei latter with the DisplayName
+	 * Create an <tt>mdmec:Publisher-type</tt> XML element with a md:DisplayName
+	 * element child, and populate the latter with the DisplayName
 	 * 
 	 * @param name
-	 *            the Licensor element to be created
+	 *            the parent element to be created (i.e., Licensor or
+	 *            ServiceProvider)
 	 * @param displayName
-	 *            the name to be held in the DisplayName child node of Licensor
-	 * @param mandatory
-	 *            if true, an exception will thrown if the displayName is empty
-	 * @return the created Licensor element
-	 * @throws ParseException
-	 *             if there is an error and abort-on-error policy is in effect
-	 * @throws Exception
-	 *             other error conditions may also throw exceptions
+	 *            the name to be held in the DisplayName child node
+	 * @return the created element
 	 */
-	protected Element mPublisher(String name, String displayName, boolean mandatory) {
-		if (displayName.equals("") && !mandatory) {
-			return null;
-		}
-		Element licensor = dom.createElement(name);
+	protected Element mPublisher(String name, String displayName) {
+		Element pubEl = dom.createElement(name);
 		Element e = dom.createElement("md:DisplayName");
 		Text tmp = dom.createTextNode(displayName);
 		e.appendChild(tmp);
-		licensor.appendChild(e);
+		pubEl.appendChild(e);
 		// XXX ContactInfo mandatory but can't get this info from the
 		// spreadsheet
 		e = dom.createElement("mdmec:ContactInfo");
@@ -143,11 +153,11 @@ public abstract class RowToXmlHelper {
 		e.appendChild(e2);
 		e2 = dom.createElement("md:PrimaryEmail");
 		e.appendChild(e2);
-		licensor.appendChild(e);
-		return licensor;
+		pubEl.appendChild(e);
+		return pubEl;
 	}
 
-	protected Element mAssetHeader(String workType) throws Exception {
+	protected Element mAssetHeader(String workType) {
 		Element asset = dom.createElement("Asset");
 		Element wt = dom.createElement("WorkType");
 		Text tmp = dom.createTextNode(workType);
@@ -166,113 +176,70 @@ public abstract class RowToXmlHelper {
 	 */
 	protected Element mAssetBody(Element asset) {
 		Element e;
-		String contentID =   sheet.getColumnData("AvailAsset/ContentID", row);
-		Attr attr = dom.createAttribute(COL.ContentID.toString());
-		attr.setValue(contentID);
-		asset.setAttributeNode(attr);
-		Element metadata = dom.createElement("Metadata");
-		String territory = fields[COL.Territory.ordinal()];
-
-		// TitleDisplayUnlimited
-		// XXX Optional in SS, Required in XML; workaround by assigning it
-		// internal alias value
-		if (fields[COL.TitleDisplayUnlimited.ordinal()].equals(""))
-			fields[COL.TitleDisplayUnlimited.ordinal()] = fields[COL.TitleInternalAlias.ordinal()];
-		if ((e = mGenericElement(COL.TitleDisplayUnlimited.toString(), fields[COL.TitleDisplayUnlimited.ordinal()],
-				false)) != null)
-			metadata.appendChild(e);
-		// TitleInternalAlias
-		metadata.appendChild(
-				mGenericElement(COL.TitleInternalAlias.toString(), fields[COL.TitleInternalAlias.ordinal()], true));
-
-		// ProductID --> EditEIDR-S
-		if (!fields[COL.ProductID.ordinal()].equals("")) { // optional field
-			String productID = normalizeEIDR(fields[COL.ProductID.ordinal()]);
-			if (productID == null) {
-				reportError("Invalid ProductID: " + fields[COL.ProductID.ordinal()]);
-			} else {
-				fields[COL.ProductID.ordinal()] = productID;
-			}
-			// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-			/*
-			 * SPECIAL CASE KLUDGE!!! Column name is no longer same as Element
-			 * name
-			 */
-			String elementName = COL.ProductID.toString();
-			if (!elementName.endsWith("-URN")) {
-				elementName = "EditEIDR-URN";
-			}
-			metadata.appendChild(mGenericElement(elementName, fields[COL.ProductID.ordinal()], false));
+		String contentID = sheet.getColumnData("AvailAsset/ContentID", row);
+		if (isSpecified(contentID)) {
+			Attr attr = dom.createAttribute("contentID");
+			attr.setValue(contentID);
+			asset.setAttributeNode(attr);
 		}
 
+		Element metadata = dom.createElement("Metadata");
+
+		/*
+		 * TitleDisplayUnlimited is OPTIONAL in SS but REQUIRED in XML;
+		 * workaround by assigning it internal alias value
+		 */
+		String titleDU = sheet.getColumnData("AvailMetadata/TitleDisplayUnlimited", row);
+		String titleAlias = sheet.getColumnData("AvailMetadata/TitleInternalAlias", row);
+		if (!isSpecified(titleDU)) {
+			titleDU = titleAlias;
+		}
+		if (isSpecified(titleDU)) {
+			e = mGenericElement("TitleDisplayUnlimited", titleDU);
+			metadata.appendChild(e);
+		}
+		// TitleInternalAlias
+		if (isSpecified(titleAlias)) {
+			metadata.appendChild(mGenericElement("TitleInternalAlias", titleAlias));
+		}
+
+		// ProductID --> EditEIDR-URN ( optional field)
+		String value = sheet.getColumnData("AvailAsset/ProductID", row);
+		if (isSpecified(value)) {
+			metadata.appendChild(mGenericElement("EditEIDR-URN", value));
+		}
+
+		// ContentID --> TitleEIDR-URN ( optional field)
+		process(metadata, "TitleEIDR-URN", "AvailMetadata/ContentID", row);
+
 		// AltID --> AltIdentifier
-		if (!fields[COL.AltID.ordinal()].equals("")) { // optional
-			Element altID = dom.createElement("AltIdentifier");
+		value = sheet.getColumnData("AvailMetadata/AltID", row);
+		if (isSpecified(value)) {
+			Element altIdEl = dom.createElement("AltIdentifier");
 			Element cid = dom.createElement("md:Namespace");
 			Text tmp = dom.createTextNode(MISSING);
 			cid.appendChild(tmp);
-			altID.appendChild(cid);
-			altID.appendChild(mGenericElement(COL.AltID.toString(), fields[COL.AltID.ordinal()], false));
+			altIdEl.appendChild(cid);
+			altIdEl.appendChild(mGenericElement("md:Identifier", value));
 			Element loc = dom.createElement("md:Location");
 			tmp = dom.createTextNode(MISSING);
 			loc.appendChild(tmp);
-			altID.appendChild(loc);
-			metadata.appendChild(altID);
+			altIdEl.appendChild(loc);
+			metadata.appendChild(altIdEl);
 		}
 
-		// ReleaseYear ---> ReleaseDate
-		if (!fields[COL.ReleaseYear.ordinal()].equals("")) { // optional
-			String year = normalizeYear(fields[COL.ReleaseYear.ordinal()]);
-			if (year == null) {
-				reportError("Invalid ReleaseYear: " + fields[COL.ReleaseYear.ordinal()]);
-			} else {
-				fields[COL.ReleaseYear.ordinal()] = year;
-			}
-			metadata.appendChild(mGenericElement(COL.ReleaseYear.toString(), fields[COL.ReleaseYear.ordinal()], false));
-		}
+		process(metadata, "ReleaseDate", "AvailMetadata/ReleaseYear", row);
+		process(metadata, "RunLength", "AvailMetadata/TotalRunTime", row);
 
-		// TotalRunTime --> RunLength
-		// XXX TotalRunTime is optional, RunLength is required
-		if ((e = mRunLength(fields[COL.TotalRunTime.ordinal()])) != null) {
-			metadata.appendChild(e);
-		}
+		mReleaseHistory(metadata, "original", "AvailMetadata/ReleaseHistoryOriginal", row);
+		mReleaseHistory(metadata, "DVD", "AvailMetadata/ReleaseHistoryPhysicalHV", row);
 
-		// ReleaseHistoryOriginal ---> ReleaseHistory/Date
-		String date = fields[COL.ReleaseHistoryOriginal.ordinal()];
-		if (!date.equals("")) {
-			if ((e = mReleaseHistory(COL.ReleaseHistoryOriginal.toString(), normalizeDate(date), "original")) != null)
-				metadata.appendChild(e);
-		}
+		process(metadata, "USACaptionsExemptionReason", "AvailMetadata/CaptionExemption", row);
 
-		// ReleaseHistoryPhysicalHV ---> ReleaseHistory/Date
-		date = fields[COL.ReleaseHistoryPhysicalHV.ordinal()];
-		if (!date.equals("")) {
-			if ((e = mReleaseHistory(COL.ReleaseHistoryPhysicalHV.toString(), normalizeDate(date), "DVD")) != null)
-				metadata.appendChild(e);
-		}
+		mRatings(metadata);
 
-		// CaptionIncluded/CaptionException
-		mCaption(metadata, fields[COL.CaptionIncluded.ordinal()], fields[COL.CaptionExemption.ordinal()], territory);
-
-		// RatingSystem ---> Ratings
-		mRatings(metadata, fields[COL.RatingSystem.ordinal()], fields[COL.RatingValue.ordinal()],
-				fields[COL.RatingReason.ordinal()], territory);
-
-		// EncodeID --> EditEIDR-S
-		if (!fields[COL.EncodeID.ordinal()].equals("")) { // optional field
-			String encodeID = normalizeEIDR(fields[COL.EncodeID.ordinal()]);
-			if (encodeID == null) {
-				reportError("Invalid EncodeID: " + fields[COL.EncodeID.ordinal()]);
-			} else {
-				fields[COL.EncodeID.ordinal()] = encodeID;
-			}
-			metadata.appendChild(mGenericElement(COL.EncodeID.toString(), fields[COL.EncodeID.ordinal()], false));
-		}
-
-		// LocalizationType --> LocalizationOffering
-		if ((e = mLocalizationType(metadata, fields[COL.LocalizationType.ordinal()])) != null) {
-			metadata.appendChild(e);
-		}
+		process(metadata, "EncodeID", "AvailAsset/EncodeID", row);
+		process(metadata, "LocalizationOffering", "AvailMetadata/LocalizationType", row);
 
 		// Attach generated Metadata node
 		asset.appendChild(metadata);
@@ -284,7 +251,139 @@ public abstract class RowToXmlHelper {
 		return mTransactionBody(transaction);
 	}
 
-	protected abstract Element mTransactionBody(Element transaction) throws Exception;
+	/**
+	 * populate a Transaction element; called from superclass
+	 * 
+	 * @param transaction
+	 *            parent node
+	 * @return transaction parent node
+	 */
+	protected Element mTransactionBody(Element transaction) throws Exception {
+		Element e;
+		String prefix = "AvailTrans/";
+		process(transaction, "LicenseType", prefix + "LicenseType", row);
+		process(transaction, "Description", prefix + "Description", row);
+		process(transaction, "Territory", prefix + "Territory", row);
+
+		// Start or StartCondition
+		processCondition(transaction, "Start", prefix + "Start", row);
+		// End or EndCondition
+		processCondition(transaction, "End", prefix + "End", row);
+
+		process(transaction, "StoreLanguage", prefix + "StoreLanguage", row);
+		process(transaction, "LicenseRightsDescription", prefix + "LicenseRightsDescription", row);
+		process(transaction, "FormatProfile", prefix + "FormatProfile", row);
+		process(transaction, "ContractID", prefix + "ContractID", row);
+
+		processTerm(transaction);
+
+		// OtherInstructions
+		// if ((e = mGenericElement(COL.OtherInstructions.toString(),
+		// fields[COL.OtherInstructions.ordinal()],
+		// false)) != null)
+		// transaction.appendChild(e);
+
+		return transaction;
+	}
+
+	/**
+	 * Add 1 or more Term elements to a Transaction.
+	 * <p>
+	 * As of Excel v 1.6. Terms are a mess. There are two modes for defining:
+	 * <ol>
+	 * <li>Use 'PriceType' cell to define a <tt>termName</tt> and then get value
+	 * from 'PriceValue' cell, or</li>
+	 * <li>the use of columns implicitly linked to specific <tt>termName</tt>
+	 * </li>
+	 * </ol>
+	 * An example of the 2nd approach is the 'WatchDuration' column.
+	 * </p>
+	 * 
+	 * @param transaction
+	 */
+	private void processTerm(Element transaction) {
+		Element termEl = dom.createElement("Term");
+		transaction.appendChild(termEl);
+		String prefix = "AvailTrans/";
+		String tName = sheet.getColumnData(prefix + "PriceType", row);
+		if (isSpecified(tName)) {
+			termEl.setAttribute("termName", tName);
+			switch (tName) {
+			case "Tier":
+			case "Category":
+				process(termEl, "Text", prefix + "PriceValue", row);
+				break;
+			case "SRP":
+			case "WSP":
+				Element moneyEl = process(termEl, "Money", prefix + "PriceValue", row);
+				String currency = sheet.getColumnData(prefix + "PriceCurrency", row);
+				if (moneyEl != null && isSpecified(currency)) {
+					moneyEl.setAttribute("currency", currency);
+				}
+				break;
+			}
+		}
+
+		// SRP Term
+		// String val = fields[COL.SRP.ordinal()];
+		// if (!val.equals(""))
+		// transaction.appendChild(makeMoneyTerm("SRP",
+		// fields[COL.SRP.ordinal()], null));
+
+		String value = sheet.getColumnData(prefix + "SuppressionLiftDate", row);
+		if (isSpecified(value)) {
+			termEl = dom.createElement("AnnounceDate");
+			transaction.appendChild(termEl);
+
+		}
+
+		// // Any Term
+		// val = fields[COL.Any.ordinal()];
+		// if (!val.equals("")) {
+		// transaction.appendChild(makeTextTerm(COL.Any.toString(), val));
+		// }
+		//
+		// // RentalDuration Term
+		// val = fields[COL.RentalDuration.ordinal()];
+		// if (!val.equals("")) {
+		// if ((e = makeDurationTerm(COL.RentalDuration.toString(), val)) !=
+		// null)
+		// transaction.appendChild(e);
+		// }
+		//
+		// // WatchDuration Term
+		// val = fields[COL.WatchDuration.ordinal()];
+		// if (!val.equals("")) {
+		// if ((e = makeDurationTerm(COL.WatchDuration.toString(), val)) !=
+		// null)
+		// if (e != null)
+		// transaction.appendChild(e);
+		// }
+		//
+		// // FixedEndDate Term
+		// val = fields[COL.FixedEndDate.ordinal()];
+		// if (!val.equals("")) {
+		// if ((e = makeEventTerm(COL.FixedEndDate.toString(),
+		// normalizeDate(val))) != null)
+		// if (e != null)
+		// transaction.appendChild(e);
+		// }
+		//
+		// // HoldbackLanguage Term
+		// val = fields[COL.HoldbackLanguage.ordinal()].trim();
+		// if (!val.equals("")) {
+		// transaction.appendChild(makeLanguageTerm(COL.HoldbackLanguage.toString(),
+		// val));
+		// }
+		//
+		// // HoldbackExclusionLanguage Term
+		// val = fields[COL.HoldbackExclusionLanguage.ordinal()].trim();
+		// if (!val.equals("")) {
+		// transaction.appendChild(makeLanguageTerm(COL.HoldbackExclusionLanguage.toString(),
+		// val));
+		// }
+
+	}
 
 	/**
 	 * Create an Avails ExceptionFlag element
@@ -297,108 +396,125 @@ public abstract class RowToXmlHelper {
 	}
 
 	/**
-	 * Create an XML element
-	 * 
-	 * @param name
-	 *            the name of the element
-	 * @param val
-	 *            the value of the element
-	 * @param mandatory
-	 *            if true, indicates this is a required field,
-	 * @return the created element, or null
+	 * @param parentEl
+	 * @param type
+	 * @param cellKey
+	 * @param row
 	 */
-	protected Element mGenericElement(String name, String val, boolean mandatory) throws Exception {
-		if (val.equals("") && !mandatory) {
-			return null;
+	private void mReleaseHistory(Element parentEl, String type, String cellKey, int row) {
+		String value = sheet.getColumnData(cellKey, row);
+		if (!isSpecified(value)) {
+			return;
 		}
-		Element tia = dom.createElement(name);
-		Text tmp = dom.createTextNode(val);
-		tia.appendChild(tmp);
-		return tia;
+		Element rh = dom.createElement("ReleaseHistory");
+		Element rt = dom.createElement("md:ReleaseType");
+		Text tmp = dom.createTextNode(type);
+		rt.appendChild(tmp);
+		rh.appendChild(rt);
+		rh.appendChild(mGenericElement("md:Date", value));
+		parentEl.appendChild(rh);
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	protected void mRatings(Element m) {
 
-	/*
-	 * ************************************** Node-generating methods
-	 ****************************************/
-
-	protected Element mReleaseHistory(String name, String val, String rType) throws Exception {
-		Element rh = null;
-		if (!val.equals("")) { // optional
-			String date = normalizeDate(val);
-			if (date == null)
-				reportError("Invalid " + name + ": " + val);
-			rh = dom.createElement("ReleaseHistory");
-			Element rt = dom.createElement("md:ReleaseType");
-			Text tmp = dom.createTextNode(rType);
-			rt.appendChild(tmp);
-			rh.appendChild(rt);
-			rh.appendChild(mGenericElement(name, val, false));
+		String ratingSystem = sheet.getColumnData("AvailMetadata/RatingSystem", row);
+		String ratingValue = sheet.getColumnData("AvailMetadata/RatingValue", row);
+		String ratingReason = sheet.getColumnData("AvailMetadata/RatingReason", row);
+		/*
+		 * According to XML schema, all 3 values are REQUIRED for a Rating. If
+		 * any has been specified than we add the Rating element and let XML
+		 * validation worry about completeness,
+		 */
+		boolean add = isSpecified(ratingSystem) || isSpecified(ratingValue) || isSpecified(ratingReason);
+		if (!add) {
+			return;
 		}
-		return rh;
-	}
-
-	protected void mCaption(Element m, String capIncluded, String capExemption, String territory) throws Exception {
-		Element e;
-		if ((e = mCaptionsExemptionReason(capIncluded, capExemption, territory)) != null) {
-			if (!territory.equals("US")) {
-				Comment comment = dom.createComment("Exemption reason specified for non-US territory");
-				m.appendChild(comment);
-			}
-			m.appendChild(e);
-		}
-	}
-
-	protected void mRatings(Element m, String ratingSystem, String ratingValue, String ratingReason, String territory)
-			throws Exception {
-		// RatingSystem ---> Ratings
-		if (ratingSystem.equals("")) { // optional
-			if (!(ratingValue.equals("") && ratingReason.equals("")))
-				reportError("RatingSystem not specified");
-			else
-				return;
-		}
-		if (!isValidISO3166_2(territory)) // validate legit ISO 3166-1 alpha-2
-			reportError("invalid Country Code: " + territory);
 		Element ratings = dom.createElement("Ratings");
 		Element rat = dom.createElement("md:Rating");
 		ratings.appendChild(rat);
-		Comment comment = dom.createComment("Ratings Region derived from Spreadsheet Territory value");
-		rat.appendChild(comment);
 		Element region = dom.createElement("md:Region");
-		Element country = dom.createElement("md:country");
-		region.appendChild(country);
-		Text tmp = dom.createTextNode(territory);
-		country.appendChild(tmp);
+		String territory = sheet.getColumnData("AvailTrans/Territory", row);
+		if (isSpecified(territory)) {
+			Element country = dom.createElement("md:country");
+			region.appendChild(country);
+			Text tmp = dom.createTextNode(territory);
+			country.appendChild(tmp);
+		}
 		rat.appendChild(region);
-		rat.appendChild(mGenericElement("md:System", ratingSystem, true));
-		rat.appendChild(mGenericElement("md:Value", ratingValue, true));
-		if (!ratingReason.equals("")) {
+
+		if (isSpecified(ratingSystem)) {
+			rat.appendChild(mGenericElement("md:System", ratingSystem));
+		}
+
+		if (isSpecified(ratingValue)) {
+			rat.appendChild(mGenericElement("md:Value", ratingValue));
+		}
+		if (isSpecified(ratingReason)) {
 			String[] reasons = ratingReason.split(",");
 			for (String s : reasons) {
-				Element reason = mGenericElement("md:Reason", s, true);
+				Element reason = mGenericElement("md:Reason", s);
 				rat.appendChild(reason);
 			}
 		}
 		m.appendChild(ratings);
 	}
 
-	protected Element mCount(String name, String val) throws Exception {
-		if (val.equals(""))
-			reportError("missing required count value on element: " + name);
+	/**
+	 * Create an XML element
+	 * 
+	 * @param name
+	 *            the name of the element
+	 * @param val
+	 *            the value of the element
+	 * @return the created element, or null
+	 */
+	protected Element mGenericElement(String name, String val) {
+		// if (val.equals("") && !mandatory) {
+		// return null;
+		// }
 		Element tia = dom.createElement(name);
-		Element e = dom.createElement("md:Number");
-		int n = normalizeInt(val);
-		Text tmp = dom.createTextNode(String.valueOf(n));
-		e.appendChild(tmp);
-		tia.appendChild(e);
-
+		Text tmp = dom.createTextNode(val);
+		tia.appendChild(tmp);
 		return tia;
 	}
+
+	protected Element process(Element parentEl, String childName, String cellKey, int row) {
+		String value = sheet.getColumnData(cellKey, row);
+		if (isSpecified(value)) {
+			Element childEl = mGenericElement(childName, value);
+			parentEl.appendChild(childEl);
+			return childEl;
+		} else {
+			return null;
+		}
+	}
+
+	protected boolean processCondition(Element parentEl, String childName, String cellKey, int row) {
+		String value = sheet.getColumnData(cellKey, row);
+		if (isSpecified(value)) {
+			// does it start with 'yyyy' ?
+			if (value.matches("^\\d[.]*")) {
+				parentEl.appendChild(mGenericElement(childName, value));
+			} else {
+				parentEl.appendChild(mGenericElement(childName + "Condition", value));
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Returns <tt>true</tt> if the value is both non-null and not empty.
+	 * 
+	 * @param value
+	 * @return
+	 */
+	protected boolean isSpecified(String value) {
+		return (value != null && (!value.isEmpty()));
+	}
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
 	 * Creates an Avails/ALID XML node
@@ -422,283 +538,183 @@ public abstract class RowToXmlHelper {
 		disp.appendChild(entry);
 		return disp;
 	}
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// ------------------------ Transaction-related methods
-
-	protected Element mLicenseType(String val) throws Exception {
-		if (!val.matches("^\\s*EST|VOD|SVOD|POEST\\s*$"))
-			reportError("invalid LicenseType: " + val);
-		Element e = dom.createElement("LicenseType");
-		Text tmp = dom.createTextNode(val);
-		e.appendChild(tmp);
-		return e;
-	}
-
-	protected Element mTerritory(String val) throws Exception {
-		if (!isValidISO3166_2(val)) // validate legit ISO 3166-1 alpha-2
-			reportError("invalid Country Code: " + val);
-		Element e = dom.createElement("Territory");
-		Element e2 = mGenericElement("md:country", val, true);
-		e.appendChild(e2);
-		return e;
-	}
-
-	protected Element mDescription(String val) throws Exception {
-		// XXX this can be optional in SS, but not in XML
-		if (val.equals(""))
-			val = MISSING;
-		return mGenericElement("Description", val, true);
-	}
-
-	// XXX XML allows empty value
-	// XXX cleanupData code not added
-	/**
-	 * Generate Start or StartCondition
-	 * 
-	 * @param val
-	 *            start time
-	 * @return a Start element
-	 * @throws Exception
-	 *             if an error condition is encountered
-	 */
-	protected Element mStart(String val) throws Exception {
-		Element e = null;
-		if (val.equals("")) {
-			reportError("Missing Start date: ");
-			// e = dom.createElement("StartCondition");
-			// tmp = dom.createTextNode("Immediate");
-		} else {
-			String date = normalizeDate(val);
-			if (date == null)
-				reportError("Invalid Start date: " + val);
-			e = dom.createElement("Start"); // [sic] yes name
-			Text tmp = dom.createTextNode(date + "T00:00:00");
-			e.appendChild(tmp);
-		}
-		return e;
-	}
+	//
+	// protected Element mLicenseType(String val) throws Exception {
+	// if (!val.matches("^\\s*EST|VOD|SVOD|POEST\\s*$"))
+	// reportError("invalid LicenseType: " + val);
+	// Element e = dom.createElement("LicenseType");
+	// Text tmp = dom.createTextNode(val);
+	// e.appendChild(tmp);
+	// return e;
+	// }
+	//
+	// // XXX cleanupData code not added
+	// protected Element mLicenseRightsDescription(String val) throws Exception
+	// {
+	// if (Arrays.binarySearch(LRD, val) == -1)
+	// reportError("invalid LicenseRightsDescription " + val);
+	// Element e = dom.createElement("LicenseRightsDescription");
+	// Text tmp = dom.createTextNode(val);
+	// e.appendChild(tmp);
+	// return e;
+	// }
+	//
+	// // XXX cleanupData code not added
+	// protected Element mFormatProfile(String val) throws Exception {
+	// if (!val.matches("^\\s*SD|HD|3D\\s*$"))
+	// reportError("invalid FormatProfile: " + val);
+	// Element e = dom.createElement("FormatProfile");
+	// Text tmp = dom.createTextNode(val);
+	// e.appendChild(tmp);
+	// return e;
+	// }
 
 	// XXX cleanupData code not added
-	protected Element mEnd(String val) throws Exception {
-		Element e = null;
-		Text tmp;
-		if (val.equals(""))
-			reportError("End date may not be null");
-
-		String date = normalizeDate(val);
-		if (date != null) {
-			e = dom.createElement("End");
-			tmp = dom.createTextNode(date + "T00:00:00");
-			e.appendChild(tmp);
-		} else if (val.matches("^\\s*Open|ESTStart|Immediate\\s*$")) {
-			e = dom.createElement("EndCondition");
-			tmp = dom.createTextNode(val);
-			e.appendChild(tmp);
-		} else {
-			reportError("Invalid End Condition " + val);
-		}
-		return e;
-	}
-
-	protected Element mStoreLanguage(String val) throws Exception {
-		if (!isValidLanguageTag(val)) // RFC 5646/BCP 47 validation
-			reportError("invalid language tag: '" + val + "'");
-		return mGenericElement("StoreLanguage", val, false);
-	}
-
-	// XXX cleanupData code not added
-	protected Element mLicenseRightsDescription(String val) throws Exception {
-		if (Arrays.binarySearch(LRD, val) == -1)
-			reportError("invalid LicenseRightsDescription " + val);
-		Element e = dom.createElement("LicenseRightsDescription");
-		Text tmp = dom.createTextNode(val);
-		e.appendChild(tmp);
-		return e;
-	}
-
-	// XXX cleanupData code not added
-	protected Element mFormatProfile(String val) throws Exception {
-		if (!val.matches("^\\s*SD|HD|3D\\s*$"))
-			reportError("invalid FormatProfile: " + val);
-		Element e = dom.createElement("FormatProfile");
-		Text tmp = dom.createTextNode(val);
-		e.appendChild(tmp);
-		return e;
-	}
-
-	// XXX cleanupData code not added
-	protected Element mPriceType(String priceType, String priceVal) throws Exception {
-		Element e = null;
-		priceType = priceType.toLowerCase();
-		Pattern pat = Pattern.compile("^\\s*(tier|category|wsp|srp)\\s*$", Pattern.CASE_INSENSITIVE);
-		Matcher m = pat.matcher(priceType);
-		if (!m.matches())
-			reportError("Invalid PriceType: " + priceType);
-		switch (priceType) {
-		case "tier":
-		case "category":
-			e = makeTextTerm(priceType, priceVal);
-			break;
-		case "wsp":
-		case "srp":
-			// XXX set currency properly
-			e = makeMoneyTerm(priceType, priceVal, "USD");
-		}
-		return e;
-	}
-
-	protected Element makeTextTerm(String name, String value) {
-		Element e = dom.createElement("Term");
-		Attr attr = dom.createAttribute("termName");
-		attr.setValue(name);
-		e.setAttributeNode(attr);
-
-		Element e2 = dom.createElement("Text");
-		Text tmp = dom.createTextNode(value);
-		e2.appendChild(tmp);
-		e.appendChild(e2);
-		return e;
-	}
-
-	protected Element makeDurationTerm(String name, String value) throws Exception {
-		int hours;
-		try {
-			hours = normalizeInt(value);
-		} catch (NumberFormatException e) {
-			reportError(" invalid duration: " + value);
-			return null;
-		}
-		value = String.format("PT%dH", hours);
-
-		Element e = dom.createElement("Term");
-		Attr attr = dom.createAttribute("termName");
-		attr.setValue(name);
-		e.setAttributeNode(attr);
-
-		// XXX validate
-		Element e2 = dom.createElement("Duration");
-		Text tmp = dom.createTextNode(value);
-		e2.appendChild(tmp);
-		e.appendChild(e2);
-		return e;
-	}
-
-	protected Element makeLanguageTerm(String name, String value) throws Exception {
-		// XXX validate
-		if (!isValidLanguageTag(value))
-			reportError("Suspicious Language Tag: " + value);
-		Element e = dom.createElement("Term");
-		Attr attr = dom.createAttribute("termName");
-		attr.setValue(name);
-		e.setAttributeNode(attr);
-
-		// XXX validate
-		Element e2 = dom.createElement("Language");
-		Text tmp = dom.createTextNode(value);
-		e2.appendChild(tmp);
-		e.appendChild(e2);
-		return e;
-	}
-
-	protected Element makeEventTerm(String name, String dateTime) {
-		Element e = dom.createElement("Term");
-		Attr attr = dom.createAttribute("termName");
-		attr.setValue(name);
-		e.setAttributeNode(attr);
-
-		Element e2 = dom.createElement("Event");
-		// XXX validate dateTime
-		Text tmp = dom.createTextNode(dateTime);
-		e2.appendChild(tmp);
-		e.appendChild(e2);
-		return e;
-	}
-
-	protected Element makeMoneyTerm(String name, String value, String currency) {
-		Element e = dom.createElement("Term");
-		Attr attr = dom.createAttribute("termName");
-		attr.setValue(name);
-		e.setAttributeNode(attr);
-
-		Element e2 = dom.createElement("Money");
-		if (currency != null) {
-			attr = dom.createAttribute("currency");
-			attr.setValue(currency);
-			e2.setAttributeNode(attr);
-		}
-		Text tmp = dom.createTextNode(value);
-		e2.appendChild(tmp);
-		e.appendChild(e2);
-		return e;
-	}
+	// protected Element mPriceType(String priceType, String priceVal) throws
+	// Exception {
+	// Element e = null;
+	// priceType = priceType.toLowerCase();
+	// Pattern pat = Pattern.compile("^\\s*(tier|category|wsp|srp)\\s*$",
+	// Pattern.CASE_INSENSITIVE);
+	// Matcher m = pat.matcher(priceType);
+	// if (!m.matches())
+	// reportError("Invalid PriceType: " + priceType);
+	// switch (priceType) {
+	// case "tier":
+	// case "category":
+	// e = makeTextTerm(priceType, priceVal);
+	// break;
+	// case "wsp":
+	// case "srp":
+	// // XXX set currency properly
+	// e = makeMoneyTerm(priceType, priceVal, "USD");
+	// }
+	// return e;
+	// }
+	//
+	// protected Element makeTextTerm(String name, String value) {
+	// Element e = dom.createElement("Term");
+	// Attr attr = dom.createAttribute("termName");
+	// attr.setValue(name);
+	// e.setAttributeNode(attr);
+	//
+	// Element e2 = dom.createElement("Text");
+	// Text tmp = dom.createTextNode(value);
+	// e2.appendChild(tmp);
+	// e.appendChild(e2);
+	// return e;
+	// }
+	//
+	// protected Element makeDurationTerm(String name, String value) throws
+	// Exception {
+	// int hours;
+	// try {
+	// hours = normalizeInt(value);
+	// } catch (NumberFormatException e) {
+	// reportError(" invalid duration: " + value);
+	// return null;
+	// }
+	// value = String.format("PT%dH", hours);
+	//
+	// Element e = dom.createElement("Term");
+	// Attr attr = dom.createAttribute("termName");
+	// attr.setValue(name);
+	// e.setAttributeNode(attr);
+	//
+	// // XXX validate
+	// Element e2 = dom.createElement("Duration");
+	// Text tmp = dom.createTextNode(value);
+	// e2.appendChild(tmp);
+	// e.appendChild(e2);
+	// return e;
+	// }
+	//
+	// protected Element makeLanguageTerm(String name, String value) throws
+	// Exception {
+	// // XXX validate
+	// if (!isValidLanguageTag(value))
+	// reportError("Suspicious Language Tag: " + value);
+	// Element e = dom.createElement("Term");
+	// Attr attr = dom.createAttribute("termName");
+	// attr.setValue(name);
+	// e.setAttributeNode(attr);
+	//
+	// // XXX validate
+	// Element e2 = dom.createElement("Language");
+	// Text tmp = dom.createTextNode(value);
+	// e2.appendChild(tmp);
+	// e.appendChild(e2);
+	// return e;
+	// }
+	//
+	// protected Element makeEventTerm(String name, String dateTime) {
+	// Element e = dom.createElement("Term");
+	// Attr attr = dom.createAttribute("termName");
+	// attr.setValue(name);
+	// e.setAttributeNode(attr);
+	//
+	// Element e2 = dom.createElement("Event");
+	// // XXX validate dateTime
+	// Text tmp = dom.createTextNode(dateTime);
+	// e2.appendChild(tmp);
+	// e.appendChild(e2);
+	// return e;
+	// }
+	//
+	// protected Element makeMoneyTerm(String name, String value, String
+	// currency) {
+	// Element e = dom.createElement("Term");
+	// Attr attr = dom.createAttribute("termName");
+	// attr.setValue(name);
+	// e.setAttributeNode(attr);
+	//
+	// Element e2 = dom.createElement("Money");
+	// if (currency != null) {
+	// attr = dom.createAttribute("currency");
+	// attr.setValue(currency);
+	// e2.setAttributeNode(attr);
+	// }
+	// Text tmp = dom.createTextNode(value);
+	// e2.appendChild(tmp);
+	// e.appendChild(e2);
+	// return e;
+	// }
 
 	// ------------------
 
-	protected Element mRunLength(String val) throws Exception {
-		Element ret = dom.createElement("RunLength");
-		Text tmp = dom.createTextNode(val);
-		ret.appendChild(tmp);
-		System.out.println("RunLength='" + val + "'");
-		return ret;
-	}
-
-	protected Element mLocalizationType(Element parent, String loc) throws Exception {
-		if (loc.equals(""))
-			return null;
-		if (!(loc.equals("sub") || loc.equals("dub") || loc.equals("subdub") || loc.equals("any"))) {
-			if (cleanupData) {
-				Pattern pat = Pattern.compile("^\\s*(sub|dub|subdub|any)\\s*$", Pattern.CASE_INSENSITIVE);
-				Matcher m = pat.matcher(loc);
-				if (m.matches()) {
-					Comment comment = dom.createComment("corrected from '" + loc + "'");
-					loc = m.group(1).toLowerCase();
-					parent.appendChild(comment);
-				}
-			} else {
-				reportError("invalid LocalizationOffering value: " + loc);
-			}
-		}
-		return mGenericElement("LocalizationOffering", loc, false);
-	}
-
-	protected Element mCaptionsExemptionReason(String captionIncluded, String captionExemption, String territory)
-			throws Exception {
-		int exemption = 0;
-		switch (yesorno(captionIncluded)) {
-		case 1: // yes, caption is included
-			if (!captionExemption.equals(""))
-				reportError("CaptionExemption specified without CaptionIncluded");
-			break;
-		case 0: // no, captions not included
-			if (captionExemption.equals("")) {
-				reportError("Captions not included and CaptionExemption not specified");
-				return null;
-			} else {
-				try {
-					exemption = normalizeInt(captionExemption);
-				} catch (NumberFormatException s) {
-					exemption = -1;
-				}
-				if (exemption < 1 || exemption > 6)
-					reportError("Invalid CaptionExamption Value: " + exemption);
-				Element capex = dom.createElement("USACaptionsExemptionReason");
-				Text tmp = dom.createTextNode(Integer.toString(exemption));
-				capex.appendChild(tmp);
-				return capex;
-			}
-			// break
-		default:
-			reportError("CaptionExemption specified without CaptionIncluded");
-		}
-		// } else {
-		// if (captionIncluded.equals("") && captionExemption.equals(""))
-		// return null;
-		// else
-		// reportError("CaptionIncluded/Exemption should only be specified in
-		// US");
-		// }
-		return null;
-	}
+	// protected Element mRunLength(String val) throws Exception {
+	// Element ret = dom.createElement("RunLength");
+	// Text tmp = dom.createTextNode(val);
+	// ret.appendChild(tmp);
+	// System.out.println("RunLength='" + val + "'");
+	// return ret;
+	// }
+	//
+	// protected Element mLocalizationType(Element parent, String loc) throws
+	// Exception {
+	// if (loc.equals(""))
+	// return null;
+	// if (!(loc.equals("sub") || loc.equals("dub") || loc.equals("subdub") ||
+	// loc.equals("any"))) {
+	// if (cleanupData) {
+	// Pattern pat = Pattern.compile("^\\s*(sub|dub|subdub|any)\\s*$",
+	// Pattern.CASE_INSENSITIVE);
+	// Matcher m = pat.matcher(loc);
+	// if (m.matches()) {
+	// Comment comment = dom.createComment("corrected from '" + loc + "'");
+	// loc = m.group(1).toLowerCase();
+	// parent.appendChild(comment);
+	// }
+	// } else {
+	// reportError("invalid LocalizationOffering value: " + loc);
+	// }
+	// }
+	// return mGenericElement("LocalizationOffering", loc, false);
+	// }
 
 	/*
 	 * ************************************** Helper methods
@@ -729,29 +745,19 @@ public abstract class RowToXmlHelper {
 	 * @return true iff val is a valid language tag
 	 * @throws Exception
 	 */
-	protected boolean isValidLanguageTag(String val) throws Exception {
-		Pattern pat = Pattern.compile("^([a-zA-Z]{2,3})(?:-[a-zA-Z0-9]+)*$");
-		Matcher m = pat.matcher(val);
-		boolean ret = false;
-		if (m.matches()) {
-			String lang = m.group(1).toLowerCase();
-			ret = ((Arrays.binarySearch(ISO639, lang) >= 0) || isValidISO639_2(lang));
-		}
-		if (!ret)
-			reportError("Suspicious Language Tag: " + val);
-		return ret;
-	}
-
-	/**
-	 * Determine if a string is a valid ISO 3066-2 country code
-	 * 
-	 * @param val
-	 *            the string to be tested
-	 * @return true iff val is a valid code
-	 */
-	protected boolean isValidISO3166_2(String val) {
-		return Arrays.binarySearch(ISO3166, val) != -1;
-	}
+	// protected boolean isValidLanguageTag(String val) throws Exception {
+	// Pattern pat = Pattern.compile("^([a-zA-Z]{2,3})(?:-[a-zA-Z0-9]+)*$");
+	// Matcher m = pat.matcher(val);
+	// boolean ret = false;
+	// if (m.matches()) {
+	// String lang = m.group(1).toLowerCase();
+	// ret = ((Arrays.binarySearch(ISO639, lang) >= 0) ||
+	// isValidISO639_2(lang));
+	// }
+	// if (!ret)
+	// reportError("Suspicious Language Tag: " + val);
+	// return ret;
+	// }
 
 	/**
 	 * logs an error and potentially throws an exception. The error is decorated
@@ -762,12 +768,12 @@ public abstract class RowToXmlHelper {
 	 * @throws ParseException
 	 *             if exit-on-error policy is in effect
 	 */
-	protected void reportError(String s) throws Exception {
-		s = String.format("Row %5d: %s", rowNum, s);
-		log.error(s);
-		if (exitOnError)
-			throw new ParseException(s, 0);
-	}
+	// protected void reportError(String s) throws Exception {
+	// s = String.format("Row %5d: %s", rowNum, s);
+	// log.error(s);
+	// if (exitOnError)
+	// throw new ParseException(s, 0);
+	// }
 
 	/**
 	 * Parse an input string to determine whether "Yes" or "No" is intended. A
@@ -800,26 +806,6 @@ public abstract class RowToXmlHelper {
 				return 0;
 			else
 				return -1;
-		}
-	}
-
-	/**
-	 * Verify that a string represents a valid EIDR, and return compact
-	 * representation if so. Leading and trailing whitespace is tolerated, as is
-	 * the presence/absence of the EIDR "10.5240/" prefix
-	 * 
-	 * @param s
-	 *            the input string to be tested
-	 * @return a short EIDR corresponding to the asset if valid; null if not a
-	 *         proper EIDR exception
-	 */
-	protected String normalizeEIDR(String s) {
-		Pattern eidr = Pattern.compile("^\\s*(?:10\\.5240/)?((?:(?:\\p{XDigit}){4}-){5}\\p{XDigit})\\s*$");
-		Matcher m = eidr.matcher(s);
-		if (m.matches()) {
-			return m.group(1).toUpperCase();
-		} else {
-			return null;
 		}
 	}
 

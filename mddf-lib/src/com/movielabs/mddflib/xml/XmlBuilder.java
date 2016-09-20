@@ -98,53 +98,15 @@ public class XmlBuilder {
 		xmlns.setPrefix("xsi");
 		root.setAttributeNode(xmlns);
 
-		dom.appendChild(root);
-
-		for (SheetRow r : rows) {
-			if (shortDesc != null & !shortDesc.equals(""))
-				r.setShortDesc(shortDesc);
-			Element e = r.makeAvail(dom);
+		dom.appendChild(root); 
+		for (int i=0; i < aSheet.getRowCount(); i++) {
+			RowToXmlHelper xmlConverter = new RowToXmlHelper(aSheet, i, shortDesc); 
+			Element e = xmlConverter.makeAvail(dom);
 			root.appendChild(e);
 		}
 
 		return dom;
 	}
 
-	/**
-	 * Create an Avails XML file based on the data in this spreadsheet
-	 * 
-	 * @param xmlFile
-	 *            the name of the created XML output file
-	 * @param shortDesc
-	 *            a short description that will appear in the document
-	 * @throws Exception
-	 *             if any errors are encountered
-	 */
-	public void makeXMLFile(String xmlFile, String shortDesc) throws Exception {
-		try {
-			Document dom = makeXML(shortDesc);
-
-			// Use a Transformer for output
-			TransformerFactory tFactory = TransformerFactory.newInstance();
-			Transformer transformer = tFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-
-			DOMSource source = new DOMSource(dom);
-			// StreamResult result = new StreamResult(System.out);
-			StreamResult result = new StreamResult(new FileOutputStream(xmlFile));
-			transformer.transform(source, result);
-
-		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 }

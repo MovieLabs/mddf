@@ -28,9 +28,6 @@ package com.movielabs.mddflib;
 import java.util.*;
 import java.text.ParseException;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -121,57 +118,6 @@ public class AvailsSheet {
 	}
 
 	/**
-	 * Add a row of spreadsheet data
-	 * 
-	 * @param fields
-	 *            an array containing the raw values of a spreadsheet row
-	 * @param rowNum
-	 *            the row number from the source spreadsheet
-	 * @throws Exception
-	 *             if an invalid workType is encountered (currently, only
-	 *             'movie', 'episode', or 'season' are accepted)
-	 */
-	private void addRow(String[] fields, int rowNum) {
-		int cIdx = getColumnIdx("AvailAsset/WorkType");
-		String workType = fields[cIdx];
-
-		System.out.println("workType=" + workType);
-
-		if (!(workType.equals("Movie") || workType.equals("Episode") || workType.equals("Season"))) {
-			if (parent.getCleanupData()) {
-				Pattern pat = Pattern.compile("^\\s*(movie|episode|season)\\s*$", Pattern.CASE_INSENSITIVE);
-				Matcher m = pat.matcher(workType);
-				if (m.matches()) {
-					log("corrected from '" + workType + "'", rowNum);
-					workType = m.group(1).substring(0, 1).toUpperCase() + m.group(1).substring(1).toLowerCase();
-				} else {
-					log("invalid workType: '" + workType + "'", rowNum);
-					return;
-				}
-			} else {
-				log("invalid workType: '" + workType + "'", rowNum);
-				return;
-			}
-		}
-		SheetRow sr;
-		switch (workType) {
-		case "Movie":
-			sr = new Movie(this, "Movie", rowNum, fields);
-			break;
-		case "Episode":
-			sr = new Episode(this, "Episode", rowNum, fields);
-			break;
-		case "Season":
-			sr = new Season(this, "Season", rowNum, fields);
-			break;
-		default:
-			log("invalid workType: " + workType, rowNum);
-			return;
-		}
-		// rows.add(sr);
-	}
-
-	/**
 	 * Determine if a spreadsheet row contains an avail
 	 * 
 	 * @param nextRow
@@ -208,6 +154,13 @@ public class AvailsSheet {
 	}
 
 	/**
+	 * @return
+	 */
+	public int getRowCount() { 
+		return rows.size();
+	}
+
+	/**
 	 * helper routine to create a log entry
 	 * 
 	 * @param msg
@@ -238,16 +191,19 @@ public class AvailsSheet {
 	}
 
 	/**
-	 * @param key
+	 * Return value of cell identified by the columnKey and row. If either
+	 * argument is invalid a <tt>null</tt> value is returned.
+	 * 
+	 * @param columnKey
 	 * @param row
 	 *            zero-based row number
 	 * @return
 	 */
-	public String getColumnData(String key, int row) {
+	public String getColumnData(String columnKey, int row) {
 		if (row >= rows.size()) {
 			return null;
 		}
-		int idx = getColumnIdx(key);
+		int idx = getColumnIdx(columnKey);
 		if (idx < 0) {
 			return null;
 		} else {
