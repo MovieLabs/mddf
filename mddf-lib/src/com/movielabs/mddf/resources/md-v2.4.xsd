@@ -1,0 +1,1152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2015 sp1 (x64) (http://www.altova.com) by Craig Seidel (private) -->
+<xs:schema xmlns:md="http://www.movielabs.com/schema/md/v2.4/md" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.movielabs.com/schema/md/v2.3/md" targetNamespace="http://www.movielabs.com/schema/md/v2.4/md" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.4">
+	<!--Common Metadata-->
+	<!--Verson 2.4-->
+	<!-- *** Metadata References ***-->
+	<xs:simpleType name="id-type">
+		<xs:restriction base="xs:anyURI"/>
+	</xs:simpleType>
+	<xs:simpleType name="orgID-type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="ContentID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:complexType name="ContentIdentifier-type">
+		<xs:sequence>
+			<xs:element name="Namespace" type="md:string-ContentID-Namespace"/>
+			<xs:element name="Identifier" type="md:string-ContentID-Identifier"/>
+			<xs:element name="Location" type="xs:anyURI" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="AssetPhysicalID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="AssetLogicalID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<!--*** Parental Controls ***-->
+	<xs:complexType name="ContentRatingDetail-type">
+		<xs:sequence>
+			<xs:element name="Region" type="md:Region-type"/>
+			<xs:element name="System" type="md:string-Rating-System"/>
+			<xs:element name="Value" type="xs:string"/>
+			<xs:element name="Reason" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="LinkToLogo" type="xs:anyURI" minOccurs="0"/>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ContentRating-type">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="NotRated" fixed="true">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:boolean">
+								<xs:attribute name="condition" type="md:string-NotRated-condition"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Rating" type="md:ContentRatingDetail-type" maxOccurs="unbounded"/>
+			</xs:choice>
+			<xs:element name="AdultContent" type="xs:boolean" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** Basic Metadata ***-->
+	<xs:complexType name="ContentSequenceInfo-type">
+		<xs:sequence>
+			<xs:element name="Number" type="xs:int" minOccurs="0"/>
+			<xs:element name="DistributionNumber" type="md:complex-SequenceInfo-DistributionNumber" minOccurs="0"/>
+			<xs:element name="HouseSequence" type="md:complex-SequenceInfo-HouseSequence" minOccurs="0"/>
+			<xs:element name="AlternateNumber" type="md:complex-SequenceInfo-AlternateNumber" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BasicMetadataParent-type">
+		<xs:choice>
+			<xs:element name="Parent" type="md:BasicMetadata-type"/>
+			<xs:element name="ParentContentID" type="md:ContentID-type"/>
+		</xs:choice>
+		<xs:attribute name="relationshipType">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="isclipof"/>
+					<xs:enumeration value="isepisodeof"/>
+					<xs:enumeration value="isseasonof"/>
+					<xs:enumeration value="ispieceof"/>
+					<xs:enumeration value="ispartof"/>
+					<xs:enumeration value="isderivedfrom"/>
+					<xs:enumeration value="iscompositeof"/>
+					<xs:enumeration value="issupplementto"/>
+					<xs:enumeration value="ispromotionfor"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="BasicMetadataInfo-type">
+		<xs:sequence>
+			<xs:element name="TitleDisplay19" type="xs:string" minOccurs="0"/>
+			<xs:element name="TitleDisplay60" type="xs:string" minOccurs="0"/>
+			<xs:element name="TitleDisplayUnlimited" type="xs:string" minOccurs="0"/>
+			<xs:element name="TitleSort" type="xs:string"/>
+			<xs:element name="ArtReference" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:anyURI">
+							<xs:attribute name="resolution" type="md:string-ArtReference_resolution"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Summary190">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="cast" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Summary400" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="cast" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Summary4000" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="cast" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DisplayIndicators" type="md:string-DisplayIndicators" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Genre" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="source" type="xs:anyURI"/>
+							<xs:attribute name="id" type="md:string-Genre_id"/>
+							<xs:attribute name="level" type="xs:integer"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Keyword" type="md:string-Keyword" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="VersionNotes" type="xs:string" minOccurs="0"/>
+			<xs:element name="Region" type="md:Region-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="OriginalTitle" type="xs:string" minOccurs="0"/>
+			<xs:element name="CopyrightLine" type="xs:string" minOccurs="0"/>
+			<xs:element name="PeopleLocal" type="md:BasicMetadataPeople-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TitleAlternate" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="type" type="md:string-TitleAlternate_type"/>
+							<xs:attribute name="language" type="md:language-redefine"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="language" type="md:language-redefine" use="required"/>
+		<xs:attribute name="default" type="xs:boolean"/>
+	</xs:complexType>
+	<xs:complexType name="BasicMetadataJob-type">
+		<xs:sequence>
+			<xs:element name="JobFunction">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="md:Role-type">
+							<xs:attribute name="scheme" type="md:string-JobFunction_scheme"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="JobDisplay" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="md:string-JobDisplay">
+							<xs:attribute name="language" type="md:language-redefine"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BillingBlockOrder" type="xs:int" minOccurs="0"/>
+			<xs:element name="Character" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Guest" type="xs:boolean" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BasicMetadataPeople-type">
+		<xs:sequence>
+			<xs:element name="Job" type="md:BasicMetadataJob-type" maxOccurs="unbounded"/>
+			<xs:element name="Name" type="md:PersonName-type"/>
+			<xs:element name="Identifier" type="md:PersonIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Gender" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="male"/>
+						<xs:enumeration value="female"/>
+						<xs:enumeration value="neutral"/>
+						<xs:enumeration value="plural"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BasicMetadata-type">
+		<xs:sequence>
+			<xs:element name="UpdateNum" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:minInclusive value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LocalizedInfo" type="md:BasicMetadataInfo-type" maxOccurs="unbounded"/>
+			<xs:element name="RunLength" type="xs:duration" minOccurs="0"/>
+			<xs:element name="ReleaseYear" type="xs:gYear"/>
+			<xs:element name="ReleaseDate" type="md:YearDateOrTime-type" minOccurs="0"/>
+			<xs:element name="ReleaseHistory" type="md:ReleaseHistory-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="WorkType" type="md:string-WorkType"/>
+			<xs:element name="WorkTypeDetail" type="md:string-WorkTypeDetail" minOccurs="0"/>
+			<xs:element name="PictureColorType" type="md:ColorType-type" minOccurs="0"/>
+			<xs:element name="PictureFormat" type="md:string-PictureFormat" minOccurs="0"/>
+			<xs:element name="ThreeD" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="AspectRatio" type="md:string-AspectRatio" minOccurs="0"/>
+			<xs:element name="AltIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="RatingSet" type="md:ContentRating-type" minOccurs="0"/>
+			<xs:element name="People" type="md:BasicMetadataPeople-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="CountryOfOrigin" type="md:Region-type" minOccurs="0"/>
+			<xs:element name="PrimarySpokenLanguage" type="md:language-redefine" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="OriginalLanguage" type="md:language-redefine" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="VersionLanguage" type="md:language-redefine" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AssociatedOrg" type="md:AssociatedOrg-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SequenceInfo" type="md:ContentSequenceInfo-type" minOccurs="0"/>
+			<xs:element name="Parent" type="md:BasicMetadataParent-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="ContentID" type="md:ContentID-type" use="required"/>
+	</xs:complexType>
+	<!--*** Abbreviated Metadata ***-->
+	<xs:complexType name="AbbreviatedMetadataInfo-type">
+		<xs:sequence>
+			<xs:element name="TitleBrief" type="xs:string"/>
+			<xs:element name="ArtReference" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SummaryShort" type="xs:string"/>
+			<xs:element name="DisplayIndicators" minOccurs="0" maxOccurs="unbounded">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="CC"/>
+						<xs:enumeration value="F"/>
+						<xs:enumeration value="P"/>
+						<xs:enumeration value="DD"/>
+						<xs:enumeration value="SAP"/>
+						<xs:enumeration value="DVS"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="language" type="md:language-redefine" use="required"/>
+		<xs:attribute name="default" type="xs:boolean"/>
+	</xs:complexType>
+	<xs:complexType name="AbbreviatedMetadata-type">
+		<xs:sequence>
+			<xs:element name="UpdateNum" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:minInclusive value="1"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="LocalizedInfo" type="md:AbbreviatedMetadataInfo-type" maxOccurs="unbounded"/>
+			<xs:element name="Rating" type="md:ContentRating-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AltIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Studio" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Equivalent to DisplayName</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="ContentID" type="md:ContentID-type" use="required"/>
+	</xs:complexType>
+	<!--*** Digital Asset Metadata ***-->
+	<xs:complexType name="DigitalAssetExternalTrackReference-type">
+		<xs:simpleContent>
+			<xs:extension base="md:ContentID-type">
+				<xs:attribute name="namespace" type="xs:string"/>
+				<xs:attribute name="location" type="xs:string"/>
+				<xs:attribute name="trackReference" type="md:string-TrackReference"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetCardset-type">
+		<xs:sequence>
+			<xs:element name="Type" type="md:string-Cardset-Type" maxOccurs="unbounded"/>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+			<xs:element name="Sequence" type="xs:positiveInteger" minOccurs="0"/>
+			<xs:element name="Language" type="md:language-redefine" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetCardsetList-type">
+		<xs:sequence>
+			<xs:element name="Type" type="md:string-CardsetList-Type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Region" type="md:MadeForRegion-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Cardset" type="md:DigitalAssetCardset-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetWatermark-type">
+		<xs:sequence>
+			<xs:element name="Vendor" type="md:string-Watermark_Vendor"/>
+			<xs:element name="ProductAndVersionID" type="xs:string"/>
+			<xs:element name="Data" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="guaranteedAbsent" type="xs:boolean" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetAudioEncoding-type">
+		<xs:sequence>
+			<xs:element name="Codec" type="md:string-Audio-Enc-Codec"/>
+			<xs:element name="CodecType" type="md:string-Audio-Enc-CodecType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="BitrateMax" type="xs:integer" minOccurs="0"/>
+			<xs:element name="BitrateAverage" type="xs:integer" minOccurs="0"/>
+			<xs:element name="VBR" type="md:string-Audio-Enc-VBR" minOccurs="0"/>
+			<xs:element name="SampleRate" type="xs:integer" minOccurs="0"/>
+			<xs:element name="SampleBitDepth" type="xs:integer" minOccurs="0"/>
+			<xs:element name="ChannelMapping" type="md:string-Audio-Enc-ChannelMapping" minOccurs="0"/>
+			<xs:element name="Watermark" type="md:DigitalAssetWatermark-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ActualLength" type="xs:duration" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetAudioLanguage-type">
+		<xs:simpleContent>
+			<xs:extension base="md:language-redefine">
+				<xs:attribute name="dubbed" type="xs:boolean"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetAudioData-type">
+		<xs:sequence>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+			<xs:element name="Type" type="md:string-Audio-Type" minOccurs="0"/>
+			<xs:element name="Encoding" type="md:DigitalAssetAudioEncoding-type" minOccurs="0"/>
+			<xs:element name="Language" type="md:DigitalAssetAudioLanguage-type"/>
+			<xs:element name="Channels" type="md:string-Audio-Channels" minOccurs="0"/>
+			<xs:element name="TrackReference" type="md:string-TrackReference" minOccurs="0"/>
+			<xs:element name="TrackIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Private" type="md:PrivateData-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetVideoEncoding-type">
+		<xs:sequence>
+			<xs:element name="Codec" type="md:string-Video-Enc-Codec"/>
+			<xs:element name="CodecType" type="md:string-Video-Enc-CodecType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="MPEGProfile" type="md:string-Video-Enc-MProfile" minOccurs="0"/>
+			<xs:element name="MPEGLevel" type="md:string-Video-Enc-MLevel" minOccurs="0"/>
+			<xs:element name="BitrateMax" type="xs:integer" minOccurs="0"/>
+			<xs:element name="BitRateAverage" type="xs:integer" minOccurs="0"/>
+			<xs:element name="VBR" type="md:string-Video-Enc-VBR" minOccurs="0"/>
+			<xs:element name="Watermark" type="md:DigitalAssetWatermark-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ActualLength" type="xs:duration" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetChromaticity-type">
+		<xs:sequence>
+			<xs:element name="ChromaticityCIEx" type="xs:decimal"/>
+			<xs:element name="ChromaticityCIEy" type="xs:decimal"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetColorVolume-type">
+		<xs:sequence>
+			<xs:element name="PrimaryRChromaticity" type="md:DigitalAssetChromaticity-type"/>
+			<xs:element name="PrimaryGChromaticity" type="md:DigitalAssetChromaticity-type"/>
+			<xs:element name="PrimaryBChromaticity" type="md:DigitalAssetChromaticity-type"/>
+			<xs:element name="WhitePointChromaticity" type="md:DigitalAssetChromaticity-type"/>
+			<xs:element name="LuminanceMin" type="xs:decimal"/>
+			<xs:element name="LuminanceMax" type="xs:decimal"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetColorEncoding-type">
+		<xs:sequence>
+			<xs:element name="Primaries" type="md:string-Video-Pic-Primaries"/>
+			<xs:element name="TransferFunction" type="md:string-Video-Pic-OETF"/>
+			<xs:element name="ColorDifferencing" type="md:string-Video-Pic-ColorDifferencing"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetVideoPictureFrameRate-type">
+		<xs:simpleContent>
+			<xs:extension base="xs:int">
+				<xs:attribute name="multiplier" type="md:string-Video-Pic-FrameRate-multiplier"/>
+				<xs:attribute name="timecode" type="md:string-Video-Pic-FrameRate-timecode"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetVideoPictureProgressive-type">
+		<xs:simpleContent>
+			<xs:extension base="xs:boolean">
+				<xs:attribute name="scanOrder" type="md:string-Video-Pic-Progressive-scanOrder"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetVideoPictureLightLevel-type">
+		<xs:sequence>
+			<xs:element name="ContentMax" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:nonNegativeInteger">
+							<xs:attribute name="interpretation" type="md:string-Video-Pic-CMaxInterpretation"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FrameAverageMax" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:nonNegativeInteger">
+							<xs:attribute name="interpretation" type="md:string-Video-Pic-FMaxInterpretation"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetVideoPictureHDRPlaybackInfo-type">
+		<xs:sequence>
+			<xs:element name="SDRDownconversion" type="md:string-Video-Pic-SDRDownconversion" minOccurs="0"/>
+			<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetVideoPicture-type">
+		<xs:sequence>
+			<xs:element name="AspectRatio" type="md:string-Video-Pic-AspectRatio" minOccurs="0"/>
+			<xs:element name="PixelAspect" type="md:string-Video-Pic-PixelAspect" minOccurs="0"/>
+			<xs:element name="WidthPixels" type="xs:int" minOccurs="0"/>
+			<xs:element name="HeightPixels" type="xs:int" minOccurs="0"/>
+			<xs:element name="ActiveWidthPixels" type="xs:int" minOccurs="0"/>
+			<xs:element name="ActiveHeightPixels" type="xs:int" minOccurs="0"/>
+			<xs:element name="FrameRate" type="md:DigitalAssetVideoPictureFrameRate-type" minOccurs="0"/>
+			<xs:element name="Progressive" type="md:DigitalAssetVideoPictureProgressive-type" minOccurs="0"/>
+			<xs:element name="ColorSubsampling" type="md:string-Video-Pic-ColorSampling" minOccurs="0"/>
+			<xs:element name="Colorimetry" type="md:string-Video-Pic-Colorimetry" minOccurs="0"/>
+			<xs:element name="Type3D" type="md:string-Video-Pic-Type3D" minOccurs="0"/>
+			<xs:element name="MasteredColorVolume" type="md:DigitalAssetColorVolume-type" minOccurs="0"/>
+			<xs:element name="ColorEncoding" type="md:DigitalAssetColorEncoding-type" minOccurs="0"/>
+			<xs:element name="LightLevel" type="md:DigitalAssetVideoPictureLightLevel-type" minOccurs="0"/>
+			<xs:element name="HDRPlaybackInfo" type="md:DigitalAssetVideoPictureHDRPlaybackInfo-type" minOccurs="0"/>
+			<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetVideoSubtitleLanguage-type">
+		<xs:simpleContent>
+			<xs:extension base="md:language-redefine">
+				<xs:attribute name="closed" type="xs:boolean"/>
+				<xs:attribute name="type" type="md:string-Video-SubLang-type"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetVideoData-type">
+		<xs:sequence>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+			<xs:element name="Type" type="md:string-Video-Type" minOccurs="0"/>
+			<xs:element name="Encoding" type="md:DigitalAssetVideoEncoding-type" minOccurs="0"/>
+			<xs:element name="Picture" type="md:DigitalAssetVideoPicture-type" minOccurs="0"/>
+			<xs:element name="ColorType" type="md:ColorType-type" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>BW, Color, Colorized, etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="PictureFormat" type="md:string-Video-PictureFormat" minOccurs="0"/>
+			<xs:element name="Language" type="md:language-redefine" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SubtitleLanguage" type="md:DigitalAssetVideoSubtitleLanguage-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SignedLanguage" type="md:language-redefine" minOccurs="0"/>
+			<xs:element name="CardsetList" type="md:DigitalAssetCardsetList-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TrackReference" type="md:string-TrackReference" minOccurs="0"/>
+			<xs:element name="TrackIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Private" type="md:PrivateData-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetImageData-type">
+		<xs:sequence>
+			<xs:element name="Width" type="xs:int"/>
+			<xs:element name="Height" type="xs:int"/>
+			<xs:element name="Encoding" type="md:string-Image-Encoding"/>
+			<xs:element name="Language" type="md:language-redefine" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TrackReference" type="md:string-TrackReference" minOccurs="0"/>
+			<xs:element name="TrackIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Private" type="md:PrivateData-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetSubtitleFormat-type">
+		<xs:simpleContent>
+			<xs:extension base="md:string-Subtitle-Format">
+				<xs:attribute name="SDImage" type="xs:boolean"/>
+				<xs:attribute name="HDImage" type="xs:boolean"/>
+				<xs:attribute name="UHDImage" type="xs:boolean"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetSubtitleData-type">
+		<xs:sequence>
+			<xs:element name="Format" type="md:DigitalAssetSubtitleFormat-type" minOccurs="0"/>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+			<xs:element name="Type" type="md:string-Subtitle-Type" maxOccurs="unbounded"/>
+			<xs:element name="FormatType" type="md:string-Subtitle-FormatType" minOccurs="0"/>
+			<xs:element name="Language" type="md:language-redefine"/>
+			<xs:element name="Encoding" type="xs:anyType" minOccurs="0"/>
+			<xs:element name="CardsetList" type="md:DigitalAssetCardsetList-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TrackReference" type="md:string-TrackReference" minOccurs="0"/>
+			<xs:element name="TrackIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Private" type="md:PrivateData-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetInteractiveEncoding-type">
+		<xs:sequence>
+			<xs:element name="RuntimeEnvironment" type="md:string-Interactive-Enc-RuntimeEnvironment"/>
+			<xs:element name="FirstVersion" type="md:string-Interactive-Enc-Version" minOccurs="0"/>
+			<xs:element name="LastVersion" type="md:string-Interactive-Enc-Version" minOccurs="0"/>
+			<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:group name="DigitalAssetInteractiveBase-group">
+		<xs:sequence>
+			<xs:element name="Type" type="md:string-Interactive-Type"/>
+			<xs:element name="FormatType" type="md:string-Interactive-FormatType" minOccurs="0"/>
+			<xs:element name="Language" type="md:language-redefine" minOccurs="0"/>
+		</xs:sequence>
+	</xs:group>
+	<xs:complexType name="DigitalAssetInteractiveBaseData-type">
+		<xs:sequence>
+			<xs:group ref="md:DigitalAssetInteractiveBase-group"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetInteractiveData-type">
+		<xs:sequence>
+			<xs:group ref="md:DigitalAssetInteractiveBase-group"/>
+			<xs:element name="Encoding" type="md:DigitalAssetInteractiveEncoding-type" maxOccurs="unbounded"/>
+			<xs:element name="TrackReference" type="md:string-TrackReference" minOccurs="0"/>
+			<xs:element name="TrackIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Private" type="md:PrivateData-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetAncillaryData-type">
+		<xs:sequence>
+			<xs:element name="Type" type="md:string-Anc-Type"/>
+			<xs:element name="SubType" type="md:string-Anc-SubType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="BaseTrackID" type="md:id-type" minOccurs="0"/>
+			<xs:element name="BaseTrackReference" type="md:string-TrackReference" minOccurs="0"/>
+			<xs:element name="BaseTrackIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TrackMetadata" type="md:DigitalAssetMetadata-type" minOccurs="0"/>
+			<xs:element name="CombinedMetadata" type="md:DigitalAssetMetadata-type" minOccurs="0"/>
+			<xs:element name="Private" type="md:PrivateData-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetSet-type">
+		<xs:sequence>
+			<xs:element name="Audio" type="md:DigitalAssetAudioData-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Video" type="md:DigitalAssetVideoData-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Subtitle" type="md:DigitalAssetSubtitleData-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Image" type="md:DigitalAssetImageData-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Interactive" type="md:DigitalAssetInteractiveData-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Ancillary" type="md:DigitalAssetAncillaryData-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetMetadata-type">
+		<xs:choice>
+			<xs:element name="Audio" type="md:DigitalAssetAudioData-type"/>
+			<xs:element name="Video" type="md:DigitalAssetVideoData-type"/>
+			<xs:element name="Subtitle" type="md:DigitalAssetSubtitleData-type"/>
+			<xs:element name="Image" type="md:DigitalAssetImageData-type"/>
+			<xs:element name="Interactive" type="md:DigitalAssetInteractiveData-type"/>
+			<xs:element name="Ancillary" type="md:DigitalAssetAncillaryData-type"/>
+		</xs:choice>
+	</xs:complexType>
+	<!--*** Container description ***-->
+	<xs:complexType name="ContainerTrackMetadata-type">
+		<xs:choice>
+			<xs:element name="Audio" type="md:DigitalAssetAudioData-type"/>
+			<xs:element name="Video" type="md:DigitalAssetVideoData-type"/>
+			<xs:element name="Subtitle" type="md:DigitalAssetSubtitleData-type"/>
+			<xs:element name="Image" type="md:DigitalAssetImageData-type"/>
+			<xs:element name="Interactive" type="md:DigitalAssetInteractiveData-type"/>
+			<xs:element name="Container" type="md:ContainerMetadata-type"/>
+			<xs:element name="ExternalTrackReference" type="md:DigitalAssetExternalTrackReference-type"/>
+			<xs:element name="InternalTrackReference" type="md:string-TrackReference"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:simpleType name="ContainerProfile-type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:complexType name="ContainerSpecific-type">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="ContainerType-type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:complexType name="ContainerMetadataWithID-type">
+		<xs:complexContent>
+			<xs:extension base="md:ContainerMetadata-type">
+				<xs:sequence>
+					<xs:element name="ContainerID" type="md:ContentIdentifier-type"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ContainerMetadata-type">
+		<xs:sequence>
+			<xs:element name="Type" type="md:string-Container-Type" minOccurs="0"/>
+			<xs:element name="Track" type="md:ContainerTrackMetadata-type" maxOccurs="unbounded"/>
+			<xs:element name="Hash" type="md:Hash-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Size" type="xs:positiveInteger" minOccurs="0"/>
+			<xs:element name="ContainerReference" type="md:string-Container-ContainerReference" minOccurs="0"/>
+			<xs:element name="ContainerIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ContainerSpecificMetadata" type="md:ContainerSpecific-type" minOccurs="0"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** Compilation Object ***-->
+	<xs:complexType name="CompObjClass-type">
+		<xs:simpleContent>
+			<xs:extension base="md:string-Compilation-CompilationClass">
+				<xs:attribute name="hasOtherInclusions" type="xs:boolean" use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="CompObjID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:complexType name="CompObjEntry-type">
+		<xs:sequence>
+			<xs:element name="DisplayName" type="md:StringAndLanguage-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="EntryNumber" type="md:string-Compilation-EntryNumber" minOccurs="0"/>
+			<xs:element name="EntryClass" type="md:string-Compilation-EntryClass" minOccurs="0"/>
+			<xs:element name="Entry" type="md:CompObjEntry-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:choice>
+				<xs:element name="ContentID" type="md:ContentID-type"/>
+				<xs:element name="BasicMetadata" type="md:BasicMetadata-type"/>
+				<xs:any namespace="##other" processContents="lax"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CompObjData-type">
+		<xs:complexContent>
+			<xs:extension base="md:CompObj-type">
+				<xs:sequence>
+					<xs:element name="DisplayName" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:simpleContent>
+								<xs:extension base="xs:string">
+									<xs:attribute name="language" type="md:language-redefine"/>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="CompObjID" type="md:CompObjID-type"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CompObj-type">
+		<xs:sequence>
+			<xs:element name="Entry" type="md:CompObjEntry-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="CompilationClass" type="md:CompObjClass-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** Prior Release Information ***-->
+	<xs:complexType name="ReleaseHistory-type">
+		<xs:sequence>
+			<xs:element name="ReleaseType">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="md:string-Release-ReleaseType">
+							<xs:attribute name="wide" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DistrTerritory" type="md:Region-type" minOccurs="0"/>
+			<xs:element name="Date">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="md:YearDateOrTime-type">
+							<xs:attribute name="scheduled" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+			<xs:element name="ReleaseOrg" type="md:OrgName-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!---->
+	<!--*** ADDITIONAL TYPES ***-->
+	<xs:simpleType name="Role-type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:complexType name="Money-type">
+		<xs:simpleContent>
+			<xs:extension base="xs:decimal">
+				<xs:attribute name="currency" type="md:string-Money-currency"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="NVPairMoney-type">
+		<xs:sequence>
+			<xs:element name="Name" type="xs:string"/>
+			<xs:element name="Value" type="md:Money-type"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="NVPair-type">
+		<xs:sequence>
+			<xs:element name="Name" type="xs:string"/>
+			<xs:element name="Value" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="ColorType-type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="color"/>
+			<xs:enumeration value="bandw"/>
+			<xs:enumeration value="colorized"/>
+			<xs:enumeration value="composite"/>
+			<xs:enumeration value="unknown"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Region-string">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:complexType name="Region-type">
+		<xs:choice>
+			<xs:element name="country">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:pattern value="[A-Z][A-Z]"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="countryRegion">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:pattern value="[A-Z][A-Z]-[A-Z0-9]+"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:simpleType name="MadeForRegion-type">
+		<xs:union memberTypes="md:MadeForRegionInternal-type md:Region-string"/>
+	</xs:simpleType>
+	<xs:simpleType name="MadeForRegionInternal-type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Domestic"/>
+			<xs:enumeration value="International"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="OrgName-type">
+		<xs:sequence minOccurs="0">
+			<xs:element name="DisplayName" type="xs:string" minOccurs="1"/>
+			<xs:element name="SortName" type="xs:string" minOccurs="0"/>
+			<xs:element name="AlternateName" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="organizationID" type="md:orgID-type"/>
+		<xs:attribute name="idType" type="md:string-OrgName-idType"/>
+	</xs:complexType>
+	<xs:complexType name="AssociatedOrg-type">
+		<xs:complexContent>
+			<xs:extension base="md:OrgName-type">
+				<xs:attribute name="role" type="md:string-AssociatedOrg-role"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PersonName-type">
+		<xs:sequence>
+			<xs:element name="DisplayName" type="md:StringAndLanguage-type" maxOccurs="unbounded"/>
+			<xs:element name="SortName" type="md:StringAndLanguage-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="FirstGivenName" type="xs:string" minOccurs="0"/>
+			<xs:element name="SecondGivenName" type="xs:string" minOccurs="0"/>
+			<xs:element name="FamilyName" type="xs:string" minOccurs="0"/>
+			<xs:element name="Suffix" type="md:string-Name_Suffix" minOccurs="0"/>
+			<xs:element name="Moniker" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ContactInfo-type">
+		<xs:sequence>
+			<xs:element name="Name" type="xs:string"/>
+			<xs:element name="PrimaryEmail" type="xs:string"/>
+			<xs:element name="AlternateEmail" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Address" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Phone" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="type" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PersonIdentifier-type">
+		<xs:sequence>
+			<xs:element name="Identifier" type="xs:string"/>
+			<xs:element name="Namespace" type="md:string-Idenifier_Namespace"/>
+			<xs:element name="ReferenceLocation" type="xs:anyURI" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DateTimeRange-type">
+		<xs:sequence>
+			<xs:element name="Start" type="xs:dateTime"/>
+			<xs:element name="End" type="xs:dateTime"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="YearDateOrTime-type">
+		<xs:union memberTypes="xs:gYear xs:date xs:dateTime"/>
+	</xs:simpleType>
+	<xs:complexType name="Hash-type">
+		<xs:simpleContent>
+			<xs:extension base="md:string-Hash">
+				<xs:attribute name="method" type="md:string-Hash-method"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="CompanyCredits-type">
+		<xs:sequence>
+			<xs:element name="DisplayString" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="language" type="md:language-redefine"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Region" type="md:Region-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="DisplaySequence" type="xs:integer" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="GroupingEntity-type">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:string"/>
+			<xs:element name="GroupIdentity" type="xs:string"/>
+			<xs:element name="DisplayName" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="language" type="md:language-redefine"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Region" type="md:Region-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PrivateData-type">
+		<xs:sequence>
+			<xs:any namespace="##any" processContents="lax" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="StringAndLanguage-type">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="language" type="md:language-redefine"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!---->
+	<!--*** REDEFINE TYPES ***-->
+	<!---->
+	<!--*** General Redfine Types ***-->
+	<xs:simpleType name="language-redefine">
+		<xs:restriction base="xs:language"/>
+	</xs:simpleType>
+	<!--*** Identifier Redefine types ***-->
+	<xs:simpleType name="string-ContentID-Namespace">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-ContentID-Identifier">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<!--*** Basic Metadata Redefine types ***-->
+	<xs:simpleType name="string-Genre">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Genre_id">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-ArtReference_resolution">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-DisplayIndicators">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CC"/>
+			<xs:enumeration value="F"/>
+			<xs:enumeration value="P"/>
+			<xs:enumeration value="DD"/>
+			<xs:enumeration value="SAP"/>
+			<xs:enumeration value="DVS"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string-Keyword">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-JobFunction">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-JobFunction_scheme">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-JobDisplay">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Name_Suffix">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Idenifier_Namespace">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-TitleAlternate_type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-WorkType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-WorkTypeDetail">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-PictureFormat">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-AspectRatio">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-AssociatedOrg-role">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:complexType name="complex-SequenceInfo-DistributionNumber">
+		<xs:simpleContent>
+			<xs:extension base="md:string-SequenceInfo-DistributionNumber">
+				<xs:attribute name="domain" type="md:string-SequenceInfo-DistributionNumber-domain"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="string-SequenceInfo-DistributionNumber">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-SequenceInfo-DistributionNumber-domain">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:complexType name="complex-SequenceInfo-HouseSequence">
+		<xs:simpleContent>
+			<xs:extension base="md:string-SequenceInfo-HouseSequence">
+				<xs:attribute name="domain" type="md:string-SequenceInfo-HouseSequence-domain"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="string-SequenceInfo-HouseSequence">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-SequenceInfo-HouseSequence-domain">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:complexType name="complex-SequenceInfo-AlternateNumber">
+		<xs:simpleContent>
+			<xs:extension base="md:string-SequenceInfo-AlternateNumber">
+				<xs:attribute name="domain" type="md:string-SequenceInfo-AlternateNumber-domain"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="string-SequenceInfo-AlternateNumber">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-SequenceInfo-AlternateNumber-domain">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<!--*** Digital Asset Redefine types ***-->
+	<xs:simpleType name="string-TrackReference">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Audio-Type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Audio-Channels">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Audio-Enc-Codec">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Audio-Enc-CodecType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Audio-Enc-VBR">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Audio-Enc-ChannelMapping">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-PictureFormat">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Enc-Codec">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Enc-CodecType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Enc-MProfile">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Enc-MLevel">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Enc-VBR">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-AspectRatio">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-PixelAspect">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NTSC"/>
+			<xs:enumeration value="PAL"/>
+			<xs:enumeration value="square"/>
+			<xs:enumeration value="other"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-ColorSampling">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-Colorimetry">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-FrameRate-multiplier">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1000/1001"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-FrameRate-timecode">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-Progressive-scanOrder">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BFF"/>
+			<xs:enumeration value="TFF"/>
+			<xs:enumeration value="PPF"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-Type3D">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-Primaries">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-OETF">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-ColorDifferencing">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-CMaxInterpretation">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-FMaxInterpretation">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-SDRDownconversion">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-SubLang-type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Subtitle-Format">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Subtitle-Type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Subtitle-FormatType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Subtitle-Enc-Codec">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Subtitle-Enc-CodecType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Image-Encoding">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Interactive-Type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Interactive-FormatType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Interactive-Enc-RuntimeEnvironment">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Interactive-Enc-Version">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-CardsetList-Type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-CardsetList-Location">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Cardset-Type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Anc-Type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Anc-SubType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Watermark_Vendor">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<!--*** Other ***-->
+	<xs:simpleType name="string-NotRated-condition">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Rating-System">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Release-ReleaseType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Compilation-CompilationClass">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Compilation-EntryNumber">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Compilation-EntryClass">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Money-currency">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-OrgName-idType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Container-Type">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Container-ContainerReference">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Hash-method">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Hash">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+</xs:schema>
