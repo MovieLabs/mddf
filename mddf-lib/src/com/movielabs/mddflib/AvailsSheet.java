@@ -26,8 +26,6 @@
 package com.movielabs.mddflib;
 
 import java.util.*;
-import java.text.ParseException;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -92,8 +90,7 @@ public class AvailsSheet {
 				headerList.add(key);
 				headerMap.put(key, new Integer(idx));
 			}
-		}
-		System.out.println(headerList);
+		} 
 		// ...............................................
 		/*
 		 * Skip over the header rows and process all data rows...
@@ -158,21 +155,6 @@ public class AvailsSheet {
 	 */
 	public int getRowCount() { 
 		return rows.size();
-	}
-
-	/**
-	 * helper routine to create a log entry
-	 * 
-	 * @param msg
-	 *            the data to be logged
-	 * @param bail
-	 *            if true, throw a ParseException after logging the message
-	 * @throws ParseException
-	 *             if bail is true
-	 */
-	private void log(String msg, int rowNum) {
-		String logEntry = String.format("Sheet %s Row %5d: %s", name, rowNum, msg);
-		parent.getLogger().warn(logEntry);
 	}
 
 	/**
