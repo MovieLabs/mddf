@@ -61,6 +61,12 @@ public class RowToXmlHelper {
 
 	}
 
+	private Pedigree getData(String columnID, int row) {
+		String value = sheet.getColumnData(columnID, row);
+		Pedigree ped = new Pedigree(row, sheet.getColumnIdx(columnID), sheet.getName(), value);
+		return ped;
+	}
+
 	protected Element makeAvail(XmlBuilder xb) throws Exception {
 		this.xb = xb;
 		Element avail = new Element("Avail", xb.getAvailsNSpace());

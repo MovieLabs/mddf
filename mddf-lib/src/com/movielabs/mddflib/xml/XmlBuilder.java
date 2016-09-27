@@ -24,7 +24,9 @@ package com.movielabs.mddflib.xml;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -65,11 +67,12 @@ public class XmlBuilder {
 	private Namespace mdMecNSpace;
 
 	private Document availsXsd;
-
 	private Document mdXsd;
 	private Document mdMecXsd;
 
 	private XPathFactory xpfac;
+
+	private Map<Object, Pedigree> pedigreeMap = null;
 
 	public XmlBuilder() {
 		xpfac = XPathFactory.instance();
@@ -156,7 +159,7 @@ public class XmlBuilder {
 	}
 
 	/**
-	 * Create an Avails XML document based on the data in the spreadsheet
+	 * Create an Avails XML document based on the data in the spreadsheet.
 	 * 
 	 * @param shortDesc
 	 *            a short description that will appear in the document
@@ -167,6 +170,7 @@ public class XmlBuilder {
 		if (xsdVersion == null) {
 			throw new IllegalStateException("The XSD version was not set or is unsupported.");
 		}
+		pedigreeMap = new HashMap<Object, Pedigree>();
 		String xsdUri = "http://www.movielabs.com/schema/avails/v" + xsdVersion + "/avails";
 		String xsdLoc = "http://www.movielabs.com/schema/avails/v" + xsdVersion + "/avails-v" + xsdVersion + ".xsd";
 		String schemaLoc = xsdUri + " " + xsdLoc;
@@ -292,12 +296,12 @@ public class XmlBuilder {
 			formattedValue = "PT" + formattedValue.replaceFirst(":", "H");
 			formattedValue = formattedValue.replaceFirst(":", "M") + "S";
 			break;
-		case "xs:boolean": 
+		case "xs:boolean":
 			if (formattedValue.equals("Yes")) {
 				formattedValue = "true";
 			} else if (formattedValue.equals("No")) {
 				formattedValue = "false";
-			} 
+			}
 			break;
 		default:
 			// throw new IllegalArgumentException("Data type '" + type + "' not
@@ -326,5 +330,17 @@ public class XmlBuilder {
 		}
 		Element target = xpExpression.evaluateFirst(rootEl);
 		return target;
+	}
+
+	/**
+	 * 
+	 * @return the pedigreeMap
+	 */
+	public Map<Object, Pedigree> getPedigreeMap() {
+		return pedigreeMap;
+	}
+
+	void addToPedigree(Object content, Pedigree source) {
+		pedigreeMap.put(content, source);
 	}
 }
