@@ -1,0 +1,302 @@
+{
+	"CM": 
+	{
+		"WorkType": 
+		[
+			"Album",
+			"Song",
+			"Music Video",
+			"Ring Tone",
+			"Other Music",
+			"Movie",
+			"Short",
+			"Series",
+			"Season",
+			"Episode",
+			"Non-episodic Show",
+			"Promotion",
+			"Ad",
+			"Excerpt",
+			"Supplemental",
+			"Collection",
+			"Franchise",
+			"App",
+			"Gallery",
+			"Other"
+		],
+
+		"ColorType": 
+		[
+			"color",
+			"bandw",
+			"colorized",
+			"composite",
+			"unknown"
+		],
+
+		"PictureFormat": 
+		[
+			"Letterbox",
+			"Pillarbox",
+			"Full",
+			"Stretch",
+			"Pan and Scan",
+			"Other"
+		],
+
+		"ReleaseType": 
+		[
+			"original",
+			"Broadcast",
+			"DVD",
+			"Blu-ray",
+			"Hospitality",
+			"PayTV",
+			"InternetBuy",
+			"InternetRent",
+			"Theatrical",
+			"VOD"
+		],
+
+		"TitleAlternate@type": 
+		[
+			"alternative",
+			"misspelling",
+			"StartsWith"
+		],
+
+		"Parent@relationshipType": 
+		[
+			"isclipof",
+			"isepisodeof",
+			"isseasonof",
+			"ispartof",
+			"isderivedfrom",
+			"iscompositeof",
+			"issupplementto",
+			"ispromotionfor"
+		],
+
+		"EntryClass": 
+		[
+			"Episode",
+			"Installment",
+			"Part",
+			"Season"
+		]
+	},
+
+	"Style": 
+	{
+		"Class": 
+		[
+			"Computer",
+			"TV",
+			"Mobile"
+		],
+
+		"SubClass": 
+		[
+			"Phone",
+			"Tablet"
+		],
+
+		"Type": 
+		[
+			"Grouping",
+			"Media",
+			"App",
+			"Special"
+		],
+
+		"NeutralPalette": 
+		[
+			"light",
+			"dark"
+		],
+
+		"FontGroup": 
+		[
+			"serif",
+			"sanserif",
+			"monospace"
+		],
+
+		"Transition": 
+		[
+			"cut",
+			"fade"
+		],
+
+		"ScaleMethod": 
+		[
+			"BestFit",
+			"Full",
+			"Tiled"
+		],
+
+		"PositioningMethod": 
+		[
+			"upperleft",
+			"upperright",
+			"lowerleft",
+			"lowerright",
+			"cntered"
+		]
+	},
+
+	"Avail": 
+	{
+		"AvailType": 
+		[
+			"single",
+			"episode",
+			"season",
+			"series",
+			"miniseries",
+			"collection"
+		],
+
+		"EntryType": 
+		[
+			"Full Delete",
+			"Full Extract"
+		],
+
+		"AltIdentifier@scope": 
+		[
+			"Title",
+			"Edit",
+			"Manifestation"
+		],
+
+		"LocalizationOffering": 
+		[
+			"sub",
+			"dub",
+			"subdub",
+			"any"
+		],
+
+		"SeasonStatus": 
+		[
+			"Partial"
+		],
+
+		"SeriesStatus": 
+		[
+			"Concluded",
+			"Continuing",
+			"Pending"
+		],
+
+		"LicenseType": 
+		[
+			"EST",
+			"VOD",
+			"SVOD"
+		],
+
+		"LicenseRightsDescription": 
+		[
+			"New Release",
+			"Library",
+			"Mega-Library",
+			"Priority Library",
+			"DD-Theatrical",
+			"Pre-Theatrical",
+			"DD-DVD",
+			"Early EST",
+			"Preorder EST",
+			"Early VOD",
+			"Preorder VOD",
+			"DTV",
+			"Next Day TV",
+			"Season Only",
+			"Free"
+		],
+
+		"FormatProfile": 
+		[
+			"HD",
+			"SD",
+			"3D",
+			"3DHD",
+			"3DSD",
+			"HFR",
+			"3DHFR",
+			"4K",
+			"3D4K"
+		],
+
+		"Term@termName": 
+		[
+			"Tier",
+			"SRP",
+			"WSP",
+			"EpisodeWSP",
+			"SeasonWSP",
+			"Category",
+			"AnnounceDate",
+			"PreorderStart",
+			"PreorderFulfillDate",
+			"RentalDuration",
+			"WatchDuration",
+			"FixedEndDate",
+			"HoldbackScope",
+			"HoldbackAsset",
+			"HoldbackAssetType",
+			"HoldbackLanguage",
+			"HoldbackExclusionLanguage",
+			"LocalizationOffering",
+			"Promotion",
+			"SharedEntitlementEcosystem",
+			"SharedEntitlementEndDate.",
+			"SharedEntitlementDisposition",
+			"Tier-postTax",
+			"SRP-postTax",
+			"WSP-postTax",
+			"EpisodeWSP-postTax",
+			"SeasonWSP-postTax",
+			"Category-postTax",
+			"AnnounceDate-postTax",
+			"PreorderStart-postTax",
+			"PreorderFulfillDate-postTax",
+			"RentalDuration-postTax",
+			"WatchDuration-postTax",
+			"FixedEndDate-postTax",
+			"HoldbackScope-postTax",
+			"HoldbackAsset-postTax",
+			"HoldbackAssetType-postTax",
+			"HoldbackLanguage-postTax",
+			"HoldbackExclusionLanguage-postTax",
+			"LocalizationOffering-postTax",
+			"Promotion-postTax",
+			"SharedEntitlementEcosystem-postTax",
+			"SharedEntitlementEndDate-postTax",
+			"SharedEntitlementDisposition-postTax"
+		],
+
+		"SharedEntitlement@ecosystem": 
+		[
+			"DMA",
+			"UVVU"
+		],
+
+		"ExperienceCondition": 
+		[
+			"Unavailable",
+			"Pre-offer",
+			"Pre-order",
+			"Hold",
+			"For-sale",
+			"Acquired"
+		],
+
+		"DateTimeCondition": 
+		[
+			"Open",
+			"Immediate"
+		]
+	}
+}

@@ -20,12 +20,15 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.xml;
+package com.movielabs.mddflib.avails.xml;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import com.movielabs.mddflib.AvailsSheet;
+import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 
 /**
  * Code and functionality formerly in SheetRow. The XML generated reflects a
@@ -42,16 +45,17 @@ import com.movielabs.mddflib.AvailsSheet;
 public class RowToXmlHelper {
 
 	private static final String MISSING = "--FUBAR (missing)";
-	protected int row;
+	protected Row row;
 	protected String shortDesc = ""; // default
 	protected XmlBuilder xb;
 	private AvailsSheet sheet;
 	private String workType = "";
+	private DataFormatter dataF = new DataFormatter();
 
 	/**
 	 * @param fields
 	 */
-	RowToXmlHelper(AvailsSheet sheet, int row, String desc) {
+	RowToXmlHelper(AvailsSheet sheet, Row row, String desc) {
 		super();
 		this.sheet = sheet;
 		this.row = row;
@@ -61,37 +65,28 @@ public class RowToXmlHelper {
 
 	}
 
-	private Pedigree getData(String columnID, int row) {
-		String value = sheet.getColumnData(columnID, row);
-		Pedigree ped = new Pedigree(row, sheet.getColumnIdx(columnID), sheet.getName(), value);
-		return ped;
-	}
-
 	protected Element makeAvail(XmlBuilder xb) throws Exception {
 		this.xb = xb;
 		Element avail = new Element("Avail", xb.getAvailsNSpace());
 		Element e;
 
 		// ALID
-		String value = sheet.getColumnData("Avail/AvailID", row);
-		if (xb.isRequired("ALID", "avails") || isSpecified(value)) {
-			avail.addContent(mALID(value));
-		}
+		process(avail, "ALID", xb.getAvailsNSpace(), "Avail/AvailID");
 
 		// Disposition
-		value = sheet.getColumnData("Disposition/EntryType", row);
+		String value = getColumnData("Disposition/EntryType");
 		if (xb.isRequired("Disposition", "avails") || isSpecified(value)) {
 			avail.addContent(mDisposition(value));
 		}
 
 		// Licensor
-		value = sheet.getColumnData("Avail/DisplayName", row);
+		value = getColumnData("Avail/DisplayName");
 		if (xb.isRequired("Licensor", "avails") || isSpecified(value)) {
 			avail.addContent(mPublisher("Licensor", value));
 		}
 
 		// Service Provider (OPTIONAL)
-		value = sheet.getColumnData("Avail/ServiceProvider", row);
+		value = getColumnData("Avail/ServiceProvider");
 		if (xb.isRequired("ServiceProvider", "avails") || isSpecified(value)) {
 			avail.addContent(mPublisher("ServiceProvider", value));
 		}
@@ -99,7 +94,7 @@ public class RowToXmlHelper {
 		/*
 		 * Need to save the current workType for use in Transaction/Terms
 		 */
-		this.workType = sheet.getColumnData("AvailAsset/WorkType", row);
+		this.workType = getColumnData("AvailAsset/WorkType");
 		String availType;
 		switch (workType) {
 		case "Movie":
@@ -135,9 +130,20 @@ public class RowToXmlHelper {
 			avail.addContent(e);
 
 		// Exception Flag
-		process(avail, "ExceptionFlag", xb.getAvailsNSpace(), "Avail/ExceptionFlag", row);
+		process(avail, "ExceptionFlag", xb.getAvailsNSpace(), "Avail/ExceptionFlag");
 
 		return avail;
+	}
+
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	protected Element mDisposition(String entryType) {
+		Element disp = new Element("Disposition", xb.getAvailsNSpace());
+		Element entry = new Element("EntryType", xb.getAvailsNSpace());
+		entry.setText(entryType);
+		disp.addContent(entry);
+		return disp;
 	}
 
 	/**
@@ -187,7 +193,7 @@ public class RowToXmlHelper {
 	 */
 	protected Element mAssetBody(Element asset) {
 		Element e;
-		String contentID = sheet.getColumnData("AvailAsset/ContentID", row);
+		String contentID = getColumnData("AvailAsset/ContentID");
 		if (isSpecified(contentID)) {
 			asset.setAttribute("contentID", "contentID");
 		}
@@ -198,8 +204,8 @@ public class RowToXmlHelper {
 		 * TitleDisplayUnlimited is OPTIONAL in SS but REQUIRED in XML;
 		 * workaround by assigning it internal alias value
 		 */
-		String titleDU = sheet.getColumnData("AvailMetadata/TitleDisplayUnlimited", row);
-		String titleAlias = sheet.getColumnData("AvailMetadata/TitleInternalAlias", row);
+		String titleDU = getColumnData("AvailMetadata/TitleDisplayUnlimited");
+		String titleAlias = getColumnData("AvailMetadata/TitleInternalAlias");
 		if (!isSpecified(titleDU)) {
 			titleDU = titleAlias;
 		}
@@ -214,13 +220,13 @@ public class RowToXmlHelper {
 		}
 
 		// ProductID --> EditEIDR-URN ( optional field)
-		process(metadata, "EditEIDR-URN", xb.getAvailsNSpace(), "AvailAsset/ProductID", row);
+		process(metadata, "EditEIDR-URN", xb.getAvailsNSpace(), "AvailAsset/ProductID");
 
 		// ContentID --> TitleEIDR-URN ( optional field)
-		process(metadata, "TitleEIDR-URN", xb.getAvailsNSpace(), "AvailMetadata/ContentID", row);
+		process(metadata, "TitleEIDR-URN", xb.getAvailsNSpace(), "AvailAsset/ContentID");
 
 		// AltID --> AltIdentifier
-		String value = sheet.getColumnData("AvailMetadata/AltID", row);
+		String value = getColumnData("AvailMetadata/AltID");
 		if (xb.isRequired("AltIdentifier", "avails") || isSpecified(value)) {
 			Element altIdEl = new Element("AltIdentifier", xb.getAvailsNSpace());
 			Element cid = new Element("Namespace", xb.getMdNSpace());
@@ -233,18 +239,18 @@ public class RowToXmlHelper {
 			metadata.addContent(altIdEl);
 		}
 
-		process(metadata, "ReleaseDate", xb.getAvailsNSpace(), "AvailMetadata/ReleaseYear", row);
-		process(metadata, "RunLength", xb.getAvailsNSpace(), "AvailMetadata/TotalRunTime", row);
+		process(metadata, "ReleaseDate", xb.getAvailsNSpace(), "AvailMetadata/ReleaseYear");
+		process(metadata, "RunLength", xb.getAvailsNSpace(), "AvailMetadata/TotalRunTime");
 
-		mReleaseHistory(metadata, "original", "AvailMetadata/ReleaseHistoryOriginal", row);
-		mReleaseHistory(metadata, "DVD", "AvailMetadata/ReleaseHistoryPhysicalHV", row);
+		mReleaseHistory(metadata, "original", "AvailMetadata/ReleaseHistoryOriginal");
+		mReleaseHistory(metadata, "DVD", "AvailMetadata/ReleaseHistoryPhysicalHV");
 
-		process(metadata, "USACaptionsExemptionReason", xb.getAvailsNSpace(), "AvailMetadata/CaptionExemption", row);
+		process(metadata, "USACaptionsExemptionReason", xb.getAvailsNSpace(), "AvailMetadata/CaptionExemption");
 
 		mRatings(metadata);
 
-		process(metadata, "EncodeID", xb.getAvailsNSpace(), "AvailAsset/EncodeID", row);
-		process(metadata, "LocalizationOffering", xb.getAvailsNSpace(), "AvailMetadata/LocalizationType", row);
+		process(metadata, "EncodeID", xb.getAvailsNSpace(), "AvailAsset/EncodeID");
+		process(metadata, "LocalizationOffering", xb.getAvailsNSpace(), "AvailMetadata/LocalizationType");
 
 		// Attach generated Metadata node
 		asset.addContent(metadata);
@@ -266,20 +272,19 @@ public class RowToXmlHelper {
 	protected Element mTransactionBody(Element transaction) throws Exception {
 		Element e;
 		String prefix = "AvailTrans/";
-		process(transaction, "LicenseType", xb.getAvailsNSpace(), prefix + "LicenseType", row);
-		process(transaction, "Description", xb.getAvailsNSpace(), prefix + "Description", row);
-		processRegion(transaction, "Territory", xb.getAvailsNSpace(), prefix + "Territory", row);
+		process(transaction, "LicenseType", xb.getAvailsNSpace(), prefix + "LicenseType");
+		process(transaction, "Description", xb.getAvailsNSpace(), prefix + "Description");
+		processRegion(transaction, "Territory", xb.getAvailsNSpace(), prefix + "Territory");
 
 		// Start or StartCondition
-		processCondition(transaction, "Start", xb.getAvailsNSpace(), prefix + "Start", row);
+		processCondition(transaction, "Start", xb.getAvailsNSpace(), prefix + "Start");
 		// End or EndCondition
-		processCondition(transaction, "End", xb.getAvailsNSpace(), prefix + "End", row);
+		processCondition(transaction, "End", xb.getAvailsNSpace(), prefix + "End");
 
-		process(transaction, "StoreLanguage", xb.getAvailsNSpace(), prefix + "StoreLanguage", row);
-		process(transaction, "LicenseRightsDescription", xb.getAvailsNSpace(), prefix + "LicenseRightsDescription",
-				row);
-		process(transaction, "FormatProfile", xb.getAvailsNSpace(), prefix + "FormatProfile", row);
-		process(transaction, "ContractID", xb.getAvailsNSpace(), prefix + "ContractID", row);
+		process(transaction, "StoreLanguage", xb.getAvailsNSpace(), prefix + "StoreLanguage");
+		process(transaction, "LicenseRightsDescription", xb.getAvailsNSpace(), prefix + "LicenseRightsDescription");
+		process(transaction, "FormatProfile", xb.getAvailsNSpace(), prefix + "FormatProfile");
+		process(transaction, "ContractID", xb.getAvailsNSpace(), prefix + "ContractID");
 
 		processTerm(transaction);
 
@@ -312,14 +317,14 @@ public class RowToXmlHelper {
 		/*
 		 * May be multiple 'terms'. Start with one specified via the PriceType
 		 */
-		String tName = sheet.getColumnData(prefix + "PriceType", row);
+		String tName = getColumnData(prefix + "PriceType");
 		if (isSpecified(tName)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
 			switch (tName) {
 			case "Tier":
 			case "Category":
-				process(termEl, "Text", xb.getAvailsNSpace(), prefix + "PriceValue", row);
+				process(termEl, "Text", xb.getAvailsNSpace(), prefix + "PriceValue");
 				break;
 			case "WSP":
 				if (workType.equals("Episode")) {
@@ -329,8 +334,8 @@ public class RowToXmlHelper {
 				}
 			case "DMRP":
 			case "SMRP":
-				Element moneyEl = process(termEl, "Money", xb.getAvailsNSpace(), prefix + "PriceValue", row);
-				String currency = sheet.getColumnData(prefix + "PriceCurrency", row);
+				Element moneyEl = process(termEl, "Money", xb.getAvailsNSpace(), prefix + "PriceValue");
+				String currency = getColumnData(prefix + "PriceCurrency");
 				if (moneyEl != null && isSpecified(currency)) {
 					moneyEl.setAttribute("currency", currency);
 				}
@@ -344,7 +349,7 @@ public class RowToXmlHelper {
 		 */
 
 		// SRP Term
-		String value = sheet.getColumnData(prefix + "SRP", row);
+		String value = getColumnData(prefix + "SRP");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -354,7 +359,7 @@ public class RowToXmlHelper {
 			termEl.setAttribute("currency", value);
 		}
 
-		value = sheet.getColumnData(prefix + "SuppressionLiftDate", row);
+		value = getColumnData(prefix + "SuppressionLiftDate");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -363,7 +368,7 @@ public class RowToXmlHelper {
 			termEl.addContent(childEl);
 		}
 
-		value = sheet.getColumnData(prefix + "RentalDuration", row);
+		value = getColumnData(prefix + "RentalDuration");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -372,7 +377,7 @@ public class RowToXmlHelper {
 			termEl.addContent(childEl);
 		}
 
-		value = sheet.getColumnData(prefix + "WatchDuration", row);
+		value = getColumnData(prefix + "WatchDuration");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -381,7 +386,7 @@ public class RowToXmlHelper {
 			termEl.addContent(childEl);
 		}
 
-		value = sheet.getColumnData(prefix + "FixedEndDate", row);
+		value = getColumnData(prefix + "FixedEndDate");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -390,7 +395,7 @@ public class RowToXmlHelper {
 			termEl.addContent(childEl);
 		}
 
-		value = sheet.getColumnData(prefix + "HoldbackLanguage", row);
+		value = getColumnData(prefix + "HoldbackLanguage");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -399,7 +404,7 @@ public class RowToXmlHelper {
 			termEl.addContent(childEl);
 		}
 
-		value = sheet.getColumnData(prefix + "AllowedLanguages", row);
+		value = getColumnData(prefix + "AllowedLanguages");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -424,8 +429,8 @@ public class RowToXmlHelper {
 	 * @param cellKey
 	 * @param row
 	 */
-	private void mReleaseHistory(Element parentEl, String type, String cellKey, int row) {
-		String value = sheet.getColumnData(cellKey, row);
+	private void mReleaseHistory(Element parentEl, String type, String cellKey) {
+		String value = getColumnData(cellKey);
 		if (!isSpecified(value)) {
 			return;
 		}
@@ -439,9 +444,9 @@ public class RowToXmlHelper {
 
 	protected void mRatings(Element m) {
 
-		String ratingSystem = sheet.getColumnData("AvailMetadata/RatingSystem", row);
-		String ratingValue = sheet.getColumnData("AvailMetadata/RatingValue", row);
-		String ratingReason = sheet.getColumnData("AvailMetadata/RatingReason", row);
+		String ratingSystem = getColumnData("AvailMetadata/RatingSystem");
+		String ratingValue = getColumnData("AvailMetadata/RatingValue");
+		String ratingReason = getColumnData("AvailMetadata/RatingReason");
 		/*
 		 * According to XML schema, all 3 values are REQUIRED for a Rating. If
 		 * any has been specified than we add the Rating element and let XML
@@ -455,7 +460,7 @@ public class RowToXmlHelper {
 		Element rat = new Element("Rating", xb.getMdNSpace());
 		ratings.addContent(rat);
 		Element region = new Element("Region", xb.getMdNSpace());
-		String territory = sheet.getColumnData("AvailTrans/Territory", row);
+		String territory = getColumnData("AvailTrans/Territory");
 		if (isSpecified(territory)) {
 			Element country = new Element("country", xb.getMdNSpace());
 			region.addContent(country);
@@ -496,41 +501,94 @@ public class RowToXmlHelper {
 		return el;
 	}
 
-	protected Element process(Element parentEl, String childName, Namespace ns, String cellKey, int row) {
-		String value = sheet.getColumnData(cellKey, row);
+	protected Element process(Element parentEl, String childName, Namespace ns, String cellKey) {
+		Pedigree pg = getData(cellKey);
+		if (pg == null) {
+			System.out.println("Row2Xml.process:: Row " + row.getRowNum() + "  [" + cellKey + "]--->NULL<--");
+			return null;
+		}
+		String value = pg.getRawValue();
 		if (xb.isRequired(childName, ns.getPrefix()) || isSpecified(value)) {
 			Element childEl = mGenericElement(childName, value, ns);
 			parentEl.addContent(childEl);
+			xb.addToPedigree(childEl, pg);
+			// System.out.println("Row2Xml.process:: Row "+row.getRowNum() + " [" + cellKey +
+			// "]--->" + value + "<--");
 			return childEl;
 		} else {
 			return null;
 		}
 	}
 
-	private void processRegion(Element parentEl, String regionType, Namespace ns, String cellKey, int row) {
-		String value = sheet.getColumnData(cellKey, row);
-		if (xb.isRequired(regionType, ns.getPrefix()) || isSpecified(value)) {
-			Element regionEl = new Element(regionType, ns);
+	private void processRegion(Element parentEl, String regionType, Namespace ns, String cellKey) {
+		Element regionEl = new Element(regionType, ns);
+		Element countryEl = process(regionEl, "country", xb.getMdNSpace(), cellKey);
+		if (countryEl != null) {
 			parentEl.addContent(regionEl);
-			Element childEl = mGenericElement("country", value, xb.getMdNSpace());
-			regionEl.addContent(childEl);
 		}
-
 	}
 
-	protected boolean processCondition(Element parentEl, String childName, Namespace ns, String cellKey, int row) {
-		String value = sheet.getColumnData(cellKey, row);
+	/**
+	 * Process start or end conditions for a Transaction.
+	 * 
+	 * @param parentEl
+	 * @param childName
+	 * @param ns
+	 * @param cellKey
+	 * @param row
+	 * @return
+	 */
+	private boolean processCondition(Element parentEl, String childName, Namespace ns, String cellKey) {
+		Pedigree pg = getData(cellKey);
+		String value = pg.getRawValue();
 		if (isSpecified(value)) {
+			Element condEl = null;
 			// does it start with 'yyyy' ?
 			if (value.matches("^\\d[.]*")) {
-				parentEl.addContent(mGenericElement(childName, value, ns));
+				condEl = mGenericElement(childName, value, ns);
 			} else {
-				parentEl.addContent(mGenericElement(childName + "Condition", value, ns));
+				condEl = mGenericElement(childName + "Condition", value, ns);
 			}
+			parentEl.addContent(condEl);
+			xb.addToPedigree(condEl, pg);
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * @param colKey
+	 * @return
+	 * @deprecated Use getData(String colKey)
+	 */
+	private String getColumnData(String colKey) {
+		int cellIdx = sheet.getColumnIdx(colKey);
+		if (cellIdx < 0) {
+			return null;
+		} else {
+			Cell cell = row.getCell(cellIdx);
+			String value = dataF.formatCellValue(cell);
+			if (value == null) {
+				value = "";
+			}
+			return value;
+		}
+	}
+
+	private Pedigree getData(String colKey) {
+		int cellIdx = sheet.getColumnIdx(colKey);
+		if (cellIdx < 0) {
+			return null;
+		}
+		Cell sourceCell = row.getCell(cellIdx);
+		String value = dataF.formatCellValue(sourceCell);
+		if (value == null) {
+			value = "";
+		}
+		Pedigree ped = new Pedigree(sourceCell, value);
+
+		return ped;
 	}
 
 	/**
@@ -541,29 +599,6 @@ public class RowToXmlHelper {
 	 */
 	protected boolean isSpecified(String value) {
 		return (value != null && (!value.isEmpty()));
-	}
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-	/**
-	 * Creates an Avails/ALID XML node
-	 * 
-	 * @param availID
-	 *            the value of the ALID
-	 * @return the generated XML element
-	 */
-	protected Element mALID(String availID) {
-		Element ALID = new Element("ALID", xb.getAvailsNSpace());
-		ALID.setText(availID);
-		return ALID;
-	}
-
-	protected Element mDisposition(String entryType) {
-		Element disp = new Element("Disposition", xb.getAvailsNSpace());
-		Element entry = new Element("EntryType", xb.getAvailsNSpace());
-		entry.setText(entryType);
-		disp.addContent(entry);
-		return disp;
 	}
 
 }

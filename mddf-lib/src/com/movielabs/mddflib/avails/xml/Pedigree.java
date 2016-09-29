@@ -20,54 +20,73 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.xml;
+package com.movielabs.mddflib.avails.xml;
+
+import org.apache.poi.ss.usermodel.Cell;
 
 /**
  * @author L. Levin, Critical Architectures LLC
  *
  */
 public class Pedigree {
-	int row;
-	int column;
-	String sheet;
-	String rawValue;
+//	private int row;
+//	private int column;
+//	private String sheet;
+	private String rawValue;
+	private Object source;
 
 	/**
 	 * @param row
 	 * @param column
 	 * @param sheet
 	 */
-	Pedigree(int row, int column, String sheet, String rawValue) {
-		super();
-		this.row = row;
-		this.column = column;
-		this.sheet = sheet;
-		this.rawValue = rawValue;
-	}
+//	Pedigree(int row, int column, String sheet, String rawValue) {
+//		super();
+//		this.row = row;
+//		this.column = column;
+//		this.sheet = sheet;
+//		this.rawValue = rawValue;
+//	}
 
 	/**
-	 * @return the row
+	 * @param sourceCell
+	 * @param value
 	 */
-	public int getRow() {
-		return row;
+	public Pedigree(Object source, String value) {
+		this.source = source;
+		this.rawValue = value;
 	}
-
-	/**
-	 * @return the column
-	 */
-	public int getColumn() {
-		return column;
-	}
-
-	/**
-	 * @return the sheet name
-	 */
-	public String getSheet() {
-		return sheet;
-	}
+//
+//	/**
+//	 * @return the row
+//	 */
+//	public int getRow() {
+//		return row;
+//	}
+//
+//	/**
+//	 * @return the column
+//	 */
+//	public int getColumn() {
+//		return column;
+//	}
+//
+//	/**
+//	 * @return the sheet name
+//	 */
+//	public String getSheet() {
+//		return sheet;
+//	}
 
 	public String getRawValue() {
 		return rawValue;
+	}
+
+	/**
+	 * @return the source
+	 */
+	public Object getSource() {
+		return source;
 	}
 
 }

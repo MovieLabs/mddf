@@ -23,7 +23,7 @@
  * Author: Paul Jensen <pgj@movielabs.com>
  */
 
-package com.movielabs.mddflib;
+package com.movielabs.mddflib.avails.xlsx;
 
 public enum ISO639_2_Code {
     /**

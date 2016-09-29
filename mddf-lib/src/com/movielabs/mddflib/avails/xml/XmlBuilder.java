@@ -20,7 +20,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.xml;
+package com.movielabs.mddflib.avails.xml;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.poi.ss.usermodel.Row;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -41,11 +42,8 @@ import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.output.DOMOutputter;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-//import org.w3c.dom.Attr;
-//import org.w3c.dom.Document;
-//import org.w3c.dom.Element;
 
-import com.movielabs.mddflib.AvailsSheet;
+import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 
 /**
  * Code and functionality formerly in AvailsSheet
@@ -183,8 +181,9 @@ public class XmlBuilder {
 
 		doc.setRootElement(root);
 		try {
-			for (int i = 0; i < aSheet.getRowCount(); i++) {
-				RowToXmlHelper xmlConverter = new RowToXmlHelper(aSheet, i, shortDesc);
+			// for (int i = 0; i < aSheet.getRowCount(); i++) {
+			for (Row row : aSheet.getRows()) {
+				RowToXmlHelper xmlConverter = new RowToXmlHelper(aSheet, row, shortDesc);
 				Element e = xmlConverter.makeAvail(this);
 				root.addContent(e);
 			}

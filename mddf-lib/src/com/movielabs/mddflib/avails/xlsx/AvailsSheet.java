@@ -23,7 +23,7 @@
  * Author: Paul Jensen <pgj@movielabs.com>
  */
 
-package com.movielabs.mddflib;
+package com.movielabs.mddflib.avails.xlsx;
 
 import java.util.*;
 import org.apache.poi.ss.usermodel.Cell;
@@ -35,12 +35,13 @@ import org.apache.poi.ss.usermodel.Sheet;
  * Represents an individual sheet of an Excel spreadsheet
  */
 public class AvailsSheet {
-	private ArrayList<String[]> rows;
+	private ArrayList<Row> rows;
 	private AvailSS parent;
 	private String name;
 	private ArrayList<String> headerList;
 	private HashMap<String, Integer> headerMap;
 	private org.apache.logging.log4j.Logger logger;
+	private Sheet excelSheet;
 
 	/**
 	 * Create an object representing a single sheet of a spreadsheet
@@ -52,9 +53,10 @@ public class AvailsSheet {
 	 */
 	public AvailsSheet(AvailSS parent, Sheet excelSheet) {
 		this.parent = parent;
+		this.excelSheet = excelSheet;
 		logger = parent.getLogger();
 		this.name = excelSheet.getSheetName();
-		rows = new ArrayList<String[]>();
+		rows = new ArrayList<Row>();
 		ingest(excelSheet);
 	}
 
@@ -62,19 +64,19 @@ public class AvailsSheet {
 	 * Convert a POI sheet from an Excel spreadsheet to an Avails spreadsheet
 	 * object.
 	 * 
-	 * @param sheet
+	 * @param excelSheet
 	 *            an Apache POI sheet object
 	 * @return created sheet object
 	 */
-	private void ingest(Sheet sheet) {
+	private void ingest(Sheet excelSheet) {
 		DataFormatter dataF = new DataFormatter();
-		Row headerRow1 = sheet.getRow(0);
-		Row headerRow2 = sheet.getRow(1);
+		Row headerRow1 = excelSheet.getRow(0);
+		Row headerRow2 = excelSheet.getRow(1);
 		if (headerRow2.getPhysicalNumberOfCells() < 1) {
 			return;
 		}
 		if (headerRow1.getPhysicalNumberOfCells() != headerRow2.getPhysicalNumberOfCells()) {
-			String msg = "Sheet " + sheet.getSheetName() + ": : Invalid column headers";
+			String msg = "Sheet " + excelSheet.getSheetName() + ": : Invalid column headers";
 			logger.error(msg);
 			return;
 		}
@@ -90,26 +92,15 @@ public class AvailsSheet {
 				headerList.add(key);
 				headerMap.put(key, new Integer(idx));
 			}
-		} 
+		}
 		// ...............................................
 		/*
 		 * Skip over the header rows and process all data rows...
 		 */
-		for (int idxR = 2; idxR < sheet.getLastRowNum(); idxR++) {
-			Row nextRow = sheet.getRow(idxR);
+		for (int idxR = 2; idxR < excelSheet.getLastRowNum(); idxR++) {
+			Row nextRow = excelSheet.getRow(idxR);
 			if (isAvail(nextRow)) {
-				String[] fields = new String[headerList.size()];
-				for (int i = 0; i < headerList.size(); i++) {
-					Cell cell = nextRow.getCell(i);
-					int idx = cell.getColumnIndex();
-					String value = dataF.formatCellValue(cell);
-					if (value == null) {
-						fields[idx] = "";
-					} else {
-						fields[idx] = value;
-					}
-				}
-				rows.add(fields);
+				rows.add(nextRow);
 			}
 		}
 	}
@@ -146,14 +137,14 @@ public class AvailsSheet {
 	 * 
 	 * @return an array containing all the SheetRow objects in this sheet
 	 */
-	public ArrayList<String[]> getRows() {
+	public ArrayList<Row> getRows() {
 		return rows;
 	}
 
 	/**
 	 * @return
 	 */
-	public int getRowCount() { 
+	public int getRowCount() {
 		return rows.size();
 	}
 
@@ -173,15 +164,11 @@ public class AvailsSheet {
 	}
 
 	/**
-	 * Return value of cell identified by the columnKey and row. If either
-	 * argument is invalid a <tt>null</tt> value is returned.
-	 * 
-	 * @param columnKey
+	 * @param columnID
 	 * @param row
-	 *            zero-based row number
 	 * @return
 	 */
-	public String getColumnData(String columnKey, int row) {
+	public Cell getCell(String columnKey, int row) {
 		if (row >= rows.size()) {
 			return null;
 		}
@@ -189,8 +176,7 @@ public class AvailsSheet {
 		if (idx < 0) {
 			return null;
 		} else {
-			String[] fields = rows.get(row);
-			return fields[idx];
+			return excelSheet.getRow(row).getCell(idx);
 		}
 	}
 
@@ -207,11 +193,13 @@ public class AvailsSheet {
 	 * 
 	 */
 	public void dump() {
-		int i = 1;
-		for (String[] sr : getRows()) {
-			System.out.print("row " + i++ + "=[");
-			for (String cell : sr) {
-				System.out.print("|" + cell);
+		DataFormatter dataF = new DataFormatter();
+		for (Row nextRow : rows) {
+			int rNum = nextRow.getRowNum() + 1;
+			System.out.print("row " + rNum + "=[");
+			for (int cNum = 0; cNum < headerMap.size(); cNum++) {
+				Cell nextCell = nextRow.getCell(cNum);
+				System.out.print("|" + dataF.formatCellValue(nextCell));
 			}
 			System.out.println("]");
 		}

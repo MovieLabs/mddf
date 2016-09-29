@@ -1,0 +1,192 @@
+/**
+ * Created Jun 30, 2016 
+ * Copyright Motion Picture Laboratories, Inc. 2016
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of 
+ * this software and associated documentation files (the "Software"), to deal in 
+ * the Software without restriction, including without limitation the rights to use, 
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell copies of 
+ * the Software, and to permit persons to whom the Software is furnished to do so, 
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all 
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS 
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+package com.movielabs.mddflib.logging;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+ 
+
+/**
+ * @author L. Levin, Critical Architectures LLC
+ *
+ */
+public class LogEntryFolder extends LogEntry {
+
+	private ArrayList<LogEntryNode> msgList;
+	private int level;
+
+	/**
+	 * @param label
+	 * @param severityLevel
+	 */
+	public LogEntryFolder(String label, int severityLevel) {
+		super(label);
+		this.setTag(label);
+		this.level = severityLevel;
+		msgList = new ArrayList<LogEntryNode>();
+	}
+
+	/**
+	 * Override default implementation to return the folder's <tt>label</tt>
+	 * prefixed with the current message count. For example, if the the folder's
+	 * label is <tt>Errors</tt> and it contains 12 messages, the returned string
+	 * is '[12] Errors'.
+	 * 
+	 * @see javax.swing.tree.DefaultMutableTreeNode#toString()
+	 */
+	public String toString() {
+		int msgCnt = getMsgCnt();
+		if (msgCnt > 0) {
+			return "[" + msgCnt + "] " + getLabel();
+		} else {
+			return getLabel();
+		}
+	}
+
+	/**
+	 * Return the <tt>label</tt> (i.e., <i>name</i> of the folder.
+	 * 
+	 * @return
+	 */
+	public String getLabel() {
+		return super.toString();
+	}
+
+	/**
+	 * @param entryNode
+	 */
+	public void addMsg(LogEntryNode entryNode) {
+		msgList.add(entryNode);
+
+	}
+
+	public DefaultMutableTreeNode getChild(String id) {
+		Enumeration<LogEntry> kinder = this.children();
+		while (kinder.hasMoreElements()) {
+			LogEntry nextNode = kinder.nextElement();
+			if (nextNode.getTagAsText().equals(id)) {
+				return (nextNode);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getMsgCnt() {
+		int msgCnt = msgList.size();
+		Enumeration kinder = this.children();
+		while (kinder.hasMoreElements()) {
+			LogEntryFolder nextChild = (LogEntryFolder) kinder.nextElement();
+			msgCnt = msgCnt + nextChild.getMsgCnt();
+		}
+		return msgCnt;
+
+	}
+
+	/**
+	 * @return
+	 */
+	public List<LogEntryNode> getMsgList() {
+		List<LogEntryNode> fullList = new ArrayList<LogEntryNode>();
+		fullList.addAll(msgList);
+		Enumeration kinder = this.children();
+		while (kinder.hasMoreElements()) {
+			LogEntryFolder nextChild = (LogEntryFolder) kinder.nextElement();
+			fullList.addAll(nextChild.getMsgList());
+		}
+		return fullList;
+	}
+
+	public boolean hasErrorsMsgs(boolean forErrors) {
+		/* is this a 'leaf' folder or intermediate? */
+		Enumeration kinder = this.children();
+		if (kinder.hasMoreElements()) {
+			boolean isErrFolder = this.getTagAsText().equals(LogMgmt.logLevels[LogMgmt.LEV_ERR]);
+			while (kinder.hasMoreElements()) {
+				LogEntryFolder nextChild = (LogEntryFolder) kinder.nextElement();
+				if (nextChild.hasErrorsMsgs(forErrors || isErrFolder)) {
+					return true;
+				}
+			}
+		} else {
+			if (msgList.isEmpty()) {
+				return false;
+			} else {
+				/*
+				 * if this folder or any ancestor folder has tag indicating
+				 * UiLogger.LEV_ERR then return TRUE
+				 */
+				return forErrors;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Return the highest
+	 * 
+	 * @return
+	 */
+	public int getHighestLevel() {
+		int highest = -1;
+		/* is this a 'leaf' folder or intermediate? */
+		Enumeration kinder = this.children();
+		if (kinder.hasMoreElements()) {
+			LogEntryFolder infoFolder = null;
+			while (kinder.hasMoreElements()) {
+				LogEntryFolder nextChild = (LogEntryFolder) kinder.nextElement();
+				if (nextChild.level != LogMgmt.LEV_INFO) {
+					highest = Math.max(highest, nextChild.getHighestLevel());
+				} else {
+					infoFolder = nextChild;
+				}
+			}
+			if ((infoFolder != null) && (highest <= LogMgmt.LEV_DEBUG) && (!infoFolder.msgList.isEmpty())) {
+				highest = LogMgmt.LEV_INFO;
+			}
+		} else {
+			if (msgList != null && (!msgList.isEmpty())) {
+				highest = Math.max(highest, this.level);
+			}
+		}
+		return highest;
+	}
+
+	/**
+	 * 
+	 */
+	public void deleteMsgs() {
+		msgList = new ArrayList<LogEntryNode>();
+		Enumeration kinder = this.children();
+		while (kinder.hasMoreElements()) {
+			LogEntryFolder nextChild = (LogEntryFolder) kinder.nextElement();
+			nextChild.deleteMsgs();
+		}
+
+	}
+
+}
