@@ -30,7 +30,7 @@ public class LogEntry extends DefaultMutableTreeNode {
 	/**
 	 * 
 	 */
-	private String tag;
+	protected String tag;
 	/**
 	 * @param label
 	 */
