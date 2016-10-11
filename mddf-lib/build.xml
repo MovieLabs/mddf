@@ -1,0 +1,89 @@
+<project name="MLabs MDDF" default="proj_jar" basedir="."
+	xmlns:fx="javafx:com.sun.javafx.tools.ant">
+	<!-- .......................................................................... 
+		Created Sept 29, 2015 Copyright Motion Picture Laboratories, Inc. (2015) 
+		Permission is hereby granted, free of charge, to any person obtaining a copy 
+		of this software and associated documentation files (the "Software"), to 
+		deal in the Software without restriction, including without limitation the 
+		rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+		sell copies of the Software, and to permit persons to whom the Software is 
+		furnished to do so, subject to the following conditions: The above copyright 
+		notice and this permission notice shall be included in all copies or substantial 
+		portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY 
+		OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+		OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+		IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+		DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
+		ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+		DEALINGS IN THE SOFTWARE. .................................................... 
+		........... -->
+	<property environment="myenv." />
+	<!-- ================================================================ -->
+	<property name="proj.name" value="mddf-lib" />
+	<property name="proj.home" value="." />
+	<!-- ================================================================ -->
+	<property name="proj.version" value="1.0.1" />
+	<property name="proj.package" value="com/movielabs/mddflib" />
+	<property name="proj.build" value="${proj.home}/build" />
+	<property name="proj.lib" value="${proj.home}/lib" />
+	<property name="proj.src" value="${proj.home}/src" />
+	<property name="proj.jar" value="${proj.name}-${proj.version}.jar" /> 
+	<!-- ==================== Compilation Options ==================== -->
+	<property name="jvm.target" value="1.8" /> 
+	<!-- ======================================================== -->
+	<path id="buildPath">
+		<fileset dir="${proj.lib}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+	<path id="runPath">
+		<filelist dir="${proj.home}" files="${proj.jar}" />
+		<fileset dir="${proj.lib}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+
+	<!-- ======================================================== --> 
+	<target name="init">
+		<tstamp />
+		<echo message="${TODAY}, ${TSTAMP}" />
+		<echo message="JAVA_HOME is ${myenv.JAVA_HOME}" />
+	</target>
+
+	<target depends="init" name="proj_build">
+		<mkdir dir="${proj.build}" />
+		<delete includeEmptyDirs="true">
+			<fileset dir="${proj.build}" />
+		</delete>
+		<mkdir dir="${proj.build}" />
+		<javac debug="true" deprecation="true" target="${jvm.target}"
+			source="${jvm.target}" destdir="${proj.build}" srcdir="${proj.src}">
+			<classpath>
+				<path refid="buildPath" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target depends="proj_build" name="proj_jar">
+		<!-- create a build.prop file in the build directory. -->
+		<tstamp />
+		<echo file="./build/${proj.package}/build.properties" append="false">#
+			Project Build properties
+			version=${proj.version}
+			buildDate=${TODAY}
+			buildTime=${TSTAMP}
+		</echo>
+		<!-- Copy in-jar resources (e.g., images) -->
+		<copy todir="./build" includeEmptyDirs="false">
+			<fileset dir="${proj.src}" excludes="**/*.java" />
+		</copy>
+		<jar basedir="${proj.build}" compress="true" jarfile="${proj.home}/${proj.jar}">
+			<exclude name="**/*.java" />
+			<exclude name="**/*.form" />
+			<exclude name="lib/*.*" />
+		</jar>
+	</target>
+
+  
+</project>
