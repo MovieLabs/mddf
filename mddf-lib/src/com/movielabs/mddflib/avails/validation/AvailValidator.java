@@ -21,11 +21,8 @@
  */
 package com.movielabs.mddflib.avails.validation;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -331,10 +328,14 @@ public class AvailValidator extends ManifestIngester {
 
 				String idSyntaxPattern = "[\\S-[:]]+:[\\S-[:]]+:[\\S-[:]]+:[\\S]+$";
 				if (!idValue.matches(idSyntaxPattern)) {
-					String msg = "Invalid Identifier syntax";
+					String idID = elementName;
+					if (idAttribute != null) { 
+						idID = idID+"["+idAttribute+"]";
+					}  
+					String msg = "Non-standard Identifier syntax for "+idID;
+					
 					LogReference srcRef = LogReference.getRef("CM", "2.4", "cm001b");
-					logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, targetEl, msg, null, srcRef, logMsgSrcId);
-					curFileIsValid = false;
+					logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_WARN, targetEl, msg, null, srcRef, logMsgSrcId); 
 				} else {
 					String[] idParts = idValue.split(":");
 					String idNid = idParts[0];
