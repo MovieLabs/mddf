@@ -45,8 +45,7 @@ import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 public class RowToXmlHelper {
 
 	private static final String MISSING = "--FUBAR (missing)";
-	protected Row row;
-	protected String shortDesc = ""; // default
+	protected Row row; 
 	protected XmlBuilder xb;
 	private AvailsSheet sheet;
 	private String workType = "";
@@ -55,94 +54,44 @@ public class RowToXmlHelper {
 	/**
 	 * @param fields
 	 */
-	RowToXmlHelper(AvailsSheet sheet, Row row, String desc) {
+	RowToXmlHelper(AvailsSheet sheet, Row row ) {
 		super();
 		this.sheet = sheet;
-		this.row = row;
-		if (desc != null) {
-			this.shortDesc = desc;
-		}
+		this.row = row; 
 
 	}
 
-	protected Element makeAvail(XmlBuilder xb) throws Exception {
+	protected void makeAvail(XmlBuilder xb) throws Exception {
 		this.xb = xb;
-		Element avail = new Element("Avail", xb.getAvailsNSpace());
-		Element e;
-
-		// ALID
-		process(avail, "ALID", xb.getAvailsNSpace(), "Avail/AvailID");
-
-		// Disposition
-		String value = getColumnData("Disposition/EntryType");
-		if (xb.isRequired("Disposition", "avails") || isSpecified(value)) {
-			avail.addContent(mDisposition(value));
-		}
-
-		// Licensor
-		value = getColumnData("Avail/DisplayName");
-		if (xb.isRequired("Licensor", "avails") || isSpecified(value)) {
-			avail.addContent(mPublisher("Licensor", value));
-		}
-
-		// Service Provider (OPTIONAL)
-		value = getColumnData("Avail/ServiceProvider");
-		if (xb.isRequired("ServiceProvider", "avails") || isSpecified(value)) {
-			avail.addContent(mPublisher("ServiceProvider", value));
-		}
-
+		Element avail = xb.getAvailElement(this); 
 		/*
 		 * Need to save the current workType for use in Transaction/Terms
 		 */
-		this.workType = getColumnData("AvailAsset/WorkType");
-		String availType;
-		switch (workType) {
-		case "Movie":
-		case "Short":
-			availType = "single";
-			break;
-		case "Season":
-			availType = "season";
-			break;
-		case "Episode":
-			availType = "episode";
-			break;
-		default:
-			availType = "";
-		}
-
-		// AvailType (e.g., 'single' for a Movie)
-		avail.addContent(mGenericElement("AvailType", availType, xb.getAvailsNSpace()));
-
-		// ShortDescription
-		if (xb.isRequired("ShortDescription", "avails") || isSpecified(shortDesc)) {
-			e = mGenericElement("ShortDescription", shortDesc, xb.getAvailsNSpace());
-			avail.addContent(e);
-		}
+		this.workType = getData("AvailAsset/WorkType");
+ 
 		// Asset
 		if (xb.isRequired("WorkType", "avails") || isSpecified(workType)) {
-			e = mAssetHeader(workType);
-			avail.addContent(e);
+			Element assetEl = createAsset(workType); 
+			xb.addAsset(avail, assetEl);
 		}
 
+		Element e=createTransaction();
 		// Transaction
-		if ((e = mTransactionHeader()) != null)
-			avail.addContent(e);
+		if (e  != null) {
+			xb.addTransaction(avail,e);
+		}
 
 		// Exception Flag
 		process(avail, "ExceptionFlag", xb.getAvailsNSpace(), "Avail/ExceptionFlag");
 
-		return avail;
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	protected Element mDisposition(String entryType) {
+	Element mDisposition() {
 		Element disp = new Element("Disposition", xb.getAvailsNSpace());
-		Element entry = new Element("EntryType", xb.getAvailsNSpace());
-		entry.setText(entryType);
-		disp.addContent(entry);
+		process(disp, "EntryType", xb.getAvailsNSpace(), "Disposition/EntryType");
 		return disp;
 	}
 
@@ -150,22 +99,22 @@ public class RowToXmlHelper {
 	 * Create an <tt>mdmec:Publisher-type</tt> XML element with a md:DisplayName
 	 * element child, and populate the latter with the DisplayName
 	 * 
-	 * @param name
+	 * @param elName
 	 *            the parent element to be created (i.e., Licensor or
 	 *            ServiceProvider)
 	 * @param displayName
 	 *            the name to be held in the DisplayName child node
 	 * @return the created element
 	 */
-	protected Element mPublisher(String name, String displayName) {
-		Element pubEl = new Element(name, xb.getAvailsNSpace());
-		Element e = new Element("DisplayName", xb.getMdNSpace());
-		e.setText(displayName);
-		pubEl.addContent(e);
+	Element mPublisher(String elName, String colKey) {
+		Element pubEl = new Element(elName, xb.getAvailsNSpace());
+
+		process(pubEl, "DisplayName", xb.getMdNSpace(), colKey);
+
 		// XXX ContactInfo mandatory but can't get this info from the
 		// spreadsheet
 		if (xb.isRequired("ContactInfo", "mdmec")) {
-			e = new Element("ContactInfo", xb.getMdMecNSpace());
+			Element e = new Element("ContactInfo", xb.getMdMecNSpace());
 			Element e2 = new Element("Name", xb.getMdNSpace());
 			e.addContent(e2);
 			e2 = new Element("PrimaryEmail", xb.getMdNSpace());
@@ -175,12 +124,13 @@ public class RowToXmlHelper {
 		return pubEl;
 	}
 
-	protected Element mAssetHeader(String workType) {
-		Element asset = new Element("Asset", xb.getAvailsNSpace());
+	protected Element createAsset(String workType) {
+		Element assetEl = new Element("Asset", xb.getAvailsNSpace());
 		Element wt = new Element("WorkType", xb.getAvailsNSpace());
 		wt.setText(workType);
-		asset.addContent(wt);
-		return mAssetBody(asset);
+		assetEl.addContent(wt);
+		mAssetBody(assetEl);
+		return assetEl;
 	}
 
 	/**
@@ -188,14 +138,14 @@ public class RowToXmlHelper {
 	 * method should be extended or overridden by sub-classes specific to a
 	 * given work type (i.e., Movie, Episode, Season, etc.)
 	 * 
-	 * @param asset
+	 * @param assetEl
 	 * @return
 	 */
-	protected Element mAssetBody(Element asset) {
+	protected void mAssetBody(Element assetEl) {
 		Element e;
-		String contentID = getColumnData("AvailAsset/ContentID");
+		String contentID = getData("AvailAsset/ContentID");
 		if (isSpecified(contentID)) {
-			asset.setAttribute("contentID", "contentID");
+			assetEl.setAttribute("contentID", "contentID");
 		}
 
 		Element metadata = new Element("Metadata", xb.getAvailsNSpace());
@@ -204,8 +154,8 @@ public class RowToXmlHelper {
 		 * TitleDisplayUnlimited is OPTIONAL in SS but REQUIRED in XML;
 		 * workaround by assigning it internal alias value
 		 */
-		String titleDU = getColumnData("AvailMetadata/TitleDisplayUnlimited");
-		String titleAlias = getColumnData("AvailMetadata/TitleInternalAlias");
+		String titleDU = getData("AvailMetadata/TitleDisplayUnlimited");
+		String titleAlias = getData("AvailMetadata/TitleInternalAlias");
 		if (!isSpecified(titleDU)) {
 			titleDU = titleAlias;
 		}
@@ -226,7 +176,7 @@ public class RowToXmlHelper {
 		process(metadata, "TitleEIDR-URN", xb.getAvailsNSpace(), "AvailAsset/ContentID");
 
 		// AltID --> AltIdentifier
-		String value = getColumnData("AvailMetadata/AltID");
+		String value = getData("AvailMetadata/AltID");
 		if (xb.isRequired("AltIdentifier", "avails") || isSpecified(value)) {
 			Element altIdEl = new Element("AltIdentifier", xb.getAvailsNSpace());
 			Element cid = new Element("Namespace", xb.getMdNSpace());
@@ -253,11 +203,10 @@ public class RowToXmlHelper {
 		process(metadata, "LocalizationOffering", xb.getAvailsNSpace(), "AvailMetadata/LocalizationType");
 
 		// Attach generated Metadata node
-		asset.addContent(metadata);
-		return asset;
+		assetEl.addContent(metadata); 
 	}
 
-	protected Element mTransactionHeader() throws Exception {
+	protected Element createTransaction() throws Exception {
 		Element transaction = new Element("Transaction", xb.getAvailsNSpace());
 		return mTransactionBody(transaction);
 	}
@@ -317,7 +266,7 @@ public class RowToXmlHelper {
 		/*
 		 * May be multiple 'terms'. Start with one specified via the PriceType
 		 */
-		String tName = getColumnData(prefix + "PriceType");
+		String tName = getData(prefix + "PriceType");
 		if (isSpecified(tName)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -335,7 +284,7 @@ public class RowToXmlHelper {
 			case "DMRP":
 			case "SMRP":
 				Element moneyEl = process(termEl, "Money", xb.getAvailsNSpace(), prefix + "PriceValue");
-				String currency = getColumnData(prefix + "PriceCurrency");
+				String currency = getData(prefix + "PriceCurrency");
 				if (moneyEl != null && isSpecified(currency)) {
 					moneyEl.setAttribute("currency", currency);
 				}
@@ -349,7 +298,7 @@ public class RowToXmlHelper {
 		 */
 
 		// SRP Term
-		String value = getColumnData(prefix + "SRP");
+		String value = getData(prefix + "SRP");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -359,7 +308,7 @@ public class RowToXmlHelper {
 			termEl.setAttribute("currency", value);
 		}
 
-		value = getColumnData(prefix + "SuppressionLiftDate");
+		value = getData(prefix + "SuppressionLiftDate");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -368,7 +317,7 @@ public class RowToXmlHelper {
 			termEl.addContent(childEl);
 		}
 
-		value = getColumnData(prefix + "RentalDuration");
+		value = getData(prefix + "RentalDuration");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -377,7 +326,7 @@ public class RowToXmlHelper {
 			termEl.addContent(childEl);
 		}
 
-		value = getColumnData(prefix + "WatchDuration");
+		value = getData(prefix + "WatchDuration");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -386,7 +335,7 @@ public class RowToXmlHelper {
 			termEl.addContent(childEl);
 		}
 
-		value = getColumnData(prefix + "FixedEndDate");
+		value = getData(prefix + "FixedEndDate");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -395,7 +344,7 @@ public class RowToXmlHelper {
 			termEl.addContent(childEl);
 		}
 
-		value = getColumnData(prefix + "HoldbackLanguage");
+		value = getData(prefix + "HoldbackLanguage");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -404,7 +353,7 @@ public class RowToXmlHelper {
 			termEl.addContent(childEl);
 		}
 
-		value = getColumnData(prefix + "AllowedLanguages");
+		value = getData(prefix + "AllowedLanguages");
 		if (isSpecified(value)) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
 			transaction.addContent(termEl);
@@ -430,7 +379,7 @@ public class RowToXmlHelper {
 	 * @param row
 	 */
 	private void mReleaseHistory(Element parentEl, String type, String cellKey) {
-		String value = getColumnData(cellKey);
+		String value = getData(cellKey);
 		if (!isSpecified(value)) {
 			return;
 		}
@@ -444,9 +393,9 @@ public class RowToXmlHelper {
 
 	protected void mRatings(Element m) {
 
-		String ratingSystem = getColumnData("AvailMetadata/RatingSystem");
-		String ratingValue = getColumnData("AvailMetadata/RatingValue");
-		String ratingReason = getColumnData("AvailMetadata/RatingReason");
+		String ratingSystem = getData("AvailMetadata/RatingSystem");
+		String ratingValue = getData("AvailMetadata/RatingValue");
+		String ratingReason = getData("AvailMetadata/RatingReason");
 		/*
 		 * According to XML schema, all 3 values are REQUIRED for a Rating. If
 		 * any has been specified than we add the Rating element and let XML
@@ -460,7 +409,7 @@ public class RowToXmlHelper {
 		Element rat = new Element("Rating", xb.getMdNSpace());
 		ratings.addContent(rat);
 		Element region = new Element("Region", xb.getMdNSpace());
-		String territory = getColumnData("AvailTrans/Territory");
+		String territory = getData("AvailTrans/Territory");
 		if (isSpecified(territory)) {
 			Element country = new Element("country", xb.getMdNSpace());
 			region.addContent(country);
@@ -494,7 +443,7 @@ public class RowToXmlHelper {
 	 *            the value of the element
 	 * @return the created element, or null
 	 */
-	protected Element mGenericElement(String name, String val, Namespace ns) {
+	Element mGenericElement(String name, String val, Namespace ns) {
 		Element el = new Element(name, ns);
 		String formatted = xb.formatForType(name, ns, val);
 		el.setText(formatted);
@@ -502,9 +451,9 @@ public class RowToXmlHelper {
 	}
 
 	protected Element process(Element parentEl, String childName, Namespace ns, String cellKey) {
-		Pedigree pg = getData(cellKey);
+		Pedigree pg = getPedigreedData(cellKey);
 		if (pg == null) {
-			System.out.println("Row2Xml.process:: Row " + row.getRowNum() + "  [" + cellKey + "]--->NULL<--");
+//			System.out.println("Row2Xml.process:: Row " + row.getRowNum() + "  [" + cellKey + "]--->NULL<--");
 			return null;
 		}
 		String value = pg.getRawValue();
@@ -512,7 +461,8 @@ public class RowToXmlHelper {
 			Element childEl = mGenericElement(childName, value, ns);
 			parentEl.addContent(childEl);
 			xb.addToPedigree(childEl, pg);
-			// System.out.println("Row2Xml.process:: Row "+row.getRowNum() + " [" + cellKey +
+			// System.out.println("Row2Xml.process:: Row "+row.getRowNum() + "
+			// [" + cellKey +
 			// "]--->" + value + "<--");
 			return childEl;
 		} else {
@@ -539,14 +489,14 @@ public class RowToXmlHelper {
 	 * @return
 	 */
 	private boolean processCondition(Element parentEl, String childName, Namespace ns, String cellKey) {
-		Pedigree pg = getData(cellKey);
+		Pedigree pg = getPedigreedData(cellKey);
 		String value = pg.getRawValue();
 		if (isSpecified(value)) {
 			Element condEl = null;
-			// does it start with 'yyyy' ?
-			if (value.matches("^\\d[.]*")) {
+			// does it start with 'yyyy' ? 
+			if (value.matches("^[\\d]{4}-.*")) {
 				condEl = mGenericElement(childName, value, ns);
-			} else {
+			} else { 
 				condEl = mGenericElement(childName + "Condition", value, ns);
 			}
 			parentEl.addContent(condEl);
@@ -560,9 +510,8 @@ public class RowToXmlHelper {
 	/**
 	 * @param colKey
 	 * @return
-	 * @deprecated Use getData(String colKey)
 	 */
-	private String getColumnData(String colKey) {
+	String getData(String colKey) {
 		int cellIdx = sheet.getColumnIdx(colKey);
 		if (cellIdx < 0) {
 			return null;
@@ -576,7 +525,11 @@ public class RowToXmlHelper {
 		}
 	}
 
-	private Pedigree getData(String colKey) {
+	/**
+	 * @param colKey
+	 * @return
+	 */
+	Pedigree getPedigreedData(String colKey) {
 		int cellIdx = sheet.getColumnIdx(colKey);
 		if (cellIdx < 0) {
 			return null;
@@ -599,6 +552,13 @@ public class RowToXmlHelper {
 	 */
 	protected boolean isSpecified(String value) {
 		return (value != null && (!value.isEmpty()));
+	}
+
+	/**
+	 * @return
+	 */
+	public int getRowNumber() { 
+		return row.getRowNum();
 	}
 
 }

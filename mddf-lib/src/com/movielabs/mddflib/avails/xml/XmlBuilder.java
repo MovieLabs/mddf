@@ -24,12 +24,11 @@ package com.movielabs.mddflib.avails.xml;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.jdom2.Document;
@@ -44,6 +43,8 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
+import com.movielabs.mddflib.logging.DefaultLogging;
+import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
  * Code and functionality formerly in AvailsSheet
@@ -53,6 +54,7 @@ import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
  */
 public class XmlBuilder {
 
+	private static final String moduleId = "XmlBuilder";
 	public static Namespace xsiNSpace = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 	public static Namespace xsNSpace = Namespace.getNamespace("xs", "http://www.w3.org/2001/XMLSchema");
 
@@ -71,9 +73,17 @@ public class XmlBuilder {
 	private XPathFactory xpfac;
 
 	private Map<Object, Pedigree> pedigreeMap = null;
+	private Map<String, Element> alidElMap = null;
+	private Element root;
+	private String shortDesc;
+	private Map<Element, List<Element>> avail2AssetMap;
+	private Map<Element, List<Element>> avail2TransMap;
+	private Map<Element, RowToXmlHelper> element2SrcRowMap;
+	private LogMgmt logger;
 
-	public XmlBuilder() {
+	public XmlBuilder(LogMgmt logger) {
 		xpfac = XPathFactory.instance();
+		this.logger = logger;
 	}
 
 	public boolean setVersion(String availXsdVersion) {
@@ -111,7 +121,8 @@ public class XmlBuilder {
 		}
 		xsdVersion = availXsdVersion;
 		ingest("avail", availsXsd);
-		System.out.println("XmlBuilder initialized for v" + availXsdVersion);
+		String msg = "XmlBuilder initialized for v" + availXsdVersion;
+		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 		return true;
 	}
 
@@ -165,33 +176,51 @@ public class XmlBuilder {
 	 * @throws IllegalStateException
 	 */
 	public Document makeXmlAsJDom(AvailsSheet aSheet, String shortDesc) throws IllegalStateException {
+		this.shortDesc = shortDesc;
 		if (xsdVersion == null) {
+			String msg = "Unable to generate XML from XLSX: XSD version was not set or is unsupported.";
+			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 			throw new IllegalStateException("The XSD version was not set or is unsupported.");
 		}
+		// initialize data structures...
 		pedigreeMap = new HashMap<Object, Pedigree>();
+		alidElMap = new HashMap<String, Element>();
+		avail2AssetMap = new HashMap<Element, List<Element>>();
+		avail2TransMap = new HashMap<Element, List<Element>>();
+		element2SrcRowMap = new HashMap<Element, RowToXmlHelper>();
+
+		// Create and initialize Document...
 		String xsdUri = "http://www.movielabs.com/schema/avails/v" + xsdVersion + "/avails";
 		String xsdLoc = "http://www.movielabs.com/schema/avails/v" + xsdVersion + "/avails-v" + xsdVersion + ".xsd";
 		String schemaLoc = xsdUri + " " + xsdLoc;
 		Document doc = new Document();
-		Element root = new Element("AvailList", availsNSpace);
+		root = new Element("AvailList", availsNSpace);
 		root.addNamespaceDeclaration(mdNSpace);
 		root.addNamespaceDeclaration(mdMecNSpace);
 		root.addNamespaceDeclaration(xsiNSpace);
-		// root.setAttribute("schemaLocation", schemaLoc, xsiNSpace);
-
 		doc.setRootElement(root);
+
+		// build document components row by row....
 		try {
-			// for (int i = 0; i < aSheet.getRowCount(); i++) {
 			for (Row row : aSheet.getRows()) {
-				RowToXmlHelper xmlConverter = new RowToXmlHelper(aSheet, row, shortDesc);
-				Element e = xmlConverter.makeAvail(this);
-				root.addContent(e);
+				RowToXmlHelper xmlConverter = new RowToXmlHelper(aSheet, row);
+				xmlConverter.makeAvail(this);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
+		// Final assembly in correct order..
+		Iterator<Element> alidIt = alidElMap.values().iterator();
+		while (alidIt.hasNext()) {
+			Element nextAlidEl = alidIt.next();
+			nextAlidEl.addContent(avail2AssetMap.get(nextAlidEl));
+			nextAlidEl.addContent(avail2TransMap.get(nextAlidEl));
+
+			root.addContent(nextAlidEl);
+		}
+
 		return doc;
 	}
 
@@ -205,6 +234,126 @@ public class XmlBuilder {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	/**
+	 * Returns the <tt>JDom Element</tt> instantiating the <i>Avail</i>
+	 * associated with the ALID specified by the row. If this is the first
+	 * request for the specified Avail a new element is constructed and
+	 * returned. Otherwise, a previously created element will be returned. Thus,
+	 * there is never more than one XML element per ALID value.
+	 * 
+	 * @param curRow
+	 * @return
+	 */
+	Element getAvailElement(RowToXmlHelper curRow) {
+		Pedigree pg = curRow.getPedigreedData("Avail/ALID");
+		/*
+		 * TODO: next line throws a NullPtrException if column is missing.
+		 * How do we handle?
+		 */
+		String alid = pg.getRawValue();
+		Element availEL = alidElMap.get(alid);
+		if (availEL == null) {
+			availEL = new Element("Avail", getAvailsNSpace());
+			/*
+			 * availEl will get added to document at completion of sheet
+			 * processing. For now, just store in HashMap.
+			 */
+			alidElMap.put(alid, availEL);
+			/*
+			 * Keeping track of row will facilitate later check to make sure any
+			 * other row for same Avail has identical values where required.
+			 */
+			element2SrcRowMap.put(availEL, curRow);
+
+			Element alidEl = curRow.mGenericElement("ALID", alid, getAvailsNSpace());
+			availEL.addContent(alidEl);
+			addToPedigree(alidEl, pg);
+
+			availEL.addContent(curRow.mDisposition());
+			availEL.addContent(curRow.mPublisher("Licensor", "Avail/DisplayName"));
+			availEL.addContent(curRow.mPublisher("ServiceProvider", "Avail/ServiceProvider"));
+
+			String availType = mapWorkType(curRow);
+			Element atEl = curRow.mGenericElement("AvailType", availType, getAvailsNSpace());
+			availEL.addContent(atEl);
+			addToPedigree(atEl, curRow.getPedigreedData("AvailAsset/WorkType"));
+			
+			Element sdEl = curRow.mGenericElement("ShortDescription", shortDesc, getAvailsNSpace());
+			availEL.addContent(sdEl);
+
+			// Initialize data structures for collecting Assets and Transactions
+			avail2AssetMap.put(availEL, new ArrayList<Element>());
+			avail2TransMap.put(availEL, new ArrayList<Element>());
+		} else {
+			/*
+			 * make sure key values are aligned...
+			 */
+			RowToXmlHelper srcRow = element2SrcRowMap.get(availEL);
+			checkForMatch("Avail/ALID", srcRow, curRow);
+			checkForMatch("Avail/DisplayName", srcRow, curRow);
+			checkForMatch("Avail/ServiceProvider", srcRow, curRow);
+			/*
+			 * AvailAsset/WorkType is special case as different WorkTypes may
+			 * map to same AvailType
+			 */
+
+			String definedValue = mapWorkType(srcRow);
+			String curValue = mapWorkType(curRow);
+			if (!definedValue.equals(curValue)) {
+				// Generate error msg
+				String msg = "Inconsistent WorkType; value not compatable with 1st definition of referenced Avail";
+				String details = "AVAIL was 1st defined in row " + srcRow.getRowNumber()
+						+ " which specifies AvailAsset/WorkType as " + srcRow.getData("AvailAsset/WorkType")
+						+ " and requires WorkType=" + definedValue;
+				logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, null, curRow.getRowNumber(), moduleId, details,
+						null);
+			}
+		}
+		return availEL;
+	}
+
+	/**
+	 * @param colKey
+	 * @param srcRow
+	 * @param rowHelper
+	 */
+	private void checkForMatch(String colKey, RowToXmlHelper srcRow, RowToXmlHelper curRow) {
+		String definedValue = srcRow.getData(colKey);
+		String curValue = curRow.getData(colKey);
+		if (!definedValue.equals(curValue)) {
+			// Generate error msg
+			String msg = "Inconsistent AVAIL specification; value does not match 1st definition of referenced Avail";
+			String details = "AVAIL was 1st defined in row " + srcRow.getRowNumber() + " which specifies " + colKey
+					+ " as " + definedValue;
+			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, null, curRow.getRowNumber(), moduleId, details, null);
+		}
+
+	}
+
+	/**
+	 * @param rowHelper
+	 * @return
+	 */
+	private String mapWorkType(RowToXmlHelper rowHelper) {
+		String workTypeSS = rowHelper.getData("AvailAsset/WorkType");
+		String availType;
+		switch (workTypeSS) {
+		case "Movie":
+		case "Short":
+			availType = "single";
+			break;
+		case "Season":
+			availType = "season";
+			break;
+		case "Episode":
+			availType = "episode";
+			break;
+		default:
+			availType = workTypeSS;
+		}
+		return availType;
 	}
 
 	/**
@@ -341,5 +490,23 @@ public class XmlBuilder {
 
 	void addToPedigree(Object content, Pedigree source) {
 		pedigreeMap.put(content, source);
+	}
+
+	/**
+	 * @param avail
+	 * @param assetEl
+	 */
+	public void addAsset(Element avail, Element assetEl) {
+		List<Element> assetList = avail2AssetMap.get(avail);
+		assetList.add(assetEl);
+	}
+
+	/**
+	 * @param avail
+	 * @param e
+	 */
+	public void addTransaction(Element avail, Element transEl) {
+		List<Element> transactionList = avail2TransMap.get(avail);
+		transactionList.add(transEl);
 	}
 }
