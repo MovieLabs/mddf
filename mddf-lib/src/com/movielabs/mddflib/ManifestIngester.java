@@ -570,19 +570,19 @@ public abstract class ManifestIngester {
 	 */
 	public static void setAvailVersion(String availSchemaVer) throws IllegalArgumentException {
 		switch (availSchemaVer) {
-		case "2.1":
-			AVAIL_VER = "2.1";
+		case "2.2":  
+		case "2.1": 
 			MD_VER = "2.4";
 			MDMEC_VER = "2.4";
 			break;
-		case "1.7":
-			AVAIL_VER = "1.7";
+		case "1.7": 
 			MD_VER = "2.3";
 			MDMEC_VER = "2.3";
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported Avails Schema version " + availSchemaVer);
 		}
+		AVAIL_VER = availSchemaVer;
 		mdmecNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
 		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
 		availsNSpace = Namespace.getNamespace("avails",
