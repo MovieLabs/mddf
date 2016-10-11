@@ -30,14 +30,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.jdom2.Element;
 import org.jdom2.located.Located;
 
 /**
  * Implements a basic logging capability not linked to a GUI. Intended usage is
- * to support logging functions when running Validator from a CLI or as a
- * cloud-based service. Instances of this class therefore serve the same purpose
- * as the <tt>LogPanel</tt> does in a GUI environment.
+ * to support logging functions when running from a CLI or as a cloud-based
+ * service. Instances of this class therefore serve the same purpose as the
+ * <tt>LogPanel</tt> does in a GUI environment.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -46,10 +45,10 @@ public class DefaultLogging implements LogMgmt {
 
 	private LogEntryFolder rootLogNode = new LogEntryFolder("", -1);
 	private int masterSeqNum;
-	private List<LogEntryNode> entryList; 
-	// private String currentFileId;
+	private List<LogEntryNode> entryList;
 	private File curInputFile;
 	private int minLevel = LogMgmt.LEV_WARN;
+	private boolean printToConsole = true;
 
 	/**
 	 * 
@@ -70,12 +69,12 @@ public class DefaultLogging implements LogMgmt {
 			String moduleId) {
 		int lineNum = -1;
 		if (target != null) {
-			if(target instanceof  Located) {
+			if (target instanceof Located) {
 				lineNum = ((Located) target).getLine();
-			}else if (target instanceof Cell){
+			} else if (target instanceof Cell) {
 				lineNum = ((Cell) target).getRowIndex();
-				
-			} 
+
+			}
 		}
 		log(level, tag, msg, curInputFile, lineNum, moduleId, explanation, srcRef);
 	}
@@ -106,51 +105,52 @@ public class DefaultLogging implements LogMgmt {
 
 	protected void append(int level, int tag, String msg, File xmlFile, int line, String moduleID, String details,
 			LogReference srcRef) {
+		if (level < minLevel) {
+			return;
+		}
+		if (xmlFile == null) {
+			xmlFile = curInputFile;
+		}
 		// First get correct 'folder'
 		String tagAsText = LogMgmt.logTags[tag];
 		LogEntryFolder byManifestFile = getFileFolder(xmlFile.getName());
 		LogEntryFolder byLevel = (LogEntryFolder) byManifestFile.getChild(LogMgmt.logLevels[level]);
 		LogEntryFolder tagNode = (LogEntryFolder) byLevel.getChild(tagAsText);
-		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, xmlFile, line, moduleID, masterSeqNum++, details,
-				srcRef);
-		append(entryNode);
-
-	}
-
-	/**
-	 * @param entry
-	 */
-	protected void append(LogEntryNode entry) { 
-		if(entry.getLevel() < minLevel){
-			return;
-		}
-		String tagAsText = entry.getTagAsText();
-		// First get correct 'folder'
-		LogEntryFolder byManifestFile = getFileFolder(curInputFile.getName());
-		LogEntryFolder byLevel = (LogEntryFolder) byManifestFile.getChild(LogMgmt.logLevels[entry.getLevel()]);
-		LogEntryFolder tagNode = (LogEntryFolder) byLevel.getChild(tagAsText);
-
 		if (tagNode == null) {
-			/*
-			 * Add tag-specific node for previously unused folder (i.e., we use
-			 * lazy-constructor design pattern)
-			 */
-			tagNode = new LogEntryFolder(tagAsText, entry.getLevel());
-			/*
-			 * need to keep order consistent so figure where to insert. Allow
-			 * for situation where it is the first node or the child set is
-			 * empty
-			 */
-			int tagIdx = getTagIndex(tagAsText);
-			byLevel.insert(tagNode, tagIdx);
-			byLevel.add(tagNode);
+			tagNode = createTagNode(tag, level, byLevel);
 		}
-		/* now add the node representing the actual log entry to it's folder. */
-		tagNode.addMsg(entry);
+		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, xmlFile, line, moduleID, masterSeqNum++, details,
+				srcRef); 
+		tagNode.addMsg(entryNode);
 		/*
 		 * add to the flat (i.e., sequential but non-hierarchical) list too...
 		 */
-		entryList.add(entry);
+		entryList.add(entryNode);
+		if (printToConsole) {
+			entryNode.print();
+		}
+	}
+
+	/**
+	 * Add tag-specific node for previously unused folder
+	 * 
+	 * @param tagAsText
+	 * @param level
+	 * @param byLevel
+	 * @return
+	 */
+	private LogEntryFolder createTagNode(int tag , int level, LogEntryFolder byLevel) {
+
+		String tagAsText = LogMgmt.logTags[tag];
+		LogEntryFolder tagNode = new LogEntryFolder(tagAsText, level);
+		/*
+		 * need to keep order consistent so figure where to insert. Allow for
+		 * situation where it is the first node or the child set is empty
+		 */
+		int tagIdx = getTagIndex(tagAsText);
+//		byLevel.insert(tagNode, tagIdx);
+		byLevel.add(tagNode);
+		return tagNode;
 	}
 
 	/**
@@ -164,18 +164,8 @@ public class DefaultLogging implements LogMgmt {
 			}
 		}
 		throw new IllegalArgumentException("Unsupported tag '" + tagAsText + "'");
-	}
-
-	/**
-	 * @param msgList
-	 */
-	protected void append(List<LogEntryNode> msgList) {
-		for (int i = 0; i < msgList.size(); i++) {
-			LogEntryNode entry = msgList.get(i);
-			append(entry);
-		}
-	}
-
+	} 
+	
 	public LogEntryFolder getFileFolder(String fileName) {
 		LogEntryFolder fileFolder = (LogEntryFolder) rootLogNode.getChild(fileName);
 		if (fileFolder == null) {
@@ -253,14 +243,22 @@ public class DefaultLogging implements LogMgmt {
 
 	}
 
+	/**
+	 * @param printToConsole
+	 *            the printToConsole to set
+	 */
+	public void setPrintToConsole(boolean printToConsole) {
+		this.printToConsole = printToConsole;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see com.movielabs.mddf.util.Logger#setCurrentFile(java.lang.String)
 	 */
 	@Override
-	 public void setCurrentFile(File targetFile) {
-		this.curInputFile = targetFile; 
+	public void setCurrentFile(File targetFile) {
+		this.curInputFile = targetFile;
 	}
 
 	/*
