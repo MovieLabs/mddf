@@ -45,7 +45,6 @@ public class LogEntryNode extends LogEntry {
 		cCnt = fieldNames.length;
 	}
 
-	private int seqNum;
 	private int level;
 	private String summary;
 	private String locPath = null;
@@ -241,9 +240,18 @@ public class LogEntryNode extends LogEntry {
 	}
 
 	/**
-	 * @return the seqNum
+	 * @return the msgSeqNum
 	 */
 	public int getEntryNumber() {
-		return seqNum;
+		return msgSeqNum;
+	}
+
+	/**
+	 * 
+	 */
+	public void print() {
+		String msg = msgSeqNum + ": " + LogMgmt.logLevels[level] + ": "+tag+ ": "+summary;
+		System.out.println(msg);
+
 	}
 }
