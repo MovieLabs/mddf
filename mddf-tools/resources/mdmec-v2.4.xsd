@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Craig Seidel (private) -->
+<xs:schema xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.4" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:md="http://www.movielabs.com/schema/md/v2.4/md" targetNamespace="http://www.movielabs.com/schema/mdmec/v2.4" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.4">
+	<xs:import namespace="http://www.movielabs.com/schema/md/v2.4/md" schemaLocation="md-v2.4.xsd"/>
+	<!--Media Entertainment Core (MEC) METADATA-->
+	<!--Verson 2.4-->
+	<xs:complexType name="BasicMetadata-type">
+		<xs:complexContent>
+			<xs:extension base="md:BasicMetadata-type"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetMetadata-type">
+		<xs:complexContent>
+			<xs:extension base="md:DigitalAssetMetadata-type"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Publisher-type">
+		<xs:complexContent>
+			<xs:extension base="md:OrgName-type">
+				<xs:sequence>
+					<xs:element name="ContactInfo" type="md:ContactInfo-type" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute name="retailerSpecificID" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Disposition-type">
+		<xs:sequence>
+			<xs:element name="EntryType" type="xs:string"/>
+			<xs:element name="EntryID" type="md:id-type" minOccurs="0"/>
+			<xs:element name="IssueDate" type="md:YearDateOrTime-type" minOccurs="0"/>
+			<xs:choice>
+				<xs:element name="ReplacesEntryID" type="md:id-type" minOccurs="0"/>
+				<xs:element name="ReplacesEntryDate" type="md:YearDateOrTime-type" minOccurs="0"/>
+			</xs:choice>
+			<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CoreMetadata-type">
+		<xs:sequence>
+			<xs:element name="Basic" type="mdmec:BasicMetadata-type"/>
+			<xs:element name="DigitalAsset" type="mdmec:DigitalAssetMetadata-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TitleInternalAlias" type="xs:string" minOccurs="0"/>
+			<xs:element name="TrackingID" type="xs:string" minOccurs="0"/>
+			<xs:element name="Source" type="mdmec:Publisher-type" minOccurs="0"/>
+			<xs:element name="CompanyDisplayCredit" type="md:CompanyCredits-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="GroupingEntity" type="md:GroupingEntity-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="CoreMetadata" type="mdmec:CoreMetadata-type"/>
+</xs:schema>

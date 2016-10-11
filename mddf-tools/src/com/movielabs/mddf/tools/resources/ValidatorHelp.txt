@@ -1,0 +1,16 @@
+The CLI version of the CMM Validator is primarily intended to be used to
+run validation scripts. While all options that are available via the GUI
+version of the software are supported, most options will need to be set 
+in a script.
+
+Command line options are, therefore, focused mainly on either specifying  
+which script to run, controlling logging output, or querying the Validator
+to determine its range of capabilities (e.g., which profiles are supported).
+
+Example Usage:
+
+  Runs a script with log output saved to the default file in CSV format:
+  
+          Validator -s ./myScript.xyz -l -logFormat csv
+  
+  

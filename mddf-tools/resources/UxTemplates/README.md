@@ -1,0 +1,1 @@
+Currently only the DefaultUxDefGenerator class uses a template file. Usage by other profile classes (e.g. IP01) is still T.B.D.

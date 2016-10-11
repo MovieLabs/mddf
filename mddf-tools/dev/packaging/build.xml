@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="mddf-tools" default="test" basedir="."
+	xmlns:fx="javafx:com.sun.javafx.tools.ant">
+	<property name="proj.home" value="${basedir}/../.." />
+	<property name="mddf-lib.home" value="${proj.home}/../mddf-lib" />
+	<property name="mddf-lib.version" value="1.0.1" />
+	<property name="appPack.dir" value="${proj.home}/packager" />
+	<property name="app.version.cmm" value="1.2" />
+	<property name="app.version.avail" value="0.8" />
+	<property name="proj.appDev" value="${proj.home}/dev/packaging" />
+	<property name="proj.rsrcFolder" value="${proj.home}/resources" />
+
+	<target name="test">
+		<echo message="Hello, this is ANT" />
+		<echo message="os.name is ${os.name}." />
+		<exec executable="pwd"></exec>
+		<exec executable="ls" os="Linux">
+			<arg line="-al" />
+		</exec>
+		<exec executable="chflags" os="Max OS X">
+			<arg line="-R nouchg ${appPack.dir}" />
+		</exec>
+	</target>
+
+	<target name="init-fx-tasks">
+		<path id="fxant">
+			<filelist>
+				<file name="${java.home}\..\lib\ant-javafx.jar" />
+				<file name="${java.home}\lib\jfxrt.jar" />
+				<file name="${appPack.dir}" />
+			</filelist>
+		</path>
+		<taskdef resource="com/sun/javafx/tools/ant/antlib.xml" uri="javafx:com.sun.javafx.tools.ant"
+			classpathref="fxant" />
+	</target>
+
+	<target name="setup-staging-area">
+		<echo message="Hello, this is ANT, proj.home=${proj.home}" />
+		<delete dir="${appPack.dir}/externalLibs" />
+		<mkdir dir="${appPack.dir}/externalLibs" />
+		<copy todir="${appPack.dir}/externalLibs">
+			<fileset dir="${proj.home}/lib">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${appPack.dir}/externalLibs">
+			<fileset dir="${mddf-lib.home}/lib">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<echo message="Using mddf-lib JAR ${mddf-lib.home}/mddf-lib-${mddf-lib.version}.jar" />
+		<copy todir="${appPack.dir}/externalLibs">
+			<fileset dir="${mddf-lib.home}">
+				<include name="mddf-lib-${mddf-lib.version}.jar" />
+			</fileset>
+		</copy>
+
+		<delete dir="${appPack.dir}/project" />
+		<mkdir dir="${appPack.dir}/project" />
+		<copy todir="${appPack.dir}/project">
+			<fileset dir="${proj.home}">
+				<include name="src/**" />
+			</fileset>
+		</copy>
+
+		<delete dir="${appPack.dir}/package" />
+		<mkdir dir="${appPack.dir}/package" />
+		<copy todir="${appPack.dir}/package">
+			<fileset dir="${proj.appDev}/package">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<delete dir="${appPack.dir}/dist" />
+		<mkdir dir="${appPack.dir}/dist" />
+
+		<mkdir dir="${appPack.dir}/dist/resources" />
+		<copy todir="${appPack.dir}/dist/resources">
+			<fileset dir="${proj.rsrcFolder}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+
+	</target>
+
+
+	<target name='do-compile'>
+		<delete dir="${appPack.dir}/build" />
+		<mkdir dir="${appPack.dir}/build/src" />
+		<mkdir dir="${appPack.dir}/build/libs" />
+		<mkdir dir="${appPack.dir}/build/classes" />
+
+		<!-- Copy project-libs references -->
+		<copy todir="${appPack.dir}/build/libs">
+			<fileset dir="${appPack.dir}/externalLibs">
+				<include name="*.jar" />
+			</fileset>
+		</copy> 
+
+		<!-- Copy project references -->
+
+		<!-- Copy project sources itself -->
+		<copy todir="${appPack.dir}/build/src">
+			<fileset dir="${appPack.dir}/project/src">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<javac includeantruntime="false" source="1.8" target="1.8"
+			srcdir="${appPack.dir}/build/src" destdir="${appPack.dir}/build/classes"
+			encoding="UTF-8">
+			<classpath>
+				<fileset dir="${appPack.dir}/build/libs">
+					<include name="*" />
+				</fileset>
+			</classpath>
+		</javac>
+
+		<!-- Copy over none Java-Files -->
+		<copy todir="${appPack.dir}/build/classes">
+			<fileset dir="${appPack.dir}/project/src">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="copy-distros">
+		<copy todir="${proj.home}/distro">
+			<fileset dir="${appPack.dir}/deploy/bundles">
+				<include name="*.dmg" />
+				<include name="*.pkg" />
+				<include name="*.exe" />
+				<include name="*.msi" />
+				<include name="*.rpm" />
+				<include name="*.deb" />
+			</fileset>
+		</copy>
+
+	</target>
+	<target name="deploy-init" depends="setup-staging-area, do-compile, init-fx-tasks">
+		<delete dir="${appPack.dir}/deploy" />
+
+		<delete dir="${appPack.dir}/dist/libs" />
+		<mkdir dir="${appPack.dir}/dist/libs" />
+
+		<copy todir="${appPack.dir}/dist/libs">
+			<fileset dir="${appPack.dir}/externalLibs">
+				<include name="*" />
+			</fileset>
+		</copy>
+
+	</target>
+	<target name="deploy-tool">
+		<fx:resources id="appRes">
+			<fx:fileset dir="${appPack.dir}/dist" includes="MovieLab_RI.jar" />
+			<fx:fileset dir="${appPack.dir}/dist" includes="libs/*" />
+			<fx:fileset dir="${appPack.dir}/dist" includes="resources/**" />
+		</fx:resources>
+
+		<fx:application id="fxApplication" name="${toolName}Validator"
+			mainClass="com.movielabs.mddf.tools.${toolName}Tool" version="${app.version}" />
+
+		<mkdir dir="${appPack.dir}/build/classes/META-INF" />
+
+		<fx:jar destfile="${appPack.dir}/dist/MovieLab_RI.jar">
+			<fx:application refid="fxApplication" />
+			<fileset dir="${appPack.dir}/build/classes">
+			</fileset>
+			<fx:resources refid="appRes" />
+
+			<manifest>
+				<attribute name="Implementation-Vendor" value="MovieLabs" />
+				<attribute name="Implementation-Title" value="${toolName}Validator" />
+				<attribute name="Implementation-Version" value="0.1" />
+				<attribute name="JavaFX-Feature-Proxy" value="None" />
+			</manifest>
+		</fx:jar>
+
+		<mkdir dir="${appPack.dir}/deploy" />
+		<!-- Need to use ${appPack.dir} because somehow the ant task is calculating 
+			the directory differently -->
+		<fx:deploy embedJNLP="false" extension="false" includeDT="false"
+			offlineAllowed="true" outdir="${appPack.dir}/deploy" outfile="${toolName}_Validator"
+			nativeBundles="all" updatemode="background">
+
+			<fx:platform basedir="${java.home}" />
+
+			<fx:info title="${toolName}Validator" vendor="Motion Picture Laboratories, Inc."
+				description="${toolName} Validator" category="Interactivity"
+				copyright="(c) 2016 Motion Picture Laboratories, Inc." license="MIT" />
+			<fx:application refId="fxApplication" />
+			<fx:resources refid="appRes" />
+		</fx:deploy>
+
+	</target>
+
+	<target name="deploy-all"
+		depends="setup-staging-area, do-compile, init-fx-tasks, deploy-init">
+		<antcall target="deploy-tool">
+			<param name="toolName" value="Avails" />
+			<param name="app.version" value="${app.version.avail}" />
+		</antcall>
+		<antcall target="deploy-tool">
+			<param name="toolName" value="Manifest" />
+			<param name="app.version" value="${app.version.cmm}" />
+		</antcall>
+		<antcall target="copy-distros" />
+	</target>
+
+	<target name="deploy-avails"
+		depends="setup-staging-area, do-compile, init-fx-tasks, deploy-init">
+		<antcall target="deploy-tool">
+			<param name="toolName" value="Avails" />
+			<param name="app.version" value="${app.version.avail}" />
+		</antcall>
+		<antcall target="copy-distros" />
+	</target>
+
+	<target name="deploy-cmm"
+		depends="setup-staging-area, do-compile, init-fx-tasks, deploy-init">
+		<antcall target="deploy-tool">
+			<param name="toolName" value="Avails" />
+			<param name="app.version" value="${app.version.cmm}" />
+		</antcall>
+		<antcall target="copy-distros" />
+	</target>
+
+
+
+
+
+</project>

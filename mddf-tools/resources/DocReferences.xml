@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DocRef>
+	<Specification id="CM" label="TR-META-CM">
+		<!-- Used by ManifestValidator -->
+		<Ref id="cm001a">
+			<Version id="2.4">
+				<Label>Section 2.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="cm001b">
+			<Version id="2.4">
+				<Label>Section 2.1</Label>
+				<RelURL></RelURL>
+			</Version>
+			<Version id="2.4a">
+				<Label>Section 2.3.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="cm002">
+			<Version id="2.4">
+				<Label>Section 4.1.1.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="cm003">
+			<Version id="2.4">
+				<Label>Section 4.1.1.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="cm004">
+			<Version id="2.4">
+				<Label>Section 4.1.1.3</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="cm005">
+			<Version id="2.4">
+				<Label>Section 4.1.1.7</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="cm006">
+			<Version id="2.4">
+				<Label>Section 4.1.2.3</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="cm007">
+			<Version id="2.4">
+				<Label>Section 4.1.4.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="cm007">
+			<Version id="2.4">
+				<Label>Section 4.2.4.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+	</Specification>
+	<Specification id="MMM" label="TR-META-MMM">
+		<!-- Used by ManifestValidator -->
+		<Ref id="mmm001">
+			<Version id="1.5">
+				<Label>Section 6.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="mmm002">
+			<Version id="1.5">
+				<Label>Section 7.2.3</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="mmm003">
+			<Version id="1.5">
+				<Label>Section 8.3.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+	</Specification>
+	<Specification id="MMM-BP" label="BP-META-MMMD">
+		<!-- Used by ManifestValidator.validateId() -->
+		<Ref id="mmbp01.1">
+			<Version id="1.0">
+				<Label>Section 3.6</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="mmbp01.2">
+			<Version id="1.0">
+				<Label>Section 3.2.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="mmbp01.3">
+			<Version id="1.0">
+				<Label>Section 3.1.7</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+	</Specification>
+	<Specification id="EIDR-IDF" label="EIDR: ID FORMAT">
+		<!-- Used by ManifestValidator.validateSsid() -->
+		<Ref id="eidr01">
+			<Version id="1.3">
+				<Label>Section 3.6</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="eidr01-s">
+			<Version id="1.3">
+				<Label>Section 4.2.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="eidr01-x">
+			<Version id="1.3">
+				<Label>Section 4.2.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+	</Specification>
+	<Specification id="MMC" label="TR-META-MMC">
+		<!-- Used by MMCValidator  -->
+		<Ref id="mmc01">
+			<Version id="1.0">
+				<Label>Section 2.1.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+		<Ref id="mmc02">
+			<Version id="1.0">
+				<Label>Section 3.1.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+	</Specification>
+	<Specification id="AVAIL" label="TR-META-AVAIL"> 
+		<Ref id="avail01">
+			<Version id="2.1">
+				<Label>Section 2.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+		<Ref id="avail02">
+			<Version id="2.1">
+				<Label>Section 2.2.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+		<Ref id="avail03">
+			<Version id="2.1">
+				<Label>Section 2.2.2.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+		<Ref id="avail04">
+			<Version id="2.1">
+				<Label>Section 2.2.2.4</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+		<Ref id="avail05">
+			<Version id="2.1">
+				<Label>Section 2.2.2.5</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+		<Ref id="avail06">
+			<Version id="2.1">
+				<Label>Section 1.3</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+		<Ref id="avail07">
+			<Version id="2.1">
+				<Label>Section 2.2.3</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+		<Ref id="avail08">
+			<Version id="2.1">
+				<Label>Section 2.2.3.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+		<Ref id="avail09">
+			<Version id="2.1">
+				<Label>Section 2.2.4</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+	</Specification>
+</DocRef>

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Craig Seidel (private) -->
+<xs:schema xmlns:avails="http://www.movielabs.com/schema/avails/v2.1/avails" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:md="http://www.movielabs.com/schema/md/v2.4/md" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.4" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.movielabs.com/schema/avails/v2.1/avails" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.1">
+	<xs:import namespace="http://www.movielabs.com/schema/md/v2.4/md" schemaLocation="md-v2.4.xsd"/>
+	<xs:import namespace="http://www.movielabs.com/schema/mdmec/v2.4" schemaLocation="mdmec-v2.4.xsd"/>
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	<!-- XMLDSIG Schema can be found at http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd#%20%20%20%20xmldsig-core-schema.xsd -->
+	<!--EMA CONTENT AVAILABILITY METADATA (Avails)-->
+	<!--Verson 2.1-->
+	<xs:complexType name="TransCondDate-type">
+		<xs:sequence>
+			<xs:element name="Event" type="xs:string"/>
+			<xs:element name="Condition" type="xs:string"/>
+			<xs:element name="Locale" type="md:Region-type"/>
+			<xs:element name="Lag" type="xs:duration"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AvailDisposition-type">
+		<xs:sequence>
+			<xs:element name="EntryType" type="xs:string"/>
+			<xs:element name="IssueDate" type="md:YearDateOrTime-type" minOccurs="0"/>
+			<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AvailSeriesMetadata-type">
+		<xs:sequence>
+			<xs:element name="SeriesContentID" type="md:id-type"/>
+			<xs:element name="SeriesEIDR-URN" type="md:id-type" minOccurs="0"/>
+			<xs:element name="SeriesTitleDisplayUnlimited" type="xs:string"/>
+			<xs:element name="SeriesTitleInternalAlias" type="xs:string"/>
+			<xs:element name="LocalSeriesTitle" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="language" type="xs:language"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="VersionDescription" type="xs:string" minOccurs="0"/>
+			<xs:element name="ReleaseDate" minOccurs="0">
+				<xs:simpleType>
+					<xs:union memberTypes="xs:gYear xs:gYearMonth xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SeriesAltIdentifier" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="md:ContentIdentifier-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="NumberOfSeasons" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:integer">
+							<xs:attribute name="Estimate" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SeriesStatus" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CompanyDisplayCredit" type="md:CompanyCredits-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AvailSeasonMetadata-type">
+		<xs:sequence>
+			<xs:element name="SeasonContentID" type="md:id-type"/>
+			<xs:element name="SeasonEIDR-URN" type="md:id-type" minOccurs="0"/>
+			<xs:element name="SeasonTitleDisplayUnlimited" type="xs:string"/>
+			<xs:element name="SeasonTitleInternalAlias" type="xs:string" minOccurs="0"/>
+			<xs:element name="SeasonNumber" type="md:ContentSequenceInfo-type"/>
+			<xs:element name="VersionDescription" type="xs:string" minOccurs="0"/>
+			<xs:element name="ReleaseDate" minOccurs="0">
+				<xs:simpleType>
+					<xs:union memberTypes="xs:gYear xs:gYearMonth xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SeasonAltIdentifier" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="md:ContentIdentifier-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="NumberOfEpisodes" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:integer">
+							<xs:attribute name="Estimate" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SeasonStatus" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SeriesMetadata" type="avails:AvailSeriesMetadata-type"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AvailEpisodeMetadata-type">
+		<xs:complexContent>
+			<xs:extension base="avails:AvailMetadata-type">
+				<xs:sequence>
+					<xs:element name="EpisodeNumber" type="md:ContentSequenceInfo-type"/>
+					<xs:choice>
+						<xs:element name="SeasonMetadata" type="avails:AvailSeasonMetadata-type"/>
+						<xs:element name="SeriesMetadata" type="avails:AvailSeriesMetadata-type"/>
+					</xs:choice>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AvailMetadata-type">
+		<xs:sequence>
+			<xs:element name="TitleDisplayUnlimited">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TitleInternalAlias" type="xs:string"/>
+			<xs:element name="EditEIDR-URN" type="md:id-type" minOccurs="0"/>
+			<xs:element name="TitleEIDR-URN" type="md:id-type" minOccurs="0"/>
+			<xs:element name="AltIdentifier" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="md:ContentIdentifier-type">
+							<xs:attribute name="scope" type="xs:string"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="VersionDescription" type="xs:string" minOccurs="0"/>
+			<xs:element name="ReleaseDate" minOccurs="0">
+				<xs:simpleType>
+					<xs:union memberTypes="xs:gYear xs:gYearMonth xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RunLength" type="xs:duration" minOccurs="0"/>
+			<xs:element name="ReleaseHistory" type="md:ReleaseHistory-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="USACaptionsExemptionReason" type="xs:positiveInteger" minOccurs="0"/>
+			<xs:element name="Ratings" type="md:ContentRating-type" minOccurs="0"/>
+			<xs:element name="EncodeID" type="md:id-type" minOccurs="0"/>
+			<xs:element name="LocalizationOffering" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AvailUnitMetadata-type">
+		<xs:complexContent>
+			<xs:extension base="avails:AvailMetadata-type">
+				<xs:sequence>
+					<xs:element name="CompanyDisplayCredit" type="md:CompanyCredits-type" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AvailCaption-type">
+		<xs:sequence>
+			<xs:element name="CaptionIncluded" type="xs:boolean"/>
+			<xs:element name="CaptionRequired" type="xs:boolean"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AvailTerms-type">
+		<xs:choice>
+			<xs:element name="Money" type="md:Money-type"/>
+			<xs:element name="Event">
+				<xs:simpleType>
+					<xs:union memberTypes="xs:dateTime xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Text" type="xs:string"/>
+			<xs:element name="Duration" type="xs:duration"/>
+			<xs:element name="URI" type="xs:anyURI"/>
+			<xs:element name="Language" type="xs:language"/>
+			<xs:element name="ID" type="md:id-type"/>
+			<xs:element name="YearDateTime" type="md:YearDateOrTime-type"/>
+			<xs:element name="Time" type="xs:time"/>
+			<xs:any namespace="##other"/>
+		</xs:choice>
+		<xs:attribute name="termName" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="AvailTrans-type">
+		<xs:sequence>
+			<xs:element name="LicenseType" type="xs:string"/>
+			<xs:element name="Description" type="xs:string"/>
+			<xs:element name="Territory" type="md:Region-type" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>work Intended Audience Regiion</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TerritoryExcluded" type="md:Region-type" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>work Intended Audience Regiion</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice>
+				<xs:element name="Start" type="xs:dateTime"/>
+				<xs:element name="StartCondition" type="xs:string"/>
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="End" type="xs:dateTime"/>
+				<xs:element name="EndCondition" type="xs:string"/>
+			</xs:choice>
+			<xs:element name="StoreLanguage" type="xs:language" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="LicenseRightsDescription" type="xs:string"/>
+			<xs:element name="FormatProfile" type="xs:string"/>
+			<xs:element name="ContractID" type="xs:string" minOccurs="0"/>
+			<xs:element name="Term" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="avails:AvailTerms-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ExperienceCondition" type="xs:string" minOccurs="0"/>
+			<xs:element name="OtherInstructions" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="TransactionID" type="md:id-type"/>
+	</xs:complexType>
+	<xs:complexType name="AvailAsset-type">
+		<xs:sequence>
+			<xs:element name="WorkType" type="md:string-WorkType"/>
+			<xs:element name="WorkTypeDetail" type="md:string-WorkTypeDetail" minOccurs="0"/>
+			<xs:choice>
+				<xs:element name="Metadata" type="avails:AvailUnitMetadata-type"/>
+				<xs:element name="EpisodeMetadata" type="avails:AvailEpisodeMetadata-type"/>
+				<xs:element name="SeasonMetadata" type="avails:AvailSeasonMetadata-type"/>
+				<xs:element name="SeriesMetadata" type="avails:AvailSeriesMetadata-type"/>
+			</xs:choice>
+			<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="contentID" type="md:ContentID-type" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="AvailSharedEntitlement-type">
+		<xs:sequence>
+			<xs:element name="EcosystemID" type="md:id-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="ecosystem" type="md:YearDateOrTime-type"/>
+	</xs:complexType>
+	<xs:complexType name="Avail-type">
+		<xs:sequence>
+			<xs:element name="ALID" type="md:AssetLogicalID-type"/>
+			<xs:element name="Disposition" type="avails:AvailDisposition-type"/>
+			<xs:element name="Licensor" type="mdmec:Publisher-type"/>
+			<xs:element name="ServiceProvider" type="mdmec:Publisher-type" minOccurs="0"/>
+			<xs:element name="AvailType" type="xs:string"/>
+			<xs:element name="ShortDescription" type="xs:string"/>
+			<xs:element name="Asset" type="avails:AvailAsset-type" maxOccurs="unbounded"/>
+			<xs:element name="Transaction" type="avails:AvailTrans-type" maxOccurs="unbounded"/>
+			<xs:element name="CoreMetadata" type="mdmec:CoreMetadata-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SharedEntitlement" type="avails:AvailSharedEntitlement-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ExceptionFlag" type="xs:boolean" default="true" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AvailList-type">
+		<xs:sequence>
+			<xs:element name="Avail" type="avails:Avail-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Avail" type="avails:Avail-type"/>
+	<xs:element name="AvailList" type="avails:AvailList-type"/>
+	<!--*** Signed Avails ***-->
+	<xs:complexType name="AvailListSigned-type">
+		<xs:sequence>
+			<xs:element ref="avails:AvailList" maxOccurs="unbounded"/>
+			<xs:element ref="ds:Signature" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="AvailListSigned" type="avails:AvailListSigned-type"/>
+</xs:schema>
