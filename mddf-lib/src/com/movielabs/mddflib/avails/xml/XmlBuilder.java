@@ -22,8 +22,6 @@
  */
 package com.movielabs.mddflib.avails.xml;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,16 +33,12 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
-import org.jdom2.filter.Filters;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.output.DOMOutputter;
-import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
-import com.movielabs.mddflib.logging.DefaultLogging;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.SchemaWrapper;
 
 /**
  * Code and functionality formerly in AvailsSheet
@@ -55,9 +49,6 @@ import com.movielabs.mddflib.logging.LogMgmt;
 public class XmlBuilder {
 
 	private static final String moduleId = "XmlBuilder";
-	public static Namespace xsiNSpace = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-	public static Namespace xsNSpace = Namespace.getNamespace("xs", "http://www.w3.org/2001/XMLSchema");
-
 	private String xsdVersion;
 	private String mdMecVer;
 	private String mdVer;
@@ -66,11 +57,9 @@ public class XmlBuilder {
 	private Namespace mdNSpace;
 	private Namespace mdMecNSpace;
 
-	private Document availsXsd;
-	private Document mdXsd;
-	private Document mdMecXsd;
-
-	private XPathFactory xpfac;
+	private SchemaWrapper availsSchema;
+	private SchemaWrapper mdSchema;
+	private SchemaWrapper mdMecSchema;
 
 	private Map<Object, Pedigree> pedigreeMap = null;
 	private Map<String, Element> alidElMap = null;
@@ -82,18 +71,17 @@ public class XmlBuilder {
 	private LogMgmt logger;
 
 	public XmlBuilder(LogMgmt logger) {
-		xpfac = XPathFactory.instance();
 		this.logger = logger;
 	}
 
 	public boolean setVersion(String availXsdVersion) {
-		mdXsd = null;
-		mdMecXsd = null;
-		availsXsd = null;
+		availsSchema = null;
+		mdSchema = null;
+		mdMecSchema = null;
 		xsdVersion = null;
 		String xsdRsrc = "avails-v" + availXsdVersion;
-		availsXsd = getSchema(xsdRsrc);
-		if (availsXsd == null) {
+		availsSchema = SchemaWrapper.factory(xsdRsrc);
+		if (availsSchema == null) {
 			return false;
 		}
 		availsNSpace = Namespace.getNamespace("avails",
@@ -109,55 +97,20 @@ public class XmlBuilder {
 			xsdVersion = null;
 			return false;
 		}
-		mdMecXsd = getSchema("mdmec-v" + mdMecVer);
+		mdMecSchema = SchemaWrapper.factory("mdmec-v" + mdMecVer);
 		mdMecNSpace = Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v" + mdMecVer);
 
-		mdXsd = getSchema("md-v" + mdVer);
+		mdSchema = SchemaWrapper.factory("md-v" + mdVer);
 		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + mdVer + "/md");
 
-		if (mdMecXsd == null || (mdXsd == null)) {
+		if (mdMecSchema == null || (mdSchema == null)) {
 			xsdVersion = null;
 			return false;
 		}
 		xsdVersion = availXsdVersion;
-		ingest("avail", availsXsd);
 		String msg = "XmlBuilder initialized for v" + availXsdVersion;
 		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 		return true;
-	}
-
-	/**
-	 * @param namespace
-	 * @param xsdDoc
-	 */
-	private void ingest(String string, org.jdom2.Document xsdDoc) {
-
-	}
-
-	/**
-	 * Return the XSD resource with the specified schema. If the requested
-	 * version is not supported a <tt>null</tt> value is returned.
-	 * 
-	 * @param xsdRsrc
-	 * @return
-	 */
-	private org.jdom2.Document getSchema(String xsdRsrc) {
-		String rsrcPath = "/com/movielabs/mddf/resources/" + xsdRsrc + ".xsd";
-		SAXBuilder builder = new SAXBuilder();
-		builder.setJDOMFactory(new LocatedJDOMFactory());
-		InputStream inp = XmlBuilder.class.getResourceAsStream(rsrcPath);
-		if (inp == null) {
-			// Unsupported version of an MDDF Schema
-			return null;
-		}
-		try {
-			InputStreamReader isr = new InputStreamReader(inp, "UTF-8");
-			org.jdom2.Document schemaDoc = builder.build(isr);
-			return schemaDoc;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	/**
@@ -197,7 +150,7 @@ public class XmlBuilder {
 		root = new Element("AvailList", availsNSpace);
 		root.addNamespaceDeclaration(mdNSpace);
 		root.addNamespaceDeclaration(mdMecNSpace);
-		root.addNamespaceDeclaration(xsiNSpace);
+		root.addNamespaceDeclaration(SchemaWrapper.xsiNSpace);
 		doc.setRootElement(root);
 
 		// build document components row by row....
@@ -249,8 +202,8 @@ public class XmlBuilder {
 	Element getAvailElement(RowToXmlHelper curRow) {
 		Pedigree pg = curRow.getPedigreedData("Avail/ALID");
 		/*
-		 * TODO: next line throws a NullPtrException if column is missing.
-		 * How do we handle?
+		 * TODO: next line throws a NullPtrException if column is missing. How
+		 * do we handle?
 		 */
 		String alid = pg.getRawValue();
 		Element availEL = alidElMap.get(alid);
@@ -279,7 +232,7 @@ public class XmlBuilder {
 			Element atEl = curRow.mGenericElement("AvailType", availType, getAvailsNSpace());
 			availEL.addContent(atEl);
 			addToPedigree(atEl, curRow.getPedigreedData("AvailAsset/WorkType"));
-			
+
 			Element sdEl = curRow.mGenericElement("ShortDescription", shortDesc, getAvailsNSpace());
 			availEL.addContent(sdEl);
 
@@ -391,13 +344,7 @@ public class XmlBuilder {
 		if (xsdVersion == null) {
 			throw new IllegalStateException("The XSD version was not set or is unsupported.");
 		}
-		Element target = getElement(elementName, schema);
-		if (target == null) {
-			// TODO: Maybe its an attribute?
-			throw new IllegalArgumentException("Schema '" + schema + "' does not define element '" + elementName + "'");
-		}
-		String minVal = target.getAttributeValue("minOccurs", "1");
-		return (!minVal.equals("0"));
+		return getSchema(schema).isRequired(elementName);
 	}
 
 	/**
@@ -411,11 +358,6 @@ public class XmlBuilder {
 		if (xsdVersion == null) {
 			throw new IllegalStateException("The XSD version was not set or is unsupported.");
 		}
-		String schema = ns.getPrefix();
-		Element target = getElement(elementName, schema);
-		if (target == null) {
-			throw new IllegalArgumentException("Schema '" + schema + "' does not define element '" + elementName + "'");
-		}
 		if (inputValue == null) {
 			inputValue = "";
 		}
@@ -424,7 +366,9 @@ public class XmlBuilder {
 		 */
 		String formattedValue = inputValue.replaceAll("[\\s]*$", "");
 		formattedValue = formattedValue.replaceAll("^[\\s]*", "");
-		String type = target.getAttributeValue("type", "xs:string");
+
+		String schema = ns.getPrefix();
+		String type = getSchema(schema).getType(elementName);
 		/*
 		 * WHAT ABOUT:::::> <xs:element name="Event"> <xs:simpleType> <xs:union
 		 * memberTypes="xs:dateTime xs:date"/> </xs:simpleType> </xs:element>
@@ -459,25 +403,17 @@ public class XmlBuilder {
 		return formattedValue;
 	}
 
-	private Element getElement(String elementName, String schema) {
-		XPathExpression<Element> xpExpression = xpfac.compile(".//xs:element[@name='" + elementName + "']",
-				Filters.element(), null, xsNSpace);
-		Element rootEl = null;
+	private SchemaWrapper getSchema(String schema) {
 		switch (schema) {
 		case "avails":
-			rootEl = availsXsd.getRootElement();
-			break;
+			return availsSchema;
 		case "mdmec":
-			rootEl = mdMecXsd.getRootElement();
-			break;
+			return mdMecSchema;
 		case "md":
-			rootEl = mdXsd.getRootElement();
-			break;
+			return mdSchema;
 		default:
 			throw new IllegalArgumentException("Schema '" + schema + "' is unsupported.");
 		}
-		Element target = xpExpression.evaluateFirst(rootEl);
-		return target;
 	}
 
 	/**

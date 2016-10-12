@@ -41,11 +41,11 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
-//import com.movielabs.mddf.preProcess.ValidatorTool;
-import com.movielabs.mddflib.ManifestIngester;
+
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator.XrefCounter;
+import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
  * Validates a Manifest file as conforming to the Common Media Manifest (CMM) as
@@ -58,7 +58,7 @@ import com.movielabs.mddflib.manifest.validation.ManifestValidator.XrefCounter;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class ManifestValidator extends ManifestIngester {
+public class ManifestValidator extends XmlIngester {
 
 	/**
 	 * Used to facilitate keeping track of cross-references and identifying
@@ -169,7 +169,7 @@ public class ManifestValidator extends ManifestIngester {
 	 * @param manifestFile
 	 */
 	protected boolean validateXml(File manifestFile) {
-		String manifestXsdFile = "./resources/manifest-v" + ManifestIngester.MAN_VER + ".xsd";
+		String manifestXsdFile = "./resources/manifest-v" + XmlIngester.MAN_VER + ".xsd";
 		curFileIsValid = validateXml(manifestFile, manifestXsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}

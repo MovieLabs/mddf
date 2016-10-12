@@ -31,8 +31,8 @@ import org.jdom2.JDOMException;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 
-import com.movielabs.mddflib.ManifestIngester;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
  * 
@@ -47,7 +47,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class ModelValidator extends ManifestIngester {
+public class ModelValidator extends XmlIngester {
 
 	private static final String LOGMSG_ID = "ModelValidator";
 	protected Element curRootEl;

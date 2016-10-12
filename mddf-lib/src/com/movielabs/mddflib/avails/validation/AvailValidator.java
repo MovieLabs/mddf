@@ -38,10 +38,10 @@ import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 
-import com.movielabs.mddflib.ManifestIngester;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
+import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
  * Validates an Avails file as conforming to EMA Content Availability Data
@@ -54,7 +54,7 @@ import com.movielabs.mddflib.logging.LogReference;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class AvailValidator extends ManifestIngester {
+public class AvailValidator extends XmlIngester {
 
 	/**
 	 * Used to facilitate keeping track of cross-references and identifying
@@ -164,7 +164,7 @@ public class AvailValidator extends ManifestIngester {
 	 * @param xmlFile
 	 */
 	protected boolean validateXml(File xmlFile) {
-		String xsdFile = "./resources/avails-v" + ManifestIngester.AVAIL_VER + ".xsd";
+		String xsdFile = "./resources/avails-v" + XmlIngester.AVAIL_VER + ".xsd";
 		curFileIsValid = validateXml(xmlFile, xsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}

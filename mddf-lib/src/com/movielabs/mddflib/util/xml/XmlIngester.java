@@ -19,7 +19,7 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib;
+package com.movielabs.mddflib.util.xml;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,7 +46,6 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
-import org.jdom2.located.Located;
 import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.xpath.XPathFactory;
 import org.xml.sax.SAXException;
@@ -54,8 +53,6 @@ import org.xml.sax.SAXParseException;
 
 import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.logging.LogMgmt;
-import com.movielabs.mddflib.logging.LogReference;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
@@ -64,7 +61,7 @@ import net.sf.json.JSONSerializer;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public abstract class ManifestIngester {
+public abstract class XmlIngester {
 	public static final String SCHEMA_PREFIX = "http://www.movielabs.com/schema/";
 	public static final String NSPACE_MANIFEST_PREFIX = "http://www.movielabs.com/schema/manifest/v";
 	public static final String NSPACE_MANIFEST_SUFFIX = "/manifest";
@@ -98,7 +95,7 @@ public abstract class ManifestIngester {
 	protected int logMsgDefaultTag = LogMgmt.TAG_N_A;
 	protected LogMgmt loggingMgr;
 
-	public ManifestIngester(LogMgmt loggingMgr) {
+	public XmlIngester(LogMgmt loggingMgr) {
 		this.loggingMgr = loggingMgr;
 	}
 
@@ -522,9 +519,9 @@ public abstract class ManifestIngester {
 	public static void setSourceDirPath(String srcPath) {
 		srcFile = new File(srcPath);
 		if (srcFile.isFile()) {
-			ManifestIngester.sourceFolder = srcFile.getParentFile();
+			XmlIngester.sourceFolder = srcFile.getParentFile();
 		} else {
-			ManifestIngester.sourceFolder = srcFile;
+			XmlIngester.sourceFolder = srcFile;
 		}
 
 	}
