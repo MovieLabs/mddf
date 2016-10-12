@@ -41,7 +41,6 @@ import org.jdom2.output.XMLOutputter;
 
 import com.movielabs.mddf.tools.ValidatorTool.Context;
 import com.movielabs.mddf.tools.resources.Foo;
-import com.movielabs.mddflib.ManifestIngester;
 import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.avails.xlsx.AvailSS;
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
@@ -54,6 +53,8 @@ import com.movielabs.mddflib.manifest.validation.ManifestValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.CpeIP1Validator;
 import com.movielabs.mddflib.manifest.validation.profiles.MMCoreValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator;
+import com.movielabs.mddflib.util.xml.XmlIngester;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -290,7 +291,7 @@ public class ValidationController {
 		if (!scriptFile.isFile()) {
 			return;
 		}
-		JSONObject script = ManifestIngester.getAsJson(scriptFile);
+		JSONObject script = XmlIngester.getAsJson(scriptFile);
 		JSONObject validationTasks = script.optJSONObject("validate");
 		if (validationTasks == null) {
 			return;
@@ -457,9 +458,9 @@ public class ValidationController {
 				docRootEl = xmlDoc.getRootElement();
 			}
 		} else if (srcFile.getAbsolutePath().endsWith("xml")) {
-			docRootEl = ManifestIngester.getAsXml(srcFile);
+			docRootEl = XmlIngester.getAsXml(srcFile);
 		}
-		ManifestIngester.setSourceDirPath(srcFile.getAbsolutePath());
+		XmlIngester.setSourceDirPath(srcFile.getAbsolutePath());
 		/*
 		 * Identify type of XML file (i.e., Manifest, Avail, etc)
 		 */
@@ -479,17 +480,17 @@ public class ValidationController {
 			return;
 		}
 		logMgr.log(LogMgmt.LEV_INFO, logTag, "Validating file as a " + schemaType, srcFile, MODULE_ID);
-		String schemaPrefix = ManifestIngester.SCHEMA_PREFIX + schemaType + "/v";
+		String schemaPrefix = XmlIngester.SCHEMA_PREFIX + schemaType + "/v";
 		String schemaVer = nSpaceUri.replace(schemaPrefix, "");
 		schemaVer = schemaVer.replace("/" + schemaType, "");
 		logMgr.log(LogMgmt.LEV_DEBUG, logTag, "Using Schema Version " + schemaVer, srcFile, MODULE_ID);
 		switch (logTag) {
 		case LogMgmt.TAG_MANIFEST:
-			ManifestIngester.setManifestVersion(schemaVer);
+			XmlIngester.setManifestVersion(schemaVer);
 			validateManifest(srcFile, uxProfile, useCases);
 			break;
 		case LogMgmt.TAG_AVAIL:
-			ManifestIngester.setAvailVersion(schemaVer);
+			XmlIngester.setAvailVersion(schemaVer);
 			validateAvail(srcFile, docRootEl, pedigreeMap);
 			break;
 		}
@@ -601,7 +602,7 @@ public class ValidationController {
 	 */
 	protected void validateManifest(File srcFile, String uxProfile, List<String> useCases)
 			throws IOException, JDOMException {
-		Element docRootEl = ManifestIngester.getAsXml(srcFile);
+		Element docRootEl = XmlIngester.getAsXml(srcFile);
 		boolean isValid = true;
 		ManifestValidator tool1 = new ManifestValidator(validateC, logMgr);
 		isValid = tool1.process(srcFile);
@@ -627,8 +628,8 @@ public class ValidationController {
 		getSupportedProfiles();
 		List<String> profileNameList = new ArrayList<String>();
 		profileNameList.add(uxProfile);
-		Element compEl = docRootEl.getChild("Compatibility", ManifestIngester.manifestNSpace);
-		List<Element> profileElList = compEl.getChildren("Profile", ManifestIngester.manifestNSpace);
+		Element compEl = docRootEl.getChild("Compatibility", XmlIngester.manifestNSpace);
+		List<Element> profileElList = compEl.getChildren("Profile", XmlIngester.manifestNSpace);
 		if (!profileElList.isEmpty()) {
 			for (int i = 0; i < profileElList.size(); i++) {
 				Element nextProfile = profileElList.get(i);
