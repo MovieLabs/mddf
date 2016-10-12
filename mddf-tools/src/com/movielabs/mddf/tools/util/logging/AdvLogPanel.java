@@ -72,7 +72,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	public AdvLogPanel() {
 		treeView = new LogNavPanel();
 		treeView.addListener(this);
-		tableView = new LogPanel();
+		tableView = new LogPanel( );
 		tableView.addMouseListener(new PopClickListener(this));
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeView, tableView);
 		splitPane.setContinuousLayout(true);
@@ -80,12 +80,24 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent pce) {
+
+				System.out.println("AdvLogPanel: JSplitPane PropertyChangeEvent" );
 				String propertyName = pce.getPropertyName();
 				JSplitPane sourceSplitPane = (JSplitPane) pce.getSource();
 				if (propertyName.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
 					setSize(getWidth(), getHeight());
 				}
 			}
+		});
+		tableView.addPropertyChangeListener( new PropertyChangeListener(){
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				// TODO Auto-generated method stub
+
+				System.out.println("AdvLogPanel: tableView PropertyChangeEvent" );
+			}
+			
 		});
 		// Add GUI components
 		this.setLayout(new BorderLayout());
@@ -118,6 +130,10 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		});
 	}
 
+	public void setSize( ){ 
+		setSize(getWidth(), getHeight());
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -127,7 +143,6 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	public void setSize(int width, int height) {
 		int tableWidth = width - treeView.getWidth() - splitPane.getDividerSize();
 		tableView.setSize(tableWidth, height);
-
 	}
 
 	/**
@@ -403,7 +418,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		LogEntryNode entry = treeView.append(level, tag, msg, xmlFile, line, moduleID, tooltip, srcRef);
 		entryList.add(entry);
 		tableView.append(entryList);
-
+		setSize(getWidth(), getHeight());
 	}
 
 	/*

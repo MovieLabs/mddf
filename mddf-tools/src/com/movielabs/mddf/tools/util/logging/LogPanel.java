@@ -28,6 +28,10 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.JTable;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -35,6 +39,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
 import com.movielabs.mddf.tools.util.FileChooserDialog;
@@ -132,14 +137,18 @@ public class LogPanel extends JPanel {
 
 	private final String columnNames[] = { "Level", "Type", "Details", "Line", "File", "Reference" };
 
-	private float[] colWidthPercentage = { 0.08f, 0.08f, 0.50f, 0.07f, 0.2f, 0.12f };
+	private float[] colWidthBASE = { 0.08f, 0.08f, 0.50f, 0.07f, 0.2f, 0.12f };
+	private float[] colWidthSaved = colWidthBASE;
 	private boolean firstResize = true;
 	private TableRowSorter<DefaultTableModel> sorter;
+	private AdvLogPanel advLogPanel;
 
 	/**
 	 * Create the panel.
+	 * 
+	 * @param advLogPanel
 	 */
-	public LogPanel() {
+	public LogPanel( ) { 
 		setBackground(UIManager.getColor("OptionPane.warningDialog.titlePane.background"));
 		final Object testData[][] = {};
 		model = new DefaultTableModel(testData, columnNames);
@@ -156,7 +165,51 @@ public class LogPanel extends JPanel {
 		scPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		add(scPane);
 
+		/*
+		 * Following is broken code (hence commented out for now). Intent is to
+		 * detect user resize of column widths and save for next time setSize()
+		 * is invoked.
+		 */
+		TableColumnModelListener tableColumnModelListener = new TableColumnModelListener() {
+			public void columnAdded(TableColumnModelEvent e) {
+			}
+
+			public void columnMarginChanged(ChangeEvent e) {
+				if (colWidthSaved[0] >= 1.0f) {
+					/*
+					 * NONE OF THESE WORK!!
+					 */
+					// System.out.println("Margin: colWidthSaved[2]=" +
+					// colWidthSaved[2]);
+					// saveColSize();
+					// Dimension newPS = scPane.getPreferredSize();
+					// int curW = (int) newPS.getWidth();
+					// setSize(curW, (int) (newPS.getHeight()+2));
+					// advLogPanel.setSize();
+				}
+			}
+
+			public void columnMoved(TableColumnModelEvent e) {
+			}
+
+			public void columnRemoved(TableColumnModelEvent e) {
+			}
+
+			public void columnSelectionChanged(ListSelectionEvent e) {
+			}
+		};
+		TableColumnModel columnModel = logTable.getColumnModel();
+		columnModel.addColumnModelListener(tableColumnModelListener);
+
 	}
+
+	// private void saveColSize() {
+	// for (int i = 0; i < logTable.getColumnModel().getColumnCount(); i++) {
+	// TableColumn column = logTable.getColumnModel().getColumn(i);
+	// colWidthSaved[i] = column.getPreferredWidth();
+	// }
+	// System.out.println("saveColSize: colWidthSaved[2]=" + colWidthSaved[2]);
+	// }
 
 	public void addMouseListener(MouseListener listener) {
 		super.addMouseListener(listener);
@@ -169,6 +222,7 @@ public class LogPanel extends JPanel {
 	 * @see com.movielabs.mddf.util.UiLogger#setWidth(int)
 	 */
 	public void setSize(int width, int ht) {
+		System.out.println("setSize");
 		if (width < 1) {
 			width = 1000;
 		}
@@ -176,13 +230,17 @@ public class LogPanel extends JPanel {
 		scPane.setPreferredSize(newPS);
 		// now apportion the col widths..
 		double total = 0;
+		float[] colWidthPercentage = new float[colWidthSaved.length];
 		for (int i = 0; i < logTable.getColumnModel().getColumnCount(); i++) {
 			if (!firstResize) {
 				TableColumn column = logTable.getColumnModel().getColumn(i);
 				colWidthPercentage[i] = column.getPreferredWidth();
+			} else {
+				colWidthPercentage[i] = colWidthSaved[i];
 			}
 			total += colWidthPercentage[i];
 		}
+		colWidthSaved = colWidthPercentage;
 		firstResize = false;
 		int totalW = 0;
 		for (int i = 0; i < logTable.getColumnModel().getColumnCount(); i++) {
@@ -221,6 +279,7 @@ public class LogPanel extends JPanel {
 			LogEntryNode entry = msgList.get(i);
 			append(entry);
 		}
+		firstResize = true;
 		int lastRow = model.getRowCount() - 1;
 		TableModelEvent evt = new TableModelEvent(model, firstRow, lastRow, TableModelEvent.ALL_COLUMNS,
 				TableModelEvent.INSERT);
