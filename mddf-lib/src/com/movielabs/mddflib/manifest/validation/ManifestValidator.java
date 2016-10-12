@@ -45,6 +45,7 @@ import org.jdom2.xpath.XPathExpression;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator.XrefCounter;
+import com.movielabs.mddflib.util.AbstractValidator;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
@@ -58,7 +59,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class ManifestValidator extends XmlIngester {
+public class ManifestValidator extends AbstractValidator {
 
 	/**
 	 * Used to facilitate keeping track of cross-references and identifying
@@ -104,16 +105,7 @@ public class ManifestValidator extends XmlIngester {
 
 	}
 
-	public static final String LOGMSG_ID = "ManifestValidator";
-	private static HashMap<String, String> id2typeMap;
-	private static JSONObject cmVocab;
-
-	protected boolean validateC;
-	protected Element curRootEl;
-	protected boolean curFileIsValid;
-	protected Map<String, HashSet<String>> idSets;
-	protected Map<String, Map<String, XrefCounter>> idXRefCounts;
-	protected Map<String, Map<String, Element>> id2XmlMappings;
+	public static final String LOGMSG_ID = "ManifestValidator"; 
 
 	static {
 		id2typeMap = new HashMap<String, String>();
@@ -125,7 +117,7 @@ public class ManifestValidator extends XmlIngester {
 		id2typeMap.put("ContentID", "cid");
  
 		try {
-			cmVocab = loadVocab(cmVrcPath, "CM");
+			controlledVocab = loadVocab(cmVrcPath, "CM");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -140,6 +132,10 @@ public class ManifestValidator extends XmlIngester {
 	public ManifestValidator(boolean validateC, LogMgmt loggingMgr) {
 		super(loggingMgr);
 		this.validateC = validateC;
+		
+		rootNS = manifestNSpace;
+		rootPrefix = "manifest:";
+		
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_MANIFEST;
 	}
@@ -179,9 +175,7 @@ public class ManifestValidator extends XmlIngester {
 	 */
 	protected void validateConstraints() {
 		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, "Validating constraints", curFile, LOGMSG_ID);
-		idSets = new HashMap<String, HashSet<String>>();
-		idXRefCounts = new HashMap<String, Map<String, XrefCounter>>();
-		id2XmlMappings = new HashMap<String, Map<String, Element>>();
+		super.validateConstraints();
 
 		// TODO: Load from JSON file....
 		/*
@@ -295,263 +289,7 @@ public class ManifestValidator extends XmlIngester {
 		 * BasicMetadata must be included for each Inventory/Metadata instance
 		 */
 
-	}
-
-	/**
-	 * @param elementName
-	 * @param idxAttribute
-	 * @param parentName
-	 */
-	protected void validateIndexing(String elementName, String idxAttribute, String parentName) {
-		XPathExpression<Element> xpExpression = xpfac.compile(".//manifest:" + parentName, Filters.element(), null,
-				manifestNSpace);
-		List<Element> parentElList = xpExpression.evaluate(curRootEl);
-		for (int i = 0; i < parentElList.size(); i++) {
-			Element parentEl = (Element) parentElList.get(i);
-			List<Element> childList = parentEl.getChildren(elementName, manifestNSpace);
-			Boolean[] validIndex = new Boolean[childList.size()];
-			Arrays.fill(validIndex, Boolean.FALSE);
-			for (int cPtr = 0; cPtr < childList.size(); cPtr++) {
-				Element nextChildEl = childList.get(cPtr);
-				/*
-				 * Each child Element must have @index attribute
-				 */
-				String indexAsString = nextChildEl.getAttributeValue(idxAttribute);
-				if (!isValidIndex(indexAsString)) {
-					String msg = "Invalid value for indexing attribute (non-negative integer required)";
-					loggingMgr.logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, nextChildEl, msg, null, null, logMsgSrcId);
-					curFileIsValid = false;
-				} else {
-					int index = Integer.parseInt(indexAsString);
-					if (index >= validIndex.length) {
-						String msg = "value for indexing attribute out of range";
-						loggingMgr.logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, nextChildEl, msg, null, null,
-								logMsgSrcId);
-
-					} else if (validIndex[index]) {
-						// duplicate value
-						String msg = "Invalid value for indexing attribute (duplicate value)";
-						loggingMgr.logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, nextChildEl, msg, null, null,
-								logMsgSrcId);
-						curFileIsValid = false;
-					} else {
-						validIndex[index] = true;
-					}
-				}
-			}
-			// now make sure all values were covered..
-			boolean allValues = true;
-			for (int j = 0; j < validIndex.length; j++) {
-				allValues = allValues && validIndex[j];
-			}
-			if (!allValues) {
-				String msg = "Invalid indexing of " + elementName + " sequence: be monotonically increasing";
-				loggingMgr.logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, parentEl, msg, null, null, logMsgSrcId);
-				curFileIsValid = false;
-			}
-		}
-	}
-
-	/**
-	 * Check for the presence of an ID attribute and, if provided, verify it is
-	 * unique.
-	 * 
-	 * @param elementName
-	 * @param idAttribute
-	 * @return the <tt>Set</tt> of unique IDs found.
-	 */
-	protected HashSet<String> validateId(String elementName, String idAttribute, boolean reqUniqueness) {
-		XPathExpression<Element> xpExpression = xpfac.compile(".//manifest:" + elementName, Filters.element(), null,
-				manifestNSpace);
-		HashSet<String> idSet = new HashSet<String>();
-
-		/*
-		 * idXRefCounter is initialized here but will 'filled in' by
-		 * validateXRef();
-		 */
-		HashMap<String, XrefCounter> idXRefCounter = new HashMap<String, XrefCounter>();
-		/*
-		 * id2XmlMap is provided for look-ups later as an alternative to using
-		 * XPaths.
-		 */
-		HashMap<String, Element> id2XmlMap = new HashMap<String, Element>();
-
-		List<Element> elementList = xpExpression.evaluate(curRootEl);
-		for (int i = 0; i < elementList.size(); i++) {
-			/*
-			 * XSD may specify ID attribute as OPTIONAL but we need to verify
-			 * cross-references and uniqueness.
-			 */
-			Element targetEl = (Element) elementList.get(i);
-			String idValue = targetEl.getAttributeValue(idAttribute);
-			id2XmlMap.put(idValue, targetEl);
-			XrefCounter count = new XrefCounter(elementName, idValue);
-			idXRefCounter.put(idValue, count);
-
-			if ((idValue == null) || (idValue.isEmpty())) {
-				String msg = idAttribute + " not specified. References to this " + elementName
-						+ " will not be supportable.";
-				loggingMgr.logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, targetEl, msg, null, null, logMsgSrcId);
-			} else {
-				if (!idSet.add(idValue)) {
-					LogReference srcRef = LogReference.getRef("CM", "2.4", "cm001a");
-					String msg = idAttribute + " is not unique";
-					int msgLevel;
-					if (reqUniqueness) {
-						msgLevel = LogMgmt.LEV_ERR;
-						curFileIsValid = false;
-					} else {
-						msgLevel = LogMgmt.LEV_WARN;
-					}
-					loggingMgr.logIssue(LogMgmt.TAG_MANIFEST, msgLevel, targetEl, msg, null, srcRef, logMsgSrcId);
-				}
-				/*
-				 * Validate identifier structure conforms with Sec 2.1 of Common
-				 * Metadata spec (v2.4)
-				 */
-
-				String idSyntaxPattern = "[\\S-[:]]+:[\\S-[:]]+:[\\S-[:]]+:[\\S]+$";
-				if (!idValue.matches(idSyntaxPattern)) {
-					String msg = "Invalid Identifier syntax";
-					LogReference srcRef = LogReference.getRef("CM", "2.4", "cm001b");
-					loggingMgr.logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, targetEl, msg, null, srcRef, logMsgSrcId);
-					curFileIsValid = false;
-				} else {
-					String[] idParts = idValue.split(":");
-					String idNid = idParts[0];
-					String idType = idParts[1];
-					String idScheme = idParts[2];
-					String idSSID = idValue.split(":" + idScheme + ":")[1];
-					validateIdScheme(idScheme, targetEl);
-					validateIdSsid(idSSID, idScheme, targetEl);
-					validateIdType(idType, idAttribute, targetEl);
-				}
-			}
-		}
-		idSets.put(elementName, idSet);
-		id2XmlMappings.put(elementName, id2XmlMap);
-		idXRefCounts.put(elementName, idXRefCounter);
-		return idSet;
-	}
-
-	/**
-	 * @param idType
-	 * @param targetEl
-	 */
-	private void validateIdType(String idType, String idAttribute, Element targetEl) {
-		/*
-		 * Check syntax of the 'type' as defined in Best Practices Section 3.1.7
-		 */
-		String type = id2typeMap.get(idAttribute);
-		if (type == null) {
-			type = idAttribute.toLowerCase();
-		}
-		if (!idType.equals(type)) {
-			LogReference srcRef = LogReference.getRef("MMM-BP", "1.0", "mmbp01.3");
-			String msg = "ID <type> does not conform to recommendation (i.e. '" + type + "')";
-			loggingMgr.logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_WARN, targetEl, msg, null, srcRef, logMsgSrcId);
-		}
-
-	}
-
-	/**
-	 * @param idSchema
-	 * @param targetEl
-	 */
-	private void validateIdScheme(String idScheme, Element targetEl) {
-		if (!idScheme.startsWith("eidr")) {
-			String msg = "Use of EIDR identifiers is recommended";
-			LogReference srcRef = LogReference.getRef("MMM-BP", "1.0", "mmbp01.1");
-			loggingMgr.logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_WARN, targetEl, msg, null, srcRef, logMsgSrcId);
-		}
-	}
-
-	private void validateIdSsid(String idSSID, String idScheme, Element targetEl) {
-		String idPattern = null;
-		LogReference srcRef = null;
-		switch (idScheme) {
-		case "eidr":
-			srcRef = LogReference.getRef("MMM-BP", "1.0", "mmbp01.2");
-			String msg = "Use of EIDR-x or EIDR-s identifiers is recommended";
-			loggingMgr.logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_WARN, targetEl, msg, null, srcRef, logMsgSrcId);
-
-			srcRef = null;
-			idPattern = "10\\.[\\d]{4}/[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-Z]";
-			break;
-		case "eidr-s":
-			srcRef = LogReference.getRef("EIDR-IDF", "1.3", "eidr01-s");
-			idPattern = "[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-Z]";
-			break;
-		case "eidr-x":
-			srcRef = LogReference.getRef("EIDR-IDF", "1.3", "eidr01-x");
-			idPattern = "[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-Z]:[\\S]+";
-			break;
-		default:
-			msg = "ID uses scheme '" + idScheme + "', SSID format will not be verified";
-			loggingMgr.logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_INFO, targetEl, msg, "ssid='" + idSSID + "'", null,
-					logMsgSrcId);
-			return;
-		}
-		boolean match = idSSID.matches(idPattern);
-		if (!match) {
-			String msg = "Invalid SSID syntax for " + idScheme + " scheme";
-			loggingMgr.logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, targetEl, msg, "ssid='" + idSSID + "'",
-					srcRef, logMsgSrcId);
-			curFileIsValid = false;
-		}
-	}
-
-	/**
-	 * @param srcElement
-	 * @param xrefElement
-	 * @param targetElType
-	 */
-	protected void validateXRef(String srcElement, String xrefElement, String targetElType) {
-		HashSet<String> idSet = idSets.get(targetElType);
-		Map<String, XrefCounter> idXRefCounter = idXRefCounts.get(targetElType);
-		XPathExpression<Element> xpExpression = xpfac.compile(".//manifest:" + srcElement + "/manifest:" + xrefElement,
-				Filters.element(), null, manifestNSpace);
-		List<Element> elementList = xpExpression.evaluate(curRootEl);
-		String debugMsg = "Found " + elementList.size() + " cross-refs by a " + srcElement + " to a " + targetElType;
-		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, debugMsg, curFile, LOGMSG_ID);
-		for (int i = 0; i < elementList.size(); i++) {
-			Element refEl = (Element) elementList.get(i);
-			String targetId = refEl.getTextNormalize();
-			if (!idSet.contains(targetId)) {
-				String msg = "Invalid cross-reference: the referenced " + targetElType
-						+ " is not defined in this manifest";
-				loggingMgr.logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, refEl, msg, null, null, logMsgSrcId);
-				curFileIsValid = false;
-			} else {
-				XrefCounter count = idXRefCounter.get(targetId);
-				if (count == null) {
-					System.out.println("TRAPPED :" + targetId);
-					count = new XrefCounter(targetElType, targetId);
-					idXRefCounter.put(targetId, count);
-				}
-				count.increment();
-			}
-		}
-	}
-
-	/**
-	 * 
-	 */
-	private void checkForOrphans() {
-		// Map<String, Map<String, XrefCounter>> idXRefCounts;
-		Iterator<Map<String, XrefCounter>> allCOunters = idXRefCounts.values().iterator();
-		while (allCOunters.hasNext()) {
-			// get the type-specific collection of counters...
-			Map<String, XrefCounter> nextCSet = allCOunters.next();
-			// now iterate thru the instance-specific counts..
-			Iterator<XrefCounter> typeCounters = nextCSet.values().iterator();
-			while (typeCounters.hasNext()) {
-				XrefCounter nextCount = typeCounters.next();
-				nextCount.validate();
-			}
-		}
-
-	}
+	} 
 
 	/**
 	 * @return
@@ -560,31 +298,31 @@ public class ManifestValidator extends XmlIngester {
 		boolean allOK = true;
 		String mdVersion = "2.4";
 
-		JSONArray allowed = cmVocab.optJSONArray("WorkType");
+		JSONArray allowed = controlledVocab.optJSONArray("WorkType");
 		LogReference srcRef = LogReference.getRef("CM", mdVersion, "cm002");
 		allOK = allOK && validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, srcRef);
 
-		allowed = cmVocab.optJSONArray("ColorType");
+		allowed = controlledVocab.optJSONArray("ColorType");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm003");
 		allOK = allOK && validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", allowed, srcRef);
 
-		allowed = cmVocab.optJSONArray("PictureFormat");
+		allowed = controlledVocab.optJSONArray("PictureFormat");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm004");
 		allOK = allOK && validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", allowed, srcRef);
 
-		allowed = cmVocab.optJSONArray("ReleaseType");
+		allowed = controlledVocab.optJSONArray("ReleaseType");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm005");
 		allOK = allOK && validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, srcRef);
 
-		allowed = cmVocab.optJSONArray("TitleAlternate@type");
+		allowed = controlledVocab.optJSONArray("TitleAlternate@type");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm006");
 		allOK = allOK && validateVocab(mdNSpace, "TitleAlternate", null, "@type", allowed, srcRef);
 
-		allowed = cmVocab.optJSONArray("Parent@relationshipType");
+		allowed = controlledVocab.optJSONArray("Parent@relationshipType");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm007");
 		allOK = allOK && validateVocab(mdNSpace, "Parent", null, "@relationshipType", allowed, srcRef);
 
-		allowed = cmVocab.optJSONArray("EntryClass");
+		allowed = controlledVocab.optJSONArray("EntryClass");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm008");
 		allOK = allOK && validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef);
 
@@ -592,64 +330,5 @@ public class ManifestValidator extends XmlIngester {
 		// TODO: DIGITAL ASSET METADATA
 
 		return allOK;
-	}
-
-	/**
-	 * @param primaryNS
-	 * @param primaryEl
-	 * @param childNS
-	 * @param child
-	 * @param expected
-	 * @param srcRef
-	 * @return
-	 */
-	protected boolean validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
-			JSONArray expected, LogReference srcRef) {
-		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
-				Filters.element(), null, primaryNS);
-		List<Element> elementList = xpExpression.evaluate(curRootEl);
-		boolean allOK = true;
-		int tag4log = LogMgmt.TAG_N_A;
-		Namespace tagNS;
-		if (childNS != null) {
-			tagNS = childNS;
-		} else {
-			tagNS = primaryNS;
-		}
-		if (tagNS == manifestNSpace) {
-			tag4log = LogMgmt.TAG_MANIFEST;
-		} else if (tagNS == mdNSpace) {
-			tag4log = LogMgmt.TAG_MD;
-		}
-		for (int i = 0; i < elementList.size(); i++) {
-			Element targetEl = (Element) elementList.get(i);
-			if (!child.startsWith("@")) {
-				Element subElement = targetEl.getChild(child, childNS);
-				if (subElement != null) {
-					String text = subElement.getTextNormalize();
-					if (!expected.contains(text)) {
-						String explanation = "Values are case-sensitive";
-						String msg = "Unrecognized value for " + primaryEl + "/" + child;
-						// TODO: Is this ERROR or WARNING???
-						loggingMgr.logIssue(tag4log, LogMgmt.LEV_ERR, subElement, msg, explanation, srcRef,
-								logMsgSrcId);
-						allOK = false;
-						curFileIsValid = false;
-					}
-				}
-			} else {
-				String targetAttb = child.replaceFirst("@", "");
-				String text = targetEl.getAttributeValue(targetAttb);
-				if (!expected.contains(text)) {
-					String explanation = "Values are case-sensitive";
-					String msg = "Unrecognized value for attribute " + child;
-					// TODO: Is this ERROR or WARNING???
-					loggingMgr.logIssue(tag4log, LogMgmt.LEV_ERR, targetEl, msg, explanation, srcRef, logMsgSrcId);
-					allOK = false;
-					curFileIsValid = false;
-				}
-			}
-		}
-		return allOK;
-	}
+	} 
 }
