@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -62,7 +63,7 @@ public class XmlBuilder {
 	private SchemaWrapper mdMecSchema;
 
 	private Map<Object, Pedigree> pedigreeMap = null;
-	private Map<String, Element> alidElMap = null;
+	private Map<String, Element> availElMap = null;
 	private Element root;
 	private String shortDesc;
 	private Map<Element, List<Element>> avail2AssetMap;
@@ -137,7 +138,7 @@ public class XmlBuilder {
 		}
 		// initialize data structures...
 		pedigreeMap = new HashMap<Object, Pedigree>();
-		alidElMap = new HashMap<String, Element>();
+		availElMap = new HashMap<String, Element>();
 		avail2AssetMap = new HashMap<Element, List<Element>>();
 		avail2TransMap = new HashMap<Element, List<Element>>();
 		element2SrcRowMap = new HashMap<Element, RowToXmlHelper>();
@@ -165,13 +166,15 @@ public class XmlBuilder {
 			return null;
 		}
 		// Final assembly in correct order..
-		Iterator<Element> alidIt = alidElMap.values().iterator();
+		Iterator<Element> alidIt = availElMap.values().iterator();
 		while (alidIt.hasNext()) {
-			Element nextAlidEl = alidIt.next();
-			nextAlidEl.addContent(avail2AssetMap.get(nextAlidEl));
-			nextAlidEl.addContent(avail2TransMap.get(nextAlidEl));
+			Element nextAvailEl = alidIt.next();
+			Element sDescEl = nextAvailEl.getChild("ShortDescription", availsNSpace);
+			int index = nextAvailEl.indexOf(sDescEl) + 1;
+			nextAvailEl.addContent(index, avail2TransMap.get(nextAvailEl));
+			nextAvailEl.addContent(index, avail2AssetMap.get(nextAvailEl));
 
-			root.addContent(nextAlidEl);
+			root.addContent(nextAvailEl);
 		}
 
 		return doc;
@@ -206,14 +209,14 @@ public class XmlBuilder {
 		 * do we handle?
 		 */
 		String alid = pg.getRawValue();
-		Element availEL = alidElMap.get(alid);
+		Element availEL = availElMap.get(alid);
 		if (availEL == null) {
 			availEL = new Element("Avail", getAvailsNSpace());
 			/*
 			 * availEl will get added to document at completion of sheet
 			 * processing. For now, just store in HashMap.
 			 */
-			alidElMap.put(alid, availEL);
+			availElMap.put(alid, availEL);
 			/*
 			 * Keeping track of row will facilitate later check to make sure any
 			 * other row for same Avail has identical values where required.
@@ -236,6 +239,9 @@ public class XmlBuilder {
 			Element sdEl = curRow.mGenericElement("ShortDescription", shortDesc, getAvailsNSpace());
 			availEL.addContent(sdEl);
 
+			// Exception Flag
+			curRow.process(availEL, "ExceptionFlag", getAvailsNSpace(), "Avail/ExceptionFlag");
+
 			// Initialize data structures for collecting Assets and Transactions
 			avail2AssetMap.put(availEL, new ArrayList<Element>());
 			avail2TransMap.put(availEL, new ArrayList<Element>());
@@ -247,6 +253,7 @@ public class XmlBuilder {
 			checkForMatch("Avail/ALID", srcRow, curRow);
 			checkForMatch("Avail/DisplayName", srcRow, curRow);
 			checkForMatch("Avail/ServiceProvider", srcRow, curRow);
+			checkForMatch("Avail/ExceptionFlag", srcRow, curRow);
 			/*
 			 * AvailAsset/WorkType is special case as different WorkTypes may
 			 * map to same AvailType
@@ -257,11 +264,11 @@ public class XmlBuilder {
 			if (!definedValue.equals(curValue)) {
 				// Generate error msg
 				String msg = "Inconsistent WorkType; value not compatable with 1st definition of referenced Avail";
-				String details = "AVAIL was 1st defined in row " + srcRow.getRowNumber()
-						+ " which specifies AvailAsset/WorkType as " + srcRow.getData("AvailAsset/WorkType")
-						+ " and requires WorkType=" + definedValue;
-				logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, null, curRow.getRowNumber(), moduleId, details,
-						null);
+				int row4log = srcRow.getRowNumber() + 1;
+				String details = "AVAIL was 1st defined in row " + row4log + " which specifies AvailAsset/WorkType as "
+						+ srcRow.getData("AvailAsset/WorkType") + " and requires WorkType=" + definedValue; 
+				Cell sourceCell = curRow.sheet.getCell("AvailAsset/WorkType", curRow.getRowNumber());
+				logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
 			}
 		}
 		return availEL;
@@ -278,9 +285,11 @@ public class XmlBuilder {
 		if (!definedValue.equals(curValue)) {
 			// Generate error msg
 			String msg = "Inconsistent AVAIL specification; value does not match 1st definition of referenced Avail";
-			String details = "AVAIL was 1st defined in row " + srcRow.getRowNumber() + " which specifies " + colKey
-					+ " as " + definedValue;
-			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, null, curRow.getRowNumber(), moduleId, details, null);
+			int row4log = srcRow.getRowNumber() + 1;
+			String details = "AVAIL was 1st defined in row " + row4log + " which specifies " + colKey + " as '"
+					+ definedValue + "'"; 
+			Cell sourceCell = curRow.sheet.getCell(colKey, curRow.getRowNumber());
+			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
 		}
 
 	}
@@ -369,13 +378,6 @@ public class XmlBuilder {
 
 		String schema = ns.getPrefix();
 		String type = getSchema(schema).getType(elementName);
-		/*
-		 * WHAT ABOUT:::::> <xs:element name="Event"> <xs:simpleType> <xs:union
-		 * memberTypes="xs:dateTime xs:date"/> </xs:simpleType> </xs:element>
-		 */
-		if (type.contains("xs:date")) {
-			type = "xs:date";
-		}
 		switch (type) {
 		case "xs:string":
 		case "md:id-type":
@@ -393,6 +395,17 @@ public class XmlBuilder {
 				formattedValue = "true";
 			} else if (formattedValue.equals("No")) {
 				formattedValue = "false";
+			}
+			break;
+		case "xs:date":
+			break;
+		case "xs:dateTime":
+			if (formattedValue.matches("[\\d]{4}-[\\d]{2}-[\\d]{2}")) {
+				if (elementName.startsWith("End")) {
+					formattedValue = formattedValue + "T23:59:59";
+				} else {
+					formattedValue = formattedValue + "T00:00:00";
+				}
 			}
 			break;
 		default:

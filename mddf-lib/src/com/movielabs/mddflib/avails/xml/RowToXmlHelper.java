@@ -25,6 +25,7 @@ package com.movielabs.mddflib.avails.xml;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -45,44 +46,41 @@ import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 public class RowToXmlHelper {
 
 	private static final String MISSING = "--FUBAR (missing)";
-	protected Row row; 
+	protected Row row;
 	protected XmlBuilder xb;
-	private AvailsSheet sheet;
+	 AvailsSheet sheet;
 	private String workType = "";
 	private DataFormatter dataF = new DataFormatter();
 
 	/**
 	 * @param fields
 	 */
-	RowToXmlHelper(AvailsSheet sheet, Row row ) {
+	RowToXmlHelper(AvailsSheet sheet, Row row) {
 		super();
 		this.sheet = sheet;
-		this.row = row; 
+		this.row = row;
 
 	}
 
 	protected void makeAvail(XmlBuilder xb) throws Exception {
 		this.xb = xb;
-		Element avail = xb.getAvailElement(this); 
+		Element avail = xb.getAvailElement(this);
 		/*
 		 * Need to save the current workType for use in Transaction/Terms
 		 */
 		this.workType = getData("AvailAsset/WorkType");
- 
+
 		// Asset
 		if (xb.isRequired("WorkType", "avails") || isSpecified(workType)) {
-			Element assetEl = createAsset(workType); 
+			Element assetEl = createAsset(workType);
 			xb.addAsset(avail, assetEl);
 		}
 
-		Element e=createTransaction();
+		Element e = createTransaction();
 		// Transaction
-		if (e  != null) {
-			xb.addTransaction(avail,e);
+		if (e != null) {
+			xb.addTransaction(avail, e);
 		}
-
-		// Exception Flag
-		process(avail, "ExceptionFlag", xb.getAvailsNSpace(), "Avail/ExceptionFlag");
 
 	}
 
@@ -143,10 +141,9 @@ public class RowToXmlHelper {
 	 */
 	protected void mAssetBody(Element assetEl) {
 		Element e;
-		String contentID = getData("AvailAsset/ContentID");
-		if (isSpecified(contentID)) {
-			assetEl.setAttribute("contentID", "contentID");
-		}
+		Pedigree pg = getPedigreedData("AvailAsset/ContentID");
+		String contentID = pg.getRawValue();
+		assetEl.setAttribute("contentID", contentID);
 
 		Element metadata = new Element("Metadata", xb.getAvailsNSpace());
 
@@ -203,11 +200,19 @@ public class RowToXmlHelper {
 		process(metadata, "LocalizationOffering", xb.getAvailsNSpace(), "AvailMetadata/LocalizationType");
 
 		// Attach generated Metadata node
-		assetEl.addContent(metadata); 
+		assetEl.addContent(metadata);
 	}
 
 	protected Element createTransaction() throws Exception {
 		Element transaction = new Element("Transaction", xb.getAvailsNSpace());
+		/*
+		 * TransactionID is OPTIONAL. For mystical reasons lost in the mists of
+		 * time, it come from the 'AvailID' column.
+		 */
+		Pedigree pg = getPedigreedData("Avail/AvailID");
+		if (pg != null && this.isSpecified(pg.getRawValue())) {
+			transaction.setAttribute("TransactionID", pg.getRawValue());
+		}
 		return mTransactionBody(transaction);
 	}
 
@@ -284,9 +289,11 @@ public class RowToXmlHelper {
 			case "DMRP":
 			case "SMRP":
 				Element moneyEl = process(termEl, "Money", xb.getAvailsNSpace(), prefix + "PriceValue");
-				String currency = getData(prefix + "PriceCurrency");
-				if (moneyEl != null && isSpecified(currency)) {
-					moneyEl.setAttribute("currency", currency);
+				Pedigree curPGee = getPedigreedData(prefix + "PriceCurrency"); 
+				if (moneyEl != null && isSpecified(curPGee.getRawValue())) {
+					Attribute curAt = new Attribute("currency", curPGee.getRawValue());
+					moneyEl.setAttribute(curAt);
+					xb.addToPedigree(curAt, curPGee);
 				}
 				break;
 			case "Season Only":
@@ -297,79 +304,65 @@ public class RowToXmlHelper {
 		 * Now look for Terms specified via other columns....
 		 */
 
-		// SRP Term
-		String value = getData(prefix + "SRP");
-		if (isSpecified(value)) {
-			Element termEl = new Element("Term", xb.getAvailsNSpace());
+		Element termEl = processTerm(prefix + "SuppressionLiftDate", "SuppressionLiftDate", "Event");
+		if (termEl != null) {
 			transaction.addContent(termEl);
-			termEl.setAttribute("termName", "SRP");
-			Element childEl = new Element("Money", xb.getAvailsNSpace());
-			termEl.addContent(childEl);
-			termEl.setAttribute("currency", value);
 		}
 
-		value = getData(prefix + "SuppressionLiftDate");
-		if (isSpecified(value)) {
-			Element termEl = new Element("Term", xb.getAvailsNSpace());
+		termEl = processTerm(prefix + "AnnounceDate", "AnnounceDate", "Event");
+		if (termEl != null) {
 			transaction.addContent(termEl);
-			termEl.setAttribute("termName", "AnnounceDate");
-			Element childEl = mGenericElement("Event", value, xb.getAvailsNSpace());
-			termEl.addContent(childEl);
 		}
 
-		value = getData(prefix + "RentalDuration");
-		if (isSpecified(value)) {
-			Element termEl = new Element("Term", xb.getAvailsNSpace());
+		termEl = processTerm(prefix + "SpecialPreOrderFulfillDate", "PreOrderFulfillDate", "Event");
+		if (termEl != null) {
 			transaction.addContent(termEl);
-			termEl.setAttribute("termName", "RentalDuration");
-			Element childEl = mGenericElement("Duration", value, xb.getAvailsNSpace());
-			termEl.addContent(childEl);
 		}
 
-		value = getData(prefix + "WatchDuration");
-		if (isSpecified(value)) {
-			Element termEl = new Element("Term", xb.getAvailsNSpace());
+		termEl = processTerm(prefix + "SRP", "SRP", "Money");
+		if (termEl != null) {
 			transaction.addContent(termEl);
-			termEl.setAttribute("termName", "WatchDuration");
-			Element childEl = mGenericElement("Duration", value, xb.getAvailsNSpace());
-			termEl.addContent(childEl);
 		}
 
-		value = getData(prefix + "FixedEndDate");
-		if (isSpecified(value)) {
-			Element termEl = new Element("Term", xb.getAvailsNSpace());
+		termEl = processTerm(prefix + "RentalDuration", "RentalDuration", "Duration");
+		if (termEl != null) {
 			transaction.addContent(termEl);
-			termEl.setAttribute("termName", "FixedEndDate");
-			Element childEl = mGenericElement("Event", value, xb.getAvailsNSpace());
-			termEl.addContent(childEl);
 		}
 
-		value = getData(prefix + "HoldbackLanguage");
-		if (isSpecified(value)) {
-			Element termEl = new Element("Term", xb.getAvailsNSpace());
+		termEl = processTerm(prefix + "WatchDuration", "WatchDuration", "Duration");
+		if (termEl != null) {
 			transaction.addContent(termEl);
-			termEl.setAttribute("termName", "HoldbackLanguage");
-			Element childEl = mGenericElement("Language", value, xb.getAvailsNSpace());
-			termEl.addContent(childEl);
 		}
 
-		value = getData(prefix + "AllowedLanguages");
-		if (isSpecified(value)) {
-			Element termEl = new Element("Term", xb.getAvailsNSpace());
+		termEl = processTerm(prefix + "FixedEndDate", "FixedEndDate", "Event");
+		if (termEl != null) {
 			transaction.addContent(termEl);
-			termEl.setAttribute("termName", "HoldbackExclusionLanguage");
-			Element childEl = mGenericElement("Language", value, xb.getAvailsNSpace());
-			termEl.addContent(childEl);
+		}
+
+		termEl = processTerm(prefix + "HoldbackLanguage", "HoldbackLanguage", "Language");
+		if (termEl != null) {
+			transaction.addContent(termEl);
+		}
+
+		termEl = processTerm(prefix + "AllowedLanguages", "HoldbackExclusionLanguage", "Duration");
+		if (termEl != null) {
+			transaction.addContent(termEl);
 		}
 	}
 
-	/**
-	 * Create an Avails ExceptionFlag element
-	 */
-	protected Element mExceptionFlag(String exceptionFlag) {
-		Element eFlag = new Element("ExceptionFlag", xb.getAvailsNSpace());
-		eFlag.setText(exceptionFlag);
-		return eFlag;
+	private Element processTerm(String src, String termName, String subElName) {
+		Pedigree pg =  getPedigreedData(src); 
+		if ((pg!=null)&&(isSpecified(pg.getRawValue()))) {
+			Element termEl = new Element("Term", xb.getAvailsNSpace());
+			termEl.setAttribute("termName", termName);
+			Element childEl = mGenericElement(subElName, pg.getRawValue(), xb.getAvailsNSpace());
+			termEl.addContent(childEl);
+			xb.addToPedigree(childEl, pg);
+			xb.addToPedigree(termEl, pg);
+			return termEl;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -453,7 +446,8 @@ public class RowToXmlHelper {
 	protected Element process(Element parentEl, String childName, Namespace ns, String cellKey) {
 		Pedigree pg = getPedigreedData(cellKey);
 		if (pg == null) {
-//			System.out.println("Row2Xml.process:: Row " + row.getRowNum() + "  [" + cellKey + "]--->NULL<--");
+			// System.out.println("Row2Xml.process:: Row " + row.getRowNum() + "
+			// [" + cellKey + "]--->NULL<--");
 			return null;
 		}
 		String value = pg.getRawValue();
@@ -493,10 +487,10 @@ public class RowToXmlHelper {
 		String value = pg.getRawValue();
 		if (isSpecified(value)) {
 			Element condEl = null;
-			// does it start with 'yyyy' ? 
+			// does it start with 'yyyy' ?
 			if (value.matches("^[\\d]{4}-.*")) {
 				condEl = mGenericElement(childName, value, ns);
-			} else { 
+			} else {
 				condEl = mGenericElement(childName + "Condition", value, ns);
 			}
 			parentEl.addContent(condEl);
@@ -557,7 +551,7 @@ public class RowToXmlHelper {
 	/**
 	 * @return
 	 */
-	public int getRowNumber() { 
+	public int getRowNumber() {
 		return row.getRowNum();
 	}
 
