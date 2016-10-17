@@ -22,31 +22,20 @@
  */
 package com.movielabs.mddflib.avails.xml;
 
-import org.apache.poi.ss.usermodel.Cell;
-
 /**
+ * Instantiates the linkage of a data value back to its original source. The
+ * intent is to provide the logging components with a way to point the user to
+ * the specific location in a file that specified a problematic value. The
+ * <tt>source</tt> will normally be an XML Element but, in the case of
+ * Avails, may also be a cell in a XLSX spreadsheet.
+ * 
+ * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
 public class Pedigree {
-//	private int row;
-//	private int column;
-//	private String sheet;
 	private String rawValue;
 	private Object source;
-
-	/**
-	 * @param row
-	 * @param column
-	 * @param sheet
-	 */
-//	Pedigree(int row, int column, String sheet, String rawValue) {
-//		super();
-//		this.row = row;
-//		this.column = column;
-//		this.sheet = sheet;
-//		this.rawValue = rawValue;
-//	}
 
 	/**
 	 * @param sourceCell
@@ -56,27 +45,6 @@ public class Pedigree {
 		this.source = source;
 		this.rawValue = value;
 	}
-//
-//	/**
-//	 * @return the row
-//	 */
-//	public int getRow() {
-//		return row;
-//	}
-//
-//	/**
-//	 * @return the column
-//	 */
-//	public int getColumn() {
-//		return column;
-//	}
-//
-//	/**
-//	 * @return the sheet name
-//	 */
-//	public String getSheet() {
-//		return sheet;
-//	}
 
 	public String getRawValue() {
 		return rawValue;
