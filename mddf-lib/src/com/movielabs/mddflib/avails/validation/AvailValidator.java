@@ -24,6 +24,7 @@ package com.movielabs.mddflib.avails.validation;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import net.sf.json.JSONArray;
 import org.jdom2.Element;
@@ -33,6 +34,7 @@ import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.AbstractValidator;
+import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
@@ -91,8 +93,8 @@ public class AvailValidator extends AbstractValidator {
 
 	}
 
-	public static final String LOGMSG_ID = "AvailValidator"; 
-	
+	public static final String LOGMSG_ID = "AvailValidator";
+
 	private Map<Object, Pedigree> pedigreeMap;
 
 	static {
@@ -163,6 +165,9 @@ public class AvailValidator extends AbstractValidator {
 	 */
 	protected boolean validateXml(File xmlFile) {
 		String xsdFile = "./resources/avails-v" + XmlIngester.AVAIL_VER + ".xsd";
+		// String xsdFile = SchemaWrapper.RSRC_PACKAGE + "avails-v" +
+		// XmlIngester.AVAIL_VER + ".xsd";
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		curFileIsValid = validateXml(xmlFile, xsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
@@ -174,8 +179,16 @@ public class AvailValidator extends AbstractValidator {
 		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Validating constraints", curFile, LOGMSG_ID);
 		super.validateConstraints();
 
+		SchemaWrapper availSchema = SchemaWrapper.factory("avails-v" + XmlIngester.AVAIL_VER);
+		List<String> reqElList = availSchema.getReqElList();
+		for (int i = 0; i < reqElList.size(); i++) {
+			String key = reqElList.get(i);
+			validateNotEmpty(key);
+		}
+
 		// TODO: Load from JSON file....
-		validateId("ALID", null, true);
+
+		validateId("ALID", null, true, false);
 
 		/* Now validate cross-references */
 		// validateXRef("Experience", "ContentID", "Metadata");
@@ -220,59 +233,60 @@ public class AvailValidator extends AbstractValidator {
 
 		JSONArray allowed = controlledVocab.optJSONArray("AvailType");
 		LogReference srcRef = LogReference.getRef(doc, docVer, "avail01");
-		allOK = allOK && validateVocab(primaryNS, "Avail", primaryNS, "AvailType", allowed, srcRef);
+		allOK = allOK && validateVocab(primaryNS, "Avail", primaryNS, "AvailType", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("EntryType");
 		srcRef = LogReference.getRef(doc, docVer, "avail02");
-		allOK = allOK && validateVocab(primaryNS, "Disposition", primaryNS, "EntryType", allowed, srcRef);
+		allOK = allOK && validateVocab(primaryNS, "Disposition", primaryNS, "EntryType", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("AltIdentifier@scope");
 		srcRef = LogReference.getRef(doc, docVer, "avail03");
-		allOK = allOK && validateVocab(primaryNS, "AltIdentifier", primaryNS, "@scope", allowed, srcRef);
+		allOK = allOK && validateVocab(primaryNS, "AltIdentifier", primaryNS, "@scope", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("LocalizationOffering");
 		srcRef = LogReference.getRef(doc, docVer, "avail03");
-		allOK = allOK && validateVocab(primaryNS, "Metadata", primaryNS, "LocalizationOffering", allowed, srcRef);
-		allOK = allOK
-				&& validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "LocalizationOffering", allowed, srcRef);
+		allOK = allOK && validateVocab(primaryNS, "Metadata", primaryNS, "LocalizationOffering", allowed, srcRef, true);
+		allOK = allOK && validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "LocalizationOffering", allowed, srcRef,
+				true);
 
 		allowed = controlledVocab.optJSONArray("SeasonStatus");
 		srcRef = LogReference.getRef(doc, docVer, "avail04");
-		allOK = allOK && validateVocab(primaryNS, "SeasonMetadata", primaryNS, "SeasonStatus", allowed, srcRef);
+		allOK = allOK && validateVocab(primaryNS, "SeasonMetadata", primaryNS, "SeasonStatus", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("SeriesStatus");
 		srcRef = LogReference.getRef(doc, docVer, "avail05");
-		allOK = allOK && validateVocab(primaryNS, "SeriesMetadata", primaryNS, "SeriesStatus", allowed, srcRef);
+		allOK = allOK && validateVocab(primaryNS, "SeriesMetadata", primaryNS, "SeriesStatus", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("DateTimeCondition");
 		srcRef = LogReference.getRef(doc, docVer, "avail06");
-		allOK = allOK && validateVocab(primaryNS, "Transaction", primaryNS, "StartCondition", allowed, srcRef);
-		allOK = allOK && validateVocab(primaryNS, "Transaction", primaryNS, "EndCondition", allowed, srcRef);
+		allOK = allOK && validateVocab(primaryNS, "Transaction", primaryNS, "StartCondition", allowed, srcRef, true);
+		allOK = allOK && validateVocab(primaryNS, "Transaction", primaryNS, "EndCondition", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("LicenseType");
 		srcRef = LogReference.getRef(doc, docVer, "avail07");
-		allOK = allOK && validateVocab(primaryNS, "Transaction", primaryNS, "LicenseType", allowed, srcRef);
+		allOK = allOK && validateVocab(primaryNS, "Transaction", primaryNS, "LicenseType", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("LicenseRightsDescription");
 		srcRef = LogReference.getRef(doc, docVer, "avail07");
-		allOK = allOK
-				&& validateVocab(primaryNS, "Transaction", primaryNS, "LicenseRightsDescription", allowed, srcRef);
+		allOK = allOK && validateVocab(primaryNS, "Transaction", primaryNS, "LicenseRightsDescription", allowed, srcRef,
+				true);
 
 		allowed = controlledVocab.optJSONArray("FormatProfile");
 		srcRef = LogReference.getRef(doc, docVer, "avail07");
-		allOK = allOK && validateVocab(primaryNS, "Transaction", primaryNS, "FormatProfile", allowed, srcRef);
+		allOK = allOK && validateVocab(primaryNS, "Transaction", primaryNS, "FormatProfile", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("ExperienceCondition");
 		srcRef = LogReference.getRef(doc, docVer, "avail07");
-		allOK = allOK && validateVocab(primaryNS, "Transaction", primaryNS, "ExperienceCondition", allowed, srcRef);
+		allOK = allOK
+				&& validateVocab(primaryNS, "Transaction", primaryNS, "ExperienceCondition", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("Term@termName");
 		srcRef = LogReference.getRef(doc, docVer, "avail08");
-		allOK = allOK && validateVocab(primaryNS, "Term", primaryNS, "@termName", allowed, srcRef);
+		allOK = allOK && validateVocab(primaryNS, "Term", primaryNS, "@termName", allowed, srcRef, false);
 
 		allowed = controlledVocab.optJSONArray("SharedEntitlement@ecosystem");
 		srcRef = LogReference.getRef(doc, docVer, "avail09");
-		allOK = allOK && validateVocab(primaryNS, "SharedEntitlement", primaryNS, "@ecosystem", allowed, srcRef);
+		allOK = allOK && validateVocab(primaryNS, "SharedEntitlement", primaryNS, "@ecosystem", allowed, srcRef, true);
 		return allOK;
 	}
 
