@@ -37,7 +37,7 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
- 
+
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -111,7 +111,7 @@ public abstract class AbstractValidator extends XmlIngester {
 	protected static HashMap<String, String> id2typeMap;
 	protected static JSONObject controlledVocab;
 
-	protected int logTag;
+	// protected int logTag;
 	protected Namespace rootNS;
 	protected String rootPrefix;
 
@@ -207,6 +207,37 @@ public abstract class AbstractValidator extends XmlIngester {
 		}
 	}
 
+	protected void validateNotEmpty(String key) {
+
+		String[] parts = key.split("@");
+		String elementName = parts[0];
+		XPathExpression<Element> xpExpression = xpfac.compile(".// " + rootPrefix + elementName, Filters.element(),
+				null, rootNS);
+		String label = elementName;
+		String attributeName = null;
+		if (parts.length > 1) {
+			attributeName = parts[1];
+			label = label + "[@" + attributeName + "]";
+		}
+		List<Element> elementList = xpExpression.evaluate(curRootEl);
+		for (int i = 0; i < elementList.size(); i++) {
+			Element targetEl = (Element) elementList.get(i);
+			String value = null;
+			if (attributeName == null) {
+				value = targetEl.getTextNormalize();
+			} else {
+				value = targetEl.getAttributeValue(attributeName);
+			}
+			if ((value == null) || (value.isEmpty())) {
+				String msg = label + " not specified. A value must be provided";
+				logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, targetEl, msg, null, null, logMsgSrcId);
+				curFileIsValid = false;
+			}
+		}
+	}
+
+	// ..................
+
 	/**
 	 * Check for the presence of an ID attribute and, if provided, verify it is
 	 * unique.
@@ -215,7 +246,8 @@ public abstract class AbstractValidator extends XmlIngester {
 	 * @param idAttribute
 	 * @return the <tt>Set</tt> of unique IDs found.
 	 */
-	protected HashSet<String> validateId(String elementName, String idAttribute, boolean reqUniqueness) {
+	protected HashSet<String> validateId(String elementName, String idAttribute, boolean reqUniqueness,
+			boolean chkSyntax) {
 		XPathExpression<Element> xpExpression = xpfac.compile(".// " + rootPrefix + elementName, Filters.element(),
 				null, rootNS);
 		HashSet<String> idSet = new HashSet<String>();
@@ -254,7 +286,7 @@ public abstract class AbstractValidator extends XmlIngester {
 			if ((idValue == null) || (idValue.isEmpty())) {
 				String msg = idAttribute + " not specified. References to this " + elementName
 						+ " will not be supportable.";
-				logIssue(logTag, LogMgmt.LEV_WARN, targetEl, msg, null, null, logMsgSrcId);
+				logIssue(logMsgDefaultTag, LogMgmt.LEV_WARN, targetEl, msg, null, null, logMsgSrcId);
 			} else {
 				if (!idSet.add(idValue)) {
 					LogReference srcRef = LogReference.getRef("CM", "2.4", "cm001a");
@@ -266,28 +298,30 @@ public abstract class AbstractValidator extends XmlIngester {
 					} else {
 						msgLevel = LogMgmt.LEV_WARN;
 					}
-					logIssue(logTag, msgLevel, targetEl, msg, null, srcRef, logMsgSrcId);
+					logIssue(logMsgDefaultTag, msgLevel, targetEl, msg, null, srcRef, logMsgSrcId);
 				}
-				/*
-				 * Validate identifier structure conforms with Sec 2.1 of Common
-				 * Metadata spec (v2.4)
-				 */
+				if (chkSyntax) {
+					/*
+					 * Validate identifier structure conforms with Sec 2.1 of
+					 * Common Metadata spec (v2.4)
+					 */
 
-				String idSyntaxPattern = "[\\S-[:]]+:[\\S-[:]]+:[\\S-[:]]+:[\\S]+$";
-				if (!idValue.matches(idSyntaxPattern)) {
-					String msg = "Invalid Identifier syntax";
-					LogReference srcRef = LogReference.getRef("CM", "2.4", "cm001b");
-					logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, targetEl, msg, null, srcRef, logMsgSrcId);
-					curFileIsValid = false;
-				} else {
-					String[] idParts = idValue.split(":");
-					String idNid = idParts[0];
-					String idType = idParts[1];
-					String idScheme = idParts[2];
-					String idSSID = idValue.split(":" + idScheme + ":")[1];
-					validateIdScheme(idScheme, targetEl);
-					validateIdSsid(idSSID, idScheme, targetEl);
-					validateIdType(idType, idAttribute, targetEl);
+					String idSyntaxPattern = "[\\S-[:]]+:[\\S-[:]]+:[\\S-[:]]+:[\\S]+$";
+					if (!idValue.matches(idSyntaxPattern)) {
+						String msg = "Invalid Identifier syntax";
+						LogReference srcRef = LogReference.getRef("CM", "2.4", "cm001b");
+						logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, targetEl, msg, null, srcRef, logMsgSrcId);
+						curFileIsValid = false;
+					} else {
+						String[] idParts = idValue.split(":");
+						String idNid = idParts[0];
+						String idType = idParts[1];
+						String idScheme = idParts[2];
+						String idSSID = idValue.split(":" + idScheme + ":")[1];
+						validateIdScheme(idScheme, targetEl);
+						validateIdSsid(idSSID, idScheme, targetEl);
+						validateIdType(idType, idAttribute, targetEl);
+					}
 				}
 			}
 		}
@@ -357,7 +391,7 @@ public abstract class AbstractValidator extends XmlIngester {
 		boolean match = idSSID.matches(idPattern);
 		if (!match) {
 			String msg = "Invalid SSID syntax for " + idScheme + " scheme";
-			logIssue(logTag, LogMgmt.LEV_ERR, targetEl, msg, "ssid='" + idSSID + "'", srcRef, logMsgSrcId);
+			logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, targetEl, msg, "ssid='" + idSSID + "'", srcRef, logMsgSrcId);
 			curFileIsValid = false;
 		}
 	}
@@ -381,7 +415,7 @@ public abstract class AbstractValidator extends XmlIngester {
 			if (!idSet.contains(targetId)) {
 				String msg = "Invalid cross-reference: the referenced " + targetElType
 						+ " is not defined in this manifest";
-				logIssue(logTag, LogMgmt.LEV_ERR, refEl, msg, null, null, logMsgSrcId);
+				logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, refEl, msg, null, null, logMsgSrcId);
 				curFileIsValid = false;
 			} else {
 				XrefCounter count = idXRefCounter.get(targetId);
@@ -426,10 +460,11 @@ public abstract class AbstractValidator extends XmlIngester {
 	 * @param child
 	 * @param expected
 	 * @param srcRef
+	 * @param caseSensitive
 	 * @return
 	 */
 	protected boolean validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
-			JSONArray expected, LogReference srcRef) {
+			JSONArray expected, LogReference srcRef, boolean caseSensitive) {
 		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
 				Filters.element(), null, primaryNS);
 		List<Element> elementList = xpExpression.evaluate(curRootEl);
@@ -448,31 +483,44 @@ public abstract class AbstractValidator extends XmlIngester {
 		} else if (tagNS == mdNSpace) {
 			tag4log = LogMgmt.TAG_MD;
 		}
+		String optionsString = expected.toString().toLowerCase();
 		for (int i = 0; i < elementList.size(); i++) {
+			String text = null;
+			String errMsg = null;
+			Element logMsgEl = null;
 			Element targetEl = (Element) elementList.get(i);
 			if (!child.startsWith("@")) {
 				Element subElement = targetEl.getChild(child, childNS);
+				logMsgEl = subElement;
 				if (subElement != null) {
-					String text = subElement.getTextNormalize();
-					if (!expected.contains(text)) {
-						String explanation = "Values are case-sensitive";
-						String msg = "Unrecognized value for " + primaryEl + "/" + child;
-						// TODO: Is this ERROR or WARNING???
-						logIssue(tag4log, LogMgmt.LEV_ERR, subElement, msg, explanation, srcRef, logMsgSrcId);
-						allOK = false;
-						curFileIsValid = false;
-					}
+					text = subElement.getTextNormalize();
+					errMsg = "Unrecognized value '" + text + "' for " + primaryEl + "/" + child; 
 				}
 			} else {
 				String targetAttb = child.replaceFirst("@", "");
-				String text = targetEl.getAttributeValue(targetAttb);
-				if (!expected.contains(text)) {
-					String explanation = "Values are case-sensitive";
-					String msg = "Unrecognized value for attribute " + child;
-					// TODO: Is this ERROR or WARNING???
-					logIssue(tag4log, LogMgmt.LEV_ERR, targetEl, msg, explanation, srcRef, logMsgSrcId);
-					allOK = false;
-					curFileIsValid = false;
+				text = targetEl.getAttributeValue(targetAttb);
+				logMsgEl = targetEl;
+				errMsg = "Unrecognized value '" + text + "' for attribute " + child; 
+			}
+			if (text != null) {
+				if (caseSensitive) {
+					if (!expected.contains(text)) {
+						String explanation = "Values are case-sensitive";
+						// TODO: Is this ERROR or WARNING???
+						logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
+						allOK = false;
+						curFileIsValid = false;
+
+					}
+				} else {
+					String checkString = "\"" + text.toLowerCase() + "\"";
+					if (!optionsString.contains(checkString)) {
+						// System.out.println(checkString + " not in " +
+						// optionsString);
+						logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, null, srcRef, logMsgSrcId);
+						allOK = false;
+						curFileIsValid = false;
+					}
 				}
 			}
 		}
