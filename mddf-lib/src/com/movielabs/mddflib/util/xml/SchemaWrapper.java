@@ -24,7 +24,9 @@ package com.movielabs.mddflib.util.xml;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jdom2.Document;
@@ -59,6 +61,7 @@ public class SchemaWrapper {
 	private Element rootEl;
 
 	private XPathFactory xpfac = XPathFactory.instance();
+	private ArrayList<String> reqElList;
 
 	public static SchemaWrapper factory(String xsdRsrc) {
 		synchronized (cache) {
@@ -100,6 +103,7 @@ public class SchemaWrapper {
 	private SchemaWrapper(String xsdRsrc) {
 		schemaXSD = getSchemaXSD(xsdRsrc);
 		rootEl = schemaXSD.getRootElement();
+		buildReqElList();
 	}
 
 	public String getType(String elementName) {
@@ -112,10 +116,7 @@ public class SchemaWrapper {
 		/*
 		 * WHAT ABOUT:::::> <xs:element name="Event"> <xs:simpleType> <xs:union
 		 * memberTypes="xs:dateTime xs:date"/> </xs:simpleType> </xs:element>
-		 */
-		if (type.contains("xs:date")) {
-			type = "xs:date";
-		}
+		 */ 
 		return type;
 	}
 
@@ -126,7 +127,7 @@ public class SchemaWrapper {
 	 *             if <tt>schema</tt> is unrecognized or <tt>elementName</tt> is
 	 *             not defined by the <tt>schema</tt>
 	 */
-	public boolean isRequired(String elementName) throws IllegalStateException, IllegalArgumentException { 
+	public boolean isRequired(String elementName) throws IllegalStateException, IllegalArgumentException {
 		Element target = getElement(elementName);
 		if (target == null) {
 			// TODO: Maybe its an attribute?
@@ -142,6 +143,79 @@ public class SchemaWrapper {
 				Filters.element(), null, xsNSpace);
 		Element target = xpExpression.evaluateFirst(rootEl);
 		return target;
+	}
+
+	private void buildReqElList() {
+		reqElList = new ArrayList<String>();
+		XPathExpression<Element> xpExpression = xpfac.compile(".//xs:element", Filters.element(), null, xsNSpace);
+		List<Element> elementList = xpExpression.evaluate(rootEl);
+		for (int i = 0; i < elementList.size(); i++) {
+			Element target = (Element) elementList.get(i);
+			String minVal = target.getAttributeValue("minOccurs", "1");
+			if (minVal.equals("0")) {
+				// ignore optional elements
+				continue;
+			}
+			String type = target.getAttributeValue("type");
+			if ((type != null) && (type.startsWith("xs:"))) {
+				reqElList.add(target.getAttributeValue("name"));
+			}
+		}
+		// add required attributes...
+		xpExpression = xpfac.compile(".//xs:attribute[@use='required']", Filters.element(), null, xsNSpace);
+		elementList = xpExpression.evaluate(rootEl);
+		for (int i = 0; i < elementList.size(); i++) {
+			Element target = (Element) elementList.get(i);
+			String attName = target.getAttributeValue("name");
+			/*
+			 * need the parent Element's name which can be complicated since the
+			 * XSD can have the attribute (a) in a referenced complex type, (b)
+			 * in an xs:extension, or (c) nested in other intermediate stuff.
+			 * 
+			 */
+			Element parent = getNamedAncestor(target);
+			if (parent.getName().contains("element")) {
+				String elName = parent.getAttributeValue("name");
+				String fullName = elName + "@" + attName;
+				reqElList.add(fullName); 
+			} else {
+				// dealing with a complex-type so its more indirect
+				String typeName = parent.getAttributeValue("name");
+				xpExpression = xpfac.compile(".//xs:element[contains(@type,'" + typeName + "')]", Filters.element(), null,
+						xsNSpace);
+				List<Element> innerList = xpExpression.evaluate(rootEl);
+				for (int j = 0; j < innerList.size(); j++) {
+					Element ownerEl = (Element) innerList.get(j);
+					String elName = ownerEl.getAttributeValue("name");
+					String fullName = elName + "@" + attName;
+					reqElList.add(fullName); 
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param target
+	 * @return
+	 */
+	private Element getNamedAncestor(Element target) {
+		Element next = target;
+		Element parent = next.getParentElement();
+		while (parent != null) {
+			if (parent.getAttribute("name") != null) {
+				return parent;
+			}
+			next = parent;
+			parent = next.getParentElement();
+		}
+		return null;
+	}
+
+	/**
+	 * @return the reqElList
+	 */
+	public ArrayList<String> getReqElList() {
+		return reqElList;
 	}
 
 }

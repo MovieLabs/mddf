@@ -46,6 +46,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator.XrefCounter;
 import com.movielabs.mddflib.util.AbstractValidator;
+import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
@@ -177,31 +178,37 @@ public class ManifestValidator extends AbstractValidator {
 		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, "Validating constraints", curFile, LOGMSG_ID);
 		super.validateConstraints();
 
+		SchemaWrapper availSchema = SchemaWrapper.factory("manifest-v" + XmlIngester.MAN_VER);
+		List<String> reqElList = availSchema.getReqElList();
+		for(int i=0; i < reqElList.size();i++){
+			String key = reqElList.get(i);
+			validateNotEmpty(key);
+		}
 		// TODO: Load from JSON file....
 		/*
 		 * Check ID for any Inventory components....
 		 */
-		validateId("Audio", "AudioTrackID", true);
-		validateId("Video", "VideoTrackID", true);
-		validateId("Image", "ImageID", true);
-		validateId("Subtitle", "SubtitleTrackID", true);
-		validateId("Interactive", "InteractiveTrackID", true);
-		validateId("Ancillary", "AncillaryTrackID", true);
-		validateId("TextObject", "TextObjectID", true);
-		validateId("Metadata", "ContentID", true);
+		validateId("Audio", "AudioTrackID", true, true);
+		validateId("Video", "VideoTrackID", true, true);
+		validateId("Image", "ImageID", true, true);
+		validateId("Subtitle", "SubtitleTrackID", true, true);
+		validateId("Interactive", "InteractiveTrackID", true, true);
+		validateId("Ancillary", "AncillaryTrackID", true, true);
+		validateId("TextObject", "TextObjectID", true, true);
+		validateId("Metadata", "ContentID", true, true);
 		// validateId("BasicMetadata", "ContentID");
 
 		/*
 		 * Check ID for everything else...
 		 */
-		validateId("PictureGroup", "PictureGroupID", true);
-		validateId("TextGroup", "TextGroupID", true);
-		validateId("AppGroup", "AppGroupID", true);
-		validateId("Presentation", "PresentationID", true);
-		validateId("PlayableSequence", "PlayableSequenceID", true);
-		validateId("TimedEventSequence", "TimedSequenceID", true);
-		validateId("Experience", "ExperienceID", true);
-		validateId("Gallery", "GalleryID", false);
+		validateId("PictureGroup", "PictureGroupID", true, true);
+		validateId("TextGroup", "TextGroupID", true, true);
+		validateId("AppGroup", "AppGroupID", true, true);
+		validateId("Presentation", "PresentationID", true, true);
+		validateId("PlayableSequence", "PlayableSequenceID", true, true);
+		validateId("TimedEventSequence", "TimedSequenceID", true, true);
+		validateId("Experience", "ExperienceID", true, true);
+		validateId("Gallery", "GalleryID", false, true);
 
 		/* Now validate cross-references */
 		validateXRef("Experience", "ContentID", "Metadata");
@@ -261,21 +268,21 @@ public class ManifestValidator extends AbstractValidator {
 		allowed.addAll(Arrays.asList(vs1));
 		LogReference srcRef = LogReference.getRef("MMM", "1.5", "mmm001");
 		// srcRef = "Section 6.2, TR-META-MMM (v1.5)";
-		validateVocab(manifestNSpace, "PictureGroup", manifestNSpace, "Type", allowed, srcRef);
+		validateVocab(manifestNSpace, "PictureGroup", manifestNSpace, "Type", allowed, srcRef, true);
 
 		allowed = new JSONArray();
 		String[] vs2 = { "Synchronous", "Pause", "Stop", "Substitution" };
 		allowed.addAll(Arrays.asList(vs2));
 		srcRef = LogReference.getRef("MMM", "1.5", "mmm002");
 		// srcRef = "Section 7.2.3, TR-META-MMM (v1.5)";
-		validateVocab(manifestNSpace, "TimedEvent", manifestNSpace, "Type", allowed, srcRef);
+		validateVocab(manifestNSpace, "TimedEvent", manifestNSpace, "Type", allowed, srcRef, true);
 
 		allowed = new JSONArray();
 		String[] vs3 = { "Main", "Promotion", "Bonus", "Other" };
 		allowed.addAll(Arrays.asList(vs3));
 		srcRef = LogReference.getRef("MMM", "1.5", "mmm003");
 		// srcRef = "Section 8.3.1, TR-META-MMM (v1.5)";
-		validateVocab(manifestNSpace, "AudioVisual", manifestNSpace, "Type", allowed, srcRef);
+		validateVocab(manifestNSpace, "AudioVisual", manifestNSpace, "Type", allowed, srcRef, true);
 
 		validateCardinality();
 	}
@@ -300,31 +307,31 @@ public class ManifestValidator extends AbstractValidator {
 
 		JSONArray allowed = controlledVocab.optJSONArray("WorkType");
 		LogReference srcRef = LogReference.getRef("CM", mdVersion, "cm002");
-		allOK = allOK && validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, srcRef);
+		allOK = allOK && validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("ColorType");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm003");
-		allOK = allOK && validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", allowed, srcRef);
+		allOK = allOK && validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("PictureFormat");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm004");
-		allOK = allOK && validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", allowed, srcRef);
+		allOK = allOK && validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("ReleaseType");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm005");
-		allOK = allOK && validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, srcRef);
+		allOK = allOK && validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("TitleAlternate@type");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm006");
-		allOK = allOK && validateVocab(mdNSpace, "TitleAlternate", null, "@type", allowed, srcRef);
+		allOK = allOK && validateVocab(mdNSpace, "TitleAlternate", null, "@type", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("Parent@relationshipType");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm007");
-		allOK = allOK && validateVocab(mdNSpace, "Parent", null, "@relationshipType", allowed, srcRef);
+		allOK = allOK && validateVocab(mdNSpace, "Parent", null, "@relationshipType", allowed, srcRef, true);
 
 		allowed = controlledVocab.optJSONArray("EntryClass");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm008");
-		allOK = allOK && validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef);
+		allOK = allOK && validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef, true);
 
 		// ====================================
 		// TODO: DIGITAL ASSET METADATA
