@@ -109,7 +109,17 @@ public abstract class AbstractValidator extends XmlIngester {
 	public static final String LOGMSG_ID = "ManifestValidator";
 
 	protected static HashMap<String, String> id2typeMap;
-	protected static JSONObject controlledVocab;
+	protected static JSONObject cmVocab;
+	
+	static{
+
+		try {
+			cmVocab = loadVocab(vocabRsrcPath, "CM");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	// protected int logTag;
 	protected Namespace rootNS;

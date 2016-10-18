@@ -245,7 +245,9 @@ public class RowToXmlHelper {
 		// End or EndCondition
 		processCondition(transaction, "End", xb.getAvailsNSpace(), prefix + "End");
 
-		process(transaction, "StoreLanguage", xb.getAvailsNSpace(), prefix + "StoreLanguage");
+		process(transaction, "AllowedLanguage", xb.getAvailsNSpace(), prefix + "AllowedLanguage");
+		process(transaction, "AssetLanguage", xb.getAvailsNSpace(), prefix + "AssetLanguage");
+		process(transaction, "HoldbackLanguage", xb.getAvailsNSpace(), prefix + "HoldbackLanguage");
 		process(transaction, "LicenseRightsDescription", xb.getAvailsNSpace(), prefix + "LicenseRightsDescription");
 		process(transaction, "FormatProfile", xb.getAvailsNSpace(), prefix + "FormatProfile");
 		process(transaction, "ContractID", xb.getAvailsNSpace(), prefix + "ContractID");
@@ -420,7 +422,7 @@ public class RowToXmlHelper {
 		if (isSpecified(terrPg)) {
 			Element country = new Element("country", xb.getMdNSpace());
 			region.addContent(country);
-			country.setText(terrPg.getRawValue());
+			country.setText(terrPg.getRawValue()); 
 			xb.addToPedigree(country, terrPg);
 		}
 		rat.addContent(region);

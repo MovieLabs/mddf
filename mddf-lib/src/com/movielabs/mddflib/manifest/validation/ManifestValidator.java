@@ -106,7 +106,7 @@ public class ManifestValidator extends AbstractValidator {
 
 	}
 
-	public static final String LOGMSG_ID = "ManifestValidator"; 
+	public static final String LOGMSG_ID = "ManifestValidator";
 
 	static {
 		id2typeMap = new HashMap<String, String>();
@@ -116,16 +116,20 @@ public class ManifestValidator extends AbstractValidator {
 		id2typeMap.put("InteractiveTrackID", "interactiveid");
 		id2typeMap.put("ProductID", "alid");
 		id2typeMap.put("ContentID", "cid");
- 
-		try {
-			controlledVocab = loadVocab(cmVrcPath, "CM");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		/*
+		 * Is there a controlled vocab that is specific to a Manifest? Note the
+		 * vocab set for validating Common Metadata will be loaded by the parent
+		 * class AbstractValidator.
+		 */
+		// try {
+		// controlledVocab = loadVocab(cmVrcPath, "CM");
+		// } catch (Exception e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
 	}
- 
 
 	/**
 	 * @param validateC
@@ -133,10 +137,10 @@ public class ManifestValidator extends AbstractValidator {
 	public ManifestValidator(boolean validateC, LogMgmt loggingMgr) {
 		super(loggingMgr);
 		this.validateC = validateC;
-		
+
 		rootNS = manifestNSpace;
 		rootPrefix = "manifest:";
-		
+
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_MANIFEST;
 	}
@@ -145,6 +149,7 @@ public class ManifestValidator extends AbstractValidator {
 		curFile = xmlManifestFile;
 		curFileName = xmlManifestFile.getName();
 		curFileIsValid = true;
+		curRootEl = getAsXml(xmlManifestFile);
 		validateXml(xmlManifestFile);
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
@@ -153,7 +158,6 @@ public class ManifestValidator extends AbstractValidator {
 		}
 		String msg = "Schema validation check PASSED";
 		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
-		curRootEl = getAsXml(xmlManifestFile);
 		if (validateC) {
 			validateConstraints();
 		}
@@ -167,7 +171,7 @@ public class ManifestValidator extends AbstractValidator {
 	 */
 	protected boolean validateXml(File manifestFile) {
 		String manifestXsdFile = "./resources/manifest-v" + XmlIngester.MAN_VER + ".xsd";
-		curFileIsValid = validateXml(manifestFile, manifestXsdFile, logMsgSrcId);
+		curFileIsValid = validateXml(manifestFile, curRootEl, manifestXsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
 
@@ -180,7 +184,7 @@ public class ManifestValidator extends AbstractValidator {
 
 		SchemaWrapper availSchema = SchemaWrapper.factory("manifest-v" + XmlIngester.MAN_VER);
 		List<String> reqElList = availSchema.getReqElList();
-		for(int i=0; i < reqElList.size();i++){
+		for (int i = 0; i < reqElList.size(); i++) {
 			String key = reqElList.get(i);
 			validateNotEmpty(key);
 		}
@@ -296,7 +300,7 @@ public class ManifestValidator extends AbstractValidator {
 		 * BasicMetadata must be included for each Inventory/Metadata instance
 		 */
 
-	} 
+	}
 
 	/**
 	 * @return
@@ -305,37 +309,39 @@ public class ManifestValidator extends AbstractValidator {
 		boolean allOK = true;
 		String mdVersion = "2.4";
 
-		JSONArray allowed = controlledVocab.optJSONArray("WorkType");
+		JSONArray allowed = cmVocab.optJSONArray("WorkType");
 		LogReference srcRef = LogReference.getRef("CM", mdVersion, "cm002");
-		allOK = allOK && validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, srcRef, true);
+		allOK = validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, srcRef, true) && allOK;
 
-		allowed = controlledVocab.optJSONArray("ColorType");
+		allowed = cmVocab.optJSONArray("ColorType");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm003");
-		allOK = allOK && validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", allowed, srcRef, true);
+		allOK =  validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", allowed, srcRef, true)
+				&& allOK;
 
-		allowed = controlledVocab.optJSONArray("PictureFormat");
+		allowed = cmVocab.optJSONArray("PictureFormat");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm004");
-		allOK = allOK && validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", allowed, srcRef, true);
+		allOK =  validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", allowed, srcRef, true)
+				&& allOK;
 
-		allowed = controlledVocab.optJSONArray("ReleaseType");
+		allowed = cmVocab.optJSONArray("ReleaseType");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm005");
-		allOK = allOK && validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, srcRef, true);
+		allOK = validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, srcRef, true) && allOK;
 
-		allowed = controlledVocab.optJSONArray("TitleAlternate@type");
+		allowed = cmVocab.optJSONArray("TitleAlternate@type");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm006");
-		allOK = allOK && validateVocab(mdNSpace, "TitleAlternate", null, "@type", allowed, srcRef, true);
+		allOK = validateVocab(mdNSpace, "TitleAlternate", null, "@type", allowed, srcRef, true) && allOK;
 
-		allowed = controlledVocab.optJSONArray("Parent@relationshipType");
+		allowed = cmVocab.optJSONArray("Parent@relationshipType");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm007");
-		allOK = allOK && validateVocab(mdNSpace, "Parent", null, "@relationshipType", allowed, srcRef, true);
+		allOK = validateVocab(mdNSpace, "Parent", null, "@relationshipType", allowed, srcRef, true) && allOK;
 
-		allowed = controlledVocab.optJSONArray("EntryClass");
+		allowed = cmVocab.optJSONArray("EntryClass");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm008");
-		allOK = allOK && validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef, true);
+		allOK = validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef, true) && allOK;
 
 		// ====================================
 		// TODO: DIGITAL ASSET METADATA
 
 		return allOK;
-	} 
+	}
 }
