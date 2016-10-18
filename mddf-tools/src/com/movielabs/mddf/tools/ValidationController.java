@@ -569,7 +569,6 @@ public class ValidationController {
 	 */
 	protected void validateAvail(File srcFile, Element docRootEl, Map<Object, Pedigree> pedigreeMap)
 			throws IOException, JDOMException {
-		// Element docRootEl = ManifestIngester.getAsXml(srcFile);
 		boolean isValid = true;
 		AvailValidator tool1 = new AvailValidator(validateC, logMgr);
 		isValid = tool1.process(srcFile, docRootEl, pedigreeMap);
