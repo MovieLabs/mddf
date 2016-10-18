@@ -221,8 +221,7 @@ public class LogPanel extends JPanel {
 	 * 
 	 * @see com.movielabs.mddf.util.UiLogger#setWidth(int)
 	 */
-	public void setSize(int width, int ht) {
-		System.out.println("setSize");
+	public void setSize(int width, int ht) { 
 		if (width < 1) {
 			width = 1000;
 		}

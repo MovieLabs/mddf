@@ -79,9 +79,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		splitPane.setDividerLocation(leftWidth);
 		splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
 			@Override
-			public void propertyChange(PropertyChangeEvent pce) {
-
-				System.out.println("AdvLogPanel: JSplitPane PropertyChangeEvent" );
+			public void propertyChange(PropertyChangeEvent pce) { 
 				String propertyName = pce.getPropertyName();
 				JSplitPane sourceSplitPane = (JSplitPane) pce.getSource();
 				if (propertyName.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
@@ -203,6 +201,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		tableView.clearLog();
 		tableView.append(msgList);
 
+		setSize(getWidth(), getHeight());
 	}
 
 	/**
