@@ -26,8 +26,8 @@ package com.movielabs.mddflib.avails.xml;
  * Instantiates the linkage of a data value back to its original source. The
  * intent is to provide the logging components with a way to point the user to
  * the specific location in a file that specified a problematic value. The
- * <tt>source</tt> will normally be an XML Element but, in the case of
- * Avails, may also be a cell in a XLSX spreadsheet.
+ * <tt>source</tt> will normally be an XML Element but, in the case of Avails,
+ * may also be a cell in a XLSX spreadsheet.
  * 
  * 
  * @author L. Levin, Critical Architectures LLC
@@ -55,6 +55,10 @@ public class Pedigree {
 	 */
 	public Object getSource() {
 		return source;
+	}
+
+	public boolean isEmpty() {
+		return rawValue.isEmpty();
 	}
 
 }
