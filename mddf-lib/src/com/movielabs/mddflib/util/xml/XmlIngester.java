@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -47,6 +48,7 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
+import org.jdom2.transform.JDOMSource;
 import org.jdom2.xpath.XPathFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -81,9 +83,10 @@ public abstract class XmlIngester {
 
 	protected static XPathFactory xpfac = XPathFactory.instance();
 
-	protected static String cmVrcPath = "/com/movielabs/mddf/resources/cm_vocab.json";
+	protected static String vocabRsrcPath = "/com/movielabs/mddf/resources/cm_vocab.json";
 	protected static File srcFile;
 	protected static File sourceFolder;
+	private static JSONObject vocabResource = null;
 
 	protected File curFile;
 	protected String curFileName;
@@ -99,28 +102,42 @@ public abstract class XmlIngester {
 		this.loggingMgr = loggingMgr;
 	}
 
-
 	protected static JSONObject loadVocab(String rsrcPath, String vocabSet) throws JDOMException, IOException {
-		StringBuilder builder = new StringBuilder();
-		InputStream inp = AvailValidator.class.getResourceAsStream(rsrcPath);
-		InputStreamReader isr = new InputStreamReader(inp, "UTF-8");
-		BufferedReader reader = new BufferedReader(isr);
-		String line;
-		while ((line = reader.readLine()) != null) {
-			builder.append(line);
+		if (vocabResource == null) {
+			StringBuilder builder = new StringBuilder();
+			InputStream inp = AvailValidator.class.getResourceAsStream(rsrcPath);
+			InputStreamReader isr = new InputStreamReader(inp, "UTF-8");
+			BufferedReader reader = new BufferedReader(isr);
+			String line;
+			while ((line = reader.readLine()) != null) {
+				builder.append(line);
+			}
+			String input = builder.toString();
+			vocabResource = JSONObject.fromObject(input);
 		}
-		String input = builder.toString();
-		JSONObject vocabResource = JSONObject.fromObject(input);
 		JSONObject vocabulary = vocabResource.getJSONObject(vocabSet);
 		return vocabulary;
 	}
-	
+
 	protected static StreamSource[] generateStreamSources(String[] xsdFilesPaths) {
 		Stream<String> xsdStreams = Arrays.stream(xsdFilesPaths);
 		Stream<Object> streamSrcs = xsdStreams.map(StreamSource::new);
 		List<Object> collector = streamSrcs.collect(Collectors.toList());
 		StreamSource[] result = collector.toArray(new StreamSource[xsdFilesPaths.length]);
 		return result;
+		// --------------------
+		// StreamSource[] result = new StreamSource[xsdFilesPaths.length];
+		// for(int i=0; i < result.length;i++){
+		// InputStream inStream =
+		// XmlIngester.class.getResourceAsStream(xsdFilesPaths[i]);
+		// if(inStream != null){
+		// result[i] = new StreamSource(inStream);
+		// System.out.println("Found schema rsrc: "+xsdFilesPaths[i]);
+		// }else{
+		// System.out.println("NULL schema rsrc: "+xsdFilesPaths[i]);
+		// }
+		// }
+		// return result;
 	}
 
 	/**
@@ -132,27 +149,38 @@ public abstract class XmlIngester {
 	 *            identifier used in log messages
 	 * @return
 	 */
-	protected boolean validateXml(File xmlFile, String xsdLocation, String moduleId) {
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating XML", xmlFile, -1, moduleId, null, null);
+	protected boolean validateXml(File xmlFile, Element curRootEl, String xsdLocation, String moduleId) {
+		// String defaultRsrcLoc = SchemaWrapper.RSRC_PACKAGE ;
+		String defaultRsrcLoc = "./resources/";
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		List<String> xsdPathList = new ArrayList<String>();
 		xsdPathList.add(xsdLocation);
 		// Remember to include Common Metadata schema......
-		String mdXsdFile = "./resources/md-v" + MD_VER + ".xsd";
+		String mdXsdFile = defaultRsrcLoc + "md-v" + MD_VER + ".xsd";
 		xsdPathList.add(mdXsdFile);
 		if (MDMEC_VER != null) {
-			String mdmecXsdFile = "./resources/mdmec-v" + MDMEC_VER + ".xsd";
+			String mdmecXsdFile = defaultRsrcLoc + "mdmec-v" + MDMEC_VER + ".xsd";
 			xsdPathList.add(mdmecXsdFile);
 		}
 		String[] xsdPaths = new String[xsdPathList.size()];
 		xsdPaths = xsdPathList.toArray(xsdPaths);
 		StreamSource[] xsdSources = generateStreamSources(xsdPaths);
 		String genericTooltip = "XML does not conform to schema as defined in " + xsdLocation;
+		Schema schema;
+		try {
+			schema = schemaFactory.newSchema(xsdSources);
+		} catch (SAXException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return false;
+		}
 		// now do actual validation
 		try {
-			Schema schema = schemaFactory.newSchema(xsdSources);
 			Validator validator = schema.newValidator();
-			validator.validate(new StreamSource(xmlFile));
+			Source src = new JDOMSource(curRootEl);
+			validator.validate(src);
+			// }
 		} catch (SAXParseException e) {
 			String msg = e.getMessage();
 			// get rid of some boilerplate and unhelpfull lead-in text
@@ -274,8 +302,8 @@ public abstract class XmlIngester {
 				}
 				if (seqInfoRequired && (seqNum == null)) {
 					// Flag as ERROR
-					loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, seqEl, "Missing required SequenceInfo",
-							null, null, logMsgSrcId);
+					loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, seqEl, "Missing required SequenceInfo", null,
+							null, logMsgSrcId);
 					hasErrors = true;
 				} else if (seqNum != null) {
 					// seqNum should be monotonically increasing starting with 1
@@ -567,12 +595,12 @@ public abstract class XmlIngester {
 	 */
 	public static void setAvailVersion(String availSchemaVer) throws IllegalArgumentException {
 		switch (availSchemaVer) {
-		case "2.2":  
-		case "2.1": 
+		case "2.2":
+		case "2.1":
 			MD_VER = "2.4";
 			MDMEC_VER = "2.4";
 			break;
-		case "1.7": 
+		case "1.7":
 			MD_VER = "2.3";
 			MDMEC_VER = "2.3";
 			break;
