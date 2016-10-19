@@ -124,12 +124,32 @@ public class RowToXmlHelper {
 	}
 
 	protected Element createAsset(Pedigree workTypePedigree) {
-		Element assetEl = new Element("Asset", xb.getAvailsNSpace());
-		Element wt = new Element("WorkType", xb.getAvailsNSpace());
-		wt.setText(workTypePedigree.getRawValue());
-		xb.addToPedigree(wt, workTypePedigree);
-		assetEl.addContent(wt);
-		mAssetBody(assetEl);
+		Namespace availNS = xb.getAvailsNSpace();
+		Element assetEl = new Element("Asset", availNS);
+		Element wtEl = new Element("WorkType", availNS);
+		wtEl.setText(workTypePedigree.getRawValue());
+		xb.addToPedigree(wtEl, workTypePedigree);
+		assetEl.addContent(wtEl);
+		Pedigree pg = getPedigreedData("AvailAsset/ContentID");
+		String contentID = pg.getRawValue();
+		Attribute attEl = new Attribute("contentID", contentID);
+		assetEl.setAttribute(attEl);
+		xb.addToPedigree(attEl, pg);
+		xb.addToPedigree(assetEl, pg);
+		createAssetMetadata(assetEl);
+		
+		pg = getPedigreedData("Avail/BundledALIDs");
+		if (xb.isRequired("BundledALIDs", "avails") || isSpecified(pg)) {
+			String[] alidList = pg.getRawValue().split(";");
+			for (int i=0; i < alidList.length; i++){
+				Element bAssetEl = new Element("BundledAsset", availNS);
+				Element bAlidEl = new Element("BundledALID", availNS);
+				bAlidEl.setText(alidList[i]);
+				xb.addToPedigree(bAlidEl, pg);
+				bAssetEl.addContent(bAlidEl);
+				assetEl.addContent(bAssetEl);				
+			}
+		}
 		return assetEl;
 	}
 
@@ -141,15 +161,8 @@ public class RowToXmlHelper {
 	 * @param assetEl
 	 * @return
 	 */
-	protected void mAssetBody(Element assetEl) {
+	protected void createAssetMetadata(Element assetEl) {
 		Element e;
-		Pedigree pg = getPedigreedData("AvailAsset/ContentID");
-		String contentID = pg.getRawValue();
-		Attribute attEl = new Attribute("contentID", contentID);
-		assetEl.setAttribute(attEl);
-		xb.addToPedigree(attEl, pg);
-		xb.addToPedigree(assetEl, pg);
-
 		Element metadata = new Element("Metadata", xb.getAvailsNSpace());
 
 		/*
@@ -180,7 +193,7 @@ public class RowToXmlHelper {
 		process(metadata, "TitleEIDR-URN", xb.getAvailsNSpace(), "AvailAsset/ContentID");
 
 		// AltID --> AltIdentifier
-		pg = getPedigreedData("AvailMetadata/AltID");
+		Pedigree pg = getPedigreedData("AvailMetadata/AltID");
 		if (xb.isRequired("AltIdentifier", "avails") || isSpecified(pg)) {
 			String value = pg.getRawValue();
 			Element altIdEl = new Element("AltIdentifier", xb.getAvailsNSpace());
@@ -422,7 +435,7 @@ public class RowToXmlHelper {
 		if (isSpecified(terrPg)) {
 			Element country = new Element("country", xb.getMdNSpace());
 			region.addContent(country);
-			country.setText(terrPg.getRawValue()); 
+			country.setText(terrPg.getRawValue());
 			xb.addToPedigree(country, terrPg);
 		}
 		rat.addContent(region);
