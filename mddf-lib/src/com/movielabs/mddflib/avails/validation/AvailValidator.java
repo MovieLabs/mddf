@@ -23,6 +23,8 @@ package com.movielabs.mddflib.avails.validation;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,9 @@ import net.sf.json.JSONObject;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
+import org.jdom2.xpath.XPathExpression;
+
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
@@ -96,6 +101,8 @@ public class AvailValidator extends AbstractValidator {
 	}
 
 	public static final String LOGMSG_ID = "AvailValidator";
+
+	private static final String DOC_VER = "2.1";
 
 	private static JSONObject availVocab;
 
@@ -213,23 +220,12 @@ public class AvailValidator extends AbstractValidator {
 		 * set of allowed values).
 		 */
 		// start with Common Metadata spec..
-		boolean cmOk = validateCMVocab();
+		validateCMVocab();
 
 		// Now do any defined in Avails spec..
-		boolean availOk = validateAvailVocab();
+		validateAvailVocab();
 
-		validateCardinality();
-	}
-
-	/**
-	 * 
-	 */
-	private void validateCardinality() {
-		/*
-		 * Sec 4.2.7: At least one instance of ContainerReference or
-		 * BasicMetadata must be included for each Inventory/Metadata instance
-		 */
-
+		validateUsage();
 	}
 
 	/**
@@ -286,8 +282,7 @@ public class AvailValidator extends AbstractValidator {
 
 		allowed = availVocab.optJSONArray("ExperienceCondition");
 		srcRef = LogReference.getRef(doc, docVer, "avail07");
-		allOK = allOK
-				&& validateVocab(primaryNS, "Transaction", primaryNS, "ExperienceCondition", allowed, srcRef, true)
+		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "ExperienceCondition", allowed, srcRef, true)
 				&& allOK;
 
 		allowed = availVocab.optJSONArray("Term@termName");
@@ -336,6 +331,164 @@ public class AvailValidator extends AbstractValidator {
 		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "HoldbackLanguage", rfc5646, srcRef, true) && allOK;
 		allOK = validateVocab(primaryNS, "Term", primaryNS, "Language", rfc5646, srcRef, true) && allOK;
 		return allOK;
+	}
+
+	/**
+	 * Check for consistent usage. This typically means that an OPTIONAL element
+	 * will be either REQUIRED or INVALID for certain use-cases (e.g.
+	 * BundledAsset is only allowed when WorkType is 'Collection').
+	 * 
+	 * @return
+	 */
+	private void validateUsage() {
+		/*
+		 * Check terms associated with Pre-Orders: If LicenseType is 'POEST'
+		 * than (1) a SuppressionLiftDate term is required and (2) a
+		 * PreOrderFulfillDate term is allowed.
+		 */
+		// 1) Check all Transactions with LicenseType = 'POEST'
+		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + rootPrefix + "LicenseType[.='POEST']",
+				Filters.element(), null, availsNSpace);
+		XPathExpression<Element> xpExp02 = xpfac.compile(".//" + rootPrefix + "Term[@termName='SuppressionLiftDate']",
+				Filters.element(), null, availsNSpace);
+
+		List<Element> ltElList = xpExp01.evaluate(curRootEl);
+		for (int i = 0; i < ltElList.size(); i++) {
+			Element lTypeEl = ltElList.get(i);
+			Element transEl = lTypeEl.getParentElement();
+			List<Element> termElList = xpExp02.evaluate(transEl);
+			if (termElList.size() < 1) {
+				String msg = "SuppressionLiftDate term is missing";
+				String explanation = "If LicenseType is 'POEST' than a SuppressionLiftDate term is required";
+				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, lTypeEl, msg, explanation, null, logMsgSrcId);
+				curFileIsValid = false;
+			} else if (termElList.size() > 1) {
+				String msg = "Too many SuppressionLiftDate terms";
+				String explanation = "More than one SuppressionLiftDate terms is contradictory. Interpretation can not be guaranteed.";
+				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_WARN, termElList.get(0), msg, explanation, null, logMsgSrcId);
+			}
+		}
+
+		// 2) Check all Transactions with a PreOrderFulfilDate term
+		xpExp01 = xpfac.compile(".//" + rootPrefix + "Term[@termName='PreOrderFulfillDate']", Filters.element(), null,
+				availsNSpace);
+		List<Element> termElList = xpExp01.evaluate(curRootEl);
+		for (int i = 0; i < termElList.size(); i++) {
+			Element termEl = termElList.get(i);
+			Element transEl = termEl.getParentElement();
+			Element lTypeEl = transEl.getChild("LicenseType", availsNSpace);
+			if (!(lTypeEl.getText().equals("POEST"))) {
+				String msg = "Invalid term for LicenseType";
+				String explanation = "PreOrderFulfillDate term is only allowed if LicenseType='POEST'";
+				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, termEl, msg, explanation, null, logMsgSrcId);
+				curFileIsValid = false;
+			}
+		}
+		// ===========================================================
+		/*
+		 * Asset/BundledAsset is only allowed when Asset/WorkType is
+		 * 'Collection'
+		 * 
+		 */
+		LogReference srcRef = LogReference.getRef("AVAIL", DOC_VER, "avail01");
+		xpExp01 = xpfac.compile(".//" + rootPrefix + "Asset[" + rootPrefix + "BundledAsset]", Filters.element(), null,
+				availsNSpace);
+		List<Element> assetElList = xpExp01.evaluate(curRootEl);
+		for (int i = 0; i < assetElList.size(); i++) {
+			Element assetEl = assetElList.get(i);
+			Element wrkTypeEl = assetEl.getChild("WorkType", availsNSpace);
+			if (!(wrkTypeEl.getText().equals("Collection"))) {
+				String msg = "Invalid Asset structure for specified WorkType";
+				String explanation = "Asset/BundledAsset is only allowed when Asset/WorkType is 'Collection'";
+				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, wrkTypeEl, msg, explanation, srcRef, logMsgSrcId);
+				curFileIsValid = false;
+			}
+		}
+
+		// ===========================================================
+		/*
+		 * Match the Avail/AvailType with all child Asset/WorkTypes as
+		 * restrictions apply.
+		 * 
+		 */
+		// TODO: Load from JSON
+
+		String[] allowedWTypes = { "Movie", "Short" };
+		validateTypeCompatibility("single", allowedWTypes, 1);
+
+		allowedWTypes = (String[]) Array.newInstance(String.class, 1);
+		allowedWTypes[0] = "Episode";
+		validateTypeCompatibility("episode", allowedWTypes, 1);
+
+		allowedWTypes = (String[]) Array.newInstance(String.class, 1);
+		allowedWTypes[0] = "Season";
+		validateTypeCompatibility("season", allowedWTypes, 1);
+
+		allowedWTypes = (String[]) Array.newInstance(String.class, 1);
+		allowedWTypes[0] = "Series";
+		validateTypeCompatibility("series", allowedWTypes, -1);
+		validateTypeCompatibility("miniseries", allowedWTypes, -1);
+
+		allowedWTypes = (String[]) Array.newInstance(String.class, 1);
+		allowedWTypes[0] = "Collection";
+		validateTypeCompatibility("bundle", allowedWTypes, -1);
+
+		allowedWTypes = (String[]) Array.newInstance(String.class, 1);
+		allowedWTypes[0] = "Supplemental";
+		validateTypeCompatibility("supplement", allowedWTypes, -1);
+
+		allowedWTypes = (String[]) Array.newInstance(String.class, 1);
+		allowedWTypes[0] = "Promotion";
+		validateTypeCompatibility("promotion", allowedWTypes, -1);
+		// ===========================================================
+		/* For Transactions in US, check USACaptionsExemptionReason */
+
+		return;
+	}
+
+	/**
+	 * Check that the Avail/AvailType is compatible with all child
+	 * Asset/WorkTypes
+	 * 
+	 * @param availType
+	 * @param allowedWTypes
+	 */
+	private void validateTypeCompatibility(String availType, String[] allowedWTypes, int max) {
+		LogReference srcRef = LogReference.getRef("AVAIL", DOC_VER, "avail01");
+		List<String> allowedTypeList = Arrays.asList(allowedWTypes);
+
+		String path = ".//" + rootPrefix + "AvailType[text()='" + availType + "']";
+		XPathExpression<Element> xpExp01 = xpfac.compile(path, Filters.element(), null, availsNSpace);
+		List<Element> availTypeElList = xpExp01.evaluate(curRootEl);
+		for (int i = 0; i < availTypeElList.size(); i++) {
+			Element availTypeEl = availTypeElList.get(i);
+			Element availEl = availTypeEl.getParentElement();
+			// Now get the descendant WorkType element
+			XPathExpression<Element> xpExp02 = xpfac.compile("./" + rootPrefix + "Asset/" + rootPrefix + "WorkType",
+					Filters.element(), null, availsNSpace);
+			List<Element> workTypeElList = xpExp02.evaluate(availEl);
+			for (int j = 0; j < workTypeElList.size(); j++) {
+				Element wrkTypeEl = workTypeElList.get(j);
+				String wtValue = wrkTypeEl.getText();
+				if (!(allowedTypeList.contains(wtValue))) {
+					String msg = "AvailType is incompatible with WorkType";
+					String explanation = null;
+					logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, wrkTypeEl, msg, explanation, srcRef, logMsgSrcId);
+					curFileIsValid = false;
+				}
+
+			}
+			/*
+			 * Might as well use the Asset/WorkType to check the number of Assets is within limits
+			 */
+			if(max > 0 && ( workTypeElList.size()> max)){
+				String msg = "Invalid Asset structure for specified AvailType";
+				String explanation = "Avail of type='"+availType+"' is only allowed a max of "+max+" Assets";
+				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, availTypeEl, msg, explanation, srcRef, logMsgSrcId);
+				curFileIsValid = false;
+			}
+		}
+
 	}
 
 	/**
