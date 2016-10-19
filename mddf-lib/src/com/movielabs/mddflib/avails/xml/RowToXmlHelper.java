@@ -139,7 +139,7 @@ public class RowToXmlHelper {
 		createAssetMetadata(assetEl);
 		
 		pg = getPedigreedData("Avail/BundledALIDs");
-		if (xb.isRequired("BundledALIDs", "avails") || isSpecified(pg)) {
+		if (xb.isRequired("BundledALID", "avails") || isSpecified(pg)) {
 			String[] alidList = pg.getRawValue().split(";");
 			for (int i=0; i < alidList.length; i++){
 				Element bAssetEl = new Element("BundledAsset", availNS);

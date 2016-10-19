@@ -306,14 +306,11 @@ public class XmlBuilder {
 		case "Short":
 			availType = "single";
 			break;
-		case "Season":
-			availType = "season";
-			break;
-		case "Episode":
-			availType = "episode";
-			break;
+		case "Season": 
+		case "Episode": 
+		case "Collection": 
 		default:
-			availType = workTypeSS;
+			availType = workTypeSS.toLowerCase();
 		}
 		return availType;
 	}
