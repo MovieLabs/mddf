@@ -288,19 +288,8 @@ public class ManifestValidator extends AbstractValidator {
 		// srcRef = "Section 8.3.1, TR-META-MMM (v1.5)";
 		validateVocab(manifestNSpace, "AudioVisual", manifestNSpace, "Type", allowed, srcRef, true);
 
-		validateCardinality();
 	}
 
-	/**
-	 * 
-	 */
-	private void validateCardinality() {
-		/*
-		 * Sec 4.2.7: At least one instance of ContainerReference or
-		 * BasicMetadata must be included for each Inventory/Metadata instance
-		 */
-
-	}
 
 	/**
 	 * @return
