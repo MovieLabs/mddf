@@ -137,17 +137,17 @@ public class RowToXmlHelper {
 		xb.addToPedigree(attEl, pg);
 		xb.addToPedigree(assetEl, pg);
 		createAssetMetadata(assetEl);
-		
+
 		pg = getPedigreedData("Avail/BundledALIDs");
 		if (xb.isRequired("BundledALID", "avails") || isSpecified(pg)) {
 			String[] alidList = pg.getRawValue().split(";");
-			for (int i=0; i < alidList.length; i++){
+			for (int i = 0; i < alidList.length; i++) {
 				Element bAssetEl = new Element("BundledAsset", availNS);
 				Element bAlidEl = new Element("BundledALID", availNS);
 				bAlidEl.setText(alidList[i]);
 				xb.addToPedigree(bAlidEl, pg);
 				bAssetEl.addContent(bAlidEl);
-				assetEl.addContent(bAssetEl);				
+				assetEl.addContent(bAssetEl);
 			}
 		}
 		return assetEl;
@@ -258,9 +258,9 @@ public class RowToXmlHelper {
 		// End or EndCondition
 		processCondition(transaction, "End", xb.getAvailsNSpace(), prefix + "End");
 
-		process(transaction, "AllowedLanguage", xb.getAvailsNSpace(), prefix + "AllowedLanguage");
+		process(transaction, "AllowedLanguage", xb.getAvailsNSpace(), prefix + "AllowedLanguages", ",");
 		process(transaction, "AssetLanguage", xb.getAvailsNSpace(), prefix + "AssetLanguage");
-		process(transaction, "HoldbackLanguage", xb.getAvailsNSpace(), prefix + "HoldbackLanguage");
+		process(transaction, "HoldbackLanguage", xb.getAvailsNSpace(), prefix + "HoldbackLanguage", ",");
 		process(transaction, "LicenseRightsDescription", xb.getAvailsNSpace(), prefix + "LicenseRightsDescription");
 		process(transaction, "FormatProfile", xb.getAvailsNSpace(), prefix + "FormatProfile");
 		process(transaction, "ContractID", xb.getAvailsNSpace(), prefix + "ContractID");
@@ -366,15 +366,17 @@ public class RowToXmlHelper {
 			transaction.addContent(termEl);
 		}
 
-		termEl = processTerm(prefix + "HoldbackLanguage", "HoldbackLanguage", "Language");
-		if (termEl != null) {
-			transaction.addContent(termEl);
-		}
-
-		termEl = processTerm(prefix + "AllowedLanguages", "HoldbackExclusionLanguage", "Duration");
-		if (termEl != null) {
-			transaction.addContent(termEl);
-		}
+		// termEl = processTerm(prefix + "HoldbackLanguage", "HoldbackLanguage",
+		// "Language");
+		// if (termEl != null) {
+		// transaction.addContent(termEl);
+		// }
+		//
+		// termEl = processTerm(prefix + "AllowedLanguages",
+		// "HoldbackExclusionLanguage", "Duration");
+		// if (termEl != null) {
+		// transaction.addContent(termEl);
+		// }
 	}
 
 	private Element processTerm(String src, String termName, String subElName) {
@@ -473,17 +475,63 @@ public class RowToXmlHelper {
 		return el;
 	}
 
+	/**
+	 * Same as invoking
+	 * <tt>process(Element parentEl, String childName, Namespace ns, String cellKey, String separator) </tt>
+	 * with a <tt>null</tt> separator. A single child element will therefore be
+	 * created.
+	 * 
+	 * @param parentEl
+	 * @param childName
+	 * @param ns
+	 * @param cellKey
+	 * @return
+	 */
 	protected Element process(Element parentEl, String childName, Namespace ns, String cellKey) {
+		Element[] elementList = process(parentEl, childName, ns, cellKey, null);
+		if (elementList != null) {
+			return elementList[0];
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Add zero or more child elements with the specified name and namespace.
+	 * The number of child elements created will be determined by the contents
+	 * of the indicated cell. If <tt>separator</tt> is not <tt>null</tt>, then
+	 * it will be used to split the string value in the cell with each resulting
+	 * sub-string being used to create a distinct child element.
+	 * 
+	 * @param parentEl
+	 * @param childName
+	 * @param ns
+	 * @param cellKey
+	 * @param separator
+	 * @return an array of child <tt>Element</tt> instances
+	 */
+	protected Element[] process(Element parentEl, String childName, Namespace ns, String cellKey, String separator) {
 		Pedigree pg = getPedigreedData(cellKey);
 		if (pg == null) {
 			return null;
 		}
 		String value = pg.getRawValue();
 		if (xb.isRequired(childName, ns.getPrefix()) || isSpecified(value)) {
-			Element childEl = mGenericElement(childName, value, ns);
-			parentEl.addContent(childEl);
-			xb.addToPedigree(childEl, pg);
-			return childEl;
+			String[] valueSet;
+			if (separator == null) {
+				valueSet = new String[1];
+				valueSet[0] = value;
+			} else {
+				valueSet = value.split(separator);
+			}
+			Element[] elementList = new Element[valueSet.length];
+			for (int i = 0; i < valueSet.length; i++) {
+				Element childEl = mGenericElement(childName, valueSet[i], ns);
+				parentEl.addContent(childEl);
+				xb.addToPedigree(childEl, pg);
+				elementList[i] = childEl;
+			}
+			return elementList;
 		} else {
 			return null;
 		}
