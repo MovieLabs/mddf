@@ -217,7 +217,7 @@ public class RowToXmlHelper {
 
 		process(metadata, "USACaptionsExemptionReason", xb.getAvailsNSpace(), "AvailMetadata/CaptionExemption");
 
-		mRatings(metadata);
+		processRatings(metadata);
 
 		process(metadata, "EncodeID", xb.getAvailsNSpace(), "AvailAsset/EncodeID");
 		process(metadata, "LocalizationOffering", xb.getAvailsNSpace(), "AvailMetadata/LocalizationType");
@@ -416,47 +416,32 @@ public class RowToXmlHelper {
 		parentEl.addContent(rh);
 	}
 
-	protected void mRatings(Element m) {
+	protected void processRatings(Element metadataEl) {
 		String ratingSystem = getData("AvailMetadata/RatingSystem");
 		String ratingValue = getData("AvailMetadata/RatingValue");
-		String ratingReason = getData("AvailMetadata/RatingReason");
 		/*
-		 * According to XML schema, all 3 values are REQUIRED for a Rating. If
+		 * According to XML schema, both values are REQUIRED for a Rating. If
 		 * any has been specified than we add the Rating element and let XML
 		 * validation worry about completeness,
 		 */
-		boolean add = isSpecified(ratingSystem) || isSpecified(ratingValue) || isSpecified(ratingReason);
+		boolean add = isSpecified(ratingSystem) || isSpecified(ratingValue);
 		if (!add) {
 			return;
 		}
 		Element ratings = new Element("Ratings", xb.getAvailsNSpace());
+
+		/*
+		 * XML can support multiple Rating instances but Excel only allows 1
+		 */
 		Element rat = new Element("Rating", xb.getMdNSpace());
 		ratings.addContent(rat);
-		Element region = new Element("Region", xb.getMdNSpace());
-		Pedigree terrPg = getPedigreedData("AvailTrans/Territory");
-		if (isSpecified(terrPg)) {
-			Element country = new Element("country", xb.getMdNSpace());
-			region.addContent(country);
-			country.setText(terrPg.getRawValue());
-			xb.addToPedigree(country, terrPg);
-		}
-		rat.addContent(region);
 
-		if (isSpecified(ratingSystem)) {
-			rat.addContent(mGenericElement("System", ratingSystem, xb.getMdNSpace()));
-		}
+		processRegion(rat, "Region", xb.getMdNSpace(), "AvailTrans/Territory");
+		process(rat, "System", xb.getMdNSpace(), "AvailMetadata/RatingSystem");
+		process(rat, "Value", xb.getMdNSpace(), "AvailMetadata/RatingValue");
+		process(rat, "Reason", xb.getMdNSpace(), "AvailMetadata/RatingReason", ",");
 
-		if (isSpecified(ratingValue)) {
-			rat.addContent(mGenericElement("Value", ratingValue, xb.getMdNSpace()));
-		}
-		if (isSpecified(ratingReason)) {
-			String[] reasons = ratingReason.split(",");
-			for (String s : reasons) {
-				Element reason = mGenericElement("Reason", s, xb.getMdNSpace());
-				rat.addContent(reason);
-			}
-		}
-		m.addContent(ratings);
+		metadataEl.addContent(ratings);
 	}
 
 	/**
