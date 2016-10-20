@@ -62,7 +62,7 @@ public class RowToXmlHelper {
 
 	}
 
-	protected void makeAvail(XmlBuilder xb)   {
+	protected void makeAvail(XmlBuilder xb) {
 		this.xb = xb;
 		Element avail = xb.getAvailElement(this);
 		/*
@@ -226,7 +226,7 @@ public class RowToXmlHelper {
 		assetEl.addContent(metadata);
 	}
 
-	protected Element createTransaction()   {
+	protected Element createTransaction() {
 		Element transactionEl = new Element("Transaction", xb.getAvailsNSpace());
 		/*
 		 * TransactionID is OPTIONAL. For mystical reasons lost in the mists of
@@ -264,7 +264,7 @@ public class RowToXmlHelper {
 		process(transactionEl, "FormatProfile", xb.getAvailsNSpace(), prefix + "FormatProfile");
 		process(transactionEl, "ContractID", xb.getAvailsNSpace(), prefix + "ContractID");
 
-		processTerm(transactionEl);
+		addAllTerms(transactionEl);
 
 		process(transactionEl, "OtherInstructions", xb.getAvailsNSpace(), prefix + "OtherInstructions");
 
@@ -283,9 +283,9 @@ public class RowToXmlHelper {
 	 * An example of the 2nd approach is the 'WatchDuration' column.
 	 * </p>
 	 * 
-	 * @param transaction
+	 * @param transactionEl
 	 */
-	private void processTerm(Element transaction) {
+	private void addAllTerms(Element transactionEl) {
 		String prefix = "AvailTrans/";
 		/*
 		 * May be multiple 'terms'. Start with one specified via the PriceType
@@ -294,7 +294,7 @@ public class RowToXmlHelper {
 		if (isSpecified(pg)) {
 			String tName = pg.getRawValue();
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
-			transaction.addContent(termEl);
+			transactionEl.addContent(termEl);
 			switch (tName) {
 			case "Tier":
 			case "Category":
@@ -321,59 +321,20 @@ public class RowToXmlHelper {
 			termEl.setAttribute("termName", tName);
 			xb.addToPedigree(termEl, pg);
 		}
+		
 		/*
 		 * Now look for Terms specified via other columns....
 		 */
-
-		Element termEl = processTerm(prefix + "SuppressionLiftDate", "SuppressionLiftDate", "Event");
-		if (termEl != null) {
-			transaction.addContent(termEl);
-		}
-
-		termEl = processTerm(prefix + "AnnounceDate", "AnnounceDate", "Event");
-		if (termEl != null) {
-			transaction.addContent(termEl);
-		}
-
-		termEl = processTerm(prefix + "SpecialPreOrderFulfillDate", "PreOrderFulfillDate", "Event");
-		if (termEl != null) {
-			transaction.addContent(termEl);
-		}
-
-		termEl = processTerm(prefix + "SRP", "SRP", "Money");
-		if (termEl != null) {
-			transaction.addContent(termEl);
-		}
-
-		termEl = processTerm(prefix + "RentalDuration", "RentalDuration", "Duration");
-		if (termEl != null) {
-			transaction.addContent(termEl);
-		}
-
-		termEl = processTerm(prefix + "WatchDuration", "WatchDuration", "Duration");
-		if (termEl != null) {
-			transaction.addContent(termEl);
-		}
-
-		termEl = processTerm(prefix + "FixedEndDate", "FixedEndDate", "Event");
-		if (termEl != null) {
-			transaction.addContent(termEl);
-		}
-
-		// termEl = processTerm(prefix + "HoldbackLanguage", "HoldbackLanguage",
-		// "Language");
-		// if (termEl != null) {
-		// transaction.addContent(termEl);
-		// }
-		//
-		// termEl = processTerm(prefix + "AllowedLanguages",
-		// "HoldbackExclusionLanguage", "Duration");
-		// if (termEl != null) {
-		// transaction.addContent(termEl);
-		// }
+		Element termEl = addTerm(transactionEl, prefix + "SuppressionLiftDate", "SuppressionLiftDate", "Event");
+		termEl = addTerm(transactionEl, prefix + "AnnounceDate", "AnnounceDate", "Event");
+		termEl = addTerm(transactionEl, prefix + "SpecialPreOrderFulfillDate", "PreOrderFulfillDate", "Event");
+		termEl = addTerm(transactionEl, prefix + "SRP", "SRP", "Money");
+		termEl = addTerm(transactionEl, prefix + "RentalDuration", "RentalDuration", "Duration");
+		termEl = addTerm(transactionEl, prefix + "WatchDuration", "WatchDuration", "Duration");
+		termEl = addTerm(transactionEl, prefix + "FixedEndDate", "FixedEndDate", "Event");
 	}
 
-	private Element processTerm(String src, String termName, String subElName) {
+	private Element addTerm(Element parent, String src, String termName, String subElName) {
 		Pedigree pg = getPedigreedData(src);
 		if ((pg != null) && (isSpecified(pg.getRawValue()))) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
@@ -382,6 +343,7 @@ public class RowToXmlHelper {
 			termEl.addContent(childEl);
 			xb.addToPedigree(childEl, pg);
 			xb.addToPedigree(termEl, pg);
+			parent.addContent(termEl);
 			return termEl;
 		} else {
 			return null;
