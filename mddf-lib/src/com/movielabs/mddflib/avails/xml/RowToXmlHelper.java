@@ -62,7 +62,7 @@ public class RowToXmlHelper {
 
 	}
 
-	protected void makeAvail(XmlBuilder xb) throws Exception {
+	protected void makeAvail(XmlBuilder xb)   {
 		this.xb = xb;
 		Element avail = xb.getAvailElement(this);
 		/*
@@ -226,54 +226,48 @@ public class RowToXmlHelper {
 		assetEl.addContent(metadata);
 	}
 
-	protected Element createTransaction() throws Exception {
-		Element transaction = new Element("Transaction", xb.getAvailsNSpace());
+	protected Element createTransaction()   {
+		Element transactionEl = new Element("Transaction", xb.getAvailsNSpace());
 		/*
 		 * TransactionID is OPTIONAL. For mystical reasons lost in the mists of
 		 * time, it come from the 'AvailID' column.
 		 */
 		Pedigree pg = getPedigreedData("Avail/AvailID");
 		if (this.isSpecified(pg)) {
-			transaction.setAttribute("TransactionID", pg.getRawValue());
+			transactionEl.setAttribute("TransactionID", pg.getRawValue());
 		}
-		return mTransactionBody(transaction);
+		processTransactionBody(transactionEl);
+		return transactionEl;
 	}
 
 	/**
-	 * populate a Transaction element; called from superclass
+	 * populate a Transaction element
 	 * 
-	 * @param transaction
-	 *            parent node
-	 * @return transaction parent node
+	 * @param transactionEl
 	 */
-	protected Element mTransactionBody(Element transaction) throws Exception {
+	protected void processTransactionBody(Element transactionEl) {
 		Element e;
 		String prefix = "AvailTrans/";
-		process(transaction, "LicenseType", xb.getAvailsNSpace(), prefix + "LicenseType");
-		process(transaction, "Description", xb.getAvailsNSpace(), prefix + "Description");
-		processRegion(transaction, "Territory", xb.getAvailsNSpace(), prefix + "Territory");
+		process(transactionEl, "LicenseType", xb.getAvailsNSpace(), prefix + "LicenseType");
+		process(transactionEl, "Description", xb.getAvailsNSpace(), prefix + "Description");
+		processRegion(transactionEl, "Territory", xb.getAvailsNSpace(), prefix + "Territory");
 
 		// Start or StartCondition
-		processCondition(transaction, "Start", xb.getAvailsNSpace(), prefix + "Start");
+		processCondition(transactionEl, "Start", xb.getAvailsNSpace(), prefix + "Start");
 		// End or EndCondition
-		processCondition(transaction, "End", xb.getAvailsNSpace(), prefix + "End");
+		processCondition(transactionEl, "End", xb.getAvailsNSpace(), prefix + "End");
 
-		process(transaction, "AllowedLanguage", xb.getAvailsNSpace(), prefix + "AllowedLanguages", ",");
-		process(transaction, "AssetLanguage", xb.getAvailsNSpace(), prefix + "AssetLanguage");
-		process(transaction, "HoldbackLanguage", xb.getAvailsNSpace(), prefix + "HoldbackLanguage", ",");
-		process(transaction, "LicenseRightsDescription", xb.getAvailsNSpace(), prefix + "LicenseRightsDescription");
-		process(transaction, "FormatProfile", xb.getAvailsNSpace(), prefix + "FormatProfile");
-		process(transaction, "ContractID", xb.getAvailsNSpace(), prefix + "ContractID");
+		process(transactionEl, "AllowedLanguage", xb.getAvailsNSpace(), prefix + "AllowedLanguages", ",");
+		process(transactionEl, "AssetLanguage", xb.getAvailsNSpace(), prefix + "AssetLanguage");
+		process(transactionEl, "HoldbackLanguage", xb.getAvailsNSpace(), prefix + "HoldbackLanguage", ",");
+		process(transactionEl, "LicenseRightsDescription", xb.getAvailsNSpace(), prefix + "LicenseRightsDescription");
+		process(transactionEl, "FormatProfile", xb.getAvailsNSpace(), prefix + "FormatProfile");
+		process(transactionEl, "ContractID", xb.getAvailsNSpace(), prefix + "ContractID");
 
-		processTerm(transaction);
+		processTerm(transactionEl);
 
-		// OtherInstructions
-		// if ((e = mGenericElement(COL.OtherInstructions.toString(),
-		// fields[COL.OtherInstructions.ordinal()],
-		// false)) != null)
-		// transaction.addContent(e);
+		process(transactionEl, "OtherInstructions", xb.getAvailsNSpace(), prefix + "OtherInstructions");
 
-		return transaction;
 	}
 
 	/**
