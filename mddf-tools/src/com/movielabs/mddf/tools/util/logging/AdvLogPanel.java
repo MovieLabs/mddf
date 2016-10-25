@@ -439,4 +439,11 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	public int getMinLevel() {
 		return minLevel;
 	}
+
+	/**
+	 * @return the LogNavPanel
+	 */
+	public LogNavPanel getLogNavPanel() {
+		return treeView;
+	}
 }

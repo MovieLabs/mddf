@@ -36,8 +36,11 @@ import javax.swing.JToolBar;
 import java.awt.Color;
 
 import javax.swing.border.TitledBorder;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.TreePath;
 
 import org.jdom2.JDOMException;
 
@@ -60,7 +63,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.ButtonGroup;
@@ -77,7 +82,8 @@ import javax.swing.JRadioButtonMenuItem;
 import com.movielabs.mddf.tools.ValidationController;
 import com.movielabs.mddf.tools.util.AboutDialog;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
-import com.movielabs.mddf.tools.util.logging.LoggerWidget; 
+import com.movielabs.mddf.tools.util.logging.LogNavPanel;
+import com.movielabs.mddf.tools.util.logging.LoggerWidget;
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -93,7 +99,7 @@ import javax.swing.SwingConstants;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public abstract class ValidatorTool extends GenericTool {
+public abstract class ValidatorTool extends GenericTool implements TreeSelectionListener {
 
 	public static enum Context {
 		MANIFEST, AVAILS
@@ -111,7 +117,7 @@ public abstract class ValidatorTool extends GenericTool {
 	protected String contextName; // version suitable for use in UI and log
 									// messages
 	protected JFrame frame;
-	protected JTextField manifestSrcPathTField;
+	protected JTextField inputSrcTField;
 	protected Properties properties;
 	protected File userPropFile;
 	protected List<String> recentFileList = new ArrayList<String>();
@@ -135,6 +141,7 @@ public abstract class ValidatorTool extends GenericTool {
 	protected List<String> useCases = new ArrayList<String>();
 	protected JToolBar validatorToolBar;
 	protected JButton editFileBtn;
+	protected Map<String, File> selectedFiles = new HashMap<String, File>();
 
 	/**
 	 * Create the application.
@@ -189,7 +196,7 @@ public abstract class ValidatorTool extends GenericTool {
 	protected void initialize() {
 		frame = new JFrame();
 		frame.setIconImage(Toolkit.getDefaultToolkit()
-				.getImage(ValidatorTool.class.getResource(GenericTool.imageRsrcPath +"icon_movielabs.jpg")));
+				.getImage(ValidatorTool.class.getResource(GenericTool.imageRsrcPath + "icon_movielabs.jpg")));
 		frame.setTitle(contextName + " Validator");
 		frame.setBounds(100, 100, 1150, 600);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -233,7 +240,7 @@ public abstract class ValidatorTool extends GenericTool {
 			fileLabel.setForeground(Color.BLUE);
 			fileLabel.setToolTipText("Select a single file or a directory");
 			validatorToolBar.add(fileLabel);
-			validatorToolBar.add(getManifestSrcField());
+			validatorToolBar.add(getInputSrcTextField());
 		}
 		return validatorToolBar;
 	}
@@ -244,7 +251,7 @@ public abstract class ValidatorTool extends GenericTool {
 	protected JButton getEditFileBtn() {
 		if (editFileBtn == null) {
 			editFileBtn = new JButton("Edit");
-			editFileBtn.setIcon(new ImageIcon(ValidatorTool.class.getResource(GenericTool.imageRsrcPath +"edit.png")));
+			editFileBtn.setIcon(new ImageIcon(ValidatorTool.class.getResource(GenericTool.imageRsrcPath + "edit.png")));
 			editFileBtn.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -274,8 +281,8 @@ public abstract class ValidatorTool extends GenericTool {
 	protected JButton getRunValidationBtn() {
 		if (runValidatorBtn == null) {
 			runValidatorBtn = new JButton("RUN");
-			runValidatorBtn
-					.setIcon(new ImageIcon(ValidatorTool.class.getResource(GenericTool.imageRsrcPath +"validate.png")));
+			runValidatorBtn.setIcon(
+					new ImageIcon(ValidatorTool.class.getResource(GenericTool.imageRsrcPath + "validate.png")));
 			runValidatorBtn.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -501,7 +508,10 @@ public abstract class ValidatorTool extends GenericTool {
 
 	protected LoggerWidget getConsoleLogPanel() {
 		if (consoleLogger == null) {
-			consoleLogger = new AdvLogPanel(); 
+			consoleLogger = new AdvLogPanel();
+			LogNavPanel logNav = ((AdvLogPanel) consoleLogger).getLogNavPanel();
+			// listen for user selections..
+			logNav.addListener(this);
 		}
 		return consoleLogger;
 	}
@@ -509,14 +519,14 @@ public abstract class ValidatorTool extends GenericTool {
 	/**
 	 * @return
 	 */
-	protected JTextField getManifestSrcField() {
-		if (manifestSrcPathTField == null) {
-			manifestSrcPathTField = new JTextField();
-			manifestSrcPathTField.setText(" ");
-			manifestSrcPathTField.setToolTipText("Select single file or a directory");
-			manifestSrcPathTField.setEditable(false);
-			manifestSrcPathTField.setColumns(20);
-			manifestSrcPathTField.addMouseListener(new MouseAdapter() {
+	protected JTextField getInputSrcTextField() {
+		if (inputSrcTField == null) {
+			inputSrcTField = new JTextField();
+			inputSrcTField.setText(" ");
+			inputSrcTField.setToolTipText("Select single file or a directory");
+			inputSrcTField.setEditable(false);
+			inputSrcTField.setColumns(20);
+			inputSrcTField.addMouseListener(new MouseAdapter() {
 
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -527,16 +537,42 @@ public abstract class ValidatorTool extends GenericTool {
 					fileInputDir = FileChooserDialog.getPath("Source Folder", null, xmlFilter, "srcManifest",
 							window.frame, JFileChooser.FILES_AND_DIRECTORIES);
 					if (fileInputDir != null) {
-						manifestSrcPathTField.setText(fileInputDir.getName());
-						manifestSrcPathTField.setToolTipText(fileInputDir.getAbsolutePath());
+						inputSrcTField.setText(fileInputDir.getName());
+						inputSrcTField.setToolTipText(fileInputDir.getAbsolutePath());
 						getRunValidationBtn().setEnabled(true);
 						getEditFileBtn().setEnabled(fileInputDir.isFile());
+						/*
+						 * Store for possible recall be user via menu selection
+						 */
+						selectedFiles.put(fileInputDir.getName(), fileInputDir);
 					}
 					// }
 				}
 			});
 		}
-		return manifestSrcPathTField;
+		return inputSrcTField;
+	}
+
+	/**
+	 * Respond to user selection in the Log Panel's navigation (i.e., tree)
+	 * component.
+	 * 
+	 * @param e
+	 */
+	public void valueChanged(TreeSelectionEvent e) {
+		TreePath tp = e.getPath();
+		if (tp == null || (tp.getPathCount() < 2)) {
+			return;
+		}
+		String selectedFileLabel = tp.getPathComponent(1).toString();
+		selectedFileLabel = selectedFileLabel.replaceFirst("\\s*\\[\\d+\\]\\s*", "");
+		File selectedFile = selectedFiles.get(selectedFileLabel);
+		if (selectedFile == null) {
+			return;
+		}
+		fileInputDir = selectedFile;
+		getInputSrcTextField().setText(selectedFileLabel);
+		inputSrcTField.setToolTipText(fileInputDir.getAbsolutePath());
 	}
 
 	/**
@@ -664,7 +700,7 @@ public abstract class ValidatorTool extends GenericTool {
 				JFileChooser.FILES_ONLY);
 
 		frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-//		Converter.outputJson = false;
+		// Converter.outputJson = false;
 		preProcessor = getPreProcessor();
 		try {
 			preProcessor.runScript(scriptPath);
@@ -682,8 +718,8 @@ public abstract class ValidatorTool extends GenericTool {
 	 */
 	protected void runTool() {
 		frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-//		Converter.compress = compressCBoxMenuItem.isSelected();
-//		Converter.outputJson = false;
+		// Converter.compress = compressCBoxMenuItem.isSelected();
+		// Converter.outputJson = false;
 		consoleLogger.collapse();
 		String uxProfile = (String) getProfileComboBox().getSelectedItem();
 		String srcPath = fileInputDir.getAbsolutePath();
