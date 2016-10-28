@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2009 (http://www.altova.com) by Lawrence J Levin (private) -->
-<xs:schema xmlns:avails="http://www.movielabs.com/schema/avails/v2.2/avails" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:md="http://www.movielabs.com/schema/md/v2.4/md" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.4" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.movielabs.com/schema/avails/v2.2/avails" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.1">
-	<xs:import namespace="http://www.movielabs.com/schema/md/v2.4/md" schemaLocation="md-v2.4.xsd"/>
-	<xs:import namespace="http://www.movielabs.com/schema/mdmec/v2.4" schemaLocation="mdmec-v2.4.xsd"/>
-	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+<!-- Version v2.2-draft-20161013 -->
+<!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Craig Seidel (private) -->
+<xs:schema xmlns:avails="http://www.movielabs.com/schema/avails/v2.2/avails" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:md="http://www.movielabs.com/schema/md/v2.4/md" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.4" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.movielabs.com/schema/avails/v2.2/avails" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.2">
+	<xs:import namespace="http://www.movielabs.com/schema/md/v2.4/md" schemaLocation="./md-v2.4.xsd"/>
+	<xs:import namespace="http://www.movielabs.com/schema/mdmec/v2.4" schemaLocation="./mdmec-v2.4.xsd"/>
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="./xmldsig-core-schema.xsd"/>
 	<!-- XMLDSIG Schema can be found at http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd#%20%20%20%20xmldsig-core-schema.xsd -->
 	<!--EMA CONTENT AVAILABILITY METADATA (Avails)-->
-	<!--Verson 2.1-->
+	<!--Verson 2.2 DRAFT-->
 	<xs:complexType name="TransCondDate-type">
 		<xs:sequence>
 			<xs:element name="Event" type="xs:string"/>
@@ -26,7 +27,7 @@
 		<xs:sequence>
 			<xs:element name="SeriesContentID" type="md:id-type"/>
 			<xs:element name="SeriesEIDR-URN" type="md:id-type" minOccurs="0"/>
-			<xs:element name="SeriesTitleDisplayUnlimited" type="xs:string"/>
+			<xs:element name="SeriesTitleDisplayUnlimited" type="xs:string" minOccurs="0"/>
 			<xs:element name="SeriesTitleInternalAlias" type="xs:string"/>
 			<xs:element name="LocalSeriesTitle" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
@@ -43,6 +44,9 @@
 					<xs:union memberTypes="xs:gYear xs:gYearMonth xs:date"/>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="USACaptionsExemptionReason" type="xs:positiveInteger" minOccurs="0"/>
+			<xs:element name="ReleaseHistory" type="md:ReleaseHistory-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Ratings" type="md:ContentRating-type" minOccurs="0"/>
 			<xs:element name="SeriesAltIdentifier" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:complexContent>
@@ -74,7 +78,7 @@
 		<xs:sequence>
 			<xs:element name="SeasonContentID" type="md:id-type"/>
 			<xs:element name="SeasonEIDR-URN" type="md:id-type" minOccurs="0"/>
-			<xs:element name="SeasonTitleDisplayUnlimited" type="xs:string"/>
+			<xs:element name="SeasonTitleDisplayUnlimited" type="xs:string" minOccurs="0"/>
 			<xs:element name="SeasonTitleInternalAlias" type="xs:string" minOccurs="0"/>
 			<xs:element name="SeasonNumber" type="md:ContentSequenceInfo-type"/>
 			<xs:element name="VersionDescription" type="xs:string" minOccurs="0"/>
@@ -83,6 +87,9 @@
 					<xs:union memberTypes="xs:gYear xs:gYearMonth xs:date"/>
 				</xs:simpleType>
 			</xs:element>
+			<xs:element name="ReleaseHistory" type="md:ReleaseHistory-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="USACaptionsExemptionReason" type="xs:positiveInteger" minOccurs="0"/>
+			<xs:element name="Ratings" type="md:ContentRating-type" minOccurs="0"/>
 			<xs:element name="SeasonAltIdentifier" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:complexContent>
@@ -124,7 +131,7 @@
 	</xs:complexType>
 	<xs:complexType name="AvailMetadata-type">
 		<xs:sequence>
-			<xs:element name="TitleDisplayUnlimited">
+			<xs:element name="TitleDisplayUnlimited" minOccurs="0">
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:string"/>
@@ -159,10 +166,12 @@
 	</xs:complexType>
 	<xs:complexType name="AvailBundledAsset-type">
 		<xs:sequence>
-			<xs:element name="BundledALID" type="md:AssetLogicalID-type" minOccurs="0"/>
+			<xs:element name="BundledALID" type="md:AssetLogicalID-type"/>
 			<xs:element name="SharedEntitlement" type="avails:AvailSharedEntitlement-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ShortDescription" type="xs:string" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="AvailContentRef-type"/>
 	<xs:complexType name="AvailUnitMetadata-type">
 		<xs:complexContent>
 			<xs:extension base="avails:AvailMetadata-type">
@@ -201,7 +210,7 @@
 	<xs:complexType name="AvailTrans-type">
 		<xs:sequence>
 			<xs:element name="LicenseType" type="xs:string"/>
-			<xs:element name="Description" type="xs:string"/>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
 			<xs:element name="Territory" type="md:Region-type" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>work Intended Audience Regiion</xs:documentation>
@@ -220,8 +229,25 @@
 				<xs:element name="End" type="xs:dateTime"/>
 				<xs:element name="EndCondition" type="xs:string"/>
 			</xs:choice>
-			<xs:element name="AllowedLanguage" type="xs:language" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="AssetLanguage" type="xs:language" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AllowedLanguage" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:language">
+							<xs:attribute name="asset" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AssetLanguage" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:language">
+							<xs:attribute name="asset" type="xs:string"/>
+							<xs:attribute name="descriptive" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="HoldbackLanguage" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:simpleContent>
@@ -246,6 +272,15 @@
 			</xs:element>
 			<xs:element name="ContractID" type="xs:string" minOccurs="0"/>
 			<xs:element name="ReportingID" type="xs:string" minOccurs="0"/>
+			<xs:element name="RefALID" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="md:AssetLogicalID-type">
+							<xs:attribute name="refWorkType" type="md:string-WorkType"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="Term" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:complexContent>
@@ -275,7 +310,20 @@
 	</xs:complexType>
 	<xs:complexType name="AvailSharedEntitlement-type">
 		<xs:sequence>
-			<xs:element name="EcosystemID" type="md:id-type" maxOccurs="unbounded"/>
+			<xs:element name="EcosystemID" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="md:id-type"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DepricatedEcosystemID" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="md:id-type"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
 		</xs:sequence>
 		<xs:attribute name="ecosystem" type="xs:string"/>
 	</xs:complexType>
