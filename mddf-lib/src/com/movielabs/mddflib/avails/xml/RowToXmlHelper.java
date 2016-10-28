@@ -45,7 +45,7 @@ import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
  */
 public class RowToXmlHelper {
 
-	private static final String MISSING = "--FUBAR (missing)";
+	static final String MISSING = "--FUBAR (missing)";
 	protected Row row;
 	protected XmlBuilder xb;
 	AvailsSheet sheet;
@@ -71,11 +71,11 @@ public class RowToXmlHelper {
 		Pedigree pg = getPedigreedData("AvailAsset/WorkType");
 		this.workType = pg.getRawValue();
 
-		// Asset
-		if (xb.isRequired("WorkType", "avails") || (pg != null && this.isSpecified(pg.getRawValue()))) {
-			Element assetEl = createAsset(pg);
-			xb.addAsset(avail, assetEl);
-		}
+		/*
+		 * Assets can be defined redundantly on multiple lines so the XmlBuilder
+		 * is used to coordinate and filter out duplicates.
+		 */
+		xb.createAsset(this);
 
 		Element e = createTransaction();
 		// Transaction
@@ -110,8 +110,10 @@ public class RowToXmlHelper {
 
 		process(pubEl, "DisplayName", xb.getMdNSpace(), colKey);
 
-		// XXX ContactInfo mandatory but can't get this info from the
-		// spreadsheet
+		/*
+		 * if ContactInfo is mandatory we can't get this info from the
+		 * spreadsheet
+		 */
 		if (xb.isRequired("ContactInfo", "mdmec")) {
 			Element e = new Element("ContactInfo", xb.getMdMecNSpace());
 			Element e2 = new Element("Name", xb.getMdNSpace());
@@ -123,23 +125,47 @@ public class RowToXmlHelper {
 		return pubEl;
 	}
 
-	protected Element createAsset(Pedigree workTypePedigree) {
+	/**
+	 * Invoked by XmlBuilder.createAsset() when a pre-existing Asset element
+	 * does not exist.
+	 * 
+	 * @param workTypePedigree
+	 * @return
+	 */
+	protected Element buildAsset() {
+		Pedigree workTypePedigree = getPedigreedData("AvailAsset/WorkType");
+		String workType = workTypePedigree.getRawValue();
 		Namespace availNS = xb.getAvailsNSpace();
 		Element assetEl = new Element("Asset", availNS);
 		Element wtEl = new Element("WorkType", availNS);
-		wtEl.setText(workTypePedigree.getRawValue());
+		String assetWorkType = workTypePedigree.getRawValue();
+		wtEl.setText(assetWorkType);
 		xb.addToPedigree(wtEl, workTypePedigree);
 		assetEl.addContent(wtEl);
-		Pedigree pg = getPedigreedData("AvailAsset/ContentID");
+		/*
+		 * Source key for 'contentID' depends (unfortunately) on the WorkType of
+		 * the Asset.
+		 */
+		String cidPrefix = "";
+		switch (assetWorkType) {
+		case "Season":
+		case "Episode":
+			cidPrefix = assetWorkType;
+			break;
+		default:
+		}
+		String colKey = "AvailAsset/" + cidPrefix + "ContentID";
+		Pedigree pg = getPedigreedData(colKey);
 		String contentID = pg.getRawValue();
 		Attribute attEl = new Attribute("contentID", contentID);
 		assetEl.setAttribute(attEl);
 		xb.addToPedigree(attEl, pg);
 		xb.addToPedigree(assetEl, pg);
-		createAssetMetadata(assetEl);
+
+		xb.createAssetMetadata(assetEl, assetWorkType, this);
 
 		pg = getPedigreedData("Avail/BundledALIDs");
-		if (xb.isRequired("BundledALID", "avails") || isSpecified(pg)) {
+		if (isSpecified(pg)) {
 			String[] alidList = pg.getRawValue().split(";");
 			for (int i = 0; i < alidList.length; i++) {
 				Element bAssetEl = new Element("BundledAsset", availNS);
@@ -154,78 +180,12 @@ public class RowToXmlHelper {
 	}
 
 	/**
-	 * Construct Element instantiating the <tt>AvailMetadata-type</tt>. This
-	 * method should be extended or overridden by sub-classes specific to a
-	 * given work type (i.e., Movie, Episode, Season, etc.)
+	 * Create a Transaction Element. While the Avail XSD allows multiple
+	 * Transactions per Avail, the XLSX mechanism only allows a single
+	 * Transaction element to be defined <i>per-row</i>.
 	 * 
-	 * @param assetEl
 	 * @return
 	 */
-	protected void createAssetMetadata(Element assetEl) {
-		Element e;
-		Element metadata = new Element("Metadata", xb.getAvailsNSpace());
-
-		/*
-		 * TitleDisplayUnlimited is OPTIONAL in SS but REQUIRED in XML;
-		 * workaround by assigning it internal alias value which is REQUIRED in
-		 * SS.
-		 */
-		Pedigree titleDuPg = getPedigreedData("AvailMetadata/TitleDisplayUnlimited");
-		Pedigree titleAliasPg = getPedigreedData("AvailMetadata/TitleInternalAlias");
-		if (!isSpecified(titleDuPg)) {
-			titleDuPg = titleAliasPg;
-		}
-		e = mGenericElement("TitleDisplayUnlimited", titleDuPg.getRawValue(), xb.getAvailsNSpace());
-		xb.addToPedigree(e, titleDuPg);
-		metadata.addContent(e);
-
-		// TitleInternalAlias
-		if (xb.isRequired("TitleInternalAlias", "avails") || isSpecified(titleAliasPg)) {
-			e = mGenericElement("TitleInternalAlias", titleAliasPg.getRawValue(), xb.getAvailsNSpace());
-			metadata.addContent(e);
-			xb.addToPedigree(e, titleAliasPg);
-		}
-
-		// ProductID --> EditEIDR-URN ( optional field)
-		process(metadata, "EditEIDR-URN", xb.getAvailsNSpace(), "AvailAsset/ProductID");
-
-		// ContentID --> TitleEIDR-URN ( optional field)
-		process(metadata, "TitleEIDR-URN", xb.getAvailsNSpace(), "AvailAsset/ContentID");
-
-		// AltID --> AltIdentifier
-		Pedigree pg = getPedigreedData("AvailMetadata/AltID");
-		if (xb.isRequired("AltIdentifier", "avails") || isSpecified(pg)) {
-			String value = pg.getRawValue();
-			Element altIdEl = new Element("AltIdentifier", xb.getAvailsNSpace());
-			Element cid = new Element("Namespace", xb.getMdNSpace());
-			cid.setText(MISSING);
-			altIdEl.addContent(cid);
-			Element idEl = mGenericElement("Identifier", value, xb.getMdNSpace());
-			altIdEl.addContent(idEl);
-			xb.addToPedigree(idEl, pg);
-			Element loc = new Element("Location", xb.getMdNSpace());
-			loc.setText(MISSING);
-			altIdEl.addContent(loc);
-			metadata.addContent(altIdEl);
-		}
-
-		process(metadata, "ReleaseDate", xb.getAvailsNSpace(), "AvailMetadata/ReleaseYear");
-		process(metadata, "RunLength", xb.getAvailsNSpace(), "AvailMetadata/TotalRunTime");
-
-		mReleaseHistory(metadata, "original", "AvailMetadata/ReleaseHistoryOriginal");
-		mReleaseHistory(metadata, "DVD", "AvailMetadata/ReleaseHistoryPhysicalHV");
-
-		process(metadata, "USACaptionsExemptionReason", xb.getAvailsNSpace(), "AvailMetadata/CaptionExemption");
-
-		processRatings(metadata);
-
-		process(metadata, "EncodeID", xb.getAvailsNSpace(), "AvailAsset/EncodeID");
-		process(metadata, "LocalizationOffering", xb.getAvailsNSpace(), "AvailMetadata/LocalizationType");
-
-		// Attach generated Metadata node
-		assetEl.addContent(metadata);
-	}
-
 	protected Element createTransaction() {
 		Element transactionEl = new Element("Transaction", xb.getAvailsNSpace());
 		/*
@@ -246,11 +206,10 @@ public class RowToXmlHelper {
 	 * @param transactionEl
 	 */
 	protected void processTransactionBody(Element transactionEl) {
-		Element e;
 		String prefix = "AvailTrans/";
 		process(transactionEl, "LicenseType", xb.getAvailsNSpace(), prefix + "LicenseType");
 		process(transactionEl, "Description", xb.getAvailsNSpace(), prefix + "Description");
-		processRegion(transactionEl, "Territory", xb.getAvailsNSpace(), prefix + "Territory");
+		addRegion(transactionEl, "Territory", xb.getAvailsNSpace(), prefix + "Territory");
 
 		// Start or StartCondition
 		processCondition(transactionEl, "Start", xb.getAvailsNSpace(), prefix + "Start");
@@ -321,7 +280,7 @@ public class RowToXmlHelper {
 			termEl.setAttribute("termName", tName);
 			xb.addToPedigree(termEl, pg);
 		}
-		
+
 		/*
 		 * Now look for Terms specified via other columns....
 		 */
@@ -348,56 +307,6 @@ public class RowToXmlHelper {
 		} else {
 			return null;
 		}
-	}
-
-	/**
-	 * @param parentEl
-	 * @param type
-	 * @param cellKey
-	 * @param row
-	 */
-	private void mReleaseHistory(Element parentEl, String type, String cellKey) {
-		Pedigree pg = getPedigreedData(cellKey);
-		if (!isSpecified(pg)) {
-			return;
-		}
-		String value = pg.getRawValue();
-		Element rh = new Element("ReleaseHistory", xb.getAvailsNSpace());
-		Element rt = new Element("ReleaseType", xb.getMdNSpace());
-		rt.setText(type);
-		rh.addContent(rt);
-		Element dateEl = mGenericElement("Date", value, xb.getMdNSpace());
-		rh.addContent(dateEl);
-		xb.addToPedigree(dateEl, pg);
-		parentEl.addContent(rh);
-	}
-
-	protected void processRatings(Element metadataEl) {
-		String ratingSystem = getData("AvailMetadata/RatingSystem");
-		String ratingValue = getData("AvailMetadata/RatingValue");
-		/*
-		 * According to XML schema, both values are REQUIRED for a Rating. If
-		 * any has been specified than we add the Rating element and let XML
-		 * validation worry about completeness,
-		 */
-		boolean add = isSpecified(ratingSystem) || isSpecified(ratingValue);
-		if (!add) {
-			return;
-		}
-		Element ratings = new Element("Ratings", xb.getAvailsNSpace());
-
-		/*
-		 * XML can support multiple Rating instances but Excel only allows 1
-		 */
-		Element rat = new Element("Rating", xb.getMdNSpace());
-		ratings.addContent(rat);
-
-		processRegion(rat, "Region", xb.getMdNSpace(), "AvailTrans/Territory");
-		process(rat, "System", xb.getMdNSpace(), "AvailMetadata/RatingSystem");
-		process(rat, "Value", xb.getMdNSpace(), "AvailMetadata/RatingValue");
-		process(rat, "Reason", xb.getMdNSpace(), "AvailMetadata/RatingReason", ",");
-
-		metadataEl.addContent(ratings);
 	}
 
 	/**
@@ -457,7 +366,7 @@ public class RowToXmlHelper {
 			return null;
 		}
 		String value = pg.getRawValue();
-		if (xb.isRequired(childName, ns.getPrefix()) || isSpecified(value)) {
+		if (isSpecified(value) || xb.isRequired(childName, ns.getPrefix())) {
 			String[] valueSet;
 			if (separator == null) {
 				valueSet = new String[1];
@@ -478,7 +387,7 @@ public class RowToXmlHelper {
 		}
 	}
 
-	private void processRegion(Element parentEl, String regionType, Namespace ns, String cellKey) {
+	void addRegion(Element parentEl, String regionType, Namespace ns, String cellKey) {
 		Element regionEl = new Element(regionType, ns);
 		Element countryEl = process(regionEl, "country", xb.getMdNSpace(), cellKey);
 		if (countryEl != null) {

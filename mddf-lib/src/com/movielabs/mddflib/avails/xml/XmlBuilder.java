@@ -35,14 +35,12 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.output.DOMOutputter;
-import org.jdom2.xpath.XPathFactory;
-
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 
 /**
- * Code and functionality formerly in AvailsSheet
+ * Code and functionality formerly in AvailsSheet.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -63,16 +61,23 @@ public class XmlBuilder {
 	private SchemaWrapper mdMecSchema;
 
 	private Map<Object, Pedigree> pedigreeMap = null;
-	private Map<String, Element> availElMap = null;
+	private Map<String, Element> availElRegistry = null;
 	private Element root;
 	private String shortDesc;
 	private Map<Element, List<Element>> avail2AssetMap;
 	private Map<Element, List<Element>> avail2TransMap;
+	private Map<String, Element> assetElRegistry;
 	private Map<Element, RowToXmlHelper> element2SrcRowMap;
 	private LogMgmt logger;
+	private DefaultMetadata mdHelper_basic;
+	private EpisodeMetadata mdHelper_episode;
+	private SeasonMetadata mdHelper_season;
 
 	public XmlBuilder(LogMgmt logger) {
 		this.logger = logger;
+		mdHelper_basic = new DefaultMetadata(this);
+		mdHelper_episode = new EpisodeMetadata(this);
+		mdHelper_season = new SeasonMetadata(this);
 	}
 
 	public boolean setVersion(String availXsdVersion) {
@@ -138,7 +143,8 @@ public class XmlBuilder {
 		}
 		// initialize data structures...
 		pedigreeMap = new HashMap<Object, Pedigree>();
-		availElMap = new HashMap<String, Element>();
+		availElRegistry = new HashMap<String, Element>();
+		assetElRegistry = new HashMap<String, Element>();
 		avail2AssetMap = new HashMap<Element, List<Element>>();
 		avail2TransMap = new HashMap<Element, List<Element>>();
 		element2SrcRowMap = new HashMap<Element, RowToXmlHelper>();
@@ -166,7 +172,7 @@ public class XmlBuilder {
 			return null;
 		}
 		// Final assembly in correct order..
-		Iterator<Element> alidIt = availElMap.values().iterator();
+		Iterator<Element> alidIt = availElRegistry.values().iterator();
 		while (alidIt.hasNext()) {
 			Element nextAvailEl = alidIt.next();
 			Element sDescEl = nextAvailEl.getChild("ShortDescription", availsNSpace);
@@ -203,20 +209,25 @@ public class XmlBuilder {
 	 * @return
 	 */
 	Element getAvailElement(RowToXmlHelper curRow) {
-		Pedigree pg = curRow.getPedigreedData("Avail/ALID");
+		Pedigree alidPedigree = curRow.getPedigreedData("Avail/ALID");
 		/*
 		 * TODO: next line throws a NullPtrException if column is missing. How
 		 * do we handle?
 		 */
-		String alid = pg.getRawValue();
-		Element availEL = availElMap.get(alid);
+		String alid = alidPedigree.getRawValue();
+		Element availEL = availElRegistry.get(alid);
 		if (availEL == null) {
 			availEL = new Element("Avail", getAvailsNSpace());
+			/*
+			 * No data value for the Avail element itself but for purposes of
+			 * error logging we link it to the ALID
+			 */
+			addToPedigree(availEL, alidPedigree);
 			/*
 			 * availEl will get added to document at completion of sheet
 			 * processing. For now, just store in HashMap.
 			 */
-			availElMap.put(alid, availEL);
+			availElRegistry.put(alid, availEL);
 			/*
 			 * Keeping track of row will facilitate later check to make sure any
 			 * other row for same Avail has identical values where required.
@@ -225,7 +236,7 @@ public class XmlBuilder {
 
 			Element alidEl = curRow.mGenericElement("ALID", alid, getAvailsNSpace());
 			availEL.addContent(alidEl);
-			addToPedigree(alidEl, pg);
+			addToPedigree(alidEl, alidPedigree);
 
 			availEL.addContent(curRow.mDisposition());
 			availEL.addContent(curRow.mPublisher("Licensor", "Avail/DisplayName"));
@@ -266,7 +277,7 @@ public class XmlBuilder {
 				String msg = "Inconsistent WorkType; value not compatable with 1st definition of referenced Avail";
 				int row4log = srcRow.getRowNumber() + 1;
 				String details = "AVAIL was 1st defined in row " + row4log + " which specifies AvailAsset/WorkType as "
-						+ srcRow.getData("AvailAsset/WorkType") + " and requires WorkType=" + definedValue; 
+						+ srcRow.getData("AvailAsset/WorkType") + " and requires WorkType=" + definedValue;
 				Cell sourceCell = curRow.sheet.getCell("AvailAsset/WorkType", curRow.getRowNumber());
 				logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
 			}
@@ -281,13 +292,17 @@ public class XmlBuilder {
 	 */
 	private void checkForMatch(String colKey, RowToXmlHelper srcRow, RowToXmlHelper curRow) {
 		String definedValue = srcRow.getData(colKey);
+		if (definedValue == null) {
+			// col not defined so we consider it a match
+			return;
+		}
 		String curValue = curRow.getData(colKey);
 		if (!definedValue.equals(curValue)) {
 			// Generate error msg
 			String msg = "Inconsistent AVAIL specification; value does not match 1st definition of referenced Avail";
 			int row4log = srcRow.getRowNumber() + 1;
 			String details = "AVAIL was 1st defined in row " + row4log + " which specifies " + colKey + " as '"
-					+ definedValue + "'"; 
+					+ definedValue + "'";
 			Cell sourceCell = curRow.sheet.getCell(colKey, curRow.getRowNumber());
 			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
 		}
@@ -306,9 +321,9 @@ public class XmlBuilder {
 		case "Short":
 			availType = "single";
 			break;
-		case "Season": 
-		case "Episode": 
-		case "Collection": 
+		case "Season":
+		case "Episode":
+		case "Collection":
 		default:
 			availType = workTypeSS.toLowerCase();
 		}
@@ -440,19 +455,85 @@ public class XmlBuilder {
 
 	/**
 	 * @param avail
+	 * @param e
+	 */
+	void addTransaction(Element avail, Element transEl) {
+		List<Element> transactionList = avail2TransMap.get(avail);
+		transactionList.add(transEl);
+	}
+
+	/**
+	 * @param row
+	 */
+	void createAsset(RowToXmlHelper curRow) {
+		/*
+		 * Gen unique key and see if there is a matching Element. Unfortunately
+		 * the key's structure is based on contentID which is sensitive to the
+		 * WorkType.
+		 */
+		String workType = curRow.getData("AvailAsset/WorkType");
+		String cidPrefix = "";
+		switch (workType) {
+		case "Season":
+		case "Episode":
+			cidPrefix = workType;
+			break;
+		default:
+		}
+		String cidSrc = cidPrefix + "ContentID";
+		String cidColKey = "AvailAsset/" + cidSrc;
+		String contentID = curRow.getData(cidColKey);
+		// concatenate with the ALID
+		String alid = curRow.getData("Avail/ALID");
+		String assetKey = contentID + "__" + alid;
+		Element assetEl = assetElRegistry.get(assetKey);
+		if (assetEl == null) {
+			assetEl = curRow.buildAsset();
+			assetElRegistry.put(assetKey, assetEl);
+			Element availEL = availElRegistry.get(alid);
+			addAsset(availEL, assetEl);
+		} else {
+			// Generate warning msg
+			String msg = "Ignoring redundant Asset information";
+			int row4log = curRow.getRowNumber() + 1;
+			String details = "An Asset with " + cidSrc + "=" + contentID
+					+ " was previously defined. Asset-specific fields in row " + row4log + " will be ignored";
+			Cell sourceCell = curRow.sheet.getCell(cidColKey, curRow.getRowNumber());
+			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_WARN, sourceCell, msg, details, null, moduleId);
+		}
+	}
+
+	/**
+	 * @param avail
 	 * @param assetEl
 	 */
-	public void addAsset(Element avail, Element assetEl) {
+	void addAsset(Element avail, Element assetEl) {
 		List<Element> assetList = avail2AssetMap.get(avail);
 		assetList.add(assetEl);
 	}
 
 	/**
-	 * @param avail
-	 * @param e
+	 * @param assetEl
+	 * @param assetWorkType
+	 * @param row
 	 */
-	public void addTransaction(Element avail, Element transEl) {
-		List<Element> transactionList = avail2TransMap.get(avail);
-		transactionList.add(transEl);
+	void createAssetMetadata(Element assetEl, String assetWorkType, RowToXmlHelper row) {
+		/*
+		 * Need to determine what metadata structure to use based on the
+		 * Asset/WorkType
+		 */
+		switch (assetWorkType) {
+		case "Season":
+			mdHelper_season.createAssetMetadata(assetEl, row);
+			return;
+		case "Episode":
+			mdHelper_episode.createAssetMetadata(assetEl, row);
+			return;
+		case "Series":
+			return;
+		default:
+			mdHelper_basic.createAssetMetadata(assetEl, row);
+			return;
+		}
 	}
 }
