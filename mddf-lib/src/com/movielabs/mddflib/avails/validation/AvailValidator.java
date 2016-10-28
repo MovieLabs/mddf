@@ -23,11 +23,11 @@ package com.movielabs.mddflib.avails.validation;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -41,6 +41,7 @@ import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.AbstractValidator;
+import com.movielabs.mddflib.util.xml.RatingSystem;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -56,6 +57,61 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  *
  */
 public class AvailValidator extends AbstractValidator {
+
+	/**
+	 * Used to facilitate keeping track of the presence or absence of required
+	 * Assets within an Avail.
+	 * 
+	 * @author L. Levin, Critical Architectures LLC
+	 *
+	 */
+
+	protected class AvailRqmt {
+		private JSONObject rqmt;
+		private JSONArray included;
+		private int counter = 0;
+
+		AvailRqmt(JSONObject rqmt) {
+			this.rqmt = rqmt;
+			included = rqmt.getJSONArray("WorkType");
+		}
+
+		boolean notePresenceOf(String workType) {
+			if (included.contains(workType)) {
+				counter++;
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		/**
+		 * @param availEl
+		 * @return
+		 */
+		public boolean violated(Element availTypeEl) {
+			int min = rqmt.optInt("min", 0);
+			int max = rqmt.optInt("max", -1);
+			Element availEl = availTypeEl.getParentElement();
+			String availType = availTypeEl.getTextTrim();
+			String msg = "Invalid Asset structure for specified AvailType";
+			if (counter < min) {
+				String explanation = "Avail of type='" + availType + "' must have at least " + min
+						+ " Assets of WorkType=" + included.toString();
+				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, availEl, msg, explanation, AVAIL_RQMT_srcRef, logMsgSrcId);
+				return true;
+			}
+
+			if ((max > 0) && (counter > max)) {
+				String explanation = "Avail of type='" + availType + "' must have no more than " + max
+						+ " Assets of WorkType=" + included.toString();
+				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, availTypeEl, msg, explanation, AVAIL_RQMT_srcRef,
+						logMsgSrcId);
+				return true;
+			}
+			return false;
+		}
+	}
 
 	/**
 	 * Used to facilitate keeping track of cross-references and identifying
@@ -102,22 +158,44 @@ public class AvailValidator extends AbstractValidator {
 
 	public static final String LOGMSG_ID = "AvailValidator";
 
-	private static final String DOC_VER = "2.1";
+	static final String DOC_VER = "2.1";
+	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL", DOC_VER, "avail01");
 
 	private static JSONObject availVocab;
+
+	private static JSONObject availTypeStruct;
+
+	private static Properties iso3166_1_codes;
+
+	private static JSONArray genericAvailTypes;
 
 	private Map<Object, Pedigree> pedigreeMap;
 
 	static {
 		id2typeMap = new HashMap<String, String>();
 
-		/*
-		 * Is there a controlled vocab that is specific to a Manifest? Note the
-		 * vocab set for validating Common Metadata will be loaded by the parent
-		 * class AbstractValidator.
-		 */
 		try {
+			/*
+			 * Is there a controlled vocab that is specific to a Manifest? Note
+			 * the vocab set for validating Common Metadata will be loaded by
+			 * the parent class AbstractValidator.
+			 */
 			availVocab = loadVocab(vocabRsrcPath, "Avail");
+
+			/*
+			 * Load JSON that defines various constraints on structure of an
+			 * Avails
+			 */
+			String availRsrcPath = "/com/movielabs/mddf/resources/avail_structure.json";
+			JSONObject availStruct = loadJSON(availRsrcPath);
+			availTypeStruct = availStruct.getJSONObject("AvailType");
+			genericAvailTypes = availTypeStruct.getJSONArray("common");
+
+			/*
+			 * ISO codes are simple so we use Properties
+			 */
+			String iso3166RsrcPath = "/com/movielabs/mddf/resources/ISO3166-1.properties";
+			iso3166_1_codes = loadProperties(iso3166RsrcPath);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -181,9 +259,7 @@ public class AvailValidator extends AbstractValidator {
 	 * @param xmlFile
 	 */
 	protected boolean validateXml(File xmlFile) {
-		String xsdFile = "./resources/avails-v" + XmlIngester.AVAIL_VER + ".xsd";
-		// String xsdFile = SchemaWrapper.RSRC_PACKAGE + "avails-v" +
-		// XmlIngester.AVAIL_VER + ".xsd";
+		String xsdFile = XmlIngester.defaultRsrcLoc + "avails-v" + XmlIngester.AVAIL_VER + ".xsd";
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		curFileIsValid = validateXml(xmlFile, curRootEl, xsdFile, logMsgSrcId);
 		return curFileIsValid;
@@ -411,56 +487,56 @@ public class AvailValidator extends AbstractValidator {
 		 * restrictions apply.
 		 * 
 		 */
-		// TODO: Load from JSON
-
-		String[] allowedWTypes = { "Movie", "Short" };
-		validateTypeCompatibility("single", allowedWTypes, 1);
-
-		allowedWTypes = (String[]) Array.newInstance(String.class, 1);
-		allowedWTypes[0] = "Episode";
-		validateTypeCompatibility("episode", allowedWTypes, 1);
-
-		allowedWTypes = (String[]) Array.newInstance(String.class, 1);
-		allowedWTypes[0] = "Season";
-		validateTypeCompatibility("season", allowedWTypes, 1);
-
-		allowedWTypes = (String[]) Array.newInstance(String.class, 1);
-		allowedWTypes[0] = "Series";
-		validateTypeCompatibility("series", allowedWTypes, -1);
-		validateTypeCompatibility("miniseries", allowedWTypes, -1);
-
-		allowedWTypes = (String[]) Array.newInstance(String.class, 1);
-		allowedWTypes[0] = "Collection";
-		validateTypeCompatibility("bundle", allowedWTypes, -1);
-
-		allowedWTypes = (String[]) Array.newInstance(String.class, 1);
-		allowedWTypes[0] = "Supplemental";
-		validateTypeCompatibility("supplement", allowedWTypes, -1);
-
-		allowedWTypes = (String[]) Array.newInstance(String.class, 1);
-		allowedWTypes[0] = "Promotion";
-		validateTypeCompatibility("promotion", allowedWTypes, -1);
+		validateTypeCompatibility("single");
+		validateTypeCompatibility("episode");
+		validateTypeCompatibility("season");
+		validateTypeCompatibility("series");
+		validateTypeCompatibility("miniseries");
+		validateTypeCompatibility("bundle");
+		validateTypeCompatibility("supplement");
+		validateTypeCompatibility("promotion");
 		// ===========================================================
 		/* For Transactions in US, check USACaptionsExemptionReason */
 
+		// ==============================================
+
+		/* Validate any Ratings information */
+		validateRatings();
+
 		return;
 	}
+	// ########################################################################
 
 	/**
-	 * Check that the Avail/AvailType is compatible with all child
-	 * Asset/WorkTypes
+	 * Validate the Avail's structure is compatible with the specified
+	 * AvailType. The structural constraints are defined via JSON in a
+	 * <tt>structureDef</tt> JSONObject. The 'structureDef' has two components:
+	 * <ol>
+	 * <li>"requirement": an ARRAY of 1 or more JSONObjects, each of which
+	 * defines a REQUIREMENT</li>
+	 * <li>"allowed": an optional ARRAY of 1 or more Strings listing allowed
+	 * Asset WorkTypes. Any WorkType listed in the 'allowed' set should NOT be
+	 * included in any of the requirements.
+	 * </ol>
 	 * 
 	 * @param availType
-	 * @param allowedWTypes
 	 */
-	private void validateTypeCompatibility(String availType, String[] allowedWTypes, int max) {
+	private void validateTypeCompatibility(String availType) {
 		LogReference srcRef = LogReference.getRef("AVAIL", DOC_VER, "avail01");
-		List<String> allowedTypeList = Arrays.asList(allowedWTypes);
+
+		JSONObject structureDef = availTypeStruct.getJSONObject(availType);
+		if (structureDef == null || structureDef.isNullObject()) {
+			System.out.println("No structureDef for AvailTye='" + availType + "'");
+			return;
+		}
+		JSONArray allAllowedWTypes = getAllowedWTypes(availType);
 
 		String path = ".//" + rootPrefix + "AvailType[text()='" + availType + "']";
 		XPathExpression<Element> xpExp01 = xpfac.compile(path, Filters.element(), null, availsNSpace);
 		List<Element> availTypeElList = xpExp01.evaluate(curRootEl);
+		/* Loop thru all the Avail instances... */
 		for (int i = 0; i < availTypeElList.size(); i++) {
+			AvailRqmt[] allRqmts = getRequirements(availType);
 			Element availTypeEl = availTypeElList.get(i);
 			Element availEl = availTypeEl.getParentElement();
 			// Now get the descendant WorkType element
@@ -468,27 +544,156 @@ public class AvailValidator extends AbstractValidator {
 					Filters.element(), null, availsNSpace);
 			List<Element> workTypeElList = xpExp02.evaluate(availEl);
 			for (int j = 0; j < workTypeElList.size(); j++) {
+				/*
+				 * Check each Asset's WorkType to see if it allowed for the
+				 * current AvailType
+				 */
 				Element wrkTypeEl = workTypeElList.get(j);
 				String wtValue = wrkTypeEl.getText();
-				if (!(allowedTypeList.contains(wtValue))) {
+				if (!(allAllowedWTypes.contains(wtValue))) {
 					String msg = "AvailType is incompatible with WorkType";
 					String explanation = null;
 					logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, wrkTypeEl, msg, explanation, srcRef, logMsgSrcId);
 					curFileIsValid = false;
+				} else {
+					/*
+					 * Yes its allowed, but is there any cardinality constraint?
+					 */
+					if (allRqmts != null) {
+						for (int k = 0; k < allRqmts.length; k++) {
+							allRqmts[k].notePresenceOf(wtValue);
+						}
+					}
 				}
 
 			}
 			/*
-			 * Might as well use the Asset/WorkType to check the number of Assets is within limits
+			 * Last step for each Avail is to check accumulated counts for any
+			 * violation of a cardinality constraint.
 			 */
-			if(max > 0 && ( workTypeElList.size()> max)){
-				String msg = "Invalid Asset structure for specified AvailType";
-				String explanation = "Avail of type='"+availType+"' is only allowed a max of "+max+" Assets";
-				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, availTypeEl, msg, explanation, srcRef, logMsgSrcId);
-				curFileIsValid = false;
+
+			if (allRqmts != null) {
+				for (int k = 0; k < allRqmts.length; k++) {
+					if (allRqmts[k].violated(availTypeEl)) {
+						curFileIsValid = false;
+					}
+				}
 			}
 		}
 
+	}
+
+	// ######################################################################
+
+	/**
+	 * @param availType
+	 * @return
+	 */
+	private AvailRqmt[] getRequirements(String availType) {
+		JSONObject structureDef = availTypeStruct.getJSONObject(availType);
+		JSONArray requirementJA = structureDef.getJSONArray("requirement");
+		if (requirementJA == null) {
+			// no cardinality requirements for this type
+			return null;
+		}
+		AvailRqmt[] arSet = new AvailRqmt[requirementJA.size()];
+		for (int i = 0; i < requirementJA.size(); i++) {
+			JSONObject reqJO = requirementJA.getJSONObject(i);
+			arSet[i] = new AvailRqmt(reqJO);
+		}
+		return arSet;
+	}
+
+	/**
+	 * Adds all required and GENERIC WorkTypes to the list of allowed WorkTypes
+	 * and returns a single unified collection.
+	 * 
+	 * @param availType
+	 * @return
+	 */
+	private static JSONArray getAllowedWTypes(String availType) {
+		JSONObject structureDef = availTypeStruct.getJSONObject(availType);
+		JSONArray allowedWTypes = structureDef.getJSONArray("allowed");
+		allowedWTypes.addAll(genericAvailTypes);
+		JSONArray reqmts = structureDef.getJSONArray("requirement");
+		for (int i = 0; i < reqmts.size(); i++) {
+			JSONObject nextRqmt = reqmts.getJSONObject(i);
+			JSONArray wtArray = nextRqmt.getJSONArray("WorkType");
+			allowedWTypes.addAll(wtArray);
+		}
+		return allowedWTypes;
+	}
+
+	private void validateRatings() {
+		XPathExpression<Element> xpExp01 = xpfac.compile(".//avails:Ratings/md:Rating", Filters.element(), null,
+				availsNSpace, mdNSpace);
+		List<Element> ratingElList = xpExp01.evaluate(curRootEl);
+		rLoop: for (int i = 0; i < ratingElList.size(); i++) {
+			Element ratingEl = ratingElList.get(i);
+			String system = ratingEl.getChildTextNormalize("System", mdNSpace);
+			RatingSystem rSystem = RatingSystem.factory(system);
+			if (rSystem == null) {
+				String msg = "Unrecognized Rating System '" + system + "'";
+				String explanation = null;
+				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, ratingEl, msg, explanation, null, logMsgSrcId);
+				curFileIsValid = false;
+				continue;
+			}
+			Element valueEl = ratingEl.getChild("Value", mdNSpace);
+			String rating = valueEl.getTextNormalize();
+			if (!rSystem.isValid(rating)) {
+				String msg = "Invalid Rating for RatingSystem";
+				String explanation = "The " + system + " Rating System does not include the '" + rating + "'";
+				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, valueEl, msg, explanation, null, logMsgSrcId);
+				curFileIsValid = false;
+			} else if (rSystem.isDeprecated(rating)) {
+				String msg = "Deprecated Rating";
+				String explanation = "The " + system + " Rating System has deprecated the '" + rating
+						+ "' rating. A more recent rating should be used if one is available";
+				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, valueEl, msg, explanation, null, logMsgSrcId);
+			}
+
+			/*
+			 * Is the RatingSystem in use in the specified country or
+			 * countryRegion?
+			 * 
+			 */
+			LogReference srcRef = LogReference.getRef("CM", "2.4", "cm_regions");
+			Element regionEl = ratingEl.getChild("Region", mdNSpace);
+			String region = null;
+			String subRegion = null;
+			Element target = regionEl.getChild("country", mdNSpace);
+			if (target == null) {
+				target = regionEl.getChild("countryRegion", mdNSpace);
+				region = target.getText();
+				/*
+				 * We don't check validity of ISO-3166-2 codes as there are too
+				 * many defined but very few used for ratings
+				 */
+				if (!rSystem.isUsedInSubRegion(region)) {
+					String msg = "RatingSystem not used in specified Country SubRegion";
+					String explanation = "The " + system
+							+ " Rating System has not been officially adopted in SubRegion '" + region + "'";
+					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, target, msg, explanation, null, logMsgSrcId);
+					curFileIsValid = false;
+				}
+			} else {
+				region = target.getText();
+				/* Is it valid ISO-3166-1 code? */
+				if (!iso3166_1_codes.containsKey(region)) {
+					String msg = "Invalid code for country";
+					String explanation = "A country should be specified as a ISO 3166-1 Alpha-2 code";
+					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
+					curFileIsValid = false;
+				} else if (!rSystem.isUsedInRegion(region)) {
+					String msg = "RatingSystem not used in specified Region";
+					String explanation = "The " + system + " Rating System has not been officially adopted in Region '"
+							+ region + "'";
+					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, target, msg, explanation, null, logMsgSrcId);
+					curFileIsValid = false;
+				}
+			}
+		}
 	}
 
 	/**
