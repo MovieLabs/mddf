@@ -32,6 +32,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,10 +53,10 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.transform.JDOMSource;
 import org.jdom2.xpath.XPathFactory;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.logging.LogMgmt;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -104,65 +107,92 @@ public abstract class XmlIngester {
 
 	protected static JSONObject loadVocab(String rsrcPath, String vocabSet) throws JDOMException, IOException {
 		if (vocabResource == null) {
-			StringBuilder builder = new StringBuilder();
-			InputStream inp = AvailValidator.class.getResourceAsStream(rsrcPath);
-			InputStreamReader isr = new InputStreamReader(inp, "UTF-8");
-			BufferedReader reader = new BufferedReader(isr);
-			String line;
-			while ((line = reader.readLine()) != null) {
-				builder.append(line);
-			}
-			String input = builder.toString();
-			vocabResource = JSONObject.fromObject(input);
+			vocabResource = loadJSON(rsrcPath);
 		}
 		JSONObject vocabulary = vocabResource.getJSONObject(vocabSet);
 		return vocabulary;
 	}
 
-	protected static StreamSource[] generateStreamSources(String[] xsdFilesPaths) {
+	protected static JSONObject loadJSON(String rsrcPath) throws JDOMException, IOException {
+		StringBuilder builder = new StringBuilder();
+		InputStream inp = XmlIngester.class.getResourceAsStream(rsrcPath);
+		InputStreamReader isr = new InputStreamReader(inp, "UTF-8");
+		BufferedReader reader = new BufferedReader(isr);
+		String line;
+		while ((line = reader.readLine()) != null) {
+			builder.append(line);
+		}
+		String input = builder.toString();
+		return JSONObject.fromObject(input);
+	}
+
+	protected static Properties loadProperties(String rsrcPath) {
+		Properties props = new Properties();
+		InputStream inStream = XmlIngester.class.getResourceAsStream(rsrcPath);
+		try {
+			props.load(inStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return props;
+	}
+
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	/*
+	 * Mode A
+	 */
+	public static String defaultRsrcLoc = "./resources/";
+	/*
+	 * Mode B
+	 */
+	// public static String defaultRsrcLoc = SchemaWrapper.RSRC_PACKAGE ;
+
+	public static StreamSource[] generateStreamSources(String[] xsdFilesPaths) {
+		return generateStreamSources_A(xsdFilesPaths);
+		// return generateStreamSources_B(xsdFilesPaths);
+	}
+
+	private static StreamSource[] generateStreamSources_A(String[] xsdFilesPaths) {
 		Stream<String> xsdStreams = Arrays.stream(xsdFilesPaths);
 		Stream<Object> streamSrcs = xsdStreams.map(StreamSource::new);
 		List<Object> collector = streamSrcs.collect(Collectors.toList());
 		StreamSource[] result = collector.toArray(new StreamSource[xsdFilesPaths.length]);
 		return result;
-		// --------------------
-		// StreamSource[] result = new StreamSource[xsdFilesPaths.length];
-		// for(int i=0; i < result.length;i++){
-		// InputStream inStream =
-		// XmlIngester.class.getResourceAsStream(xsdFilesPaths[i]);
-		// if(inStream != null){
-		// result[i] = new StreamSource(inStream);
-		// System.out.println("Found schema rsrc: "+xsdFilesPaths[i]);
-		// }else{
-		// System.out.println("NULL schema rsrc: "+xsdFilesPaths[i]);
-		// }
-		// }
-		// return result;
 	}
+
+	private static StreamSource[] generateStreamSources_B(String[] xsdFilesPaths) {
+		StreamSource[] result = new StreamSource[xsdFilesPaths.length];
+		for (int i = 0; i < result.length; i++) {
+			InputStream inStream = XmlIngester.class.getResourceAsStream(xsdFilesPaths[i]);
+			if (inStream != null) {
+				result[i] = new StreamSource(inStream);
+				System.out.println("Found schema rsrc: " + xsdFilesPaths[i]);
+			} else {
+				System.out.println("NULL schema rsrc: " + xsdFilesPaths[i]);
+			}
+		}
+		return result;
+	}
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	/**
 	 * Validate everything that is fully specified via the identified XSD.
 	 * 
-	 * @param xmlFile
+	 * @param srcFile
+	 *            source from which XML was obtained (used for logging only; not
+	 *            required to be an XML file)
 	 * @param xsdLocation
 	 * @param moduleId
 	 *            identifier used in log messages
 	 * @return
 	 */
-	protected boolean validateXml(File xmlFile, Element curRootEl, String xsdLocation, String moduleId) {
-		// String defaultRsrcLoc = SchemaWrapper.RSRC_PACKAGE ;
-		String defaultRsrcLoc = "./resources/";
+	protected boolean validateXml(File srcFile, Element docRootEl, String xsdLocation, String moduleId) {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		List<String> xsdPathList = new ArrayList<String>();
 		xsdPathList.add(xsdLocation);
-		// Remember to include Common Metadata schema......
-		String mdXsdFile = defaultRsrcLoc + "md-v" + MD_VER + ".xsd";
-		xsdPathList.add(mdXsdFile);
-		if (MDMEC_VER != null) {
-			String mdmecXsdFile = defaultRsrcLoc + "mdmec-v" + MDMEC_VER + ".xsd";
-			xsdPathList.add(mdmecXsdFile);
-		}
+
 		String[] xsdPaths = new String[xsdPathList.size()];
 		xsdPaths = xsdPathList.toArray(xsdPaths);
 		StreamSource[] xsdSources = generateStreamSources(xsdPaths);
@@ -171,35 +201,52 @@ public abstract class XmlIngester {
 		try {
 			schema = schemaFactory.newSchema(xsdSources);
 		} catch (SAXException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			return false;
 		}
+		XsdErrorHandler errHandler = new XsdErrorHandler();
 		// now do actual validation
 		try {
 			Validator validator = schema.newValidator();
-			Source src = new JDOMSource(curRootEl);
+			validator.setErrorHandler(errHandler);
+			Source src = new JDOMSource(docRootEl);
 			validator.validate(src);
 			// }
 		} catch (SAXParseException e) {
-			String msg = e.getMessage();
+			String msg = "Validation error -::" + getExceptionCause(e);
 			// get rid of some boilerplate and unhelpfull lead-in text
 			int i = msg.indexOf(":");
 			msg = msg.substring(i + 2);
-			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, xmlFile, e.getLineNumber(), moduleId, genericTooltip,
+			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, srcFile, e.getLineNumber(), moduleId, genericTooltip,
 					null);
 			return (false);
 		} catch (IOException e) {
-			String msg = "Validation error -::" + e.getMessage();
-			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, xmlFile, -1, moduleId, genericTooltip, null);
+			String msg = "Validation error -::" + getExceptionCause(e);
+			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, srcFile, -1, moduleId, genericTooltip, null);
 			return (false);
 		} catch (SAXException e) {
-			String msg = "Validation error -::" + e.getMessage();
-			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, xmlFile, -1, moduleId, genericTooltip, null);
+			String msg = "Validation error -::" + getExceptionCause(e);
+			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, srcFile, -1, moduleId, genericTooltip, null);
 			return (false);
 		}
-		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "XML is valid", xmlFile, -1, moduleId, null, null);
-		return (true);
+		if (errHandler.errCount == 0) {
+			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "XML is valid", srcFile, -1, moduleId, null, null);
+			return (true);
+		} else {
+			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Invalid XML, " + errHandler.errCount + " errors found",
+					srcFile, -1, moduleId, null, null);
+			return (false);
+		}
+	}
+
+	protected String getExceptionCause(Exception e) {
+		String description = e.getMessage();
+		Throwable cause = e.getCause();
+		while (cause != null) {
+			description = cause.getMessage();
+			cause = cause.getCause();
+		}
+		return description;
 	}
 
 	/**
@@ -388,16 +435,6 @@ public abstract class XmlIngester {
 		}
 	}
 
-	// protected JSONObject extractLocalInfo(JSONObject mData_external) {
-	// JSONObject mData_local = JsonUtilities.findByAttribute(mData_external,
-	// "LocalizedInfo", "@language", "en");
-	// if (mData_local == null) {
-	// mData_local = JsonUtilities.findByAttribute(mData_external,
-	// "LocalizedInfo", "@language", "en-US");
-	// }
-	// return mData_local;
-	// }
-
 	public static Element getAsXml(File inputFile) throws JDOMException, IOException {
 		InputStreamReader isr = new InputStreamReader(new FileInputStream(inputFile), "UTF-8");
 		SAXBuilder builder = new SAXBuilder();
@@ -413,125 +450,6 @@ public abstract class XmlIngester {
 		return (JSONObject) jsonObj;
 	}
 
-	/**
-	 * Locates a <tt>&lt;BasicMetadata&gt; Element</tt> using the specified
-	 * <tt>cid</tt>. The contents of it's <tt>&lt;LocalizedInfo&gt;</tt>is
-	 * converted to a JSON format using the <tt>extractMetadata()</tt> function
-	 * and then returned to the caller. If a match for the specified
-	 * <tt>cid</tt> value can not be found, a <tt>null</tt> value is returned.
-	 * Note that the returned JSON will contain only the <u>required</u>
-	 * properties of the <u>default</u> <tt>&lt;LocalizedInfo&gt; Element</tt>
-	 * 
-	 * @param cid
-	 * @param mdList
-	 * @return
-	 */
-	// protected static JSONObject extractMetadata(String cid, List<Element>
-	// mdList) {
-	// Element targetEl = getBasicMetaData(cid, mdList);
-	// Object[] targets = mdList.toArray();
-	// for (int i = 0; i < targets.length; i++) {
-	// Element target = (Element) targets[i];
-	// /* get the value for @ContentID */
-	// String targetCid = target.getAttributeValue("ContentID");
-	// if (targetCid.equals(cid)) {
-	// // Process the match
-	// Element basic = target.getChild("BasicMetadata", manifestNSpace);
-	// return extractMetadata(basic);
-	// }
-	// }
-	// return null;
-	// }
-
-	/**
-	 * Locate and return a <tt>&lt;BasicMetadata&gt; Element</tt> using the
-	 * specified <tt>cid</tt> . If a match for the specified <tt>cid</tt> value
-	 * can not be found, a <tt>null</tt> value is returned.
-	 * 
-	 * @param cid
-	 * @param mdList
-	 * @return
-	 */
-	protected static Element getBasicMetaData(String cid, List<Element> mdList) {
-		Object[] targets = mdList.toArray();
-		for (int i = 0; i < targets.length; i++) {
-			Element target = (Element) targets[i];
-			/* get the value for @ContentID */
-			String targetCid = target.getAttributeValue("ContentID");
-			if (targetCid.equals(cid)) {
-				// Process the match
-				Element basicMDEl = target.getChild("BasicMetadata", manifestNSpace);
-				return basicMDEl;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Return asJSON the <u>required</u> properties of the <u>default</u>
-	 * <tt>&lt;LocalizedInfo&gt; Element</tt>
-	 * 
-	 * @param target
-	 * @return
-	 */
-	// protected static JSONObject extractMetadata(Element target) {
-	// JSONObject json = new JSONObject();
-	// List<Element> localList = target.getChildren("LocalizedInfo", mdNSpace);
-	// Object[] locals = localList.toArray();
-	// for (int j = 0; j < locals.length; j++) {
-	// Element localMData = (Element) locals[j];
-	// Map<String, String> localKVP = new HashMap<String, String>();
-	// String language = localMData.getAttributeValue("language");
-	// // NOTE: We are limited to elements that the Schema flags as
-	// // REQUIRED
-	// String title = localMData.getChildTextNormalize("TitleSort", mdNSpace);
-	// String summary = localMData.getChildTextNormalize("Summary190",
-	// mdNSpace);
-	// localKVP.put("title", title);
-	// localKVP.put("summary", summary);
-	// /*
-	// * Remaining fields are optional in XSD but may be required by a
-	// * profile
-	// */
-	// String titleFull =
-	// localMData.getChildTextNormalize("TitleDisplayUnlimited", mdNSpace);
-	// json.put(language, localKVP);
-	// }
-	// return json;
-	// }
-
-	//
-	// /**
-	// * @param object
-	// * @param string
-	// */
-	// protected static void logDebug(String moduleID, int tag, String msg) {
-	// loggingMgr.log(LogMgmt.LEV_DEBUG, tag, msg, null, -1, moduleID, null,
-	// null);
-	// }
-	//
-	// /**
-	// * @param object
-	// * @param string
-	// */
-	// protected static void logInfo(String moduleID, int tag, String msg) {
-	// loggingMgr.log(LogMgmt.LEV_INFO, tag, msg, null, -1, moduleID, null,
-	// null);
-	// }
-	//
-	// /**
-	// * @param name
-	// * @param alid
-	// * @param msg
-	// *
-	// */
-	// protected static void logError(String moduleID, int tag, File xmlFile,
-	// String msg, String supplemental,
-	// LogReference docRef) {
-	// loggingMgr.log(LogMgmt.LEV_ERR, tag, msg, xmlFile, -1, moduleID,
-	// supplemental, docRef);
-	//
-	// }
 
 	/**
 	 * @return the sourceFolder
@@ -614,4 +532,115 @@ public abstract class XmlIngester {
 				"http://www.movielabs.com/schema/avails/v" + AVAIL_VER + "/avails");
 	}
 
+	// ###################################################################
+	/**
+	 * Custom error handler used while validating xml against xsd. This class
+	 * serves two purposes:
+	 * <ol>
+	 * <li>it allows validation to continue even after an error or warning
+	 * condition, thereby allowing the entire XML file to be checked in one
+	 * pass, and</li>
+	 * <li>it provides condensed and easy to read versions of the error message.
+	 * </li>
+	 * </ol>
+	 */
+	public class XsdErrorHandler implements ErrorHandler {
+		int errCount = 0;
+
+		@Override
+		public void warning(SAXParseException exception) throws SAXException {
+			handleMessage(LogMgmt.LEV_WARN, exception);
+		}
+
+		@Override
+		public void error(SAXParseException exception) throws SAXException {
+			handleMessage(LogMgmt.LEV_ERR, exception);
+			errCount++;
+		}
+
+		@Override
+		public void fatalError(SAXParseException exception) throws SAXException {
+			handleMessage(LogMgmt.LEV_FATAL, exception);
+		}
+
+		private void handleMessage(int level, SAXParseException exception) throws SAXException {
+			int lineNumber = exception.getLineNumber();
+			int columnNumber = exception.getColumnNumber();
+			String message = parseSaxMessage(exception);
+			String explanation = "XML at line: " + lineNumber + " does not comply with schema :: " + message;
+			Element target = null; // <<- Incomplete code
+			loggingMgr.logIssue(LogMgmt.TAG_XSD, level, target, message, explanation, null, "XmlIngester");
+
+			if (level == LogMgmt.LEV_FATAL) {
+				throw new SAXException(explanation + ":: " + message);
+			}
+		}
+
+		/**
+		 * Return a shortened and simplified message
+		 * 
+		 * @param exception
+		 * @return
+		 */
+		private String parseSaxMessage(SAXParseException exception) {
+			String msgType1 = "Invalid content was found starting with element";
+			String msgType2 = "is a simple type, so it cannot have attributes";
+			String msgType3 = "The content of element '[\\w]+:[\\w]+' is not complete.";
+			String message = exception.getMessage();
+			String primary = getPrimary(message);
+			String secondary = getSecondary(message);
+			if (message.contains(msgType1)) {
+				return "Invalid content after " + primary + "; expected " + secondary;
+			}
+			if (message.contains(msgType2)) {
+				return "A " + primary + " may not have attributes";
+			}
+			Pattern p = Pattern.compile(msgType3);
+			Matcher m = p.matcher(message);
+			if (m.find()) {
+				return "Incomplete " + primary + "; Missing child " + secondary;
+			}
+			// final default handling...
+			// System.out.println("\n" + message);
+			String msg = message.replaceFirst("cvc-[a-zA-Z0-9.\\-]+: ", "");
+			return msg;
+		}
+
+		private String getPrimary(String text) {
+			Pattern p = Pattern.compile("[a-z]+:[a-zA-Z]+");
+			Matcher m = p.matcher(text);
+			if (m.find()) {
+				return m.group();
+			}
+			Pattern p2 = Pattern.compile("'[a-zA-Z]+'");
+			m = p2.matcher(text);
+			if (m.find()) {
+				return m.group();
+			}
+			return "-UNKNOWN-";
+
+		}
+
+		private String getSecondary(String text) {
+			Pattern p = Pattern.compile("[a-z]+\":[a-zA-Z]+");
+			Matcher m = p.matcher(text);
+			String result = "";
+			boolean hasAnother = m.find();
+			String sep = "";
+			while (hasAnother) {
+				String next = m.group();
+				hasAnother = m.find();
+				if (hasAnother) {
+					result = result + sep + next;
+				} else if (result.isEmpty()) {
+					result = next;
+				} else {
+					result = result + ", or " + next;
+				}
+				sep = ", ";
+			}
+
+			return result.replaceAll("\"", "");
+		}
+	}
 }
