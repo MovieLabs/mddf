@@ -204,22 +204,36 @@ public abstract class XmlIngester {
 			e1.printStackTrace();
 			return false;
 		}
-		XsdErrorHandler errHandler = new XsdErrorHandler();
+		/*
+		 * Use a custom ErrorHandler for all SAXParseExceptions
+		 */
+		XsdErrorHandler errHandler = new XsdErrorHandler(srcFile);
 		// now do actual validation
 		try {
 			Validator validator = schema.newValidator();
 			validator.setErrorHandler(errHandler);
-			Source src = new JDOMSource(docRootEl);
+			/*
+			 * This block of code handles a problem associated with supporting
+			 * the validation of XML generated from an Excel spreadsheet.
+			 * Regardless of whether the XML comes from an XML file or is
+			 * internally generated via the transformation of an xlsx file, we
+			 * still have (at this point in processing) a JDOM document. In
+			 * theory the obvious approach is to use a JDOMSource in all cases.
+			 * In practice, however, using a JDOMSource will result in
+			 * SaxParseException messages that lack line numbers. This greatly
+			 * reduces the value of the error messages. The work-around solution
+			 * is to use a StreamSource and process the XML on the file system
+			 * even though we already have the same XML in the form of the JDOM
+			 * document.
+			 * 
+			 */
+			Source src;
+			if (srcFile.getName().endsWith(".xml")) {
+				src = new StreamSource(srcFile);
+			} else {
+				src = new JDOMSource(docRootEl);
+			}
 			validator.validate(src);
-			// }
-		} catch (SAXParseException e) {
-			String msg = "Validation error -::" + getExceptionCause(e);
-			// get rid of some boilerplate and unhelpfull lead-in text
-			int i = msg.indexOf(":");
-			msg = msg.substring(i + 2);
-			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, srcFile, e.getLineNumber(), moduleId, genericTooltip,
-					null);
-			return (false);
 		} catch (IOException e) {
 			String msg = "Validation error -::" + getExceptionCause(e);
 			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, srcFile, -1, moduleId, genericTooltip, null);
@@ -450,7 +464,6 @@ public abstract class XmlIngester {
 		return (JSONObject) jsonObj;
 	}
 
-
 	/**
 	 * @return the sourceFolder
 	 */
@@ -546,6 +559,14 @@ public abstract class XmlIngester {
 	 */
 	public class XsdErrorHandler implements ErrorHandler {
 		int errCount = 0;
+		private File srcFile;
+
+		/**
+		 * @param srcFile
+		 */
+		public XsdErrorHandler(File srcFile) {
+			this.srcFile = srcFile;
+		}
 
 		@Override
 		public void warning(SAXParseException exception) throws SAXException {
@@ -564,15 +585,13 @@ public abstract class XmlIngester {
 		}
 
 		private void handleMessage(int level, SAXParseException exception) throws SAXException {
-			int lineNumber = exception.getLineNumber();
-			int columnNumber = exception.getColumnNumber();
+			int lineNumber = exception.getLineNumber(); 
 			String message = parseSaxMessage(exception);
-			String explanation = "XML at line: " + lineNumber + " does not comply with schema :: " + message;
-			Element target = null; // <<- Incomplete code
-			loggingMgr.logIssue(LogMgmt.TAG_XSD, level, target, message, explanation, null, "XmlIngester");
+			String explanation = "XML at line: " + lineNumber + " does not comply with schema :: " + message; 
+			loggingMgr.log(level, LogMgmt.TAG_XSD, message, srcFile, lineNumber, "XmlIngester", explanation, null);
 
 			if (level == LogMgmt.LEV_FATAL) {
-				throw new SAXException(explanation + ":: " + message);
+				throw new SAXException(explanation );
 			}
 		}
 
