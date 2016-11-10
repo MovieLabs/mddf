@@ -75,13 +75,13 @@ public class ModelValidator extends XmlIngester {
 	 * com.movielabs.mddf.preProcess.manifest.Validator#process(java.io.File)
 	 */
 	@SuppressWarnings("deprecation")
-	public boolean process(File xmlManifestFile, String profileId) throws JDOMException, IOException {
+	public boolean process(Element docRootEl, File xmlManifestFile, String profileId) throws JDOMException, IOException {
 		curFile = xmlManifestFile;
 		curFileName = xmlManifestFile.getName();
 		curFileIsValid = true;
 		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MODEL, "Validating Model", curFile, LOGMSG_ID);
 
-		curRootEl = getAsXml(xmlManifestFile);
+		curRootEl = docRootEl;  
 
 		/*
 		 * Get all ALID and identify for each the 'root' (i.e., main) Experience

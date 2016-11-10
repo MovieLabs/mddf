@@ -216,34 +216,25 @@ public class AvailValidator extends AbstractValidator {
 		logMsgDefaultTag = LogMgmt.TAG_AVAIL;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddflib.util.AbstractValidator#process(java.io.File)
-	 */
-	@Override
-	public boolean process(File xmlManifestFile) throws IOException, JDOMException {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
-	public boolean process(File xmlFile, Element rootEl, Map<Object, Pedigree> pedigreeMap)
+	public boolean process(File xmlFile, Element docRootEl, Map<Object, Pedigree> pedigreeMap)
 			throws IOException, JDOMException {
+		curRootEl =  null;
 		curFile = xmlFile;
 		curFileName = xmlFile.getName();
 		this.pedigreeMap = pedigreeMap;
 		curFileIsValid = true;
 		// if (xmlFile.getName().endsWith(".xml")) {
-		validateXml(xmlFile);
+		validateXml(xmlFile, docRootEl);
 		// }
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
 			// return false;
 		} else {
+			curRootEl = docRootEl; // getAsXml(xmlFile);
 			String msg = "Schema validation check PASSED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
-			curRootEl = rootEl; // getAsXml(xmlFile);
 			if (validateC) {
 				validateConstraints();
 			}
@@ -258,10 +249,10 @@ public class AvailValidator extends AbstractValidator {
 	 * 
 	 * @param xmlFile
 	 */
-	protected boolean validateXml(File xmlFile) {
+	protected boolean validateXml(File srcFile, Element docRootEl) {
 		String xsdFile = XmlIngester.defaultRsrcLoc + "avails-v" + XmlIngester.AVAIL_VER + ".xsd";
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		curFileIsValid = validateXml(xmlFile, curRootEl, xsdFile, logMsgSrcId);
+		curFileIsValid = validateXml(srcFile, docRootEl, xsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
 

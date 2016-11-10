@@ -33,14 +33,15 @@ import org.jdom2.Element;
  */
 public interface LogMgmt {
 
-	public static String[] logLevels = { "Debug", "Warning", "Error", "Info" };
+	public static String[] logLevels = { "Debug", "Warning", "Error", "Info", "Fatal" };
 	public static final int LEV_DEBUG = 0;
 	public static final int LEV_WARN = 1;
 	public static final int LEV_ERR = 2;
 	public static final int LEV_INFO = 3;
+	public static final int LEV_FATAL = 4;
 
 	public static String[] logTags = { "Manifest", "CPE Model", "Profile", "Best Prac.", "Action", "Other", "Avail",
-			"Common MD" };
+			"Common MD", "Rating", "XML", "MEC" };
 	public static final int TAG_MANIFEST = 0;
 	public static final int TAG_MODEL = 1;
 	public static final int TAG_PROFILE = 2;
@@ -50,6 +51,9 @@ public interface LogMgmt {
 	public static final int TAG_N_A = 5;
 	public static final int TAG_AVAIL = 6;
 	public static final int TAG_MD = 7;
+	public static final int TAG_CR = 8;
+	public static final int TAG_XSD = 9;
+	public static int TAG_MEC = 10;
 
 	/**
 	 * @param levInfo
@@ -113,9 +117,9 @@ public interface LogMgmt {
 	public void saveAs(File outFile, String format) throws IOException;
 
 	/**
-	 * Set the file currently being processed. Until the next
-	 * invocation of <tt>setCurrentFile()</tt>, all subsequent log entries will
-	 * be associated with this file.
+	 * Set the file currently being processed. Until the next invocation of
+	 * <tt>setCurrentFile()</tt>, all subsequent log entries will be associated
+	 * with this file.
 	 * 
 	 * @param curFileID
 	 */

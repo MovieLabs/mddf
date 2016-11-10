@@ -21,30 +21,17 @@
  */
 package com.movielabs.mddflib.manifest.validation;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
-import org.jdom2.Namespace;
-import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathExpression;
-
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
-import com.movielabs.mddflib.manifest.validation.ManifestValidator.XrefCounter;
 import com.movielabs.mddflib.util.AbstractValidator;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -122,12 +109,6 @@ public class ManifestValidator extends AbstractValidator {
 		 * vocab set for validating Common Metadata will be loaded by the parent
 		 * class AbstractValidator.
 		 */
-		// try {
-		// controlledVocab = loadVocab(cmVrcPath, "CM");
-		// } catch (Exception e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
 
 	}
 
@@ -145,17 +126,18 @@ public class ManifestValidator extends AbstractValidator {
 		logMsgDefaultTag = LogMgmt.TAG_MANIFEST;
 	}
 
-	public boolean process(File xmlManifestFile) throws IOException, JDOMException {
+	public boolean process(Element docRootEl, File xmlManifestFile) throws IOException, JDOMException {
 		curFile = xmlManifestFile;
 		curFileName = xmlManifestFile.getName();
 		curFileIsValid = true;
-		curRootEl = getAsXml(xmlManifestFile);
-		validateXml(xmlManifestFile);
+		curRootEl = null;  
+		validateXml(xmlManifestFile,docRootEl);
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 			return false;
 		}
+		curRootEl = docRootEl;  
 		String msg = "Schema validation check PASSED";
 		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 		if (validateC) {
@@ -169,9 +151,9 @@ public class ManifestValidator extends AbstractValidator {
 	 * 
 	 * @param manifestFile
 	 */
-	protected boolean validateXml(File manifestFile) {
+	protected boolean validateXml(File srcFile, Element docRootEl) {
 		String manifestXsdFile = "./resources/manifest-v" + XmlIngester.MAN_VER + ".xsd";
-		curFileIsValid = validateXml(manifestFile, curRootEl, manifestXsdFile, logMsgSrcId);
+		curFileIsValid = validateXml(srcFile, docRootEl, manifestXsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
 

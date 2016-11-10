@@ -106,12 +106,12 @@ public abstract class AbstractValidator extends XmlIngester {
 
 	}
 
-	public static final String LOGMSG_ID = "ManifestValidator";
+	public static final String LOGMSG_ID = "AbstractValidator";
 
 	protected static HashMap<String, String> id2typeMap;
 	protected static JSONObject cmVocab;
-	
-	static{
+
+	static {
 
 		try {
 			cmVocab = loadVocab(vocabRsrcPath, "CM");
@@ -141,7 +141,7 @@ public abstract class AbstractValidator extends XmlIngester {
 		logMsgSrcId = LOGMSG_ID;
 	}
 
-	public abstract boolean process(File xmlManifestFile) throws IOException, JDOMException;
+//	public abstract boolean process( Element docRootEl,File xmlManifestFile) throws IOException, JDOMException;
 
 	/**
 	 * Validate everything that is not fully specified via the XSD.
@@ -343,6 +343,7 @@ public abstract class AbstractValidator extends XmlIngester {
 
 	/**
 	 * @param idType
+	 * @param idAttribute
 	 * @param targetEl
 	 */
 	protected void validateIdType(String idType, String idAttribute, Element targetEl) {
@@ -504,13 +505,13 @@ public abstract class AbstractValidator extends XmlIngester {
 				logMsgEl = subElement;
 				if (subElement != null) {
 					text = subElement.getTextNormalize();
-					errMsg = "Unrecognized value '" + text + "' for " + primaryEl + "/" + child; 
+					errMsg = "Unrecognized value '" + text + "' for " + primaryEl + "/" + child;
 				}
 			} else {
 				String targetAttb = child.replaceFirst("@", "");
 				text = targetEl.getAttributeValue(targetAttb);
 				logMsgEl = targetEl;
-				errMsg = "Unrecognized value '" + text + "' for attribute " + child; 
+				errMsg = "Unrecognized value '" + text + "' for attribute " + child;
 			}
 			if (text != null) {
 				if (caseSensitive) {
@@ -535,10 +536,5 @@ public abstract class AbstractValidator extends XmlIngester {
 			}
 		}
 		return allOK;
-	}
-
-	protected void logIssue(int tag, int level, Element xmlElement, String msg, String explanation, LogReference srcRef,
-			String moduleId) {
-		loggingMgr.logIssue(tag, level, xmlElement, msg, explanation, srcRef, moduleId);
 	}
 }

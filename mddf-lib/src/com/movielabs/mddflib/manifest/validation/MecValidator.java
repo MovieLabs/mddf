@@ -129,23 +129,23 @@ public class MecValidator extends AbstractValidator {
 	 * Validate everything that is not fully specified via the XSD.
 	 */
 	protected void validateConstraints() {
-		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Validating constraints", curFile, LOGMSG_ID);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints", curFile, LOGMSG_ID);
 		super.validateConstraints();
 
-		SchemaWrapper availSchema = SchemaWrapper.factory("avails-v" + XmlIngester.AVAIL_VER);
+		SchemaWrapper availSchema = SchemaWrapper.factory("mdmec-v" + XmlIngester.MDMEC_VER);
 		List<String> reqElList = availSchema.getReqElList();
 		for (int i = 0; i < reqElList.size(); i++) {
 			String key = reqElList.get(i);
 			validateNotEmpty(key);
-		} 
+		}
 
 		/*
 		 * Validate the usage of controlled vocab (i.e., places where XSD
 		 * specifies a xs:string but the documentation specifies an enumerated
 		 * set of allowed values).
 		 */
-		validateCMVocab(); 
-		
+		 validateCMVocab();
+
 		validateRatings();
 	}
 
@@ -154,16 +154,16 @@ public class MecValidator extends AbstractValidator {
 	 */
 	protected boolean validateCMVocab() {
 		boolean allOK = true;
-		String mdVersion = "2.4"; 
+		String mdVersion = "2.4";
 
 		/*
 		 * Validate use of Country identifiers....
 		 */
 		JSONArray iso3691 = cmVocab.optJSONArray("ISO3691");
 		LogReference srcRef = LogReference.getRef("CM", mdVersion, "cm_regions");
- 
+
 		allOK = validateVocab(mdNSpace, "DistrTerritory", mdNSpace, "country", iso3691, srcRef, true) && allOK;
-		allOK = validateVocab(mdNSpace, "CountryOfOrigin", mdNSpace, "country", iso3691, srcRef, true) && allOK; 
+		allOK = validateVocab(mdNSpace, "CountryOfOrigin", mdNSpace, "country", iso3691, srcRef, true) && allOK;
 		// in multiple places
 		allOK = validateVocab(mdNSpace, "Region", mdNSpace, "country", iso3691, srcRef, true) && allOK;
 
@@ -178,11 +178,10 @@ public class MecValidator extends AbstractValidator {
 		allOK = validateVocab(mdmecNSpace, "Basic", mdNSpace, "PrimarySpokenLanguage", rfc5646, srcRef, true) && allOK;
 		allOK = validateVocab(mdmecNSpace, "Basic", mdNSpace, "OriginalLanguage", rfc5646, srcRef, true) && allOK;
 		allOK = validateVocab(mdmecNSpace, "Basic", mdNSpace, "VersionLanguage", rfc5646, srcRef, true) && allOK;
-		
+
 		return allOK;
 	}
 
- 
 	// ########################################################################
 
 	private void validateRatings() {
@@ -256,5 +255,5 @@ public class MecValidator extends AbstractValidator {
 			}
 		}
 	}
- 
+
 }
