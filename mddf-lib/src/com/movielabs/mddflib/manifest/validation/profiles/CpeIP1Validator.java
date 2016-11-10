@@ -86,11 +86,10 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 	 * @see
 	 * com.movielabs.mddf.preProcess.manifest.Validator#process(java.io.File,
 	 * java.lang.String, java.util.List)
-	 */
-	@Override
-	public boolean process(File xmlManifestFile, String profileId, List<String> useCases)
+	 */ 
+	public boolean process(Element docRootEl, File xmlManifestFile, String profileId, List<String> useCases)
 			throws JDOMException, IOException {
-		return super.process(xmlManifestFile, profileId);
+		return super.process(docRootEl, xmlManifestFile, profileId);
 	}
 
 	protected void validateInfoModel01(Element mainExpEl) {

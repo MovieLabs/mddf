@@ -113,9 +113,9 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		return pucList;
 	}
 
-	public boolean process(File xmlManifestFile, String profileId, List<String> useCases)
+	public boolean process(Element docRootEl,File xmlManifestFile, String profileId, List<String> useCases)
 			throws JDOMException, IOException {
-		super.process(xmlManifestFile);
+		super.process(docRootEl,xmlManifestFile);
 		// boolean isOk = validateUseCases(profileId, useCases);
 		return curFileIsValid;
 	}
