@@ -21,6 +21,7 @@
  */
 package com.movielabs.mddflib.util.xml;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,6 +29,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,11 +55,17 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.transform.JDOMSource;
 import org.jdom2.xpath.XPathFactory;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.logging.LogReference;
+import com.movielabs.mddflib.util.xml.XmlIngester.Input;
+import com.movielabs.mddflib.util.xml.XmlIngester.ResourceResolver;
+
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
@@ -139,18 +147,31 @@ public abstract class XmlIngester {
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	/*
-	 * Mode A
-	 */
-	public static String defaultRsrcLoc = "./resources/";
-	/*
-	 * Mode B
-	 */
-	// public static String defaultRsrcLoc = SchemaWrapper.RSRC_PACKAGE ;
+	public static String defaultRsrcLoc;
+	private static boolean streamModeA;
+
+	static {
+		/*
+		 * Mode A works but required a kludge (i.e., duplicate XSD files); Mode
+		 * B has a bug.
+		 */
+
+		streamModeA = true;
+
+		if (streamModeA) {
+			defaultRsrcLoc = "./resources/";
+		} else {
+			defaultRsrcLoc = SchemaWrapper.RSRC_PACKAGE;
+		}
+	}
 
 	public static StreamSource[] generateStreamSources(String[] xsdFilesPaths) {
-		return generateStreamSources_A(xsdFilesPaths);
-		// return generateStreamSources_B(xsdFilesPaths);
+
+		if (streamModeA) {
+			return generateStreamSources_A(xsdFilesPaths);
+		} else {
+			return generateStreamSources_B(xsdFilesPaths);
+		}
 	}
 
 	private static StreamSource[] generateStreamSources_A(String[] xsdFilesPaths) {
@@ -190,9 +211,14 @@ public abstract class XmlIngester {
 	protected boolean validateXml(File srcFile, Element docRootEl, String xsdLocation, String moduleId) {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+		if (!streamModeA) {
+			System.out.println("Loading XSD resource usiing Mode 'B'");
+			schemaFactory.setResourceResolver(new ResourceResolver());
+		}
+
 		List<String> xsdPathList = new ArrayList<String>();
 		xsdPathList.add(xsdLocation);
-
 		String[] xsdPaths = new String[xsdPathList.size()];
 		xsdPaths = xsdPathList.toArray(xsdPaths);
 		StreamSource[] xsdSources = generateStreamSources(xsdPaths);
@@ -449,6 +475,11 @@ public abstract class XmlIngester {
 		}
 	}
 
+	protected void logIssue(int tag, int level, Element xmlElement, String msg, String explanation, LogReference srcRef,
+			String moduleId) {
+		loggingMgr.logIssue(tag, level, xmlElement, msg, explanation, srcRef, moduleId);
+	}
+
 	public static Element getAsXml(File inputFile) throws JDOMException, IOException {
 		InputStreamReader isr = new InputStreamReader(new FileInputStream(inputFile), "UTF-8");
 		SAXBuilder builder = new SAXBuilder();
@@ -521,6 +552,20 @@ public abstract class XmlIngester {
 		manifestNSpace = Namespace.getNamespace("manifest", NSPACE_MANIFEST_PREFIX + MAN_VER + NSPACE_MANIFEST_SUFFIX);
 	}
 
+	public static void setMdMecVersion(String mecSchemaVer) throws IllegalArgumentException {
+		switch (mecSchemaVer) {
+		case "2.4":
+		case "2.3":
+			MD_VER = "2.4";
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported MEC Schema version " + mecSchemaVer);
+		}
+		MDMEC_VER = mecSchemaVer;
+		mdmecNSpace = Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
+		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
+	}
+
 	/**
 	 * @param availSchemaVer
 	 */
@@ -543,6 +588,241 @@ public abstract class XmlIngester {
 		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
 		availsNSpace = Namespace.getNamespace("avails",
 				"http://www.movielabs.com/schema/avails/v" + AVAIL_VER + "/avails");
+	}
+
+	// ###################################################################
+
+	// ###################################################################
+	/**
+	 * @author L. Levin, Critical Architectures LLC
+	 *
+	 */
+	public class ResourceResolver implements LSResourceResolver {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.w3c.dom.ls.LSResourceResolver#resolveResource(java.lang.String,
+		 * java.lang.String, java.lang.String, java.lang.String,
+		 * java.lang.String)
+		 */
+		@Override
+		public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId,
+				String baseURI) {
+			InputStream inStream = XmlIngester.class.getResourceAsStream(SchemaWrapper.RSRC_PACKAGE + systemId);
+			System.out.println("resolveResource:: namespaceURI="+namespaceURI+", systemId="+systemId);
+			return new Input(publicId, systemId, inStream);
+		}
+
+	}
+
+	// ###################################################################
+	/**
+	 * @author L. Levin, Critical Architectures LLC
+	 *
+	 */
+	public class Input implements LSInput {
+
+		private String publicId;
+		private String systemId;
+		private BufferedInputStream bufferedInStream;
+		private InputStreamReader inStreamReader;
+
+		/**
+		 * @param publicId
+		 * @param systemId
+		 * @param inStream
+		 */
+		public Input(String publicId, String systemId, InputStream inStream) {
+			this.publicId = publicId;
+			this.systemId = systemId;
+			this.bufferedInStream = new BufferedInputStream(inStream);
+			this.inStreamReader = new InputStreamReader(inStream);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#getCharacterStream()
+		 */
+		@Override
+		public Reader getCharacterStream() {
+			// TODO Auto-generated method stub
+			 System.out.println("##### getCharacterStream "+systemId);
+			return inStreamReader;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#setCharacterStream(java.io.Reader)
+		 */
+		@Override
+		public void setCharacterStream(Reader characterStream) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#getByteStream()
+		 */
+		@Override
+		public InputStream getByteStream() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#setByteStream(java.io.InputStream)
+		 */
+		@Override
+		public void setByteStream(InputStream byteStream) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#getStringData()
+		 */
+		@Override
+		public String getStringData() {
+			synchronized (bufferedInStream) {
+				try {
+					byte[] input = new byte[bufferedInStream.available()];
+					bufferedInStream.read(input);
+					String contents = new String(input);
+					 System.out.println("##### getStringData "+systemId);
+					return contents;
+				} catch (IOException e) {
+					// e.printStackTrace();
+					return null;
+				}
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#setStringData(java.lang.String)
+		 */
+		@Override
+		public void setStringData(String stringData) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#getSystemId()
+		 */
+		@Override
+		public String getSystemId() {
+			return systemId;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#setSystemId(java.lang.String)
+		 */
+		@Override
+		public void setSystemId(String systemId) {
+			this.systemId = systemId;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#getPublicId()
+		 */
+		@Override
+		public String getPublicId() {
+			return publicId;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#setPublicId(java.lang.String)
+		 */
+		@Override
+		public void setPublicId(String publicId) {
+			this.publicId = publicId;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#getBaseURI()
+		 */
+		@Override
+		public String getBaseURI() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#setBaseURI(java.lang.String)
+		 */
+		@Override
+		public void setBaseURI(String baseURI) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#getEncoding()
+		 */
+		@Override
+		public String getEncoding() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#setEncoding(java.lang.String)
+		 */
+		@Override
+		public void setEncoding(String encoding) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#getCertifiedText()
+		 */
+		@Override
+		public boolean getCertifiedText() {
+			return false;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.w3c.dom.ls.LSInput#setCertifiedText(boolean)
+		 */
+		@Override
+		public void setCertifiedText(boolean certifiedText) {
+			// TODO Auto-generated method stub
+
+		}
+
 	}
 
 	// ###################################################################
@@ -585,13 +865,15 @@ public abstract class XmlIngester {
 		}
 
 		private void handleMessage(int level, SAXParseException exception) throws SAXException {
-			int lineNumber = exception.getLineNumber(); 
+			int lineNumber = exception.getLineNumber();
 			String message = parseSaxMessage(exception);
-			String explanation = "XML at line: " + lineNumber + " does not comply with schema :: " + message; 
+			String explanation = "XML at line: " + lineNumber + " does not comply with schema :: " + message;
 			loggingMgr.log(level, LogMgmt.TAG_XSD, message, srcFile, lineNumber, "XmlIngester", explanation, null);
+			// logIssue(LogMgmt.TAG_XSD, level, xmlEl, message, explanation,
+			// null, "XmlIngester");
 
 			if (level == LogMgmt.LEV_FATAL) {
-				throw new SAXException(explanation );
+				throw new SAXException(explanation);
 			}
 		}
 
@@ -609,7 +891,7 @@ public abstract class XmlIngester {
 			String primary = getPrimary(message);
 			String secondary = getSecondary(message);
 			if (message.contains(msgType1)) {
-				return "Invalid content after " + primary + "; expected " + secondary;
+				return "Invalid content begining with " + primary + "; expected " + secondary;
 			}
 			if (message.contains(msgType2)) {
 				return "A " + primary + " may not have attributes";
@@ -626,12 +908,12 @@ public abstract class XmlIngester {
 		}
 
 		private String getPrimary(String text) {
-			Pattern p = Pattern.compile("[a-z]+:[a-zA-Z]+");
+			Pattern p = Pattern.compile("[a-z]+:[a-zA-Z\\-]+");
 			Matcher m = p.matcher(text);
 			if (m.find()) {
 				return m.group();
 			}
-			Pattern p2 = Pattern.compile("'[a-zA-Z]+'");
+			Pattern p2 = Pattern.compile("'[a-zA-Z\\-]+'");
 			m = p2.matcher(text);
 			if (m.find()) {
 				return m.group();
@@ -641,7 +923,7 @@ public abstract class XmlIngester {
 		}
 
 		private String getSecondary(String text) {
-			Pattern p = Pattern.compile("[a-z]+\":[a-zA-Z]+");
+			Pattern p = Pattern.compile("[a-z]+\":[a-zA-Z\\-]+");
 			Matcher m = p.matcher(text);
 			String result = "";
 			boolean hasAnother = m.find();
