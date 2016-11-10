@@ -3,12 +3,13 @@
 	xmlns:fx="javafx:com.sun.javafx.tools.ant">
 	<property name="proj.home" value="${basedir}/../.." />
 	<property name="mddf-lib.home" value="${proj.home}/../mddf-lib" />
-	<property name="mddf-lib.version" value="1.0.1" />
+	<property name="mddf-lib.version" value="1.0.2_rc1" />
 	<property name="appPack.dir" value="${proj.home}/packager" />
 	<property name="app.version.cmm" value="1.2" />
-	<property name="app.version.avail" value="0.8" />
+	<property name="app.version.avail" value="0.9" />
 	<property name="proj.appDev" value="${proj.home}/dev/packaging" />
 	<property name="proj.rsrcFolder" value="${proj.home}/resources" />
+	<property name="proj.package" value="com/movielabs/mddf/tools" />
 
 	<target name="test">
 		<echo message="Hello, this is ANT" />
@@ -91,6 +92,16 @@
 		<mkdir dir="${appPack.dir}/build/libs" />
 		<mkdir dir="${appPack.dir}/build/classes" />
 
+		<!-- create a build.prop file in the build/classes directory. -->
+		<tstamp />
+		<echo file="${appPack.dir}/build/classes/${proj.package}/build.properties" append="false">#
+			Project Build properties
+			versionAvail=${app.version.avail}
+			versionCMM=${app.version.cmm}
+			buildDate=${TODAY}
+			buildTime=${TSTAMP}
+		</echo>
+		
 		<!-- Copy project-libs references -->
 		<copy todir="${appPack.dir}/build/libs">
 			<fileset dir="${appPack.dir}/externalLibs">

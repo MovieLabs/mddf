@@ -16,7 +16,8 @@ IN THIS DIRECTORY will manage the entire process:
 To Prep:
 
 	MAKE SURE that the version specified in the build.xml in THIS directory
-	is correct as it will be used for file names.
+	for BOTH ${app.version.cmm} and ${app.version.avail} is correct as 
+	it will be used for file names.
 	
 	MAKE SURE correct version of mddf-lib is specified in the build.xml as this
 	is used to determined which mddf-lib jar file is copied.
