@@ -50,6 +50,7 @@ import com.movielabs.mddflib.logging.DefaultLogging;
 import com.movielabs.mddflib.logging.Log4jAdapter;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator;
+import com.movielabs.mddflib.manifest.validation.MecValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.CpeIP1Validator;
 import com.movielabs.mddflib.manifest.validation.profiles.MMCoreValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator;
@@ -79,8 +80,6 @@ public class ValidationController {
 	private static HashMap<String, ProfileValidator> profileMap = null;
 	private static Options options = null;
 
-	private String manifestSchemaVer;
-	private String availSchemaVer;
 	private boolean validateS = true;
 	private boolean validateC = true;
 	private boolean validateBP = false;
@@ -265,22 +264,6 @@ public class ValidationController {
 		logMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_ACTION, "Initializing Validator", null, MODULE_ID);
 	}
 
-	/**
-	 * @param schemaVer
-	 */
-	public void setSchema4Manifest(String schemaVer) {
-		this.manifestSchemaVer = schemaVer;
-	}
-
-	/**
-	 * @param schemaVer
-	 */
-	public void setSchema4Avails(String schemaVer) {
-		availSchemaVer = schemaVer;
-		String logMsg = "Using Avail Schema Version " + availSchemaVer;
-		logMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, logMsg, null, MODULE_ID);
-	}
-
 	public void setValidation(boolean schema, boolean constraints, boolean bestPrac) {
 		validateS = schema;
 		validateC = constraints;
@@ -433,7 +416,7 @@ public class ValidationController {
 					msg = "Unspecified Exception while validating";
 				}
 				String loc = e.getStackTrace()[0].toString();
-				String details = "Exception while validating; "+loc;
+				String details = "Exception while validating; " + loc;
 				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, details, null);
 				e.printStackTrace();
 			}
@@ -473,6 +456,9 @@ public class ValidationController {
 		} else if (nSpaceUri.contains("avails")) {
 			schemaType = "avails";
 			logTag = LogMgmt.TAG_AVAIL;
+		} else if (nSpaceUri.contains("mdmec")) {
+			schemaType = "mdmec";
+			logTag = LogMgmt.TAG_MEC;
 		} else {
 			String errMsg = "Validation terminated: Unable to identify file type.";
 			String supplemental = "Root has unrecognized namespace " + nSpaceUri;
@@ -487,11 +473,15 @@ public class ValidationController {
 		switch (logTag) {
 		case LogMgmt.TAG_MANIFEST:
 			XmlIngester.setManifestVersion(schemaVer);
-			validateManifest(srcFile, uxProfile, useCases);
+			validateManifest(docRootEl, srcFile, uxProfile, useCases);
 			break;
 		case LogMgmt.TAG_AVAIL:
 			XmlIngester.setAvailVersion(schemaVer);
-			validateAvail(srcFile, docRootEl, pedigreeMap);
+			validateAvail(docRootEl, pedigreeMap, srcFile);
+			break;
+		case LogMgmt.TAG_MEC: 
+			XmlIngester.setMdMecVersion(schemaVer);
+			validateMEC(docRootEl, srcFile);
 			break;
 		}
 	}
@@ -529,7 +519,7 @@ public class ValidationController {
 		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp);
 
 		String outFilePath = xslxFile.getAbsolutePath().replaceFirst(".xlsx", ".xml");
-		File xmlFile = new File(outFilePath);  
+		File xmlFile = new File(outFilePath);
 		XmlBuilder xBuilder = new XmlBuilder(logMgr);
 		xBuilder.setVersion("2.2");
 		try {
@@ -557,17 +547,21 @@ public class ValidationController {
 
 	/**
 	 * Perform requested pre-processing on a single Avail file. The extent of
-	 * the pre-processing will depend on the arguments passed when invoking this
+	 * the pre-processing may depend on the arguments passed when invoking this
 	 * method as well as any a-priori set-up and configuration (e.g., use of the
 	 * <tt>setValidation()</tt> function).
 	 * 
-	 * @param srcFile
+	 * @param docRootEl
+	 *            root of the Avail
 	 * @param pedigreeMap
-	 * @param uxProfile
+	 *            links XML Elements to their original source (used for logging
+	 *            only)
+	 * @param srcFile
+	 *            is source from which XML was obtained (used for logging only)
 	 * @throws IOException
 	 * @throws JDOMException
 	 */
-	protected void validateAvail(File srcFile, Element docRootEl, Map<Object, Pedigree> pedigreeMap)
+	protected void validateAvail(Element docRootEl, Map<Object, Pedigree> pedigreeMap, File srcFile)
 			throws IOException, JDOMException {
 		boolean isValid = true;
 		AvailValidator tool1 = new AvailValidator(validateC, logMgr);
@@ -588,6 +582,21 @@ public class ValidationController {
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, srcFile, -1, MODULE_ID, null, null);
 	}
 
+	protected void validateMEC(Element docRootEl, File srcFile) throws IOException, JDOMException {
+		boolean isValid = true;
+		MecValidator tool1 = new MecValidator(validateC, logMgr);
+		isValid = tool1.process(srcFile, docRootEl);
+		if (!isValid) {
+			String msg = "Validation FAILED; Terminating processing of file";
+			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MEC, msg, srcFile, -1, MODULE_ID, null, null);
+
+			return;
+		}
+		// ----------------------------------------------------------------
+		String msg = "MEC Validation completed";
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MEC, msg, srcFile, -1, MODULE_ID, null, null);
+	}
+
 	/**
 	 * Perform requested pre-processing on a single Manifest file. The extent of
 	 * the pre-processing will depend on the arguments passed when invoking this
@@ -599,12 +608,11 @@ public class ValidationController {
 	 * @throws IOException
 	 * @throws JDOMException
 	 */
-	protected void validateManifest(File srcFile, String uxProfile, List<String> useCases)
+	protected void validateManifest(Element docRootEl, File srcFile, String uxProfile, List<String> useCases)
 			throws IOException, JDOMException {
-		Element docRootEl = XmlIngester.getAsXml(srcFile);
 		boolean isValid = true;
 		ManifestValidator tool1 = new ManifestValidator(validateC, logMgr);
-		isValid = tool1.process(srcFile);
+		isValid = tool1.process(docRootEl, srcFile);
 		if (!isValid) {
 			String msg = "Stage 1 Validation FAILED; Terminating processing of file";
 			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, null, null);
@@ -653,7 +661,7 @@ public class ValidationController {
 				logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
 				return;
 			}
-			referenceInstance.process(srcFile, profile, useCases);
+			referenceInstance.process(docRootEl, srcFile, profile, useCases);
 		}
 		// ----------------------------------------------------------------
 		String msg = "MANIFEST Validation completed";
