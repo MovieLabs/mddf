@@ -60,6 +60,18 @@
 				<RelURL></RelURL>
 			</Version>
 		</Ref>
+		<Ref id="cm_lang">
+			<Version id="2.4">
+				<Label>Section 3.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="cm_regions">
+			<Version id="2.4">
+				<Label>Section 3.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
 	</Specification>
 	<Specification id="MMM" label="TR-META-MMM">
 		<!-- Used by ManifestValidator -->
