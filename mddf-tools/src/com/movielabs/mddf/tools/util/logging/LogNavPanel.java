@@ -347,7 +347,7 @@ public class LogNavPanel extends JPanel {
 		}
 	}
 
-	public void collapse() {
+	public void collapse() { 
 		int row = tree.getRowCount() - 1;
 		while (row >= 0) {
 			tree.collapseRow(row);

@@ -38,7 +38,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
  *
  */
 public class AvailsTool extends ValidatorTool {
-	private static final String AVAIL_APP_VER = "v0.8";
+	private static final String AVAIL_APP_VER = "v0.9";
 
 	/**
 	 * Launch the application.
@@ -68,8 +68,7 @@ public class AvailsTool extends ValidatorTool {
 		super(Context.AVAILS);
 		super.appVersion = AVAIL_APP_VER;
 		htmlDocUrl = "http://www.movielabs.com/md/avails/validator/" + appVersion + "/";
-		
-	}
+ 	}
 
 	protected JToolBar getValidationTools() {
 		if (validatorToolBar == null) {
@@ -81,13 +80,14 @@ public class AvailsTool extends ValidatorTool {
 	}
 	
 	protected void runTool() {
-		frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); 
-//		Converter.outputJson = false;
-		consoleLogger.collapse(); 
+		frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));  
 		String srcPath = fileInputDir.getAbsolutePath();
+		updateUsageHistory(srcPath); 
 		fileOutDir.getAbsolutePath();
 		preProcessor = getPreProcessor();
 		preProcessor.setValidation(true, true, false);
+		inputSrcTFieldLocked = true;
+		consoleLogger.collapse();  
 		try {
 			preProcessor.validate(srcPath, null, null);
 		} catch (IOException | JDOMException e) {
@@ -96,6 +96,7 @@ public class AvailsTool extends ValidatorTool {
 			consoleLogger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, e.getMessage(), null, "UI");
 		}
 		frame.setCursor(null); // turn off the wait cursor
-		consoleLogger.expand();
+		consoleLogger.expand(); 
+		inputSrcTFieldLocked = false;
 	}
 }

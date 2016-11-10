@@ -61,6 +61,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,6 +81,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
 import com.movielabs.mddf.tools.ValidationController;
+import com.movielabs.mddf.tools.ValidatorTool.Context;
 import com.movielabs.mddf.tools.util.AboutDialog;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
 import com.movielabs.mddf.tools.util.logging.LogNavPanel;
@@ -87,6 +89,7 @@ import com.movielabs.mddf.tools.util.logging.LoggerWidget;
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.XmlIngester;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
 import com.movielabs.mddf.tools.util.HeaderPanel;
 
@@ -104,9 +107,6 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	public static enum Context {
 		MANIFEST, AVAILS
 	}
-
-	protected static final String coreVersion = "v1.2.rc4";
-	protected static final String buildDate = "2016-Sep-29 16:00 UTC";
 
 	protected static final int MAX_RECENT = 5;
 	protected String htmlDocUrl;
@@ -142,6 +142,8 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected JToolBar validatorToolBar;
 	protected JButton editFileBtn;
 	protected Map<String, File> selectedFiles = new HashMap<String, File>();
+	private JMenu fileRecentMenu;
+	protected boolean inputSrcTFieldLocked = false;
 
 	/**
 	 * Create the application.
@@ -185,6 +187,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 				e.printStackTrace();
 			}
 		}
+
 		initialize();
 	}
 
@@ -219,6 +222,8 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 		mainPanel.add((Component) getConsoleLogPanel(), BorderLayout.CENTER);
 		frame.getContentPane().add(getHeaderPanel(), BorderLayout.NORTH);
+
+		setFileRecentMenuItems(recentFileList);
 	}
 
 	protected static boolean isMaximized(int state) {
@@ -308,8 +313,10 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		if (menuBar == null) {
 			menuBar = new JMenuBar();
 
-			JMenu mnNewMenu = new JMenu("File");
-			menuBar.add(mnNewMenu);
+			JMenu fileMenu = new JMenu("File");
+			menuBar.add(fileMenu);
+
+			fileMenu.add(getFileRecentMenu());
 
 			JMenuItem menuItem1 = new JMenuItem("Run Script..");
 			menuItem1.addActionListener(new ActionListener() {
@@ -320,7 +327,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 				}
 
 			});
-			mnNewMenu.add(menuItem1);
+			fileMenu.add(menuItem1);
 
 			JMenuItem menuItem2 = new JMenuItem("Exit");
 			menuItem2.addActionListener(new ActionListener() {
@@ -331,7 +338,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 				}
 
 			});
-			mnNewMenu.add(menuItem2);
+			fileMenu.add(menuItem2);
 
 			getProcessingMenu();
 			processingMenu.add(getLoggingMenu());
@@ -399,12 +406,51 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					/*
+					 * get build.properties if possible. These may not be
+					 * present when running from an IDE as opposed to the jar
+					 * files.
+					 * 
+					 */
+					Properties mddfLibProps = loadProperties("/com/movielabs/mddflib/build.properties");
+					String libVersion;
+					String libBuildDate;
+					if (mddfLibProps == null) {
+						libVersion = "n.a.";
+						libBuildDate = "n.a.";
+					} else {
+						libVersion = mddfLibProps.getProperty("version");
+						libBuildDate = mddfLibProps.getProperty("buildDate") + "; "
+								+ mddfLibProps.getProperty("buildTime");
+					}
+					Properties mddfToolProps = loadProperties("/com/movielabs/mddf/tools/build.properties");
+					String toolVersion;
+					String toolBuildDate;
+					if (mddfToolProps == null) {
+						toolVersion = "n.a.";
+						toolBuildDate = "n.a.";
+					} else {
+						switch (context) {
+						case MANIFEST:
+							toolVersion = mddfToolProps.getProperty("versionCMM", "Not Specified");
+							break;
+						case AVAILS:
+							toolVersion = mddfToolProps.getProperty("versionAvail", "Not Specified");
+							break;
+						default:
+							toolVersion = mddfToolProps.getProperty("version", "Not Specified");
+						}
+						toolBuildDate = mddfToolProps.getProperty("buildDate") + "; "
+								+ mddfToolProps.getProperty("buildTime");
+					}
+
 					AboutDialog dialog = new AboutDialog("CMM Preprocessing:<br/><b>" + contextName + " Validator</b>",
 							"");
 					dialog.addTab("Build");
-					dialog.addEntry("Build", "<b>App Version:</b> <tt>" + appVersion + "</tt>");
-					dialog.addEntry("Build", "<b>Core S/W Version:</b> <tt>" + coreVersion + "</tt>");
-					dialog.addEntry("Build", "<b>Build Date:</b> <tt>" + buildDate + "</tt>");
+					dialog.addEntry("Build", "<b>App Version:</b> <tt>" + toolVersion + "</tt>");
+					dialog.addEntry("Build", "<b>App Build Date:</b> <tt>" + toolBuildDate + "</tt><hr/>");
+					dialog.addEntry("Build", "<b>mddflib S/W Version:</b> <tt>" + libVersion + "</tt>");
+					dialog.addEntry("Build", "<b>mddflib Build Date:</b> <tt>" + libBuildDate + "</tt><hr/>");
 					dialog.addTab("License");
 					dialog.addEntry("License", "Copyright Motion Picture Laboratories, Inc. 2016<br/>");
 					dialog.addEntry("License", license);
@@ -416,6 +462,56 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 		}
 		return menuBar;
+	}
+
+	/**
+	 * @return
+	 */
+	public JMenu getFileRecentMenu() {
+		if (fileRecentMenu == null) {
+			fileRecentMenu = new JMenu("Recent..");
+		}
+		return fileRecentMenu;
+	}
+
+	/**
+	 * Resets the Menu Items specifying recently accessed files.
+	 * 
+	 * @param recentFileList
+	 */
+	public void setFileRecentMenuItems(List<String> recentFileList) {
+		// make sure the Menu has been created
+		getFileRecentMenu();
+		fileRecentMenu.removeAll();
+		for (int i = 0; i < recentFileList.size(); i++) {
+			/* remember the list contains the full path */
+			final String path2file = recentFileList.get(i);
+			File temp = new File(path2file);
+			String name = temp.getName();
+			JMenuItem nextMI = new JMenuItem(name);
+			nextMI.setToolTipText(recentFileList.get(i));
+			fileRecentMenu.add(nextMI);
+			nextMI.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					setFileInputDir(new File(path2file));
+				}
+			});
+		}
+	}
+
+	protected static Properties loadProperties(String rsrcPath) {
+		Properties props = new Properties();
+		InputStream inStream = XmlIngester.class.getResourceAsStream(rsrcPath);
+		if (inStream == null) {
+			return null;
+		}
+		try {
+			props.load(inStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return props;
 	}
 
 	/**
@@ -517,6 +613,33 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	}
 
 	/**
+	 * Set the file or directory that will be the focus of any actions and
+	 * synchronize all other UI widgets accordingly.
+	 * 
+	 * @param target
+	 *            the fileInputDir to set
+	 */
+	protected void setFileInputDir(File target) {
+		if (inputSrcTFieldLocked) {
+			/*
+			 * runTool() locks and unlocks this field to deal with a minor but
+			 * annoying bug resulting from it's collapsing the log tree.
+			 */
+			return;
+		}
+		String name = target.getName();
+		this.fileInputDir = target;
+		inputSrcTField.setText(name);
+		inputSrcTField.setToolTipText(target.getAbsolutePath());
+		getRunValidationBtn().setEnabled(true);
+		getEditFileBtn().setEnabled(target.isFile());
+		/*
+		 * Store for possible recall be user via menu selection
+		 */
+		selectedFiles.put(name, target);
+	}
+
+	/**
 	 * @return
 	 */
 	protected JTextField getInputSrcTextField() {
@@ -537,16 +660,18 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 					fileInputDir = FileChooserDialog.getPath("Source Folder", null, xmlFilter, "srcManifest",
 							window.frame, JFileChooser.FILES_AND_DIRECTORIES);
 					if (fileInputDir != null) {
-						inputSrcTField.setText(fileInputDir.getName());
-						inputSrcTField.setToolTipText(fileInputDir.getAbsolutePath());
-						getRunValidationBtn().setEnabled(true);
-						getEditFileBtn().setEnabled(fileInputDir.isFile());
-						/*
-						 * Store for possible recall be user via menu selection
-						 */
-						selectedFiles.put(fileInputDir.getName(), fileInputDir);
+						setFileInputDir(fileInputDir);
+						// inputSrcTField.setText(fileInputDir.getName());
+						// inputSrcTField.setToolTipText(fileInputDir.getAbsolutePath());
+						// getRunValidationBtn().setEnabled(true);
+						// getEditFileBtn().setEnabled(fileInputDir.isFile());
+						// /*
+						// * Store for possible recall be user via menu
+						// selection
+						// */
+						// selectedFiles.put(fileInputDir.getName(),
+						// fileInputDir);
 					}
-					// }
 				}
 			});
 		}
@@ -570,9 +695,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		if (selectedFile == null) {
 			return;
 		}
-		fileInputDir = selectedFile;
-		getInputSrcTextField().setText(selectedFileLabel);
-		inputSrcTField.setToolTipText(fileInputDir.getAbsolutePath());
+		setFileInputDir(selectedFile);
 	}
 
 	/**
@@ -580,18 +703,6 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	 */
 	protected JPanel getProfilingPanel() {
 		JPanel profilingChoicePanel = new JPanel();
-		// float alignT = Component.TOP_ALIGNMENT;
-		// BoxLayout boxLayout = new BoxLayout(profilingChoicePanel,
-		// BoxLayout.X_AXIS);
-		// profilingChoicePanel.setLayout(boxLayout);
-		// profilingChoicePanel.setToolTipText("Click to view/set Use Cases for
-		// the selected Profile");
-		// getProfileComboBox();
-		// profileCB.setAlignmentY(alignT);
-		// profilingChoicePanel.add(profileCB);
-		// getUseCasePanel();
-		// useCaseLabel.setAlignmentY(alignT);
-		// profilingChoicePanel.add(useCaseLabel);
 		return profilingChoicePanel;
 	}
 
@@ -717,12 +828,14 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	 * 
 	 */
 	protected void runTool() {
+		inputSrcTFieldLocked = true;
 		frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		// Converter.compress = compressCBoxMenuItem.isSelected();
 		// Converter.outputJson = false;
 		consoleLogger.collapse();
 		String uxProfile = (String) getProfileComboBox().getSelectedItem();
 		String srcPath = fileInputDir.getAbsolutePath();
+		updateUsageHistory(srcPath);
 		fileOutDir.getAbsolutePath();
 		preProcessor = getPreProcessor();
 		preProcessor.setValidation(true, validateConstraintsCBox.isSelected(), validateBestPracCBox.isSelected());
@@ -735,6 +848,31 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		}
 		frame.setCursor(null); // turn off the wait cursor
 		consoleLogger.expand();
+		inputSrcTFieldLocked = false;
+	}
+
+	/**
+	 * keep track of recently accessed files
+	 * 
+	 * @param filePath
+	 */
+	protected void updateUsageHistory(String filePath) {
+		if (recentFileList.isEmpty()) {
+			recentFileList.add(filePath);
+		} else {
+			// if already there, remove it
+			recentFileList.remove(filePath);
+			// set as most recent
+			recentFileList.add(0, filePath);
+			// trim to max# remembered
+			int last = recentFileList.size();
+			if (last > MAX_RECENT) {
+				for (int j = last - 1; j >= MAX_RECENT; j--) {
+					recentFileList.remove(last - 1);
+				}
+			}
+		}
+		setFileRecentMenuItems(recentFileList);
 	}
 
 	/**
