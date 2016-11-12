@@ -69,7 +69,8 @@ public class ManifestTool extends ValidatorTool {
 	public ManifestTool() {
 		super(Context.MANIFEST);
 		super.appVersion = MANIFEST_APP_VER;
-		htmlDocUrl = "http://www.movielabs.com/md/manifest/validator/" + appVersion + "/";
+		String docVersion = appVersion;
+		htmlDocUrl = "http://www.movielabs.com/md/manifest/validator/" + docVersion + "/";
 	}
 
 	/**

@@ -67,7 +67,8 @@ public class AvailsTool extends ValidatorTool {
 	public AvailsTool() {
 		super(Context.AVAILS);
 		super.appVersion = AVAIL_APP_VER;
-		htmlDocUrl = "http://www.movielabs.com/md/avails/validator/" + appVersion + "/";
+		String docVersion = "v0.8"; // TEMPORARY
+		htmlDocUrl = "http://www.movielabs.com/md/avails/validator/" + docVersion + "/";
  	}
 
 	protected JToolBar getValidationTools() {
