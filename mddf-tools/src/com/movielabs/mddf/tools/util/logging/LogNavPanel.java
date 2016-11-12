@@ -25,7 +25,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -79,22 +81,6 @@ public class LogNavPanel extends JPanel {
 		private Icon defaultOpen = UIManager.getIcon("Tree.openIcon");
 		private Icon defaultClosed = UIManager.getIcon("Tree.closedIcon");
 
-		/*
-		 * Note that for now the same icon is used for both OPEN and CLOSED
-		 * states but that isn't required.
-		 */
-		private Icon errorFolderOpen = createIcon("images/error-icon.png");
-		// private Icon errorFolderClosed = errorFolderOpen;
-
-		private Icon warningFolderOpen = createIcon("images/warning-icon.png");
-		// private Icon warningFolderClosed = warningFolderOpen;
-
-		private Icon debugFolderOpen = createIcon("images/debug-icon.png");
-		// private Icon debugFolderClosed = debugFolderOpen;
-
-		private Icon infoFolderOpen = createIcon("images/info-icon.png");
-		// private Icon infoFolderClosed = infoFolderOpen;
-
 		@Override
 		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean exp, boolean leaf,
 				int row, boolean hasFocus) {
@@ -107,24 +93,18 @@ public class LogNavPanel extends JPanel {
 			if (value instanceof LogEntryFolder) {
 				LogEntryFolder folder = (LogEntryFolder) value;
 				int maxLevelFound = folder.getHighestLevel();
-				// --- use icon to indicate level...
-				switch (maxLevelFound) {
-				case LogMgmt.LEV_ERR:
-					setIcon(errorFolderOpen);
-					break;
-				case LogMgmt.LEV_WARN:
-					setIcon(warningFolderOpen);
-					break;
-				case LogMgmt.LEV_DEBUG:
-					setIcon(debugFolderOpen);
-					break;
-				case LogMgmt.LEV_INFO:
-					setIcon(infoFolderOpen);
-					break;
-				default:
+				// --- use icon to indicate level... 
+				Icon folderIcon = null;
+				try {
+					String key = LogMgmt.logLevels[maxLevelFound].toLowerCase();
+					folderIcon = iconSet.get(key);
+				} catch (Exception e) {
+				}
+				if (folderIcon != null) {
+					setIcon(folderIcon);
+				} else {
 					setOpenIcon(defaultOpen);
 					setClosedIcon(defaultClosed);
-					break;
 				}
 			} else {
 				setOpenIcon(defaultOpen);
@@ -141,6 +121,22 @@ public class LogNavPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	static Map<String, Icon> iconSet = new HashMap();
+
+	static {
+		/*
+		 * Note that for now the same icon is used for both OPEN and CLOSED
+		 * states but that isn't required.
+		 */
+		String[] levels = LogMgmt.logLevels;
+		for (int i = 0; i < levels.length; i++) {
+			String iconKey = levels[i].toLowerCase();
+			String path = "images/" + iconKey + "-icon.png";
+			Icon folderIcon = createIcon(path);
+			iconSet.put(iconKey, folderIcon);
+		}
+	}
 
 	static final Color errorColor = new Color(255, 100, 100); // lighter red
 	static final Color warningColor = new Color(255, 250, 87);
@@ -183,7 +179,7 @@ public class LogNavPanel extends JPanel {
 	 * @param path
 	 * @return
 	 */
-	public Icon createIcon(String path) { 
+	static Icon createIcon(String path) {
 		java.net.URL imgURL = imgURL = AdvLogPanel.class.getResource(path);
 		if (imgURL != null) {
 			return new ImageIcon(imgURL, "foobar");
@@ -279,8 +275,8 @@ public class LogNavPanel extends JPanel {
 	 * @param srcRef
 	 * @return
 	 */
-	public LogEntryNode append(int level, int tag, String msg, File xmlFile, int line, String moduleID,
-			String tooltip, LogReference srcRef) {
+	public LogEntryNode append(int level, int tag, String msg, File xmlFile, int line, String moduleID, String tooltip,
+			LogReference srcRef) {
 		String tagAsText = LogMgmt.logTags[tag];
 		// First get correct 'folder'
 		LogEntryFolder byManifestFile = getFileFolder(currentManifestId);
@@ -312,8 +308,8 @@ public class LogNavPanel extends JPanel {
 			byLevel.add(tagNode);
 		}
 		/* now create a new LogEntryNode and add it to folder. */
-		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, xmlFile, line, moduleID, masterSeqNum++,
-				tooltip, srcRef);
+		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, xmlFile, line, moduleID, masterSeqNum++, tooltip,
+				srcRef);
 		tagNode.addMsg(entryNode);
 		treeModel.nodeChanged(tagNode);
 		return entryNode;
@@ -347,7 +343,7 @@ public class LogNavPanel extends JPanel {
 		}
 	}
 
-	public void collapse() { 
+	public void collapse() {
 		int row = tree.getRowCount() - 1;
 		while (row >= 0) {
 			tree.collapseRow(row);
