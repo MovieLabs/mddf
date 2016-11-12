@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -111,14 +113,29 @@ public abstract class AbstractValidator extends XmlIngester {
 	protected static HashMap<String, String> id2typeMap;
 	protected static JSONObject cmVocab;
 
+	protected static Properties iso3166_1_codes;
+
+	protected static JSONArray rfc5646;
+
 	static {
 
 		try {
 			cmVocab = loadVocab(vocabRsrcPath, "CM");
+
+			/*
+			 * Language codes are in CM vocab
+			 */
+			rfc5646 = cmVocab.optJSONArray("RFC5646");
+			/*
+			 * ISO region/country codes are simple so we use Properties
+			 */
+			String iso3166RsrcPath = "/com/movielabs/mddf/resources/ISO3166-1.properties";
+			iso3166_1_codes = loadProperties(iso3166RsrcPath);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
 	// protected int logTag;
@@ -141,7 +158,8 @@ public abstract class AbstractValidator extends XmlIngester {
 		logMsgSrcId = LOGMSG_ID;
 	}
 
-//	public abstract boolean process( Element docRootEl,File xmlManifestFile) throws IOException, JDOMException;
+	// public abstract boolean process( Element docRootEl,File xmlManifestFile)
+	// throws IOException, JDOMException;
 
 	/**
 	 * Validate everything that is not fully specified via the XSD.
@@ -357,7 +375,7 @@ public abstract class AbstractValidator extends XmlIngester {
 		if (!idType.equals(type)) {
 			LogReference srcRef = LogReference.getRef("MMM-BP", "1.0", "mmbp01.3");
 			String msg = "ID <type> does not conform to recommendation (i.e. '" + type + "')";
-			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_WARN, targetEl, msg, null, srcRef, logMsgSrcId);
+			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_NOTICE, targetEl, msg, null, srcRef, logMsgSrcId);
 		}
 
 	}
@@ -370,7 +388,7 @@ public abstract class AbstractValidator extends XmlIngester {
 		if (!idScheme.startsWith("eidr")) {
 			String msg = "Use of EIDR identifiers is recommended";
 			LogReference srcRef = LogReference.getRef("MMM-BP", "1.0", "mmbp01.1");
-			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_WARN, targetEl, msg, null, srcRef, logMsgSrcId);
+			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_NOTICE, targetEl, msg, null, srcRef, logMsgSrcId);
 		}
 	}
 
@@ -381,7 +399,7 @@ public abstract class AbstractValidator extends XmlIngester {
 		case "eidr":
 			srcRef = LogReference.getRef("MMM-BP", "1.0", "mmbp01.2");
 			String msg = "Use of EIDR-x or EIDR-s identifiers is recommended";
-			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_WARN, targetEl, msg, null, srcRef, logMsgSrcId);
+			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_NOTICE, targetEl, msg, null, srcRef, logMsgSrcId);
 
 			srcRef = null;
 			idPattern = "10\\.[\\d]{4}/[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-Z]";
@@ -464,6 +482,98 @@ public abstract class AbstractValidator extends XmlIngester {
 	 */
 	protected abstract boolean validateCMVocab();
 
+	protected boolean validateLanguage(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
+		String mdVersion = "2.4";
+		LogReference srcRef = LogReference.getRef("CM", mdVersion, "cm_lang");
+		int tag4log = getLogTag(primaryNS, childNS);
+		boolean allOK = true;
+		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
+				Filters.element(), null, primaryNS);
+		List<Element> elementList = xpExpression.evaluate(curRootEl);
+		for (int i = 0; i < elementList.size(); i++) {
+			Element targetEl = (Element) elementList.get(i);
+			String text = getSpecifiedValue(targetEl, childNS, child);
+			if (text != null) {
+				// treat as case-insensitive
+				text = text.toUpperCase();
+				String[] langSubfields = text.split("-");
+				/* 1st field should be specified in RFC5646 */
+				boolean passed = true;
+				if (!rfc5646.contains(langSubfields[0])) {
+					passed = false;
+				} else if ((langSubfields.length > 1) && (!iso3166_1_codes.containsKey(langSubfields[1]))) {
+					passed = false;
+				}
+				if (!passed) {
+					String errMsg = null;
+					Element logMsgEl = null;
+					if (!child.startsWith("@")) {
+						Element subElement = targetEl.getChild(child, childNS);
+						logMsgEl = subElement;
+						if (subElement != null) {
+							text = subElement.getTextNormalize();
+							errMsg = "Unrecognized value '" + text + "' for " + primaryEl + "/" + child;
+						}
+					} else {
+						String targetAttb = child.replaceFirst("@", "");
+						text = targetEl.getAttributeValue(targetAttb);
+						logMsgEl = targetEl;
+						errMsg = "Unrecognized value '" + text + "' for attribute " + child;
+					}
+					logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, null, srcRef, logMsgSrcId);
+					allOK = false;
+					curFileIsValid = false;
+				}
+			}
+		}
+		return allOK;
+	}
+
+	protected boolean validateRegion(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
+		String mdVersion = "2.4";
+		LogReference srcRef = LogReference.getRef("CM", mdVersion, "cm_regions");
+		return validateCode(primaryNS, primaryEl, childNS, child, iso3166_1_codes, srcRef, false);
+	}
+
+	protected boolean validateCode(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
+			Properties codes, LogReference srcRef, boolean caseSensitive) {
+		boolean allOK = true;
+		int tag4log = getLogTag(primaryNS, childNS);
+		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
+				Filters.element(), null, primaryNS);
+		List<Element> elementList = xpExpression.evaluate(curRootEl);
+		for (int i = 0; i < elementList.size(); i++) {
+			String text = null;
+			String errMsg = null;
+			Element logMsgEl = null;
+			Element targetEl = (Element) elementList.get(i);
+			if (!child.startsWith("@")) {
+				Element subElement = targetEl.getChild(child, childNS);
+				logMsgEl = subElement;
+				if (subElement != null) {
+					text = subElement.getTextNormalize();
+					errMsg = "Unrecognized value '" + text + "' for " + primaryEl + "/" + child;
+				}
+			} else {
+				String targetAttb = child.replaceFirst("@", "");
+				text = targetEl.getAttributeValue(targetAttb);
+				logMsgEl = targetEl;
+				errMsg = "Unrecognized value '" + text + "' for attribute " + child;
+			}
+			if (text != null) {
+				if (!caseSensitive) {
+					text = text.toUpperCase();
+				}
+				if (!codes.containsKey(text)) {
+					logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, null, srcRef, logMsgSrcId);
+					allOK = false;
+					curFileIsValid = false;
+				}
+			}
+		}
+		return allOK;
+	}
+
 	/**
 	 * @param primaryNS
 	 * @param primaryEl
@@ -480,20 +590,7 @@ public abstract class AbstractValidator extends XmlIngester {
 				Filters.element(), null, primaryNS);
 		List<Element> elementList = xpExpression.evaluate(curRootEl);
 		boolean allOK = true;
-		int tag4log = LogMgmt.TAG_N_A;
-		Namespace tagNS;
-		if (childNS != null) {
-			tagNS = childNS;
-		} else {
-			tagNS = primaryNS;
-		}
-		if (tagNS == manifestNSpace) {
-			tag4log = LogMgmt.TAG_MANIFEST;
-		} else if (tagNS == availsNSpace) {
-			tag4log = LogMgmt.TAG_AVAIL;
-		} else if (tagNS == mdNSpace) {
-			tag4log = LogMgmt.TAG_MD;
-		}
+		int tag4log = getLogTag(primaryNS, childNS);
 		String optionsString = expected.toString().toLowerCase();
 		for (int i = 0; i < elementList.size(); i++) {
 			String text = null;
@@ -536,5 +633,48 @@ public abstract class AbstractValidator extends XmlIngester {
 			}
 		}
 		return allOK;
+	}
+
+	/**
+	 * @param targetEl
+	 * @param childNS
+	 * @param child
+	 * @return
+	 */
+	private String getSpecifiedValue(Element targetEl, Namespace childNS, String child) {
+		String text = null;
+		if (!child.startsWith("@")) {
+			Element subElement = targetEl.getChild(child, childNS);
+			if (subElement != null) {
+				text = subElement.getTextNormalize();
+			}
+		} else {
+			String targetAttb = child.replaceFirst("@", "");
+			text = targetEl.getAttributeValue(targetAttb);
+		}
+		return text;
+	}
+
+	/**
+	 * @param primaryNS
+	 * @param childNS
+	 * @return
+	 */
+	private int getLogTag(Namespace primaryNS, Namespace childNS) {
+		int tag4log = LogMgmt.TAG_N_A;
+		Namespace tagNS;
+		if (childNS != null) {
+			tagNS = childNS;
+		} else {
+			tagNS = primaryNS;
+		}
+		if (tagNS == manifestNSpace) {
+			tag4log = LogMgmt.TAG_MANIFEST;
+		} else if (tagNS == availsNSpace) {
+			tag4log = LogMgmt.TAG_AVAIL;
+		} else if (tagNS == mdNSpace) {
+			tag4log = LogMgmt.TAG_MD;
+		}
+		return tag4log;
 	}
 }

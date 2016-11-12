@@ -165,8 +165,6 @@ public class AvailValidator extends AbstractValidator {
 
 	private static JSONObject availTypeStruct;
 
-	private static Properties iso3166_1_codes;
-
 	private static JSONArray genericAvailTypes;
 
 	private Map<Object, Pedigree> pedigreeMap;
@@ -191,11 +189,6 @@ public class AvailValidator extends AbstractValidator {
 			availTypeStruct = availStruct.getJSONObject("AvailType");
 			genericAvailTypes = availTypeStruct.getJSONArray("common");
 
-			/*
-			 * ISO codes are simple so we use Properties
-			 */
-			String iso3166RsrcPath = "/com/movielabs/mddf/resources/ISO3166-1.properties";
-			iso3166_1_codes = loadProperties(iso3166RsrcPath);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -216,10 +209,9 @@ public class AvailValidator extends AbstractValidator {
 		logMsgDefaultTag = LogMgmt.TAG_AVAIL;
 	}
 
-
 	public boolean process(File xmlFile, Element docRootEl, Map<Object, Pedigree> pedigreeMap)
 			throws IOException, JDOMException {
-		curRootEl =  null;
+		curRootEl = null;
 		curFile = xmlFile;
 		curFileName = xmlFile.getName();
 		this.pedigreeMap = pedigreeMap;
@@ -368,35 +360,30 @@ public class AvailValidator extends AbstractValidator {
 	protected boolean validateCMVocab() {
 		boolean allOK = true;
 		String mdVersion = "2.4";
-		Namespace primaryNS = availsNSpace; /*
-											 * Validate use of Country
-											 * identifiers....
-											 */
-		JSONArray iso3691 = cmVocab.optJSONArray("ISO3691");
-		LogReference srcRef = LogReference.getRef("CM", mdVersion, "cm_regions");
-
+		Namespace primaryNS = availsNSpace;
+		/*
+		 * Validate use of Country identifiers....
+		 */
 		// In 'Metadata/Release History/DistrTerritory'
-		allOK = validateVocab(mdNSpace, "DistrTerritory", mdNSpace, "country", iso3691, srcRef, true) && allOK;
+		allOK = validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country") && allOK;
 
 		// in Transaction/Territory...
-		allOK = validateVocab(primaryNS, "Territory", mdNSpace, "country", iso3691, srcRef, true) && allOK;
-		allOK = validateVocab(primaryNS, "TerritoryExcluded", mdNSpace, "country", iso3691, srcRef, true) && allOK;
+		allOK = validateRegion(primaryNS, "Territory", mdNSpace, "country") && allOK;
+		allOK = validateRegion(primaryNS, "TerritoryExcluded", mdNSpace, "country") && allOK;
 
 		// in 'Term/Region
-		allOK = validateVocab(primaryNS, "Region", mdNSpace, "country", iso3691, srcRef, true) && allOK;
+		allOK = validateRegion(primaryNS, "Region", mdNSpace, "country") && allOK;
 
 		// in multiple places
-		allOK = validateVocab(mdNSpace, "Region", mdNSpace, "country", iso3691, srcRef, true) && allOK;
+		allOK = validateRegion(mdNSpace, "Region", mdNSpace, "country") && allOK;
 
 		/* Validate language codes */
 
-		JSONArray rfc5646 = cmVocab.optJSONArray("RFC5646");
-		srcRef = LogReference.getRef("CM", mdVersion, "cm_lang");
-		allOK = validateVocab(primaryNS, "LocalSeriesTitle", primaryNS, "@language", rfc5646, srcRef, true) && allOK;
-		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "AllowedLanguage", rfc5646, srcRef, true) && allOK;
-		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "AssetLanguage", rfc5646, srcRef, true) && allOK;
-		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "HoldbackLanguage", rfc5646, srcRef, true) && allOK;
-		allOK = validateVocab(primaryNS, "Term", primaryNS, "Language", rfc5646, srcRef, true) && allOK;
+		allOK = validateLanguage(primaryNS, "LocalSeriesTitle", primaryNS, "@language") && allOK;
+		allOK = validateLanguage(primaryNS, "Transaction", primaryNS, "AllowedLanguage") && allOK;
+		allOK = validateLanguage(primaryNS, "Transaction", primaryNS, "AssetLanguage") && allOK;
+		allOK = validateLanguage(primaryNS, "Transaction", primaryNS, "HoldbackLanguage") && allOK;
+		allOK = validateLanguage(primaryNS, "Term", primaryNS, "Language") && allOK;
 		return allOK;
 	}
 

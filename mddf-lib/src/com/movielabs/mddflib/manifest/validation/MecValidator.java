@@ -144,7 +144,7 @@ public class MecValidator extends AbstractValidator {
 		 * specifies a xs:string but the documentation specifies an enumerated
 		 * set of allowed values).
 		 */
-		 validateCMVocab();
+		validateCMVocab();
 
 		validateRatings();
 	}
@@ -159,25 +159,20 @@ public class MecValidator extends AbstractValidator {
 		/*
 		 * Validate use of Country identifiers....
 		 */
-		JSONArray iso3691 = cmVocab.optJSONArray("ISO3691");
-		LogReference srcRef = LogReference.getRef("CM", mdVersion, "cm_regions");
-
-		allOK = validateVocab(mdNSpace, "DistrTerritory", mdNSpace, "country", iso3691, srcRef, true) && allOK;
-		allOK = validateVocab(mdNSpace, "CountryOfOrigin", mdNSpace, "country", iso3691, srcRef, true) && allOK;
+		allOK = validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country") && allOK;
+		allOK = validateRegion(mdNSpace, "CountryOfOrigin", mdNSpace, "country") && allOK;
 		// in multiple places
-		allOK = validateVocab(mdNSpace, "Region", mdNSpace, "country", iso3691, srcRef, true) && allOK;
+		allOK = validateRegion(mdNSpace, "Region", mdNSpace, "country") && allOK;
 
-		/* Validate language codes */
-		JSONArray rfc5646 = cmVocab.optJSONArray("RFC5646");
-		srcRef = LogReference.getRef("CM", mdVersion, "cm_lang");
-		allOK = validateVocab(mdNSpace, "LocalizedInfo", null, "@language", rfc5646, srcRef, true) && allOK;
-		allOK = validateVocab(mdNSpace, "TitleAlternate", null, "@language", rfc5646, srcRef, true) && allOK;
-		allOK = validateVocab(mdNSpace, "DisplayName", null, "@language", rfc5646, srcRef, true) && allOK;
-		allOK = validateVocab(mdNSpace, "SortName", null, "@language", rfc5646, srcRef, true) && allOK;
-		allOK = validateVocab(mdNSpace, "DisplayString", null, "@language", rfc5646, srcRef, true) && allOK;
-		allOK = validateVocab(mdmecNSpace, "Basic", mdNSpace, "PrimarySpokenLanguage", rfc5646, srcRef, true) && allOK;
-		allOK = validateVocab(mdmecNSpace, "Basic", mdNSpace, "OriginalLanguage", rfc5646, srcRef, true) && allOK;
-		allOK = validateVocab(mdmecNSpace, "Basic", mdNSpace, "VersionLanguage", rfc5646, srcRef, true) && allOK;
+		/* Validate language codes */ 
+		allOK = validateLanguage(mdNSpace, "LocalizedInfo", null, "@language") && allOK;
+		allOK = validateLanguage(mdNSpace, "TitleAlternate", null, "@language") && allOK;
+		allOK = validateLanguage(mdNSpace, "DisplayName", null, "@language") && allOK;
+		allOK = validateLanguage(mdNSpace, "SortName", null, "@language") && allOK;
+		allOK = validateLanguage(mdNSpace, "DisplayString", null, "@language") && allOK;
+		allOK = validateLanguage(mdmecNSpace, "Basic", mdNSpace, "PrimarySpokenLanguage") && allOK;
+		allOK = validateLanguage(mdmecNSpace, "Basic", mdNSpace, "OriginalLanguage") && allOK;
+		allOK = validateLanguage(mdmecNSpace, "Basic", mdNSpace, "VersionLanguage") && allOK;
 
 		return allOK;
 	}
