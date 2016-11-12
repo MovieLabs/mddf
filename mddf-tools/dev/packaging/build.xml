@@ -3,7 +3,7 @@
 	xmlns:fx="javafx:com.sun.javafx.tools.ant">
 	<property name="proj.home" value="${basedir}/../.." />
 	<property name="mddf-lib.home" value="${proj.home}/../mddf-lib" />
-	<property name="mddf-lib.version" value="1.0.2_rc1" />
+	<property name="mddf-lib.version" value="1.0.2_rc2" />
 	<property name="appPack.dir" value="${proj.home}/packager" />
 	<property name="app.version.cmm" value="1.2" />
 	<property name="app.version.avail" value="0.9" />
@@ -231,7 +231,7 @@
 	<target name="deploy-cmm"
 		depends="setup-staging-area, do-compile, init-fx-tasks, deploy-init">
 		<antcall target="deploy-tool">
-			<param name="toolName" value="Avails" />
+			<param name="toolName" value="Manifest" />
 			<param name="app.version" value="${app.version.cmm}" />
 		</antcall>
 		<antcall target="copy-distros" />
