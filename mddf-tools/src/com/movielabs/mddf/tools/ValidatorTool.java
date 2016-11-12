@@ -81,7 +81,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
 import com.movielabs.mddf.tools.ValidationController;
-import com.movielabs.mddf.tools.ValidatorTool.Context;
 import com.movielabs.mddf.tools.util.AboutDialog;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
 import com.movielabs.mddf.tools.util.logging.LogNavPanel;
@@ -108,7 +107,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		MANIFEST, AVAILS
 	}
 
-	protected static final int MAX_RECENT = 5;
+	protected static final int MAX_RECENT = 8;
 	protected String htmlDocUrl;
 	protected String appVersion = "t.b.d.";
 	protected Context context = null;
@@ -539,65 +538,25 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected JMenuItem getLoggingMenu() {
 		if (loggingMenu == null) {
 			loggingMenu = new JMenu("Logging");
-			final JRadioButtonMenuItem v_logMenuItem = new JRadioButtonMenuItem("Verbose");
-			loggingMenu.add(v_logMenuItem);
-			v_logMenuItem.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (v_logMenuItem.isSelected()) {
-						consoleLogger.setMinLevel(LogMgmt.LEV_DEBUG);
-					}
-				}
-
-			});
-
-			final JRadioButtonMenuItem w_logMenuItem = new JRadioButtonMenuItem("Warning");
-			loggingMenu.add(w_logMenuItem);
-			w_logMenuItem.setSelected(true); // default
-			consoleLogger.setMinLevel(LogMgmt.LEV_WARN);
-			w_logMenuItem.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (w_logMenuItem.isSelected()) {
-						consoleLogger.setMinLevel(LogMgmt.LEV_WARN);
-					}
-				}
-
-			});
-
-			final JRadioButtonMenuItem e_logMenuItem = new JRadioButtonMenuItem("Error");
-			loggingMenu.add(e_logMenuItem);
-			e_logMenuItem.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (e_logMenuItem.isSelected()) {
-						consoleLogger.setMinLevel(LogMgmt.LEV_ERR);
-					}
-				}
-
-			});
-
-			final JRadioButtonMenuItem i_logMenuItem = new JRadioButtonMenuItem("Info");
-			loggingMenu.add(i_logMenuItem);
-			i_logMenuItem.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (i_logMenuItem.isSelected()) {
-						consoleLogger.setMinLevel(LogMgmt.LEV_INFO);
-					}
-				}
-
-			});
-			// Group the radio buttons.
 			ButtonGroup group = new ButtonGroup();
-			group.add(v_logMenuItem);
-			group.add(w_logMenuItem);
-			group.add(e_logMenuItem);
-			group.add(i_logMenuItem);
+			for (int i = 0; i < LogMgmt.logLevels.length; i++) {
+				int logLevel = i;
+				String label = LogMgmt.logLevels[i];
+				final JRadioButtonMenuItem logMenuItem = new JRadioButtonMenuItem(label);
+				loggingMenu.add(logMenuItem);
+
+				group.add( logMenuItem);
+				logMenuItem.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (logMenuItem.isSelected()) {
+							consoleLogger.setMinLevel(logLevel);
+						}
+					}
+
+				});
+			}
 		}
 		return loggingMenu;
 	}
@@ -661,16 +620,6 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 							window.frame, JFileChooser.FILES_AND_DIRECTORIES);
 					if (fileInputDir != null) {
 						setFileInputDir(fileInputDir);
-						// inputSrcTField.setText(fileInputDir.getName());
-						// inputSrcTField.setToolTipText(fileInputDir.getAbsolutePath());
-						// getRunValidationBtn().setEnabled(true);
-						// getEditFileBtn().setEnabled(fileInputDir.isFile());
-						// /*
-						// * Store for possible recall be user via menu
-						// selection
-						// */
-						// selectedFiles.put(fileInputDir.getName(),
-						// fileInputDir);
 					}
 				}
 			});
@@ -880,7 +829,6 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	 */
 	protected ValidationController getPreProcessor() {
 		if (preProcessor == null) {
-			// preProcessor = new PreProcessor(context);
 			preProcessor = new ValidationController(context, consoleLogger);
 		}
 		return preProcessor;
