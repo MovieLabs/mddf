@@ -33,12 +33,13 @@ import org.jdom2.Element;
  */
 public interface LogMgmt {
 
-	public static String[] logLevels = { "Debug", "Warning", "Error", "Info", "Fatal" };
+	public static String[] logLevels = { "Debug", "Notice", "Warning", "Error", "Info", "Fatal" };
 	public static final int LEV_DEBUG = 0;
-	public static final int LEV_WARN = 1;
-	public static final int LEV_ERR = 2;
-	public static final int LEV_INFO = 3;
-	public static final int LEV_FATAL = 4;
+	public static final int LEV_NOTICE = 1;
+	public static final int LEV_WARN = 2;
+	public static final int LEV_ERR = 3;
+	public static final int LEV_INFO = 4;
+	public static final int LEV_FATAL = 5;
 
 	public static String[] logTags = { "Manifest", "CPE Model", "Profile", "Best Prac.", "Action", "Other", "Avail",
 			"Common MD", "Rating", "XML", "MEC" };
