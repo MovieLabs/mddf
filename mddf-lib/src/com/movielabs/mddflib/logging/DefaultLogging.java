@@ -49,6 +49,7 @@ public class DefaultLogging implements LogMgmt {
 	private File curInputFile;
 	private int minLevel = LogMgmt.LEV_WARN;
 	private boolean printToConsole = true;
+	private boolean infoIncluded;
 
 	/**
 	 * 
@@ -279,6 +280,20 @@ public class DefaultLogging implements LogMgmt {
 	@Override
 	public int getMinLevel() {
 		return minLevel;
+	}
+
+	/**
+	 * @return the infoIncluded
+	 */
+	public boolean isInfoIncluded() {
+		return infoIncluded;
+	}
+
+	/**
+	 * @param infoIncluded the infoIncluded to set
+	 */
+	public void setInfoIncluded(boolean infoIncluded) {
+		this.infoIncluded = infoIncluded;
 	}
 
 }

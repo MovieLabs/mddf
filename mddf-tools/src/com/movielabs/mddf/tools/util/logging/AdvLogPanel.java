@@ -68,6 +68,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	private JMenu saveLogMenu;
 	private File curInputFile;
 	private int minLevel = LogMgmt.LEV_WARN;
+	private boolean infoIncluded = true;
 
 	public AdvLogPanel() {
 		treeView = new LogNavPanel();
@@ -413,6 +414,9 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		if (level < minLevel) {
 			return;
 		}
+		if((level==LogMgmt.LEV_INFO)&&(!infoIncluded)){
+			return;
+		}
 		List<LogEntryNode> entryList = new ArrayList<LogEntryNode>();
 		LogEntryNode entry = treeView.append(level, tag, msg, xmlFile, line, moduleID, tooltip, srcRef);
 		entryList.add(entry);
@@ -438,6 +442,20 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	@Override
 	public int getMinLevel() {
 		return minLevel;
+	}
+
+	/**
+	 * @return the infoIncluded
+	 */
+	public boolean isInfoIncluded() {
+		return infoIncluded;
+	}
+
+	/**
+	 * @param infoIncluded the infoIncluded to set
+	 */
+	public void setInfoIncluded(boolean infoIncluded) {
+		this.infoIncluded = infoIncluded;
 	}
 
 	/**

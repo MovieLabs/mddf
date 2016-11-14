@@ -25,21 +25,19 @@ package com.movielabs.mddflib.logging;
 import java.io.File;
 import java.io.IOException;
 
-import org.jdom2.Element;
-
 /**
  * @author L. Levin, Critical Architectures LLC
  *
  */
 public interface LogMgmt {
 
-	public static String[] logLevels = { "Debug", "Notice", "Warning", "Error", "Info", "Fatal" };
+	public static String[] logLevels = { "Debug", "Notice", "Warning", "Error", "Fatal", "Info" };
 	public static final int LEV_DEBUG = 0;
 	public static final int LEV_NOTICE = 1;
 	public static final int LEV_WARN = 2;
 	public static final int LEV_ERR = 3;
-	public static final int LEV_INFO = 4;
-	public static final int LEV_FATAL = 5;
+	public static final int LEV_FATAL = 4;
+	public static final int LEV_INFO = 5;
 
 	public static String[] logTags = { "Manifest", "CPE Model", "Profile", "Best Prac.", "Action", "Other", "Avail",
 			"Common MD", "Rating", "XML", "MEC" };
@@ -132,4 +130,8 @@ public interface LogMgmt {
 	public void setMinLevel(int level);
 
 	public int getMinLevel();
+
+	public void setInfoIncluded(boolean flag);
+
+	public boolean isInfoIncluded();
 }
