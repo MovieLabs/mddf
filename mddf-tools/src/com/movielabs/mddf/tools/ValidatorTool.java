@@ -117,7 +117,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 									// messages
 	protected JFrame frame;
 	protected JTextField inputSrcTField;
-	protected Properties properties;
+	protected Properties userPreferences;
 	protected File userPropFile;
 	protected List<String> recentFileList = new ArrayList<String>();
 	protected JComboBox<String> profileCB;
@@ -167,17 +167,17 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		} catch (SecurityException e) {
 			// ignore
 		}
-		properties = new Properties();
+		userPreferences = new Properties();
 		userPropFile = new File(PATH_USERSETTINGS);
 		if (userPropFile.canRead()) {
 			try {
-				properties.load(new FileReader(userPropFile));
-				FileChooserDialog.setDefaultDirMap(properties);
+				userPreferences.load(new FileReader(userPropFile));
+				FileChooserDialog.setDefaultDirMap(userPreferences);
 				/* also re-load the list of recently accessed files */
 
 				for (int i = 0; i < MAX_RECENT; i++) {
 					String key = "recentFile." + i;
-					String value = properties.getProperty(key);
+					String value = userPreferences.getProperty(key);
 					if (value != null) {
 						recentFileList.add(value);
 					}
@@ -539,23 +539,37 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		if (loggingMenu == null) {
 			loggingMenu = new JMenu("Logging");
 			ButtonGroup group = new ButtonGroup();
+			int minLevel = getConsoleLogPanel().getMinLevel();
 			for (int i = 0; i < LogMgmt.logLevels.length; i++) {
 				int logLevel = i;
 				String label = LogMgmt.logLevels[i];
 				final JRadioButtonMenuItem logMenuItem = new JRadioButtonMenuItem(label);
-				loggingMenu.add(logMenuItem);
-
-				group.add( logMenuItem);
-				logMenuItem.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						if (logMenuItem.isSelected()) {
-							consoleLogger.setMinLevel(logLevel);
-						}
+				if (logLevel != LogMgmt.LEV_INFO) {
+					if (minLevel == logLevel) {
+						logMenuItem.setSelected(true);
 					}
+					group.add(logMenuItem);
+					logMenuItem.addActionListener(new ActionListener() {
 
-				});
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							if (logMenuItem.isSelected()) {
+								consoleLogger.setMinLevel(logLevel);
+							}
+						}
+					});
+				} else {
+					loggingMenu.addSeparator();
+					logMenuItem.setSelected(consoleLogger.isInfoIncluded());
+					logMenuItem.addActionListener(new ActionListener() {
+
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							consoleLogger.setInfoIncluded(logMenuItem.isSelected());
+						}
+					});
+				}
+				loggingMenu.add(logMenuItem);
 			}
 		}
 		return loggingMenu;
@@ -567,6 +581,16 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			LogNavPanel logNav = ((AdvLogPanel) consoleLogger).getLogNavPanel();
 			// listen for user selections..
 			logNav.addListener(this);
+			/*
+			 * configure based on last saved user-specific settings..
+			 */
+			boolean includeInfo = Boolean.valueOf(userPreferences.getProperty("pref.log.includeInfo", "true"));
+			consoleLogger.setInfoIncluded(includeInfo);
+			String minLevelProp = userPreferences.getProperty("pref.log.minLevel");
+			if (minLevelProp != null) {
+				int minLevel = Integer.parseInt(minLevelProp);
+				consoleLogger.setMinLevel(minLevel);
+			}
 		}
 		return consoleLogger;
 	}
@@ -597,9 +621,9 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		 */
 		selectedFiles.put(name, target);
 		String path;
-		if(fileInputDir.isDirectory()){
+		if (fileInputDir.isDirectory()) {
 			path = fileInputDir.getAbsolutePath();
-		}else{
+		} else {
 			path = fileInputDir.getParent();
 		}
 		FileChooserDialog.setDirMapping("srcManifest", path);
@@ -845,14 +869,19 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	 * Save properties and open files, then shut down and exit.
 	 */
 	public void shutDown() {
+		// save user preferences
+		String flag = Boolean.toString(consoleLogger.isInfoIncluded());
+		userPreferences.setProperty("pref.log.includeInfo", flag);
+		String minLev = Integer.toString(consoleLogger.getMinLevel());
+		userPreferences.setProperty("pref.log.minLevel", minLev);
 		// save what user has been accessing
 		for (int i = 0; i < recentFileList.size(); i++) {
 			/* remember the list contains the full path */
 			String path2xml = recentFileList.get(i);
-			properties.setProperty("recentFile." + i, path2xml);
+			userPreferences.setProperty("recentFile." + i, path2xml);
 		}
 		try {
-			properties.store(new FileWriter(userPropFile), "MovieLabs CPE Pre-processing");
+			userPreferences.store(new FileWriter(userPropFile), "MovieLabs CPE Pre-processing");
 		} catch (Exception e) {
 			e.printStackTrace();
 			consoleLogger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, e.getMessage(), null, "UI");
