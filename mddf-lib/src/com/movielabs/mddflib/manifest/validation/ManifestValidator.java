@@ -309,7 +309,57 @@ public class ManifestValidator extends AbstractValidator {
 		allowed = cmVocab.optJSONArray("EntryClass");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm008");
 		allOK = validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef, true) && allOK;
+		
+		// --------------- Validate language codes ----------------------------------------
+		/*
+		 * Language codes in INVENTORY:
+		 */
+		allOK = validateLanguage(mdNSpace, "Language", null, null) && allOK;
+		allOK = validateLanguage(mdNSpace, "SubtitleLanguage", null, null) && allOK;
+		allOK = validateLanguage(mdNSpace, "SignedLanguage", null, null) && allOK;
+		allOK = validateLanguage(mdNSpace, "PrimarySpokenLanguage", null, null) && allOK;
+		allOK = validateLanguage(mdNSpace, "OriginalLanguage", null, null) && allOK;
+		allOK = validateLanguage(mdNSpace, "VersionLanguage", null, null) && allOK;
+		allOK = validateLanguage(mdNSpace, "LocalizedInfo", null, "@language") && allOK;
+		allOK = validateLanguage(mdNSpace, "JobDisplay", null, "@language") && allOK;
+		allOK = validateLanguage(mdNSpace, "DisplayName", null, "@language") && allOK;
+		allOK = validateLanguage(mdNSpace, "SortName", null, "@language") && allOK;
+		allOK = validateLanguage(mdNSpace, "TitleAlternate", null, "@language") && allOK;
+		allOK = validateLanguage(manifestNSpace, "TextObject", null, "@language") && allOK;
+		/*
+		 * PRESENTATION:
+		 */
+		allOK = validateLanguage(manifestNSpace, "SystemLanguage", null, null) && allOK;
+		allOK = validateLanguage(manifestNSpace, "AudioLanguage", null, null) && allOK;
+		allOK = validateLanguage(manifestNSpace, "SubtitleLanguage", null, null) && allOK;
+		allOK = validateLanguage(manifestNSpace, "DisplayLabel", null, "@language") && allOK;
+		allOK = validateLanguage(manifestNSpace, "ImageID", null, "@language") && allOK;
+		/*
+		 * PLAYABLE SEQ:
+		 */
+		allOK = validateLanguage(manifestNSpace, "Clip", null, "@audioLanguage") && allOK;
+		allOK = validateLanguage(manifestNSpace, "ImageClip", null, "@audioLanguage") && allOK;
+		/*
+		 * PICTURE GROUPS:
+		 */
+		allOK = validateLanguage(manifestNSpace, "LanguageInImage", null, null) && allOK;
+		allOK = validateLanguage(manifestNSpace, "AlternateText", null, "@language") && allOK;
+		allOK = validateLanguage(manifestNSpace, "Caption", null, "@language") && allOK;
+		/*
+		 * TEXT GROUP:
+		 */
+		allOK = validateLanguage(manifestNSpace, "TextGroup", null, "@language") && allOK;
+		/*
+		 * EXPERIENCES:
+		 */
+		allOK = validateLanguage(manifestNSpace, "Language", null, null) && allOK;
+		allOK = validateLanguage(manifestNSpace, "ExcludedLanguage", null, null) && allOK;
+		allOK = validateLanguage(manifestNSpace, "AppName", null, "@language") && allOK;
+		allOK = validateLanguage(manifestNSpace, "GalleryName", null, "@language") && allOK;
+		
 
+		validateRatings();
+		
 		// ====================================
 		// TODO: DIGITAL ASSET METADATA
 
