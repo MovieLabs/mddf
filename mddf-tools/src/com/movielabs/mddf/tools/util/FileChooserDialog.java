@@ -111,6 +111,10 @@ public class FileChooserDialog {
 		return myFile;
 	}
 
+	public static void setDirMapping(String key, String path){
+		defaultDirMap.put(propPrefix + key, path);
+	}
+	
 	/**
 	 * @return Returns the defaultDirMap.
 	 */

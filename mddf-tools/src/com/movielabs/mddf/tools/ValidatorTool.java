@@ -596,6 +596,13 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		 * Store for possible recall be user via menu selection
 		 */
 		selectedFiles.put(name, target);
+		String path;
+		if(fileInputDir.isDirectory()){
+			path = fileInputDir.getAbsolutePath();
+		}else{
+			path = fileInputDir.getParent();
+		}
+		FileChooserDialog.setDirMapping("srcManifest", path);
 	}
 
 	/**
