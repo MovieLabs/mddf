@@ -42,6 +42,7 @@ import org.jdom2.xpath.XPathExpression;
 
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
+import com.movielabs.mddflib.util.xml.RatingSystem;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
@@ -482,6 +483,96 @@ public abstract class AbstractValidator extends XmlIngester {
 	 */
 	protected abstract boolean validateCMVocab();
 
+	// ########################################################################
+
+	protected void validateRatings() {
+		XPathExpression<Element> xpExp01 = xpfac.compile(".//md:Rating", Filters.element(), null,
+				 mdNSpace);
+		List<Element> ratingElList = xpExp01.evaluate(curRootEl);
+		rLoop: for (int i = 0; i < ratingElList.size(); i++) {
+			Element ratingEl = ratingElList.get(i);
+			String system = ratingEl.getChildTextNormalize("System", mdNSpace);
+			RatingSystem rSystem = RatingSystem.factory(system);
+			if (rSystem == null) {
+				String msg = "Unrecognized Rating System '" + system + "'";
+				String explanation = null;
+				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, ratingEl, msg, explanation, null, logMsgSrcId);
+				curFileIsValid = false;
+				continue;
+			}
+			Element valueEl = ratingEl.getChild("Value", mdNSpace);
+			String rating = valueEl.getTextNormalize(); 
+			if (!rSystem.isValid(rating)) {
+				String msg = "Invalid Rating for RatingSystem";
+				String explanation = "The " + system + " Rating System does not include the '" + rating + "'";
+				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, valueEl, msg, explanation, null, logMsgSrcId);
+				curFileIsValid = false;
+			} else if (rSystem.isDeprecated(rating)) {
+				String msg = "Deprecated Rating";
+				String explanation = "The " + system + " Rating System has deprecated the '" + rating
+						+ "' rating. A more recent rating should be used if one is available";
+				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, valueEl, msg, explanation, null, logMsgSrcId);
+			}
+
+			/*
+			 * Is the RatingSystem in use in the specified country or
+			 * countryRegion?
+			 * 
+			 */
+			LogReference srcRef = LogReference.getRef("CM", "2.4", "cm_regions");
+			Element regionEl = ratingEl.getChild("Region", mdNSpace);
+			String region = null;
+			String subRegion = null;
+			Element target = regionEl.getChild("country", mdNSpace);
+			if (target == null) {
+				target = regionEl.getChild("countryRegion", mdNSpace);
+				region = target.getText();
+				/*
+				 * We don't check validity of ISO-3166-2 codes as there are too
+				 * many defined but very few used for ratings
+				 */
+				if (!rSystem.isUsedInSubRegion(region)) {
+					String msg = "RatingSystem not used in specified Country SubRegion";
+					String explanation = "The " + system
+							+ " Rating System has not been officially adopted in SubRegion '" + region + "'";
+					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, target, msg, explanation, null, logMsgSrcId);
+					curFileIsValid = false;
+				}
+			} else {
+				region = target.getText();
+				/* Is it valid ISO-3166-1 code? */
+				if (!iso3166_1_codes.containsKey(region)) {
+					String msg = "Invalid code for country";
+					String explanation = "A country should be specified as a ISO 3166-1 Alpha-2 code";
+					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
+					curFileIsValid = false;
+				} else if (!rSystem.isUsedInRegion(region)) {
+					String msg = "RatingSystem not used in specified Region";
+					String explanation = "The " + system + " Rating System has not been officially adopted in Region '"
+							+ region + "'";
+					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, target, msg, explanation, null, logMsgSrcId);
+					curFileIsValid = false;
+				}
+			}
+		}
+	}
+	/**
+	 * Validate a language entry conforms to RFC5646. The source of the entry is
+	 * the <i>child</i> node. The child may be:
+	 * <ul>
+	 * <li>A JDOM Element,</li>
+	 * <li>an attribute of the primary JDOM Element (as indicated by the '@'
+	 * prefix), or</li>
+	 * <li><tt>null</tt>, in which case the text value of the <tt>primaryEl</tt>
+	 * will be used.</li>
+	 * </ul>
+	 * 
+	 * @param primaryNS
+	 * @param primaryEl
+	 * @param childNS
+	 * @param child
+	 * @return
+	 */
 	protected boolean validateLanguage(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
 		String mdVersion = "2.4";
 		LogReference srcRef = LogReference.getRef("CM", mdVersion, "cm_lang");
@@ -492,9 +583,15 @@ public abstract class AbstractValidator extends XmlIngester {
 		List<Element> elementList = xpExpression.evaluate(curRootEl);
 		for (int i = 0; i < elementList.size(); i++) {
 			Element targetEl = (Element) elementList.get(i);
-			String text = getSpecifiedValue(targetEl, childNS, child);
+			String text;
+			if (child == null) {
+				text = targetEl.getTextNormalize();
+			} else {
+				text = getSpecifiedValue(targetEl, childNS, child);
+			}
 			if (text != null) {
 				// treat as case-insensitive
+				// System.out.println("Language: '"+text+"'");
 				text = text.toUpperCase();
 				String[] langSubfields = text.split("-");
 				/* 1st field should be specified in RFC5646 */
@@ -505,20 +602,29 @@ public abstract class AbstractValidator extends XmlIngester {
 					passed = false;
 				}
 				if (!passed) {
+					/*
+					 * Build an appropriate log entry based on nature and
+					 * structure of the value source
+					 */
 					String errMsg = null;
 					Element logMsgEl = null;
-					if (!child.startsWith("@")) {
+					String textAsLogged;
+					if (child == null) {
+						logMsgEl = targetEl;
+						textAsLogged = logMsgEl.getTextNormalize();
+						errMsg = "Unrecognized value '" + textAsLogged + "' for " + primaryEl;
+					} else if (!child.startsWith("@")) {
 						Element subElement = targetEl.getChild(child, childNS);
 						logMsgEl = subElement;
 						if (subElement != null) {
-							text = subElement.getTextNormalize();
-							errMsg = "Unrecognized value '" + text + "' for " + primaryEl + "/" + child;
+							textAsLogged = logMsgEl.getTextNormalize();
+							errMsg = "Unrecognized value '" + textAsLogged + "' for " + primaryEl + "/" + child;
 						}
 					} else {
 						String targetAttb = child.replaceFirst("@", "");
-						text = targetEl.getAttributeValue(targetAttb);
+						textAsLogged = targetEl.getAttributeValue(targetAttb);
 						logMsgEl = targetEl;
-						errMsg = "Unrecognized value '" + text + "' for attribute " + child;
+						errMsg = "Unrecognized value '" + textAsLogged + "' for attribute " + child;
 					}
 					logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, null, srcRef, logMsgSrcId);
 					allOK = false;
