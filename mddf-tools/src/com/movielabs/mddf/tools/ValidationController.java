@@ -417,8 +417,7 @@ public class ValidationController {
 				}
 				String loc = e.getStackTrace()[0].toString();
 				String details = "Exception while validating; " + loc;
-				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, details, null);
-				e.printStackTrace();
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, details, null); 
 			}
 		}
 	}
