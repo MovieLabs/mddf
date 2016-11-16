@@ -15,8 +15,8 @@ This repository contains Java software supporting the creation and usage of MDDF
 
 There are two projects within this repository:
 
-* mddf-tools: implements standalone applications that can be used to generate, validate, or transform MDDF files
-* mddf-lib: this implements all core (i.e., *non-UI* functionality). 
+* __mddf-tools__: implements standalone applications that can be used to generate, validate, or transform MDDF files
+* __mddf-lib__: this implements all core (i.e., *non-UI* functionality). 
 
 The applications in mddf-tools are implemented on top of mddf-lib and any developers intending to develop their 
 own mddf support applications are encouraged to do the same.
