@@ -39,6 +39,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
  */
 public class AvailsTool extends ValidatorTool {
 	private static final String AVAIL_APP_VER = "v0.9";
+	private static final String AVAIL_DOC_VER = "v0.9";
 
 	/**
 	 * Launch the application.
@@ -66,9 +67,8 @@ public class AvailsTool extends ValidatorTool {
 	 */
 	public AvailsTool() {
 		super(Context.AVAILS);
-		super.appVersion = AVAIL_APP_VER;
-		String docVersion = "v0.8"; // TEMPORARY
-		htmlDocUrl = "http://www.movielabs.com/md/avails/validator/" + docVersion + "/";
+		super.appVersion = AVAIL_APP_VER; 
+		htmlDocUrl = "http://www.movielabs.com/md/avails/validator/" + AVAIL_DOC_VER + "/";
  	}
 
 	protected JToolBar getValidationTools() {

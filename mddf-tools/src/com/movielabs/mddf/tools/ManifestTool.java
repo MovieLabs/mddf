@@ -39,6 +39,7 @@ import javax.swing.UIManager;
  */
 public class ManifestTool extends ValidatorTool {
 	private static final String MANIFEST_APP_VER = "v1.2";
+	private static final String MANIFEST_DOC_VER = "v1.2";
 
 
 	/**
@@ -68,9 +69,8 @@ public class ManifestTool extends ValidatorTool {
 	 */
 	public ManifestTool() {
 		super(Context.MANIFEST);
-		super.appVersion = MANIFEST_APP_VER;
-		String docVersion = appVersion;
-		htmlDocUrl = "http://www.movielabs.com/md/manifest/validator/" + docVersion + "/";
+		super.appVersion = MANIFEST_APP_VER; 
+		htmlDocUrl = "http://www.movielabs.com/md/manifest/validator/" + MANIFEST_DOC_VER + "/";
 	}
 
 	/**
