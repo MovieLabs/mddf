@@ -3,7 +3,7 @@
 
 ---
 
-## Overview
+## Overview:
 
 This repository contains Java software supporting the creation and usage of MDDF files including
 
@@ -11,7 +11,16 @@ This repository contains Java software supporting the creation and usage of MDDF
 * Media Manifests
 * MEC
 
-## Software Organization & Roadmap
+## Status and Relationship to Othe MovieLabs Repositories:
+
+The software in this repository is intended to replace that contained in the following MovieLabs repositories:
+
+* availslib
+* availstool
+* cpe-preprocessing
+
+
+## Software Organization & Roadmap:
 
 There are two projects within this repository:
 
