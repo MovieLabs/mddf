@@ -25,7 +25,7 @@ The software in this repository is intended to replace that contained in the fol
 There are two projects within this repository:
 
 * __mddf-tools__: implements standalone applications that can be used to generate, validate, or transform MDDF files
-* __mddf-lib__: this implements all core (i.e., *non-UI* functionality). 
+* __mddf-lib__: this implements all core (i.e., *non-UI*) functionality. 
 
 The applications in mddf-tools are implemented on top of mddf-lib and any developers intending to develop their 
 own mddf support applications are encouraged to do the same.
