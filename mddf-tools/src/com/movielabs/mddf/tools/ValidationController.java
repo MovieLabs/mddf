@@ -87,7 +87,7 @@ public class ValidationController {
 	private LogMgmt logMgr;
 
 	/**
-	 * Implementation DEFERED a/o 2016-04-11] Run preprocesssing functions via
+	 * [Implementation DEFERED a/o 2016-04-11] Run preprocesssing functions via
 	 * CLI and/or script.
 	 *
 	 * @param args
@@ -167,6 +167,10 @@ public class ValidationController {
 		options.addOption("p", "profiles", false, "List supported profiles");
 		options.addOption("useCases", false, "List supported use-case grouped by profile");
 
+		if(args.length ==0){
+			printHelp();
+			System.exit(0);
+		}
 		// parse the command line arguments
 		CommandLine line = parser.parse(options, args);
 		return line;
@@ -177,7 +181,7 @@ public class ValidationController {
 	 */
 	private static void printHelp() {
 		HelpFormatter formatter = new HelpFormatter();
-		String header = "\nValidates one or more Common Media Manifest (CMM) files.\n" + getHelpHeader() + "\n\n";
+		String header = "\nValidates one or more MovieLabs Digital Distribution Framework (MDDF) files.\n" + getHelpHeader() + "\n\n";
 		String footer = "\nPlease report issues at http://www.movielabs.com/ or info@movielabs.com";
 		formatter.printHelp("Validator", header, options, footer, true);
 
@@ -186,9 +190,7 @@ public class ValidationController {
 	private static String getHelpHeader() {
 		String header = "";
 		Object foo = new Foo();
-		String rsrcPath = "./ValidatorHelp.txt";
-		// String rsrcPath =
-		// "/com/movielabs/mddf/preProcess/resources/ValidatorHelp.txt";
+		String rsrcPath = "./ValidatorHelp.txt"; 
 		InputStream in = foo.getClass().getResourceAsStream(rsrcPath);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		String line = null;

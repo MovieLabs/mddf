@@ -1,4 +1,4 @@
-The CLI version of the CMM Validator is primarily intended to be used to
+The CLI version of the MDDF Validator is primarily intended to be used to
 run validation scripts. While all options that are available via the GUI
 version of the software are supported, most options will need to be set 
 in a script.
