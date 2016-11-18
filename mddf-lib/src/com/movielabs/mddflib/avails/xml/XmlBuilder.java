@@ -261,10 +261,10 @@ public class XmlBuilder {
 			 * make sure key values are aligned...
 			 */
 			RowToXmlHelper srcRow = element2SrcRowMap.get(availEL);
-			checkForMatch("Avail/ALID", srcRow, curRow);
-			checkForMatch("Avail/DisplayName", srcRow, curRow);
-			checkForMatch("Avail/ServiceProvider", srcRow, curRow);
-			checkForMatch("Avail/ExceptionFlag", srcRow, curRow);
+			checkForMatch("Avail/ALID", srcRow, curRow, "Avail");
+			checkForMatch("Avail/DisplayName", srcRow, curRow, "Avail");
+			checkForMatch("Avail/ServiceProvider", srcRow, curRow, "Avail");
+			checkForMatch("Avail/ExceptionFlag", srcRow, curRow, "Avail");
 			/*
 			 * AvailAsset/WorkType is special case as different WorkTypes may
 			 * map to same AvailType
@@ -290,21 +290,24 @@ public class XmlBuilder {
 	 * @param srcRow
 	 * @param rowHelper
 	 */
-	private void checkForMatch(String colKey, RowToXmlHelper srcRow, RowToXmlHelper curRow) {
+	private boolean checkForMatch(String colKey, RowToXmlHelper srcRow, RowToXmlHelper curRow, String entityName) {
 		String definedValue = srcRow.getData(colKey);
 		if (definedValue == null) {
 			// col not defined so we consider it a match
-			return;
+			return true;
 		}
 		String curValue = curRow.getData(colKey);
-		if (!definedValue.equals(curValue)) {
+		if (definedValue.equals(curValue)) {
+			return true;
+		} else {
 			// Generate error msg
-			String msg = "Inconsistent AVAIL specification; value does not match 1st definition of referenced Avail";
+			String msg = "Inconsistent specification; value does not match 1st definition of referenced " + entityName;
 			int row4log = srcRow.getRowNumber() + 1;
-			String details = "AVAIL was 1st defined in row " + row4log + " which specifies " + colKey + " as '"
+			String details = entityName + " was 1st defined in row " + row4log + " which specifies " + colKey + " as '"
 					+ definedValue + "'";
 			Cell sourceCell = curRow.sheet.getCell(colKey, curRow.getRowNumber());
 			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
+			return false;
 		}
 
 	}
@@ -490,16 +493,31 @@ public class XmlBuilder {
 		if (assetEl == null) {
 			assetEl = curRow.buildAsset();
 			assetElRegistry.put(assetKey, assetEl);
+			element2SrcRowMap.put(assetEl, curRow);
+			/* add Asset to the Avail */
 			Element availEL = availElRegistry.get(alid);
 			addAsset(availEL, assetEl);
-		} else {
-			// Generate warning msg
+			return;
+		}
+		/*
+		 * Check the consistency of the Asset info as originally specified with
+		 * the same fields in the current row.
+		 */
+		RowToXmlHelper srcRow = element2SrcRowMap.get(assetEl);
+		boolean match = true;
+		match = checkForMatch("AvailAsset/WorkType", srcRow, curRow, "Asset") && match;
+		match = checkForMatch("AvailAsset/ContentID", srcRow, curRow, "Asset") && match;
+		match = checkForMatch("AvailAsset/EpisodeContentID", srcRow, curRow, "Asset") && match;
+		match = checkForMatch("AvailAsset/SeasonContentID", srcRow, curRow, "Asset") && match;
+		match = checkForMatch("AvailAsset/SeriesContentID", srcRow, curRow, "Asset") && match;
+		if (match) {
+			// Generate msg
 			String msg = "Ignoring redundant Asset information";
 			int row4log = curRow.getRowNumber() + 1;
 			String details = "An Asset with " + cidSrc + "=" + contentID
 					+ " was previously defined. Asset-specific fields in row " + row4log + " will be ignored";
 			Cell sourceCell = curRow.sheet.getCell(cidColKey, curRow.getRowNumber());
-			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_WARN, sourceCell, msg, details, null, moduleId);
+			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_DEBUG, sourceCell, msg, details, null, moduleId);
 		}
 	}
 
