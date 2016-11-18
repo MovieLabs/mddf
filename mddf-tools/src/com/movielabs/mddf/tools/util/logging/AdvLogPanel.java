@@ -56,6 +56,16 @@ import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 
 /**
+ * A composite UI component that provides the user with the ability to filter,
+ * sort, and navigate thru a hierarchically structured log file. An
+ * <tt>AdvLogPanel</tt> contains two sub-components:
+ * <ul>
+ * <li>a table-based display of the log messages that includes support for
+ * sorting, and</li>
+ * <li>a tree-based <i>navigator</i> that provides the ability to filter the set
+ * of messages being displayed.</li>
+ * </ul>
+ * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
@@ -73,14 +83,14 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	public AdvLogPanel() {
 		treeView = new LogNavPanel();
 		treeView.addListener(this);
-		tableView = new LogPanel( );
+		tableView = new LogPanel();
 		tableView.addMouseListener(new PopClickListener(this));
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeView, tableView);
 		splitPane.setContinuousLayout(true);
 		splitPane.setDividerLocation(leftWidth);
 		splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
 			@Override
-			public void propertyChange(PropertyChangeEvent pce) { 
+			public void propertyChange(PropertyChangeEvent pce) {
 				String propertyName = pce.getPropertyName();
 				JSplitPane sourceSplitPane = (JSplitPane) pce.getSource();
 				if (propertyName.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
@@ -88,15 +98,15 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 				}
 			}
 		});
-		tableView.addPropertyChangeListener( new PropertyChangeListener(){
+		tableView.addPropertyChangeListener(new PropertyChangeListener() {
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				// TODO Auto-generated method stub
 
-				System.out.println("AdvLogPanel: tableView PropertyChangeEvent" );
+				System.out.println("AdvLogPanel: tableView PropertyChangeEvent");
 			}
-			
+
 		});
 		// Add GUI components
 		this.setLayout(new BorderLayout());
@@ -129,10 +139,10 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		});
 	}
 
-	public void setSize( ){ 
+	public void setSize() {
 		setSize(getWidth(), getHeight());
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -149,27 +159,32 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	 */
 	JMenu getSaveLogMenu() {
 		if (saveLogMenu == null) {
-			saveLogMenu = new JMenu("Save as...");
-			JMenuItem saveCsvMItem = new JMenuItem("CSV");
-			saveLogMenu.add(saveCsvMItem);
-			JMenuItem saveXmlMItem = new JMenuItem("XML");
-			saveXmlMItem.setEnabled(false);
-			saveXmlMItem.setToolTipText("not yet implemented");
-			saveLogMenu.add(saveXmlMItem);
-			saveCsvMItem.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					try {
-						tableView.saveAs("csv");
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				}
-			});
+			saveLogMenu = createSaveLogMenu();
 		}
 		return saveLogMenu;
+	}
+
+	public JMenu createSaveLogMenu() {
+		JMenu menu = new JMenu("Save as...");
+		JMenuItem saveCsvMItem = new JMenuItem("CSV");
+		menu.add(saveCsvMItem);
+		JMenuItem saveXmlMItem = new JMenuItem("XML");
+		saveXmlMItem.setEnabled(false);
+		saveXmlMItem.setToolTipText("not yet implemented");
+		menu.add(saveXmlMItem);
+		saveCsvMItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					tableView.saveAs("csv");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		return menu;
 	}
 
 	/*
@@ -414,7 +429,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		if (level < minLevel) {
 			return;
 		}
-		if((level==LogMgmt.LEV_INFO)&&(!infoIncluded)){
+		if ((level == LogMgmt.LEV_INFO) && (!infoIncluded)) {
 			return;
 		}
 		List<LogEntryNode> entryList = new ArrayList<LogEntryNode>();
@@ -452,7 +467,8 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	}
 
 	/**
-	 * @param infoIncluded the infoIncluded to set
+	 * @param infoIncluded
+	 *            the infoIncluded to set
 	 */
 	public void setInfoIncluded(boolean infoIncluded) {
 		this.infoIncluded = infoIncluded;

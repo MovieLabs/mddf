@@ -28,6 +28,7 @@ import java.io.IOException;
 
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jdom2.JDOMException;
  
@@ -69,6 +70,10 @@ public class AvailsTool extends ValidatorTool {
 		super(Context.AVAILS);
 		super.appVersion = AVAIL_APP_VER; 
 		htmlDocUrl = "http://www.movielabs.com/md/avails/validator/" + AVAIL_DOC_VER + "/";
+		/*
+		 * allow use of XLSX formatted Avails files..
+		 */
+		inputFileFilter =  new FileNameExtensionFilter("Avails file", "xml", "xlsx");
  	}
 
 	protected JToolBar getValidationTools() {

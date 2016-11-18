@@ -79,6 +79,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSeparator;
 
 import com.movielabs.mddf.tools.ValidationController;
 import com.movielabs.mddf.tools.util.AboutDialog;
@@ -108,6 +109,8 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	}
 
 	protected static final int MAX_RECENT = 8;
+	private static final String PROP_KEY_includeInfo = "pref.log.includeInfo";
+	private static final String PROP_KEY_minLogLevel = "pref.log.minLevel";
 	protected String htmlDocUrl;
 	protected String appVersion = "t.b.d.";
 	protected Context context = null;
@@ -143,6 +146,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected Map<String, File> selectedFiles = new HashMap<String, File>();
 	private JMenu fileRecentMenu;
 	protected boolean inputSrcTFieldLocked = false;
+	protected FileFilter inputFileFilter =  new FileNameExtensionFilter("XML file", "xml");
 
 	/**
 	 * Create the application.
@@ -313,7 +317,18 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			menuBar = new JMenuBar();
 
 			JMenu fileMenu = new JMenu("File");
-			menuBar.add(fileMenu);
+			menuBar.add(fileMenu); 
+			
+			JMenuItem openFileMI = new JMenuItem("Open File...");
+			openFileMI.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					openFile();
+				}
+
+			});
+			fileMenu.add(openFileMI);
 
 			fileMenu.add(getFileRecentMenu());
 
@@ -538,17 +553,21 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected JMenuItem getLoggingMenu() {
 		if (loggingMenu == null) {
 			loggingMenu = new JMenu("Logging");
+			JMenu minLevelMenu = new JMenu("Set filter level..");
+			minLevelMenu.setToolTipText("Set minimum severity level for filtering of messages to be displayed");
+			loggingMenu.add(minLevelMenu);
 			ButtonGroup group = new ButtonGroup();
 			int minLevel = getConsoleLogPanel().getMinLevel();
 			for (int i = 0; i < LogMgmt.logLevels.length; i++) {
 				int logLevel = i;
-				String label = LogMgmt.logLevels[i];
-				final JRadioButtonMenuItem logMenuItem = new JRadioButtonMenuItem(label);
 				if (logLevel != LogMgmt.LEV_INFO) {
+					String label = LogMgmt.logLevels[i];
+					final JRadioButtonMenuItem logMenuItem = new JRadioButtonMenuItem(label);
 					if (minLevel == logLevel) {
 						logMenuItem.setSelected(true);
 					}
 					group.add(logMenuItem);
+					minLevelMenu.add(logMenuItem);
 					logMenuItem.addActionListener(new ActionListener() {
 
 						@Override
@@ -559,7 +578,9 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 						}
 					});
 				} else {
-					loggingMenu.addSeparator();
+					String label = "Info Messages ON/OFF";
+					final JCheckBoxMenuItem logMenuItem = new JCheckBoxMenuItem(label);
+					logMenuItem.setToolTipText("Include/exclude status and summary messages in log file");
 					logMenuItem.setSelected(consoleLogger.isInfoIncluded());
 					logMenuItem.addActionListener(new ActionListener() {
 
@@ -568,9 +589,25 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 							consoleLogger.setInfoIncluded(logMenuItem.isSelected());
 						}
 					});
+					// user preference??
+					userPreferences.getProperty(PROP_KEY_includeInfo, "true");
+					loggingMenu.add(logMenuItem);
 				}
-				loggingMenu.add(logMenuItem);
 			}
+			loggingMenu.add(new JSeparator());
+			
+			JMenuItem clearLogMI = new JMenuItem("Clear Log");
+			clearLogMI.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					consoleLogger.clearLog();
+				}
+
+			});
+			loggingMenu.add(clearLogMI);
+			
+			loggingMenu.add(((AdvLogPanel) consoleLogger).createSaveLogMenu());
 		}
 		return loggingMenu;
 	}
@@ -584,15 +621,45 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			/*
 			 * configure based on last saved user-specific settings..
 			 */
-			boolean includeInfo = Boolean.valueOf(userPreferences.getProperty("pref.log.includeInfo", "true"));
+			boolean includeInfo = Boolean.valueOf(userPreferences.getProperty(PROP_KEY_includeInfo, "true"));
 			consoleLogger.setInfoIncluded(includeInfo);
-			String minLevelProp = userPreferences.getProperty("pref.log.minLevel");
+			String minLevelProp = userPreferences.getProperty(PROP_KEY_minLogLevel);
 			if (minLevelProp != null) {
 				int minLevel = Integer.parseInt(minLevelProp);
 				consoleLogger.setMinLevel(minLevel);
 			}
 		}
 		return consoleLogger;
+	}
+
+	/**
+	 * @return
+	 */
+	protected JTextField getInputSrcTextField() {
+		if (inputSrcTField == null) {
+			inputSrcTField = new JTextField();
+			inputSrcTField.setText(" ");
+			inputSrcTField.setToolTipText("Select single file or a directory");
+			inputSrcTField.setEditable(false);
+			inputSrcTField.setColumns(20);
+			inputSrcTField.addMouseListener(new MouseAdapter() {
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					openFile();
+				}
+			});
+		}
+		return inputSrcTField;
+	}
+
+	protected void openFile() {
+		// trigger the FileChooser dialog
+		fileInputDir = FileChooserDialog.getPath("Source Folder", null, inputFileFilter , "srcManifest", window.frame,
+				JFileChooser.FILES_AND_DIRECTORIES);
+		if (fileInputDir != null) {
+			setFileInputDir(fileInputDir);
+		}
 	}
 
 	/**
@@ -627,35 +694,6 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			path = fileInputDir.getParent();
 		}
 		FileChooserDialog.setDirMapping("srcManifest", path);
-	}
-
-	/**
-	 * @return
-	 */
-	protected JTextField getInputSrcTextField() {
-		if (inputSrcTField == null) {
-			inputSrcTField = new JTextField();
-			inputSrcTField.setText(" ");
-			inputSrcTField.setToolTipText("Select single file or a directory");
-			inputSrcTField.setEditable(false);
-			inputSrcTField.setColumns(20);
-			inputSrcTField.addMouseListener(new MouseAdapter() {
-
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					FileFilter xmlFilter = null;// new
-												// FileNameExtensionFilter("XML
-												// file", "xml");
-					// trigger the FileChooser dialog
-					fileInputDir = FileChooserDialog.getPath("Source Folder", null, xmlFilter, "srcManifest",
-							window.frame, JFileChooser.FILES_AND_DIRECTORIES);
-					if (fileInputDir != null) {
-						setFileInputDir(fileInputDir);
-					}
-				}
-			});
-		}
-		return inputSrcTField;
 	}
 
 	/**
@@ -871,9 +909,9 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	public void shutDown() {
 		// save user preferences
 		String flag = Boolean.toString(consoleLogger.isInfoIncluded());
-		userPreferences.setProperty("pref.log.includeInfo", flag);
+		userPreferences.setProperty(PROP_KEY_includeInfo, flag);
 		String minLev = Integer.toString(consoleLogger.getMinLevel());
-		userPreferences.setProperty("pref.log.minLevel", minLev);
+		userPreferences.setProperty(PROP_KEY_minLogLevel, minLev);
 		// save what user has been accessing
 		for (int i = 0; i < recentFileList.size(); i++) {
 			/* remember the list contains the full path */
