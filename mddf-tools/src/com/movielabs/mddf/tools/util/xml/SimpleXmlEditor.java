@@ -53,7 +53,9 @@ import org.apache.batik.util.gui.xmleditor.XMLTextEditor;
 
 import com.movielabs.mddf.tools.GenericTool;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
+import com.movielabs.mddf.tools.util.logging.LoggerWidget;
 import com.movielabs.mddflib.logging.LogEntryComparator;
+import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogEntryNode.Field;
 
@@ -162,7 +164,7 @@ public class SimpleXmlEditor {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setIconImage(Toolkit.getDefaultToolkit()
-				.getImage(FindReplaceDialog.class.getResource(GenericTool.imageRsrcPath +"icon_movielabs.jpg")));
+				.getImage(FindReplaceDialog.class.getResource(GenericTool.imageRsrcPath + "icon_movielabs.jpg")));
 
 		frame.setBounds(100, 100, 1024, 535);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -202,6 +204,18 @@ public class SimpleXmlEditor {
 		headerLabel.setText(curFile.getName());
 		// xmlEditorPane.goToLine(line - 1);
 		return true;
+	}
+
+	public void setVisible(boolean show) {
+		if (show) {
+			// Refresh log markers
+			LoggerWidget logger = GenericTool.consoleLogger;
+			LogEntryFolder logFolder = logger.getFileFolder(curFile.getName());
+			List<LogEntryNode> msgList = logFolder.getMsgList();
+			this.showLogMarkers(msgList);
+		}
+		getFrame().setVisible(show);
+		getFrame().repaint();
 	}
 
 	/**

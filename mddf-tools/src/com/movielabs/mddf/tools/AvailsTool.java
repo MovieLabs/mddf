@@ -31,7 +31,9 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jdom2.JDOMException;
- 
+
+import com.movielabs.mddf.tools.util.xml.EditorMgr;
+import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
@@ -96,6 +98,14 @@ public class AvailsTool extends ValidatorTool {
 		consoleLogger.collapse();  
 		try {
 			preProcessor.validate(srcPath, null, null);
+			/*
+			 * if there is an Editor for this file we want to (a) update the
+			 * log-entry markers and (b) bring it to the foreground.
+			 */
+			SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath);
+			if(xmlEditor != null){
+				xmlEditor.setVisible(true);
+			}
 		} catch (IOException | JDOMException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

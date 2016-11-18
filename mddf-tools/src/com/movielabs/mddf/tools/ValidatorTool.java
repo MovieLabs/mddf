@@ -146,7 +146,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected Map<String, File> selectedFiles = new HashMap<String, File>();
 	private JMenu fileRecentMenu;
 	protected boolean inputSrcTFieldLocked = false;
-	protected FileFilter inputFileFilter =  new FileNameExtensionFilter("XML file", "xml");
+	protected FileFilter inputFileFilter = new FileNameExtensionFilter("XML file", "xml");
 
 	/**
 	 * Create the application.
@@ -317,8 +317,8 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			menuBar = new JMenuBar();
 
 			JMenu fileMenu = new JMenu("File");
-			menuBar.add(fileMenu); 
-			
+			menuBar.add(fileMenu);
+
 			JMenuItem openFileMI = new JMenuItem("Open File...");
 			openFileMI.addActionListener(new ActionListener() {
 
@@ -595,7 +595,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 				}
 			}
 			loggingMenu.add(new JSeparator());
-			
+
 			JMenuItem clearLogMI = new JMenuItem("Clear Log");
 			clearLogMI.addActionListener(new ActionListener() {
 
@@ -606,7 +606,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 			});
 			loggingMenu.add(clearLogMI);
-			
+
 			loggingMenu.add(((AdvLogPanel) consoleLogger).createSaveLogMenu());
 		}
 		return loggingMenu;
@@ -655,7 +655,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 	protected void openFile() {
 		// trigger the FileChooser dialog
-		fileInputDir = FileChooserDialog.getPath("Source Folder", null, inputFileFilter , "srcManifest", window.frame,
+		fileInputDir = FileChooserDialog.getPath("Source Folder", null, inputFileFilter, "srcManifest", window.frame,
 				JFileChooser.FILES_AND_DIRECTORIES);
 		if (fileInputDir != null) {
 			setFileInputDir(fileInputDir);
@@ -859,6 +859,14 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		preProcessor.setValidation(true, validateConstraintsCBox.isSelected(), validateBestPracCBox.isSelected());
 		try {
 			preProcessor.validate(srcPath, uxProfile, useCases);
+			/*
+			 * if there is an Editor for this file we want to (a) update the
+			 * log-entry markers and (b) bring it to the foreground.
+			 */
+			SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath);
+			if(xmlEditor != null){
+				xmlEditor.setVisible(true);
+			}
 		} catch (IOException | JDOMException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

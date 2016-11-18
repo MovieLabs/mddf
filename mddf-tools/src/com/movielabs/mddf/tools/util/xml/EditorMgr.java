@@ -53,6 +53,11 @@ public class EditorMgr implements EditorMonitor {
 	}
 
 	/**
+	 * Display an editor showing the file associated with the specified
+	 * <tt>LogEntryNode</tt> and then scroll to the line specified by the
+	 * <tt>LogEntryNode</tt>. If an editor has not yet been created for the
+	 * designated file, a new will be instantiated.
+	 * 
 	 * @param logEntry
 	 */
 	public SimpleXmlEditor getEditor(LogEntryNode logEntry, Component parent) {
@@ -83,18 +88,21 @@ public class EditorMgr implements EditorMonitor {
 	}
 
 	/**
-	 * @param manifestPath
+	 * Display an editor showing the designated file. If an editor has not yet
+	 * been created for the designated file, a new will be instantiated.
+	 * 
+	 * @param filePath
 	 * @param parent
 	 * @return
 	 */
-	public SimpleXmlEditor getEditor(String manifestPath, Component parent) {
-		if (manifestPath == null || (manifestPath.isEmpty())) {
+	public SimpleXmlEditor getEditor(String filePath, Component parent) {
+		if (filePath == null || (filePath.isEmpty())) {
 			return null;
 		}
-		SimpleXmlEditor editor = editorMap.get(manifestPath);
+		SimpleXmlEditor editor = editorMap.get(filePath);
 		if (editor == null) {
-			editor = SimpleXmlEditor.spawn(manifestPath);
-			editorMap.put(manifestPath, editor);
+			editor = SimpleXmlEditor.spawn(filePath);
+			editorMap.put(filePath, editor);
 			editor.setMonitor(this);
 			if (parent != null) {
 				Point point = parent.getLocationOnScreen();
@@ -108,10 +116,22 @@ public class EditorMgr implements EditorMonitor {
 		 * order to set any line markers.
 		 */
 		LoggerWidget logger = GenericTool.consoleLogger;
-		File file = new File(manifestPath);
+		File file = new File(filePath);
 		LogEntryFolder logFolder = logger.getFileFolder(file.getName());
 		List<LogEntryNode> msgList = logFolder.getMsgList();
 		editor.showLogMarkers(msgList);
+		return editor;
+	}
+
+	/**
+	 * Returns the editor instance for the designated file. If one does not
+	 * already exist, a <tt>null</tt> value is returned.
+	 * 
+	 * @param filePath
+	 * @return
+	 */
+	public SimpleXmlEditor getEditorFor(String filePath) {
+		SimpleXmlEditor editor = editorMap.get(filePath);
 		return editor;
 	}
 
