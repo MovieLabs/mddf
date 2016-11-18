@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Version v2.2-draft-20161013 -->
 <!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Craig Seidel (private) -->
 <xs:schema xmlns:avails="http://www.movielabs.com/schema/avails/v2.2/avails" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:md="http://www.movielabs.com/schema/md/v2.4/md" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.4" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.movielabs.com/schema/avails/v2.2/avails" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.2">
 	<xs:import namespace="http://www.movielabs.com/schema/md/v2.4/md" schemaLocation="md-v2.4.xsd"/>
@@ -262,10 +261,10 @@
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:string">
-							<xs:attribute name="threeD" type="xs:boolean"/>
-							<xs:attribute name="HDR" type="xs:boolean"/>
-							<xs:attribute name="WCG" type="xs:boolean"/>
-							<xs:attribute name="HFR" type="xs:boolean"/>
+							<xs:attribute name="HDR" type="xs:string"/>
+							<xs:attribute name="WCG" type="xs:string"/>
+							<xs:attribute name="HFR" type="xs:string"/>
+							<xs:attribute name="NGAudio" type="xs:string"/>
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>
