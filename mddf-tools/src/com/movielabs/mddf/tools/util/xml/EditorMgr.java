@@ -43,7 +43,7 @@ import com.movielabs.mddflib.logging.LogEntryNode;
 public class EditorMgr implements EditorMonitor {
 
 	private static EditorMgr singleton;
-	private HashMap<String, SimpleXmlEditor> editorMap = new HashMap();
+	private HashMap<String, SimpleXmlEditor> editorMap = new HashMap<String, SimpleXmlEditor>();
 
 	public static EditorMgr getSingleton() {
 		if (singleton == null) {
@@ -69,6 +69,10 @@ public class EditorMgr implements EditorMonitor {
 		SimpleXmlEditor editor = editorMap.get(key);
 		if (editor == null) {
 			editor = SimpleXmlEditor.spawn(logEntry);
+			if (editor == null) {
+				// probably a problem with the underlying XML file
+				return null;
+			}
 			editorMap.put(key, editor);
 			editor.setMonitor(this);
 			if (parent != null) {
