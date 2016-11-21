@@ -99,13 +99,9 @@ public class AvailsTool extends ValidatorTool {
 		try {
 			preProcessor.validate(srcPath, null, null);
 			/*
-			 * if there is an Editor for this file we want to (a) update the
-			 * log-entry markers and (b) bring it to the foreground.
+			 * if there is an Editor for this file we want to   update the 
 			 */
-			SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath);
-			if(xmlEditor != null){
-				xmlEditor.setVisible(true);
-			}
+			SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath); 
 		} catch (IOException  e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

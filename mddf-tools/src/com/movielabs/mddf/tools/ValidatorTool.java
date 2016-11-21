@@ -279,6 +279,10 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		/* Is it an XML file? */
 		if (manifestPath.endsWith(".xml")) {
 			SimpleXmlEditor editor = EditorMgr.getSingleton().getEditor(manifestPath, frame);
+
+			if (editor != null) {
+				editor.setVisible(true);
+			}
 		}
 
 	}
@@ -655,11 +659,13 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 	protected void openFile() {
 		// trigger the FileChooser dialog
-		fileInputDir = FileChooserDialog.getPath("Source Folder", null, inputFileFilter, "srcManifest", window.frame,
+		File targetFile = FileChooserDialog.getPath("Source Folder", null, inputFileFilter, "srcManifest", window.frame,
 				JFileChooser.FILES_AND_DIRECTORIES);
-		if (fileInputDir != null) {
+		if (targetFile != null) {
+			fileInputDir = targetFile;
 			setFileInputDir(fileInputDir);
 		}
+		runValidatorBtn.setEnabled(fileInputDir != null);
 	}
 
 	/**
@@ -860,14 +866,11 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		try {
 			preProcessor.validate(srcPath, uxProfile, useCases);
 			/*
-			 * if there is an Editor for this file we want to (a) update the
-			 * log-entry markers and (b) bring it to the foreground.
+			 * if there is an Editor for this file we want to update the
+			 * log-entry markers  
 			 */
-			SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath);
-			if(xmlEditor != null){
-				xmlEditor.setVisible(true);
-			}
-		} catch (IOException  e) {
+			SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath); 
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			consoleLogger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, e.getMessage(), fileInputDir, "UI");

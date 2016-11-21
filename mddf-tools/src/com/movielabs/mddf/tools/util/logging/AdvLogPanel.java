@@ -233,6 +233,9 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		}
 		if (key.endsWith(".xml")) {
 			SimpleXmlEditor editor = EditorMgr.getSingleton().getEditor(logEntry, this);
+			if(editor != null){
+				editor.setVisible(true);
+			}
 		} else {
 			JOptionPane.showMessageDialog(this,
 					"File type is not supported by the internal Editor. Please use an external editor of the appropriate type.",
