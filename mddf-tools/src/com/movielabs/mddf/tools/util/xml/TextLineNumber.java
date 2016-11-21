@@ -108,9 +108,12 @@ public class TextLineNumber extends JPanel
 		public void mouseReleased(MouseEvent e) {
 			if (interects(e)) {
 				String msg = "Line " + logEntry.getLine() + ": " + logEntry.getSummary();
+				String tooltip = logEntry.getTooltip(); 
+				if(tooltip != null &&!tooltip.isEmpty()){
+					msg = "<html>"+msg+"<br/>"+tooltip+"</html>";
+				}
+//				editor.getMsgField().setToolTipText(tooltip);
 				editor.getMsgField().setText(msg);
-				String tooltip = logEntry.getTooltip();
-				editor.getMsgField().setToolTipText(tooltip);
 			}
 		}
 
