@@ -38,6 +38,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.xml.sax.SAXParseException;
 
 import com.movielabs.mddf.tools.ValidatorTool.Context;
 import com.movielabs.mddf.tools.resources.Foo;
@@ -85,6 +86,8 @@ public class ValidationController {
 	private boolean validateBP = false;
 	private Context context;
 	private LogMgmt logMgr;
+	
+	private boolean saveAsXml = false;
 
 	/**
 	 * [Implementation DEFERED a/o 2016-04-11] Run preprocesssing functions via
@@ -167,7 +170,7 @@ public class ValidationController {
 		options.addOption("p", "profiles", false, "List supported profiles");
 		options.addOption("useCases", false, "List supported use-case grouped by profile");
 
-		if(args.length ==0){
+		if (args.length == 0) {
 			printHelp();
 			System.exit(0);
 		}
@@ -181,7 +184,8 @@ public class ValidationController {
 	 */
 	private static void printHelp() {
 		HelpFormatter formatter = new HelpFormatter();
-		String header = "\nValidates one or more MovieLabs Digital Distribution Framework (MDDF) files.\n" + getHelpHeader() + "\n\n";
+		String header = "\nValidates one or more MovieLabs Digital Distribution Framework (MDDF) files.\n"
+				+ getHelpHeader() + "\n\n";
 		String footer = "\nPlease report issues at http://www.movielabs.com/ or info@movielabs.com";
 		formatter.printHelp("Validator", header, options, footer, true);
 
@@ -190,7 +194,7 @@ public class ValidationController {
 	private static String getHelpHeader() {
 		String header = "";
 		Object foo = new Foo();
-		String rsrcPath = "./ValidatorHelp.txt"; 
+		String rsrcPath = "./ValidatorHelp.txt";
 		InputStream in = foo.getClass().getResourceAsStream(rsrcPath);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		String line = null;
@@ -308,14 +312,17 @@ public class ValidationController {
 			case "Verbose":
 				logMgr.setMinLevel(LogMgmt.LEV_DEBUG);
 				break;
+			case "Notice":
+				logMgr.setMinLevel(LogMgmt.LEV_NOTICE);
+				break;
 			case "Warning":
 				logMgr.setMinLevel(LogMgmt.LEV_WARN);
 				break;
 			case "Error":
 				logMgr.setMinLevel(LogMgmt.LEV_ERR);
 				break;
-			case "Info":
-				logMgr.setMinLevel(LogMgmt.LEV_INFO);
+			case "Fatal":
+				logMgr.setMinLevel(LogMgmt.LEV_FATAL);
 				break;
 			}
 		}
@@ -349,15 +356,15 @@ public class ValidationController {
 				String path = pathPrefix + next.getString("file");
 				// String schema = next.optString("schema", "1.4");
 				String profile = next.optString("profile", "none");
-				try {
+//				try {
 					validate(path, profile, useCaseList);
-				} catch (JDOMException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					String errMsg = "EXCEPTION processing file " + path + "; " + e.getLocalizedMessage();
-					System.out.println(errMsg);
-					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_ACTION, errMsg, new File(path), MODULE_ID);
-				}
+//				} catch (JDOMException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					String errMsg = "EXCEPTION processing file " + path + "; " + e.getLocalizedMessage();
+//					System.out.println(errMsg);
+//					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_ACTION, errMsg, new File(path), MODULE_ID);
+//				}
 			}
 		}
 		if ((logMgr != null) && (logFile != null)) {
@@ -384,7 +391,7 @@ public class ValidationController {
 	 * @throws IOException
 	 * @throws JDOMException
 	 */
-	public void validate(String srcPath, String uxProfile, List<String> useCases) throws IOException, JDOMException {
+	public void validate(String srcPath, String uxProfile, List<String> useCases) throws IOException{
 		File srcFile = new File(srcPath);
 		if (srcFile.isDirectory()) {
 			boolean isRecursive = true;
@@ -419,7 +426,7 @@ public class ValidationController {
 				}
 				String loc = e.getStackTrace()[0].toString();
 				String details = "Exception while validating; " + loc;
-				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, details, null); 
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, details, null);
 			}
 		}
 	}
@@ -442,7 +449,15 @@ public class ValidationController {
 				docRootEl = xmlDoc.getRootElement();
 			}
 		} else if (srcFile.getAbsolutePath().endsWith("xml")) {
-			docRootEl = XmlIngester.getAsXml(srcFile);
+			try {
+				docRootEl = XmlIngester.getAsXml(srcFile);
+			} catch (SAXParseException e) { 
+				int ln = e.getLineNumber();
+				String errMsg = "Invalid XML on or before line "+e.getLineNumber();
+				String supplemental = e.getMessage();
+				logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_N_A, errMsg, srcFile, ln, MODULE_ID, supplemental, null);				
+				return;
+			}
 		}
 		XmlIngester.setSourceDirPath(srcFile.getAbsolutePath());
 		/*
@@ -480,7 +495,7 @@ public class ValidationController {
 			XmlIngester.setAvailVersion(schemaVer);
 			validateAvail(docRootEl, pedigreeMap, srcFile);
 			break;
-		case LogMgmt.TAG_MEC: 
+		case LogMgmt.TAG_MEC:
 			XmlIngester.setMdMecVersion(schemaVer);
 			validateMEC(docRootEl, srcFile);
 			break;
@@ -525,13 +540,14 @@ public class ValidationController {
 		xBuilder.setVersion("2.2");
 		try {
 			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(as, shortDesc);
-			// Save as XML
-			Format myFormat = Format.getPrettyFormat();
-			XMLOutputter outputter = new XMLOutputter(myFormat);
-			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8");
-			outputter.output(xmlJDomDoc, osw);
-			osw.close();
-
+			if (saveAsXml) {
+				// Save as XML
+				Format myFormat = Format.getPrettyFormat();
+				XMLOutputter outputter = new XMLOutputter(myFormat);
+				OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8");
+				outputter.output(xmlJDomDoc, osw);
+				osw.close();
+			}
 			Map<Object, Pedigree> pedigreeMap = xBuilder.getPedigreeMap();
 			Map<String, Object> results = new HashMap<String, Object>();
 			results.put("xlsx", xslxFile);

@@ -106,7 +106,7 @@ public class AvailsTool extends ValidatorTool {
 			if(xmlEditor != null){
 				xmlEditor.setVisible(true);
 			}
-		} catch (IOException | JDOMException e) {
+		} catch (IOException  e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			consoleLogger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, e.getMessage(), null, "UI");

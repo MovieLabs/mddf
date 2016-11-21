@@ -25,11 +25,13 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -226,6 +228,11 @@ public abstract class XmlIngester {
 		Schema schema;
 		try {
 			schema = schemaFactory.newSchema(xsdSources);
+		} catch (SAXParseException e1) {
+			String msg = "Unable to process" + e1.getMessage();
+			msg = msg.replace("schema_reference.4", "");
+			loggingMgr.log(LogMgmt.LEV_FATAL, logMsgDefaultTag, msg, srcFile, -1, moduleId, genericTooltip, null);
+			return false;
 		} catch (SAXException e1) {
 			e1.printStackTrace();
 			return false;
@@ -480,11 +487,29 @@ public abstract class XmlIngester {
 		loggingMgr.logIssue(tag, level, xmlElement, msg, explanation, srcRef, moduleId);
 	}
 
-	public static Element getAsXml(File inputFile) throws JDOMException, IOException {
-		InputStreamReader isr = new InputStreamReader(new FileInputStream(inputFile), "UTF-8");
+	/**
+	 * Reads an XML-formatted file, converting it to a JDOM document and
+	 * returning the root <tt>Element</tt>
+	 * 
+	 * @param inputFile
+	 * @return
+	 * @throws SAXParseException
+	 *             if the XML is improperly formatted
+	 * @throws IOException
+	 *             it the specified file can not be found or read.
+	 */
+	public static Element getAsXml(File inputFile) throws SAXParseException, IOException {
+		InputStreamReader isr;
+		isr = new InputStreamReader(new FileInputStream(inputFile), "UTF-8");
 		SAXBuilder builder = new SAXBuilder();
 		builder.setJDOMFactory(new LocatedJDOMFactory());
-		Document validatedDoc = builder.build(isr);
+		Document validatedDoc;
+		try {
+			validatedDoc = builder.build(isr);
+		} catch (JDOMException e) {
+			SAXParseException cause = (SAXParseException) e.getCause();
+			throw cause;
+		}
 		Element rootEl = validatedDoc.getRootElement();
 		return rootEl;
 	}
@@ -611,7 +636,7 @@ public abstract class XmlIngester {
 		public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId,
 				String baseURI) {
 			InputStream inStream = XmlIngester.class.getResourceAsStream(SchemaWrapper.RSRC_PACKAGE + systemId);
-			System.out.println("resolveResource:: namespaceURI="+namespaceURI+", systemId="+systemId);
+			System.out.println("resolveResource:: namespaceURI=" + namespaceURI + ", systemId=" + systemId);
 			return new Input(publicId, systemId, inStream);
 		}
 
@@ -649,7 +674,7 @@ public abstract class XmlIngester {
 		@Override
 		public Reader getCharacterStream() {
 			// TODO Auto-generated method stub
-			 System.out.println("##### getCharacterStream "+systemId);
+			System.out.println("##### getCharacterStream " + systemId);
 			return inStreamReader;
 		}
 
@@ -698,7 +723,7 @@ public abstract class XmlIngester {
 					byte[] input = new byte[bufferedInStream.available()];
 					bufferedInStream.read(input);
 					String contents = new String(input);
-					 System.out.println("##### getStringData "+systemId);
+					System.out.println("##### getStringData " + systemId);
 					return contents;
 				} catch (IOException e) {
 					// e.printStackTrace();
@@ -869,9 +894,6 @@ public abstract class XmlIngester {
 			String message = parseSaxMessage(exception);
 			String explanation = "XML at line: " + lineNumber + " does not comply with schema :: " + message;
 			loggingMgr.log(level, LogMgmt.TAG_XSD, message, srcFile, lineNumber, "XmlIngester", explanation, null);
-			// logIssue(LogMgmt.TAG_XSD, level, xmlEl, message, explanation,
-			// null, "XmlIngester");
-
 			if (level == LogMgmt.LEV_FATAL) {
 				throw new SAXException(explanation);
 			}
