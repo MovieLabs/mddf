@@ -455,7 +455,7 @@ public class ValidationController {
 				int ln = e.getLineNumber();
 				String errMsg = "Invalid XML on or before line "+e.getLineNumber();
 				String supplemental = e.getMessage();
-				logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_N_A, errMsg, srcFile, ln, MODULE_ID, supplemental, null);				
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, srcFile, ln, MODULE_ID, supplemental, null);				
 				return;
 			}
 		}
