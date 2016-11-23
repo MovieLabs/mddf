@@ -315,6 +315,9 @@ public class LogPanel extends JPanel {
 	 * @throws IOException
 	 */
 	public void saveAs(File outFile, String format) throws IOException {
+		if(outFile==null){
+			return;
+		}
 		String suffix = "." + format;
 		if (!outFile.getName().endsWith(suffix)) {
 			String fPath = outFile.getAbsolutePath() + suffix;
