@@ -21,12 +21,12 @@
  */
 package com.movielabs.mddflib.logging;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
- 
 
 /**
  * @author L. Levin, Critical Architectures LLC
@@ -46,6 +46,10 @@ public class LogEntryFolder extends LogEntry {
 		this.setTag(label);
 		this.level = severityLevel;
 		msgList = new ArrayList<LogEntryNode>();
+	}
+
+	public void setFile(File myFile) {
+		this.myFile = myFile;
 	}
 
 	/**
@@ -79,7 +83,16 @@ public class LogEntryFolder extends LogEntry {
 	 */
 	public void addMsg(LogEntryNode entryNode) {
 		msgList.add(entryNode);
+	}
 
+	public File getFile() {
+		if (myFile != null) {
+			return myFile;
+		} else {
+			// Must be an intermediate-level folder so go to the top..
+			LogEntryFolder fileEntry = (LogEntryFolder) getPath()[1];
+			return fileEntry.myFile;
+		}
 	}
 
 	public DefaultMutableTreeNode getChild(String id) {
@@ -121,6 +134,13 @@ public class LogEntryFolder extends LogEntry {
 		return fullList;
 	}
 
+	/**
+	 * Recursively determine if this node or any of its descendants contains any
+	 * entries with a severity of <tt>LogMgmt.LEV_ERR</tt>.
+	 * 
+	 * @param forErrors
+	 * @return
+	 */
 	public boolean hasErrorsMsgs(boolean forErrors) {
 		/* is this a 'leaf' folder or intermediate? */
 		Enumeration kinder = this.children();
@@ -147,7 +167,8 @@ public class LogEntryFolder extends LogEntry {
 	}
 
 	/**
-	 * Return the highest
+	 * Return the highest level (i.e., severity) found among all log entries for
+	 * this node and any descendant nodes.
 	 * 
 	 * @return
 	 */

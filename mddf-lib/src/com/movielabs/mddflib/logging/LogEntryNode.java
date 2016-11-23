@@ -54,7 +54,6 @@ public class LogEntryNode extends LogEntry {
 	private int msgSeqNum;
 	private String tooltip;
 	private LogReference srcRef;
-	private File xmlFile;
 	private LogEntryFolder folder;
 
 	/**
@@ -81,7 +80,7 @@ public class LogEntryNode extends LogEntry {
 		this.folder = tagNode;
 		this.setTag(tagNode.getTagAsText());
 		this.summary = msg;
-		this.xmlFile = xmlFile;
+		this.myFile = xmlFile;
 		if (xmlFile != null) {
 			this.locPath = xmlFile.getAbsolutePath();
 			this.locFile = xmlFile.getName();
@@ -250,8 +249,9 @@ public class LogEntryNode extends LogEntry {
 	 * 
 	 */
 	public void print() {
-		String msg = msgSeqNum + ": " + LogMgmt.logLevels[level] + ": "+tag+ ": "+summary;
+		String msg = msgSeqNum + ": " + LogMgmt.logLevels[level] + ": " + tag + ": " + summary;
 		System.out.println(msg);
 
 	}
+
 }

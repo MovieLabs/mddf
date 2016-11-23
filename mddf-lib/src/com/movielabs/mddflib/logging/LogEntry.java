@@ -21,16 +21,19 @@
  */
 package com.movielabs.mddflib.logging;
 
+import java.io.File;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  * @author  L. Levin, Critical Architectures LLC
  */
-public class LogEntry extends DefaultMutableTreeNode {
+public abstract class LogEntry extends DefaultMutableTreeNode {
 	/**
 	 * 
 	 */
 	protected String tag;
+	protected File myFile;
 	/**
 	 * @param label
 	 */
@@ -55,5 +58,10 @@ public class LogEntry extends DefaultMutableTreeNode {
 	 */
 	public void setTag(String tag) {
 		this.tag = tag;
+	}
+	
+
+	public File getFile() {
+		return myFile;
 	}
 }
