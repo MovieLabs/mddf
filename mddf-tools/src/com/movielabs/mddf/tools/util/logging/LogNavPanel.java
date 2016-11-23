@@ -24,6 +24,10 @@ package com.movielabs.mddf.tools.util.logging;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +36,13 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -44,6 +52,9 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.movielabs.mddf.tools.ValidatorTool;
+import com.movielabs.mddf.tools.util.logging.LogNavPanel.TreePopupMenu;
+import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -54,6 +65,57 @@ import com.movielabs.mddflib.logging.LogReference;
  *
  */
 public class LogNavPanel extends JPanel {
+
+	/**
+	 * Implements context-sensitive pop-up menu displayed when user right-clicks
+	 * on a tree node.
+	 * 
+	 * @author L. Levin, Critical Architectures LLC
+	 *
+	 */
+	public class TreePopupMenu extends JPopupMenu {
+
+		private File target;
+		private TreePath selectionPath;
+
+		public TreePopupMenu(TreePath selPath) {
+			this.selectionPath = selPath;
+			int depth = selPath.getPathCount();
+			LogEntryFolder node = (LogEntryFolder) selPath.getLastPathComponent();
+			LogEntryFolder fileFolder = (LogEntryFolder) selPath.getPathComponent(1);
+			this.target = fileFolder.getFile();
+
+			JMenuItem runMItem = new JMenuItem("Re-Validate");
+			runMItem.setToolTipText("Re-run validation checks on selection");
+			runMItem.setEnabled(node == fileFolder);
+			add(runMItem);
+
+			JMenuItem editXmlMItem = new JMenuItem("Show in Editor");
+			add(editXmlMItem);
+			boolean isXml = target.getAbsolutePath().endsWith(".xml");
+			editXmlMItem.setEnabled(isXml);
+			editXmlMItem.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					EditorMgr edMgr = EditorMgr.getSingleton();
+					edMgr.getEditor(node, parentLogger);
+				}
+			});
+			add(new JSeparator());
+
+			JMenuItem deleteLogMItem = new JMenuItem("Delete from Log");
+			add(deleteLogMItem);
+			deleteLogMItem.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+			add(parentLogger.createSaveLogMenu());
+		}
+
+	}
 
 	public class LogTree extends JTree {
 
@@ -66,6 +128,21 @@ public class LogNavPanel extends JPanel {
 			renderer.setBackgroundNonSelectionColor(backgroundPanel);
 			renderer.setBackgroundSelectionColor(backgroundPanelLabel);
 			setCellRenderer(renderer);
+			/* add listener to trigger a pop-up menu */
+			this.addMouseListener(new MouseAdapter() {
+				public void mousePressed(MouseEvent e) {
+					if (SwingUtilities.isRightMouseButton(e)) {
+						TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+						int row = tree.getClosestRowForLocation(e.getX(), e.getY());
+						if ((selPath == null) || (row < 0)) {
+							return;
+						}
+						tree.setSelectionPath(selPath);
+						TreePopupMenu contextMenu = new TreePopupMenu(selPath);
+						contextMenu.show(e.getComponent(), e.getX(), e.getY());
+					}
+				}
+			});
 		}
 
 	}
@@ -93,7 +170,7 @@ public class LogNavPanel extends JPanel {
 			if (value instanceof LogEntryFolder) {
 				LogEntryFolder folder = (LogEntryFolder) value;
 				int maxLevelFound = folder.getHighestLevel();
-				// --- use icon to indicate level... 
+				// --- use icon to indicate level...
 				Icon folderIcon = null;
 				try {
 					String key = LogMgmt.logLevels[maxLevelFound].toLowerCase();
@@ -155,6 +232,8 @@ public class LogNavPanel extends JPanel {
 
 	private LogEntryFolder previousSelectedNode;
 
+	private AdvLogPanel parentLogger;
+
 	static Color resolveColor(int i, TreeNode target, Color defaultColor) {
 		Color assignedColor = defaultColor;
 		if (target instanceof LogEntryFolder) {
@@ -189,7 +268,8 @@ public class LogNavPanel extends JPanel {
 		}
 	}
 
-	LogNavPanel() {
+	LogNavPanel(AdvLogPanel parent) {
+		parentLogger = parent;
 		initializeGui();
 	}
 
@@ -280,6 +360,9 @@ public class LogNavPanel extends JPanel {
 		String tagAsText = LogMgmt.logTags[tag];
 		// First get correct 'folder'
 		LogEntryFolder byManifestFile = getFileFolder(currentManifestId);
+		if (byManifestFile.getFile() == null) {
+			byManifestFile.setFile(xmlFile);
+		}
 		LogEntryFolder byLevel = (LogEntryFolder) byManifestFile.getChild(LogMgmt.logLevels[level]);
 		LogEntryFolder tagNode = (LogEntryFolder) byLevel.getChild(tagAsText);
 		if (tagNode == null) {

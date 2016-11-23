@@ -71,7 +71,7 @@ import com.movielabs.mddflib.logging.LogReference;
  */
 public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionListener {
 
-	static final int leftWidth = 130;
+	static final int leftWidth = 250;
 	private LogNavPanel treeView;
 	private LogPanel tableView;
 	private JSplitPane splitPane;
@@ -81,7 +81,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	private boolean infoIncluded = true;
 
 	public AdvLogPanel() {
-		treeView = new LogNavPanel();
+		treeView = new LogNavPanel(this);
 		treeView.addListener(this);
 		tableView = new LogPanel();
 		tableView.addMouseListener(new PopClickListener(this));
@@ -159,12 +159,16 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	 */
 	JMenu getSaveLogMenu() {
 		if (saveLogMenu == null) {
-			saveLogMenu = createSaveLogMenu();
+			saveLogMenu = createSaveLogMenu(tableView);
 		}
 		return saveLogMenu;
 	}
 
-	public JMenu createSaveLogMenu() {
+	public JMenuItem createSaveLogMenu() { 
+		return createSaveLogMenu(tableView);
+	}
+
+	private static JMenu createSaveLogMenu(LogPanel targetView) {
 		JMenu menu = new JMenu("Save as...");
 		JMenuItem saveCsvMItem = new JMenuItem("CSV");
 		menu.add(saveCsvMItem);
@@ -177,7 +181,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					tableView.saveAs("csv");
+					targetView.saveAs("csv");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
