@@ -54,6 +54,7 @@ import org.apache.batik.util.gui.xmleditor.XMLTextEditor;
 import com.movielabs.mddf.tools.GenericTool;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
 import com.movielabs.mddf.tools.util.logging.LoggerWidget;
+import com.movielabs.mddflib.logging.LogEntry;
 import com.movielabs.mddflib.logging.LogEntryComparator;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
@@ -126,11 +127,13 @@ public class SimpleXmlEditor {
 	 * @param logEntry
 	 * @return
 	 */
-	public static SimpleXmlEditor spawn(LogEntryNode logEntry) {
-		String filePath = logEntry.getManifestPath();
+	public static SimpleXmlEditor spawn(LogEntry logEntry) {
+		String filePath = logEntry.getFile().getAbsolutePath();
 		SimpleXmlEditor editor = spawn(filePath);
 		if (editor != null) {
-			editor.goTo(logEntry);
+			if (logEntry instanceof LogEntryNode) {
+				editor.goTo((LogEntryNode) logEntry);
+			}
 		}
 		return editor;
 	}

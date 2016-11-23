@@ -29,6 +29,7 @@ import java.util.List;
 
 import com.movielabs.mddf.tools.GenericTool;
 import com.movielabs.mddf.tools.util.logging.LoggerWidget;
+import com.movielabs.mddflib.logging.LogEntry;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 
@@ -60,13 +61,14 @@ public class EditorMgr implements EditorMonitor {
 	 * 
 	 * @param logEntry
 	 */
-	public SimpleXmlEditor getEditor(LogEntryNode logEntry, Component parent) {
+	public SimpleXmlEditor getEditor(LogEntry logEntry, Component parent) {
 		// Key is the ABSOLUTE path to XML file
-		String key = logEntry.getManifestPath();
+		String key = logEntry.getFile().getAbsolutePath();
 		if (key == null || (key.isEmpty())) {
 			return null;
 		}
 		SimpleXmlEditor editor = editorMap.get(key);
+
 		if (editor == null) {
 			editor = SimpleXmlEditor.spawn(logEntry);
 			if (editor == null) {
@@ -80,14 +82,26 @@ public class EditorMgr implements EditorMonitor {
 				int offset = editorMap.size() * 20;
 				point.translate(offset, offset);
 				editor.setLocation(point);
-			}
-		} else {
-			editor.goTo(logEntry);
+			} 
 		}
-		LogEntryFolder file1 = (LogEntryFolder) logEntry.getFolder();
-		LogEntryFolder fileEntry = (LogEntryFolder) file1.getPath()[1];
-		List<LogEntryNode> msgList = fileEntry.getMsgList();
-		editor.showLogMarkers(msgList);
+		List<LogEntryNode> msgList;
+		/* Make sure the displayed line markers are up-to-date */
+		if (logEntry instanceof LogEntryNode) {
+			LogEntryFolder file1 = (LogEntryFolder) ((LogEntryNode) logEntry).getFolder();
+			LogEntryFolder fileEntry = (LogEntryFolder) file1.getPath()[1];
+			msgList = fileEntry.getMsgList();
+			editor.showLogMarkers(msgList);
+			editor.goTo((LogEntryNode) logEntry);
+
+		} else {
+			msgList = ((LogEntryFolder) logEntry).getMsgList();
+			editor.showLogMarkers(msgList);
+			if (!msgList.isEmpty()) {
+				editor.goTo(msgList.get(0));
+			}else{
+				editor.goTo(0);
+			}
+		}
 		return editor;
 	}
 
