@@ -42,8 +42,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.TreePath;
 
-import org.jdom2.JDOMException;
-
 import javax.swing.JButton;
 
 import java.awt.event.ActionEvent;
@@ -88,6 +86,7 @@ import com.movielabs.mddf.tools.util.logging.LogNavPanel;
 import com.movielabs.mddf.tools.util.logging.LoggerWidget;
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
+import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
@@ -111,6 +110,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected static final int MAX_RECENT = 8;
 	private static final String PROP_KEY_includeInfo = "pref.log.includeInfo";
 	private static final String PROP_KEY_minLogLevel = "pref.log.minLevel";
+	protected static ValidatorTool tool;
 	protected String htmlDocUrl;
 	protected String appVersion = "t.b.d.";
 	protected Context context = null;
@@ -127,7 +127,6 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected File fileInputDir = null;
 	protected File fileOutDir = new File("./temp"); // null;
 	protected ValidationController preProcessor;
-	protected static ValidatorTool window;
 	protected JMenuBar menuBar;
 	protected HeaderPanel headerPanel;
 	protected JPanel optionsPanel;
@@ -147,6 +146,15 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	private JMenu fileRecentMenu;
 	protected boolean inputSrcTFieldLocked = false;
 	protected FileFilter inputFileFilter = new FileNameExtensionFilter("XML file", "xml");
+
+	/**
+	 * Returns the singleton instance of the currently executing tool.
+	 * 
+	 * @return
+	 */
+	public static ValidatorTool getTool() {
+		return tool;
+	}
 
 	/**
 	 * Create the application.
@@ -659,7 +667,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 	protected void openFile() {
 		// trigger the FileChooser dialog
-		File targetFile = FileChooserDialog.getPath("Source Folder", null, inputFileFilter, "srcManifest", window.frame,
+		File targetFile = FileChooserDialog.getPath("Source Folder", null, inputFileFilter, "srcManifest", tool.frame,
 				JFileChooser.FILES_AND_DIRECTORIES);
 		if (targetFile != null) {
 			fileInputDir = targetFile;
@@ -710,12 +718,11 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	 */
 	public void valueChanged(TreeSelectionEvent e) {
 		TreePath tp = e.getPath();
-		if (tp == null || (tp.getPathCount() < 2)) {
+		if (tp == null || (tp.getPathCount() != 2)) {
 			return;
 		}
-		String selectedFileLabel = tp.getPathComponent(1).toString();
-		selectedFileLabel = selectedFileLabel.replaceFirst("\\s*\\[\\d+\\]\\s*", "");
-		File selectedFile = selectedFiles.get(selectedFileLabel);
+		LogEntryFolder fileFolder = (LogEntryFolder) tp.getPathComponent(1);
+		File selectedFile = fileFolder.getFile();
 		if (selectedFile == null) {
 			return;
 		}
@@ -831,7 +838,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		// trigger the FileChooser dialog
 		String format = "json";
 		FileFilter filter = new FileNameExtensionFilter(format.toUpperCase() + " File", format);
-		File scriptPath = FileChooserDialog.getPath("Script File", null, filter, "scriptIn", window.frame,
+		File scriptPath = FileChooserDialog.getPath("Script File", null, filter, "scriptIn", tool.frame,
 				JFileChooser.FILES_ONLY);
 
 		frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -851,7 +858,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	/**
 	 * 
 	 */
-	protected void runTool() {
+	public void runTool() {
 		inputSrcTFieldLocked = true;
 		frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		// Converter.compress = compressCBoxMenuItem.isSelected();
@@ -867,9 +874,9 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			preProcessor.validate(srcPath, uxProfile, useCases);
 			/*
 			 * if there is an Editor for this file we want to update the
-			 * log-entry markers  
+			 * log-entry markers
 			 */
-			SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath); 
+			SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

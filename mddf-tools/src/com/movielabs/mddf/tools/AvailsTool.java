@@ -56,8 +56,8 @@ public class AvailsTool extends ValidatorTool {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					window = new AvailsTool();
-					window.frame.setVisible(true);
+					tool = new AvailsTool();
+					tool.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -87,7 +87,7 @@ public class AvailsTool extends ValidatorTool {
 		return validatorToolBar;
 	}
 	
-	protected void runTool() {
+	public void runTool() {
 		frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));  
 		String srcPath = fileInputDir.getAbsolutePath();
 		updateUsageHistory(srcPath); 

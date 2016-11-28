@@ -54,8 +54,8 @@ public class ManifestTool extends ValidatorTool {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					window = new ManifestTool();
-					window.frame.setVisible(true);
+					tool = new ManifestTool();
+					tool.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
