@@ -31,6 +31,9 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 /**
+ * Simple wrapper around a <tt>JFileChooser</tt> that handles housekeeping
+ * chores such as keeping track of default directories.
+ * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
@@ -39,50 +42,52 @@ public class FileChooserDialog {
 	protected static Map<String, String> defaultDirMap = new HashMap<String, String>();
 
 	/**
-	 * Simple wrapper around a <tt>JFileChooser</tt> that handles housekeeping
-	 * chores such as keeping track of default directories. If
-	 * <tt>directoryPath</tt> is specified then that will be used as the
-	 * starting point for file selection. If it is <tt>null</tt> then the
-	 * <tt>key</tt> is used to look up the last directory associated with the
-	 * specified key value. If one does not exist then a <tt>null</tt> value is
-	 * passed to <tt>JFileChooser</tt> as the starting point (i.e., the user's
-	 * home directory is to be used as the starting point).
+	 * Prompt user to select a file. If <tt>directoryPath</tt> is specified then
+	 * that will be used as the starting point for file selection. If it is
+	 * <tt>null</tt> then the <tt>key</tt> is used to look up the last directory
+	 * associated with the specified key value. If one does not exist then the
+	 * user's home directory is to be used as the starting point.
+	 * <p>
+	 * The optional <tt>filter</tt> is a standard Java <tt>FileFilter</tt> that
+	 * gets passed to the <tt>JFileChooser</tt>. The <tt>parent</tt> (also
+	 * optional) is used to position the dialog on the screen.
+	 * </p>
 	 * 
 	 * @param promptText
 	 * @param directoryPath
 	 * @param filter
 	 * @param key
+	 * @param parent
 	 * @return
 	 */
-	public static synchronized File getFilePath(String promptText,
-			String directoryPath, FileFilter filter, Object key,
+	public static synchronized File getFilePath(String promptText, String directoryPath, FileFilter filter, Object key,
 			Component parent) {
-		File myFile = getPath(promptText, directoryPath, filter, key,
-				parent, JFileChooser.FILES_ONLY);
+		File myFile = getPath(promptText, directoryPath, filter, key, parent, JFileChooser.FILES_ONLY);
 		return myFile;
 	}
 
-	public static synchronized File getDirPath(String promptText,
-			String directoryPath, FileFilter filter, Object key,
+	public static synchronized File getDirPath(String promptText, String directoryPath, FileFilter filter, Object key,
 			Component parent) {
-		File myFile = getPath(promptText, directoryPath, filter, key,
-				parent, JFileChooser.DIRECTORIES_ONLY);
+		File myFile = getPath(promptText, directoryPath, filter, key, parent, JFileChooser.DIRECTORIES_ONLY);
 		return myFile;
 	}
 
-	public static synchronized File getPath(String promptText,
-			String directoryPath, FileFilter filter, Object key,
+	public static synchronized File getPath(String promptText, String directoryPath, FileFilter filter, Object key,
 			Component parent, int mode) {
 		String myPath = null;
 		if (directoryPath == null) {
 			directoryPath = defaultDirMap.get(propPrefix + key);
 			if (directoryPath == null) {
-				directoryPath = ".";
+				directoryPath = System.getenv("HOME");
+			}
+			if (directoryPath == null) {
+				// for Microsoft OS...
+				directoryPath = System.getenv("HOMEPATH");
 			}
 		}
 		JFileChooser myChooser = new JFileChooser(directoryPath);
 		myChooser.setFileSelectionMode(mode);
-		if (mode != JFileChooser.DIRECTORIES_ONLY) { 
+		if (mode != JFileChooser.DIRECTORIES_ONLY) {
 			if (filter != null) {
 				myChooser.setFileFilter(filter);
 			}
@@ -91,7 +96,7 @@ public class FileChooserDialog {
 			 * The idea here is to show as already selected a default file name
 			 * if a 'save-as' is being done. The problem is that doing a check
 			 * for 'test.isFile()' will not work as a non-existent file would
-			 * return FALSE. Hence the check for 'isDIrectory' instead.
+			 * return FALSE. Hence the check for 'isDirectory' instead.
 			 */
 			if (!test.isDirectory()) {
 				myChooser.setSelectedFile(test);
@@ -111,10 +116,10 @@ public class FileChooserDialog {
 		return myFile;
 	}
 
-	public static void setDirMapping(String key, String path){
+	public static void setDirMapping(String key, String path) {
 		defaultDirMap.put(propPrefix + key, path);
 	}
-	
+
 	/**
 	 * @return Returns the defaultDirMap.
 	 */
