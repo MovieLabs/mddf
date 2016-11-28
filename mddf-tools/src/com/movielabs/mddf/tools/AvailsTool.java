@@ -25,6 +25,7 @@ package com.movielabs.mddf.tools;
 import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
@@ -34,6 +35,8 @@ import org.jdom2.JDOMException;
 
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
+import com.movielabs.mddflib.logging.LogEntryFolder;
+import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
@@ -70,13 +73,13 @@ public class AvailsTool extends ValidatorTool {
 	 */
 	public AvailsTool() {
 		super(Context.AVAILS);
-		super.appVersion = AVAIL_APP_VER; 
+		super.appVersion = AVAIL_APP_VER;
 		htmlDocUrl = "http://www.movielabs.com/md/avails/validator/" + AVAIL_DOC_VER + "/";
 		/*
 		 * allow use of XLSX formatted Avails files..
 		 */
-		inputFileFilter =  new FileNameExtensionFilter("Avails file", "xml", "xlsx");
- 	}
+		inputFileFilter = new FileNameExtensionFilter("Avails file", "xml", "xlsx");
+	}
 
 	protected JToolBar getValidationTools() {
 		if (validatorToolBar == null) {
@@ -86,29 +89,27 @@ public class AvailsTool extends ValidatorTool {
 		}
 		return validatorToolBar;
 	}
-	
+
 	public void runTool() {
-		frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));  
+		frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		String srcPath = fileInputDir.getAbsolutePath();
-		updateUsageHistory(srcPath); 
+		updateUsageHistory(srcPath);
 		fileOutDir.getAbsolutePath();
 		preProcessor = getPreProcessor();
 		preProcessor.setValidation(true, true, false);
 		inputSrcTFieldLocked = true;
-		consoleLogger.collapse();  
+		consoleLogger.collapse();
 		try {
 			preProcessor.validate(srcPath, null, null);
-			/*
-			 * if there is an Editor for this file we want to   update the 
-			 */
-			SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath); 
-		} catch (IOException  e) {
+			refreshEditor(srcPath);
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			consoleLogger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, e.getMessage(), null, "UI");
 		}
 		frame.setCursor(null); // turn off the wait cursor
-		consoleLogger.expand(); 
+		consoleLogger.expand();
 		inputSrcTFieldLocked = false;
 	}
+
 }

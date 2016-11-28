@@ -87,6 +87,7 @@ import com.movielabs.mddf.tools.util.logging.LoggerWidget;
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
 import com.movielabs.mddflib.logging.LogEntryFolder;
+import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
@@ -872,11 +873,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		preProcessor.setValidation(true, validateConstraintsCBox.isSelected(), validateBestPracCBox.isSelected());
 		try {
 			preProcessor.validate(srcPath, uxProfile, useCases);
-			/*
-			 * if there is an Editor for this file we want to update the
-			 * log-entry markers
-			 */
-			SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath);
+			refreshEditor(srcPath);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -885,6 +882,21 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		frame.setCursor(null); // turn off the wait cursor
 		consoleLogger.expand();
 		inputSrcTFieldLocked = false;
+	}
+
+	/**
+	 * If there is already an Editor for the specified file, update the log-entries
+	 * markers
+	 * 
+	 * @param srcPath
+	 */
+	protected void refreshEditor(String srcPath) { 
+		SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath);
+		if (xmlEditor != null) {
+			LogEntryFolder logFolder = consoleLogger.getFileFolder(xmlEditor.getCurFile().getName());
+			List<LogEntryNode> msgList = logFolder.getMsgList();
+			xmlEditor.showLogMarkers(msgList);
+		}
 	}
 
 	/**

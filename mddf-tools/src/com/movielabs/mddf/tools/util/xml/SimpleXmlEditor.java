@@ -396,7 +396,7 @@ public class SimpleXmlEditor {
 	/**
 	 * @return the curFile
 	 */
-	File getCurFile() {
+	public File getCurFile() {
 		return curFile;
 	}
 
@@ -462,6 +462,7 @@ public class SimpleXmlEditor {
 		logMarkerList.addAll(msgList);
 		Collections.sort(logMarkerList, new LogEntryComparator(Field.Line));
 		tln.setLineMarkers(logMarkerList);
+		frame.repaint();
 	}
 
 	public String getSelected() {
