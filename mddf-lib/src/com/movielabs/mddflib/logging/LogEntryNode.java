@@ -30,10 +30,10 @@ import java.io.File;
 public class LogEntryNode extends LogEntry {
 
 	public static enum Field {
-		Num, Level, Tag, Details, Manifest, Line, Reference, Module
+		Num, Level, Tag, Details, File, Line, Reference, Module
 	};
 
-	public static final String fieldNames[] = { "Num", "Level", "Tag", "Details", "Manifest", "Line", "Reference",
+	public static final String fieldNames[] = { "Num", "Level", "Tag", "Summary", "File", "Line", "Reference",
 			"Module" };
 	/**
 	 * Column separator to use when generating CSV file
@@ -110,17 +110,18 @@ public class LogEntryNode extends LogEntry {
 			case "Tag":
 				trimedRow = trimedRow + getTagAsText() + colSep;
 				break;
-			case "Details":
+			case "Summary":
 				trimedRow = trimedRow + summary + colSep;
 				break;
-			case "Manifest":
+			case "File":
 				trimedRow = trimedRow + locFile + colSep;
 				break;
 			case "Line":
 				trimedRow = trimedRow + locLine + colSep;
 				break;
 			case "Module":
-				trimedRow = trimedRow + moduleID + colSep;
+				// Skip as not of interest to end-users...
+				// trimedRow = trimedRow + moduleID + colSep;
 				break;
 			case "Reference":
 				trimedRow = trimedRow + getReference() + colSep;
@@ -130,7 +131,7 @@ public class LogEntryNode extends LogEntry {
 				break;
 			}
 		}
-		if (tooltip != null && !tooltip.isEmpty()) {
+		if (tooltip != null && !tooltip.isEmpty() && !tooltip.equalsIgnoreCase(summary)) {
 			trimedRow = trimedRow + tooltip + colSep;
 		} else {
 			trimedRow = trimedRow + " " + colSep;

@@ -103,7 +103,7 @@ public class LogPanel extends JPanel {
 			case 3:
 				return new LogEntryComparator(Field.Line);
 			case 4:
-				return new LogEntryComparator(Field.Manifest);
+				return new LogEntryComparator(Field.File);
 			case 5:
 				return new LogEntryComparator(Field.Reference);
 			}
@@ -148,7 +148,7 @@ public class LogPanel extends JPanel {
 	 * 
 	 * @param advLogPanel
 	 */
-	public LogPanel( ) { 
+	public LogPanel() {
 		setBackground(UIManager.getColor("OptionPane.warningDialog.titlePane.background"));
 		final Object testData[][] = {};
 		model = new DefaultTableModel(testData, columnNames);
@@ -221,7 +221,7 @@ public class LogPanel extends JPanel {
 	 * 
 	 * @see com.movielabs.mddf.util.UiLogger#setWidth(int)
 	 */
-	public void setSize(int width, int ht) { 
+	public void setSize(int width, int ht) {
 		if (width < 1) {
 			width = 1000;
 		}
@@ -315,7 +315,7 @@ public class LogPanel extends JPanel {
 	 * @throws IOException
 	 */
 	public void saveAs(File outFile, String format) throws IOException {
-		if(outFile==null){
+		if (outFile == null) {
 			return;
 		}
 		String suffix = "." + format;
@@ -329,7 +329,9 @@ public class LogPanel extends JPanel {
 		String colSep = LogEntryNode.colSep;
 		String headerRow = LogEntryNode.fieldNames[0];
 		for (int i = 1; i < cCnt; i++) {
-			headerRow = headerRow + colSep + LogEntryNode.fieldNames[i];
+			if (!LogEntryNode.fieldNames[i].equals("Module")) {
+				headerRow = headerRow + colSep + LogEntryNode.fieldNames[i];
+			}
 		}
 		/*
 		 * 'Notes' is special case for the tooltip (a.k.a 'added detail' or

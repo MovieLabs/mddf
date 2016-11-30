@@ -55,7 +55,7 @@ public class LogEntryComparator implements Comparator<LogEntryNode> {
 			return compareString(o1.getFolder().getLabel(), o2.getFolder().getLabel());
 		case Details:
 			return compareString(o1.getSummary(), o2.getSummary());
-		case Manifest:
+		case File:
 			return compareString(o1.getManifestName(), o2.getManifestName());
 		case Line:
 			int v1 = o1.getLine();
