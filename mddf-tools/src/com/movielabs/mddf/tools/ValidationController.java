@@ -86,7 +86,7 @@ public class ValidationController {
 	private boolean validateBP = false;
 	private Context context;
 	private LogMgmt logMgr;
-	
+
 	private boolean saveAsXml = false;
 
 	/**
@@ -356,15 +356,17 @@ public class ValidationController {
 				String path = pathPrefix + next.getString("file");
 				// String schema = next.optString("schema", "1.4");
 				String profile = next.optString("profile", "none");
-//				try {
-					validate(path, profile, useCaseList);
-//				} catch (JDOMException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//					String errMsg = "EXCEPTION processing file " + path + "; " + e.getLocalizedMessage();
-//					System.out.println(errMsg);
-//					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_ACTION, errMsg, new File(path), MODULE_ID);
-//				}
+				// try {
+				validate(path, profile, useCaseList);
+				// } catch (JDOMException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// String errMsg = "EXCEPTION processing file " + path + "; " +
+				// e.getLocalizedMessage();
+				// System.out.println(errMsg);
+				// logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_ACTION, errMsg, new
+				// File(path), MODULE_ID);
+				// }
 			}
 		}
 		if ((logMgr != null) && (logFile != null)) {
@@ -391,7 +393,7 @@ public class ValidationController {
 	 * @throws IOException
 	 * @throws JDOMException
 	 */
-	public void validate(String srcPath, String uxProfile, List<String> useCases) throws IOException{
+	public void validate(String srcPath, String uxProfile, List<String> useCases) throws IOException {
 		File srcFile = new File(srcPath);
 		if (srcFile.isDirectory()) {
 			boolean isRecursive = true;
@@ -405,11 +407,16 @@ public class ValidationController {
 						validateFile(aFile, uxProfile, useCases);
 					} catch (Exception e) {
 						String msg = e.getMessage();
+						if (msg == null) {
+							e.printStackTrace();
+							msg = e.toString();
+						}
 						String details = "Exception while validating; file processing terminated.";
 						logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_MANIFEST, msg, aFile, -1, MODULE_ID, details, null);
 					}
 				} else {
-					if (isRecursive) {
+					boolean isDir = aFile.isDirectory();
+					if (isDir && isRecursive) {
 						// recursively descend directory tree...
 						validate(aFile.getCanonicalPath(), uxProfile, useCases);
 					}
@@ -423,6 +430,7 @@ public class ValidationController {
 				String msg = e.getMessage();
 				if (msg == null) {
 					msg = "Unspecified Exception while validating";
+					e.printStackTrace();
 				}
 				String loc = e.getStackTrace()[0].toString();
 				String details = "Exception while validating; " + loc;
@@ -433,10 +441,15 @@ public class ValidationController {
 
 	protected void validateFile(File srcFile, String uxProfile, List<String> useCases)
 			throws IOException, JDOMException {
+		String fileType = extractFileType(srcFile.getAbsolutePath());
+		if (!(fileType.equals("xml") || fileType.equals("xlsx"))) {
+			// Skipping file: Unsupported file type
+			return;
+		}
 		logMgr.setCurrentFile(srcFile);
 		Map<Object, Pedigree> pedigreeMap = null;
 		Element docRootEl = null;
-		if (srcFile.getAbsolutePath().endsWith(".xlsx")) {
+		if (fileType.equals("xlsx")) {
 			Map<String, Object> results = convertSpreadsheet(srcFile);
 			if (results == null) {
 				String msg = "Unable to convert Excel to XML";
@@ -448,16 +461,26 @@ public class ValidationController {
 				Document xmlDoc = (Document) results.get("xml");
 				docRootEl = xmlDoc.getRootElement();
 			}
-		} else if (srcFile.getAbsolutePath().endsWith("xml")) {
+		} else if (fileType.equals("xml")) {
 			try {
 				docRootEl = XmlIngester.getAsXml(srcFile);
-			} catch (SAXParseException e) { 
+			} catch (SAXParseException e) {
 				int ln = e.getLineNumber();
-				String errMsg = "Invalid XML on or before line "+e.getLineNumber();
+				String errMsg = "Invalid XML on or before line " + e.getLineNumber();
 				String supplemental = e.getMessage();
-				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, srcFile, ln, MODULE_ID, supplemental, null);				
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, srcFile, ln, MODULE_ID, supplemental, null);
 				return;
 			}
+		} else {
+			/*
+			 * Because of the file-type check at the start of this method, this
+			 * code block should never be executed. However, just to be super
+			 * cautious and safe, I've added this trap...
+			 */
+			String errMsg = "Skipping file: Unsupported file type";
+			String supplemental = null;
+			logMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_N_A, errMsg, srcFile, -1, MODULE_ID, supplemental, null);
+			return;
 		}
 		XmlIngester.setSourceDirPath(srcFile.getAbsolutePath());
 		/*
@@ -500,6 +523,17 @@ public class ValidationController {
 			validateMEC(docRootEl, srcFile);
 			break;
 		}
+	}
+
+	private String extractFileType(String name) {
+		int cutPt = name.lastIndexOf(".");
+		String extension;
+		if (cutPt < 0) {
+			extension = "";
+		} else {
+			extension = name.substring(cutPt + 1, name.length());
+		}
+		return extension.toLowerCase();
 	}
 
 	/**
