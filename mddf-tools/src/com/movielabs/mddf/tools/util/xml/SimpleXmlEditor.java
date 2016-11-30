@@ -213,7 +213,7 @@ public class SimpleXmlEditor {
 		if (show) {
 			// Refresh log markers
 			LoggerWidget logger = GenericTool.consoleLogger;
-			LogEntryFolder logFolder = logger.getFileFolder(curFile.getName());
+			LogEntryFolder logFolder = logger.getFileFolder(curFile);
 			List<LogEntryNode> msgList = logFolder.getMsgList();
 			this.showLogMarkers(msgList);
 		}

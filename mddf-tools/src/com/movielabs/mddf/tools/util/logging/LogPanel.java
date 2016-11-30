@@ -44,6 +44,7 @@ import javax.swing.table.TableRowSorter;
 
 import com.movielabs.mddf.tools.util.FileChooserDialog;
 import com.movielabs.mddflib.logging.LogEntryComparator;
+import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogEntryNode.Field;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -338,6 +339,7 @@ public class LogPanel extends JPanel {
 		 * 'drill-down')
 		 */
 		headerRow = headerRow + colSep + "Notes";
+		headerRow = headerRow + colSep + "File Path";
 		writer.write(headerRow + "\n");
 		/* add data rows */
 		Vector dVecTable = model.getDataVector();
@@ -408,13 +410,14 @@ public class LogPanel extends JPanel {
 			case "Line":
 				if (entry.getLine() <= 0) {
 					celltext = "";
-					tTipText = entry.getManifestName();
+					tTipText = entry.getSrcFileName();
 				} else {
 					celltext = Integer.toString(entry.getLine());
 				}
 				break;
-			case "File":
-				celltext = entry.getManifestName();
+			case "File": 
+				celltext = entry.getSrcFileNode().getLabel();
+				tTipText = entry.getFile().getAbsolutePath();
 				break;
 			case "Reference":
 				celltext = entry.getReference();

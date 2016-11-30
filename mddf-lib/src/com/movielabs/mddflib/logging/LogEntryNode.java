@@ -21,8 +21,6 @@
  */
 package com.movielabs.mddflib.logging;
 
-import java.io.File;
-
 /**
  * @author L. Levin, Critical Architectures LLC
  *
@@ -55,20 +53,21 @@ public class LogEntryNode extends LogEntry {
 	private String tooltip;
 	private LogReference srcRef;
 	private LogEntryFolder folder;
+	private LogEntryFolder srcFileFolder;
 
 	/**
 	 * @param level
-	 * @param tag
-	 * @param summary
-	 * @param fileName
+	 * @param tagNode
+	 * @param msg
+	 * @param srcFileNode
 	 * @param line
 	 * @param moduleID
 	 * @param msgSeqNum
 	 * @param tooltip
 	 * @param srcRef
 	 */
-	public LogEntryNode(int level, LogEntryFolder tagNode, String msg, File xmlFile, int line, String moduleID,
-			int msgSeqNum, String tooltip, LogReference srcRef) {
+	public LogEntryNode(int level, LogEntryFolder tagNode, String msg, LogEntryFolder srcFileNode, int line,
+			String moduleID, int msgSeqNum, String tooltip, LogReference srcRef) {
 		super();
 		if (tagNode == null) {
 			throw new IllegalArgumentException("NULL tagNode argument");
@@ -80,10 +79,11 @@ public class LogEntryNode extends LogEntry {
 		this.folder = tagNode;
 		this.setTag(tagNode.getTagAsText());
 		this.summary = msg;
-		this.myFile = xmlFile;
-		if (xmlFile != null) {
-			this.locPath = xmlFile.getAbsolutePath();
-			this.locFile = xmlFile.getName();
+		this.srcFileFolder = srcFileNode;
+		this.myFile = srcFileNode.getFile();
+		if (myFile != null) {
+			this.locPath = myFile.getAbsolutePath();
+			this.locFile = myFile.getName();
 		}
 		this.locLine = line;
 		this.moduleID = moduleID;
@@ -97,51 +97,51 @@ public class LogEntryNode extends LogEntry {
 	}
 
 	public String toCSV() {
-		String trimedRow = "";
+		String trimmedRow = "";
 		for (int j = 0; j < cCnt; j++) {
 			switch (fieldNames[j]) {
 			case "Num":
-				trimedRow = trimedRow + Integer.toString(msgSeqNum) + colSep;
+				trimmedRow = trimmedRow + Integer.toString(msgSeqNum) + colSep;
 				break;
 			case "Level":
-				trimedRow = trimedRow + LogMgmt.logLevels[level] + colSep;
+				trimmedRow = trimmedRow + LogMgmt.logLevels[level] + colSep;
 				break;
 			case "Type":
 			case "Tag":
-				trimedRow = trimedRow + getTagAsText() + colSep;
+				trimmedRow = trimmedRow + getTagAsText() + colSep;
 				break;
 			case "Summary":
-				trimedRow = trimedRow + summary + colSep;
+				trimmedRow = trimmedRow + summary + colSep;
 				break;
 			case "File":
-				trimedRow = trimedRow + locFile + colSep;
+				trimmedRow = trimmedRow + locFile + colSep;
 				break;
 			case "Line":
-				trimedRow = trimedRow + locLine + colSep;
+				if (locLine < 0) {
+					trimmedRow = trimmedRow + " " + colSep;
+				} else {
+					trimmedRow = trimmedRow + locLine + colSep;
+				}
 				break;
 			case "Module":
 				// Skip as not of interest to end-users...
-				// trimedRow = trimedRow + moduleID + colSep;
+				// trimmedRow = trimmedRow + moduleID + colSep;
 				break;
 			case "Reference":
-				trimedRow = trimedRow + getReference() + colSep;
+				trimmedRow = trimmedRow + getReference() + colSep;
 				break;
 			default:
-				trimedRow = trimedRow + " N.A. " + colSep;
+				trimmedRow = trimmedRow + " N.A. " + colSep;
 				break;
 			}
 		}
 		if (tooltip != null && !tooltip.isEmpty() && !tooltip.equalsIgnoreCase(summary)) {
-			trimedRow = trimedRow + tooltip + colSep;
+			trimmedRow = trimmedRow + tooltip + colSep;
 		} else {
-			trimedRow = trimedRow + " " + colSep;
-		}
-		if (srcRef != null) {
-			trimedRow = trimedRow + srcRef.getLabel() + colSep;
-		} else {
-			trimedRow = trimedRow + " " + colSep;
-		}
-		return trimedRow;
+			trimmedRow = trimmedRow + " " + colSep;
+		} 
+		trimmedRow = trimmedRow + this.locPath;
+		return trimmedRow;
 	}
 
 	/**
@@ -149,16 +149,26 @@ public class LogEntryNode extends LogEntry {
 	 * 
 	 * @return the locPath
 	 */
-	public String getManifestPath() {
+	public String getSrcFilePath() {
 		return locPath;
 	}
 
-	public String getManifestName() {
+	public String getSrcFileName() {
 		return locFile;
 	}
 
 	/**
-	 * Return the line in the XML Manifest file associated with the log entry.
+	 * Return the <tt>LogEntryFolder</tt> for the XML file associated with the
+	 * log entry.
+	 * 
+	 * @return
+	 */
+	public LogEntryFolder getSrcFileNode() {
+		return srcFileFolder;
+	}
+
+	/**
+	 * Return the line in the XML file associated with the log entry.
 	 * 
 	 * @return
 	 */

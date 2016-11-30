@@ -229,7 +229,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	 */
 	protected void showEditor(LogEntryNode logEntry) {
 		// Key is the ABSOLUTE path to XML file
-		String key = logEntry.getManifestPath();
+		String key = logEntry.getSrcFilePath();
 		if (key == null || (key.isEmpty())) {
 			JOptionPane.showMessageDialog(this, "The selected logEntry is not linked to a file.", "Unsupported Request",
 					JOptionPane.ERROR_MESSAGE);
@@ -324,16 +324,13 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		treeView.collapse();
 
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.movielabs.mddf.util.logging.Logger#getFileFolder(java.lang.String)
+ 
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.logging.LogMgmt#getFileFolder(java.io.File)
 	 */
 	@Override
-	public LogEntryFolder getFileFolder(String fileName) {
-		return treeView.getFileFolder(fileName);
+	public LogEntryFolder getFileFolder(File targetFile) {
+		return treeView.getFileFolder(targetFile);
 	}
 
 	/*
@@ -344,7 +341,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	@Override
 	public void setCurrentFile(File targetFile) {
 		this.curInputFile = targetFile;
-		treeView.setCurrentFileId(targetFile.getName(), true);
+		treeView.setCurrentFileId(targetFile, true);
 		valueChanged(null);
 	}
 

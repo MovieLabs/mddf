@@ -53,8 +53,8 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.movielabs.mddf.tools.ValidatorTool;
-import com.movielabs.mddf.tools.util.logging.LogNavPanel.TreePopupMenu;
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
+import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -77,22 +77,42 @@ public class LogNavPanel extends JPanel {
 
 		private File target;
 		private TreePath selectionPath;
+		private boolean isXml;
+		private LogEntryFolder node;
 
 		public TreePopupMenu(TreePath selPath) {
 			this.selectionPath = selPath;
 			int depth = selPath.getPathCount();
-			LogEntryFolder node = (LogEntryFolder) selPath.getLastPathComponent();
+			node = (LogEntryFolder) selPath.getLastPathComponent();
 			LogEntryFolder fileFolder = (LogEntryFolder) selPath.getPathComponent(1);
 			this.target = fileFolder.getFile();
+			isXml = target.getAbsolutePath().endsWith(".xml");
 
 			JMenuItem runMItem = new JMenuItem("Re-Validate");
 			runMItem.setToolTipText("Re-run validation checks on selection");
 			runMItem.setEnabled(node == fileFolder);
 			add(runMItem);
+			runMItem.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ValidatorTool.getTool().runTool();
+					if (isXml) {
+						/*
+						 * Is there an XmlEditor for the file? If so, make sure
+						 * editor is up to-date with latest log entries
+						 */
+						EditorMgr edMgr = EditorMgr.getSingleton();
+						SimpleXmlEditor editor = edMgr.getEditorFor(target.getAbsolutePath());
+						if (editor != null) {
+							editor.showLogMarkers(node.getMsgList());
+						}
+					}
+				}
+			});
 
 			JMenuItem editXmlMItem = new JMenuItem("Show in Editor");
 			add(editXmlMItem);
-			boolean isXml = target.getAbsolutePath().endsWith(".xml");
 			editXmlMItem.setEnabled(isXml);
 			editXmlMItem.addActionListener(new ActionListener() {
 
@@ -102,7 +122,8 @@ public class LogNavPanel extends JPanel {
 					edMgr.getEditor(node, parentLogger);
 				}
 			});
-			add(new JSeparator());
+
+			// add(new JSeparator());
 
 			JMenuItem deleteLogMItem = new JMenuItem("Delete from Log");
 			add(deleteLogMItem);
@@ -227,6 +248,7 @@ public class LogNavPanel extends JPanel {
 	private JTree tree;
 	private DefaultTreeModel treeModel;
 	private LogEntryFolder rootLogNode = new LogEntryFolder("", -1);
+	private Map<File, LogEntryFolder> fileFolderMap = new HashMap<File, LogEntryFolder>();
 	private int masterSeqNum = 0;
 	private String currentManifestId = "Default";
 
@@ -273,10 +295,24 @@ public class LogNavPanel extends JPanel {
 		initializeGui();
 	}
 
-	LogEntryFolder getFileFolder(String fileName) {
-		LogEntryFolder fileFolder = (LogEntryFolder) rootLogNode.getChild(fileName);
+	LogEntryFolder getFileFolder(File targetFile) {
+		LogEntryFolder fileFolder = fileFolderMap.get(targetFile);
 		if (fileFolder == null) {
-			fileFolder = new LogEntryFolder(fileName, -1);
+			/*
+			 * Deal with possibility of multiple files with the same name being
+			 * processed (i.e. /foo/myFile.xml vs /bar/myFile.xml).
+			 */
+			int suffix = 1;
+			String label = targetFile.getName();
+			String qualifiedName = label;
+			fileFolder = (LogEntryFolder) rootLogNode.getChild(label);
+			while (fileFolder != null) {
+				suffix++;
+				qualifiedName = label + " (" + suffix + ")";
+				fileFolder = (LogEntryFolder) rootLogNode.getChild(qualifiedName);
+			}
+			fileFolder = new LogEntryFolder(qualifiedName, -1);
+			fileFolderMap.put(targetFile, fileFolder);
 			rootLogNode.add(fileFolder);
 			for (int i = 0; i < LogMgmt.logLevels.length; i++) {
 				LogEntryFolder levelTNode = new LogEntryFolder(LogMgmt.logLevels[i], i);
@@ -325,9 +361,9 @@ public class LogNavPanel extends JPanel {
 	 * 
 	 * @param id
 	 */
-	public void setCurrentFileId(String id, boolean clear) {
-		currentManifestId = id;
-		LogEntryFolder fileFolder = getFileFolder(id);
+	public void setCurrentFileId(File targetFile, boolean clear) {
+		currentManifestId = targetFile.getName();
+		LogEntryFolder fileFolder = getFileFolder(targetFile);
 		if (clear) {
 			fileFolder.deleteMsgs();
 			treeModel.nodeChanged(fileFolder);
@@ -341,6 +377,7 @@ public class LogNavPanel extends JPanel {
 	public void clearLog() {
 		rootLogNode.deleteMsgs();
 		rootLogNode.removeAllChildren();
+		fileFolderMap = new HashMap<File, LogEntryFolder>();
 		masterSeqNum = 0;
 		treeModel.reload();
 	}
@@ -359,11 +396,11 @@ public class LogNavPanel extends JPanel {
 			LogReference srcRef) {
 		String tagAsText = LogMgmt.logTags[tag];
 		// First get correct 'folder'
-		LogEntryFolder byManifestFile = getFileFolder(currentManifestId);
-		if (byManifestFile.getFile() == null) {
-			byManifestFile.setFile(xmlFile);
+		LogEntryFolder byTargetFile = getFileFolder(xmlFile);
+		if (byTargetFile.getFile() == null) {
+			byTargetFile.setFile(xmlFile);
 		}
-		LogEntryFolder byLevel = (LogEntryFolder) byManifestFile.getChild(LogMgmt.logLevels[level]);
+		LogEntryFolder byLevel = (LogEntryFolder) byTargetFile.getChild(LogMgmt.logLevels[level]);
 		LogEntryFolder tagNode = (LogEntryFolder) byLevel.getChild(tagAsText);
 		if (tagNode == null) {
 			/*
@@ -391,7 +428,7 @@ public class LogNavPanel extends JPanel {
 			byLevel.add(tagNode);
 		}
 		/* now create a new LogEntryNode and add it to folder. */
-		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, xmlFile, line, moduleID, masterSeqNum++, tooltip,
+		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, byTargetFile, line, moduleID, masterSeqNum++, tooltip,
 				srcRef);
 		tagNode.addMsg(entryNode);
 		treeModel.nodeChanged(tagNode);

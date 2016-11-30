@@ -893,7 +893,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected void refreshEditor(String srcPath) { 
 		SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath);
 		if (xmlEditor != null) {
-			LogEntryFolder logFolder = consoleLogger.getFileFolder(xmlEditor.getCurFile().getName());
+			LogEntryFolder logFolder = consoleLogger.getFileFolder(xmlEditor.getCurFile());
 			List<LogEntryNode> msgList = logFolder.getMsgList();
 			xmlEditor.showLogMarkers(msgList);
 		}

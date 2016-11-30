@@ -27,7 +27,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.jdom2.located.Located;
@@ -50,6 +52,7 @@ public class DefaultLogging implements LogMgmt {
 	private int minLevel = LogMgmt.LEV_WARN;
 	private boolean printToConsole = true;
 	private boolean infoIncluded;
+	private Map<File, LogEntryFolder> fileFolderMap = new HashMap<File, LogEntryFolder>();
 
 	/**
 	 * 
@@ -114,13 +117,13 @@ public class DefaultLogging implements LogMgmt {
 		}
 		// First get correct 'folder'
 		String tagAsText = LogMgmt.logTags[tag];
-		LogEntryFolder byManifestFile = getFileFolder(xmlFile.getName());
+		LogEntryFolder byManifestFile = getFileFolder(xmlFile );
 		LogEntryFolder byLevel = (LogEntryFolder) byManifestFile.getChild(LogMgmt.logLevels[level]);
 		LogEntryFolder tagNode = (LogEntryFolder) byLevel.getChild(tagAsText);
 		if (tagNode == null) {
 			tagNode = createTagNode(tag, level, byLevel);
 		}
-		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, xmlFile, line, moduleID, masterSeqNum++, details,
+		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, byManifestFile, line, moduleID, masterSeqNum++, details,
 				srcRef); 
 		tagNode.addMsg(entryNode);
 		/*
@@ -148,8 +151,7 @@ public class DefaultLogging implements LogMgmt {
 		 * need to keep order consistent so figure where to insert. Allow for
 		 * situation where it is the first node or the child set is empty
 		 */
-		int tagIdx = getTagIndex(tagAsText);
-//		byLevel.insert(tagNode, tagIdx);
+		int tagIdx = getTagIndex(tagAsText); 
 		byLevel.add(tagNode);
 		return tagNode;
 	}
@@ -167,10 +169,24 @@ public class DefaultLogging implements LogMgmt {
 		throw new IllegalArgumentException("Unsupported tag '" + tagAsText + "'");
 	} 
 	
-	public LogEntryFolder getFileFolder(String fileName) {
-		LogEntryFolder fileFolder = (LogEntryFolder) rootLogNode.getChild(fileName);
+	public LogEntryFolder getFileFolder(File targetFile) {
+		LogEntryFolder fileFolder = fileFolderMap.get(targetFile);
 		if (fileFolder == null) {
-			fileFolder = new LogEntryFolder(fileName, -1);
+			/*
+			 * Deal with possibility of multiple files with the same name being
+			 * processed (i.e. /foo/myFile.xml vs /bar/myFile.xml).
+			 */
+			int suffix = 1;
+			String label = targetFile.getName();
+			String qualifiedName = label;
+			fileFolder = (LogEntryFolder) rootLogNode.getChild(label);
+			while (fileFolder != null) {
+				suffix++;
+				qualifiedName = label + " (" + suffix + ")";
+				fileFolder = (LogEntryFolder) rootLogNode.getChild(qualifiedName);
+			}
+			fileFolder = new LogEntryFolder(qualifiedName, -1);
+			fileFolderMap.put(targetFile, fileFolder);
 			rootLogNode.add(fileFolder);
 			for (int i = 0; i < LogMgmt.logLevels.length; i++) {
 				LogEntryFolder levelTNode = new LogEntryFolder(LogMgmt.logLevels[i], i);

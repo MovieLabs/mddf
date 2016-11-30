@@ -135,7 +135,7 @@ public class EditorMgr implements EditorMonitor {
 		 */
 		LoggerWidget logger = GenericTool.consoleLogger;
 		File file = new File(filePath);
-		LogEntryFolder logFolder = logger.getFileFolder(file.getName());
+		LogEntryFolder logFolder = logger.getFileFolder(file);
 		List<LogEntryNode> msgList = logFolder.getMsgList();
 		editor.showLogMarkers(msgList);
 		return editor;

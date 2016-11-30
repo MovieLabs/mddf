@@ -104,7 +104,7 @@ public interface LogMgmt {
 	 * @param fileName
 	 * @return
 	 */
-	public LogEntryFolder getFileFolder(String fileName);
+	public LogEntryFolder getFileFolder(File targetFile);
 
 	/**
 	 * Save the log messages in the desired location and format.
