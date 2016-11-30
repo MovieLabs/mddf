@@ -28,6 +28,8 @@ import java.util.List;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 
+import com.movielabs.mddflib.logging.LogMgmt;
+
 /**
  * @author L. Levin, Critical Architectures LLC
  *
@@ -43,5 +45,10 @@ public interface ProfileValidator {
 	List<String> getSupportedProfiles();
 
 	List<String> getSupporteUseCases(String profile);
+
+	/**
+	 * @param logMgr
+	 */
+	void setLogger(LogMgmt logMgr);
 
 }

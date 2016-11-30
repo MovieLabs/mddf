@@ -712,6 +712,7 @@ public class ValidationController {
 				logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
 				return;
 			}
+			referenceInstance.setLogger(logMgr);
 			referenceInstance.process(docRootEl, srcFile, profile, useCases);
 		}
 		// ----------------------------------------------------------------

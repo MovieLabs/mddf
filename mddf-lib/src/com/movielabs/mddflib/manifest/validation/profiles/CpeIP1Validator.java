@@ -524,4 +524,13 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 		}
 		return isValid;
 	}
+
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator#setLogger(com.movielabs.mddflib.logging.LogMgmt)
+	 */
+	@Override
+	public void setLogger(LogMgmt logMgr) {
+		this.loggingMgr = logMgr;
+		
+	}
 }
