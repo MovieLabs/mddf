@@ -21,8 +21,6 @@
  */
 package com.movielabs.mddflib.util;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +33,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.jdom2.Element;
-import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
@@ -85,8 +82,7 @@ public abstract class AbstractValidator extends XmlIngester {
 		XrefCounter(String elType, String elId) {
 			super();
 			this.elType = elType;
-			this.elId = elId;
-			// System.out.println("CONSTRUCT: "+elId+", cnt="+count);
+			this.elId = elId; 
 		}
 
 		int increment() {
@@ -94,8 +90,7 @@ public abstract class AbstractValidator extends XmlIngester {
 			return count;
 		}
 
-		void validate() {
-			// System.out.println(" VALIDATE: "+elId+", cnt="+count);
+		void validate() { 
 			if (count > 0) {
 				return;
 			} else {
@@ -138,8 +133,7 @@ public abstract class AbstractValidator extends XmlIngester {
 		}
 
 	}
-
-	// protected int logTag;
+ 
 	protected Namespace rootNS;
 	protected String rootPrefix;
 
@@ -158,9 +152,7 @@ public abstract class AbstractValidator extends XmlIngester {
 		this.validateC = validateC;
 		logMsgSrcId = LOGMSG_ID;
 	}
-
-	// public abstract boolean process( Element docRootEl,File xmlManifestFile)
-	// throws IOException, JDOMException;
+ 
 
 	/**
 	 * Validate everything that is not fully specified via the XSD.
@@ -590,8 +582,7 @@ public abstract class AbstractValidator extends XmlIngester {
 				text = getSpecifiedValue(targetEl, childNS, child);
 			}
 			if (text != null) {
-				// treat as case-insensitive
-				// System.out.println("Language: '"+text+"'");
+				// treat as case-insensitive 
 				text = text.toUpperCase();
 				String[] langSubfields = text.split("-");
 				/* 1st field should be specified in RFC5646 */
@@ -728,9 +719,7 @@ public abstract class AbstractValidator extends XmlIngester {
 					}
 				} else {
 					String checkString = "\"" + text.toLowerCase() + "\"";
-					if (!optionsString.contains(checkString)) {
-						// System.out.println(checkString + " not in " +
-						// optionsString);
+					if (!optionsString.contains(checkString)) { 
 						logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, null, srcRef, logMsgSrcId);
 						allOK = false;
 						curFileIsValid = false;
