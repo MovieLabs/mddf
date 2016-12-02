@@ -54,9 +54,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		ENGLISH_ONLY, MULTI_DUB, MULTI_NO_DUB, MULTI_SUBTITLES, MULTI_TRAILERS
 	}
 
-	// private Element manifestRootEl;
 	private String curBranch;
-	// private boolean curFileIsValid;
 	private String curProfileId;
 	private String curUseCase;
 	private ArrayList<String> pidList = null;
@@ -68,6 +66,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 
 	public MMCoreValidator(LogMgmt loggingMgr) {
 		super(true, loggingMgr);
+		this.validateC = true;
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_PROFILE; // or LogMgmt.TAG_MMC ???
 	}
@@ -116,15 +115,16 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 	public boolean process(Element docRootEl,File xmlManifestFile, String profileId, List<String> useCases)
 			throws JDOMException, IOException {
 		super.process(docRootEl,xmlManifestFile);
-		// boolean isOk = validateUseCases(profileId, useCases);
+		if(curFileIsValid){
+			validateProfileConstraints();
+		}
 		return curFileIsValid;
 	}
 
 	/**
 	 * Validate everything that is not fully specified via the XSD.
 	 */
-	protected void validateConstraints() {
-		super.validateConstraints();
+	protected void validateProfileConstraints() { 
 		/*
 		 * now check the additional constraints identified in MMC Section
 		 * 2.1.2....

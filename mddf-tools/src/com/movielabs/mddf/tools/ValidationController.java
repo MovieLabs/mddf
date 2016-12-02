@@ -662,43 +662,11 @@ public class ValidationController {
 	protected void validateManifest(Element docRootEl, File srcFile, String uxProfile, List<String> useCases)
 			throws IOException, JDOMException {
 		boolean isValid = true;
-		ManifestValidator tool1 = new ManifestValidator(validateC, logMgr);
-		isValid = tool1.process(docRootEl, srcFile);
-		if (!isValid) {
-			String msg = "Stage 1 Validation FAILED; Terminating processing of file";
-			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, null, null);
-
+		List<String> profileNameList = identifyProfiles(docRootEl, srcFile, uxProfile);
+		if (profileNameList.isEmpty()) {
+			ManifestValidator tool1 = new ManifestValidator(validateC, logMgr);
+			isValid = tool1.process(docRootEl, srcFile);
 			return;
-		}
-		if (!validateC) {
-			return;
-		}
-		// ------------------------------------------------------------------
-		/*
-		 * Validate compatibility with any identified profiles.
-		 * Compatibility/Profile was added in v1.5. Prior to that Profile can
-		 * only be identified to Validator via external input (e.g., GUI or
-		 * script). This code will allow the use of either or both modes. It
-		 * also anticipates future changes to the schema to allow a single
-		 * Manifest to be compatible with multiple Profiles.
-		 */
-		// make sure data structures got initialized..
-		getSupportedProfiles();
-		List<String> profileNameList = new ArrayList<String>();
-		profileNameList.add(uxProfile);
-		Element compEl = docRootEl.getChild("Compatibility", XmlIngester.manifestNSpace);
-		List<Element> profileElList = compEl.getChildren("Profile", XmlIngester.manifestNSpace);
-		if (!profileElList.isEmpty()) {
-			for (int i = 0; i < profileElList.size(); i++) {
-				Element nextProfile = profileElList.get(i);
-				String nextName = nextProfile.getTextNormalize();
-				if (!profileMap.containsKey(nextName)) {
-					String msg = "Compatibility/Profile specifies unrecognized Profile: " + nextName;
-					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
-				} else if (!profileNameList.contains(nextName)) {
-					profileNameList.add(nextName);
-				}
-			}
 		}
 		for (int i = 0; i < profileNameList.size(); i++) {
 			String profile = profileNameList.get(i);
@@ -727,4 +695,43 @@ public class ValidationController {
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, null, null);
 	}
 
+	/**
+	 * Validate compatibility with any identified profiles.
+	 * Compatibility/Profile was added in v1.5. Prior to that Profile can only
+	 * be identified to Validator via external input (e.g., GUI or script). This
+	 * code will allow the use of either or both modes. It also anticipates
+	 * future changes to the schema to allow a single Manifest to be compatible
+	 * with multiple Profiles.
+	 * 
+	 * @param docRootEl
+	 * @param srcFile
+	 * @param uxProfile
+	 * @return
+	 */
+	private List<String> identifyProfiles(Element docRootEl, File srcFile, String uxProfile) {
+		// make sure data structures got initialized..
+		getSupportedProfiles();
+		List<String> profileNameList = new ArrayList<String>();
+		if (XmlIngester.MAN_VER.endsWith("1.4")) {
+			if (!uxProfile.equals("none")) {
+				profileNameList.add(uxProfile);
+			}
+			return profileNameList;
+		}
+		Element compEl = docRootEl.getChild("Compatibility", XmlIngester.manifestNSpace);
+		List<Element> profileElList = compEl.getChildren("Profile", XmlIngester.manifestNSpace);
+		if (!profileElList.isEmpty()) {
+			for (int i = 0; i < profileElList.size(); i++) {
+				Element nextProfile = profileElList.get(i);
+				String nextName = nextProfile.getTextNormalize();
+				if (!profileMap.containsKey(nextName)) {
+					String msg = "Compatibility/Profile specifies unrecognized Profile: " + nextName;
+					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
+				} else if (!profileNameList.contains(nextName)) {
+					profileNameList.add(nextName);
+				}
+			}
+		}
+		return profileNameList;
+	}
 }
