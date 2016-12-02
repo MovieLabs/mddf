@@ -702,18 +702,25 @@ public class ValidationController {
 		}
 		for (int i = 0; i < profileNameList.size(); i++) {
 			String profile = profileNameList.get(i);
-
-			String msg = "Validating compatibility with Profile '" + profile + "'";
-			logMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
-
 			ProfileValidator referenceInstance = profileMap.get(profile);
 			if (referenceInstance == null) {
-				msg = "Unrecognized Profile: " + profile;
+				String msg = "Unrecognized Profile: " + profile;
+				logMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
+			} else {
+				String msg = "Validating compatibility with Profile '" + profile + "'";
 				logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
-				return;
+				String pvClass = referenceInstance.getClass().getSimpleName();
+				ProfileValidator pValidator = null;
+				switch (pvClass) {
+				case "CpeIP1Validator":
+					pValidator = new CpeIP1Validator(logMgr);
+					break;
+				case "MMCoreValidator":
+					pValidator = new MMCoreValidator(logMgr);
+					break;
+				}
+				pValidator.process(docRootEl, srcFile, profile, useCases);
 			}
-			referenceInstance.setLogger(logMgr);
-			referenceInstance.process(docRootEl, srcFile, profile, useCases);
 		}
 		// ----------------------------------------------------------------
 		String msg = "MANIFEST Validation completed";
