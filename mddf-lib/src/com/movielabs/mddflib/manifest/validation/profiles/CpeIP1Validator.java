@@ -33,11 +33,16 @@ import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.manifest.validation.ManifestValidator;
 import com.movielabs.mddflib.manifest.validation.ModelValidator;
 
 /**
+ * <b>WARNING: Obsolete and Broken Code</b>. This class need to be
+ * re-implemented to extend ManifestValidator.
+ * <p>
  * Validates conformance of a Manifest to the requirements of CPE Interactivity
  * Profile 1 (IP1) as specified in TR-CPE-IP1 v1.0 (April 15, 2016).
+ * </p>
  * 
  * @see <a href=
  *      "http://www.movielabs.com/cpe/profiles/ip1/CPEProfile_IP1-v1.0.pdf">TR-
@@ -86,7 +91,7 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 	 * @see
 	 * com.movielabs.mddf.preProcess.manifest.Validator#process(java.io.File,
 	 * java.lang.String, java.util.List)
-	 */ 
+	 */
 	public boolean process(Element docRootEl, File xmlManifestFile, String profileId, List<String> useCases)
 			throws JDOMException, IOException {
 		return super.process(docRootEl, xmlManifestFile, profileId);
@@ -525,12 +530,15 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 		return isValid;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator#setLogger(com.movielabs.mddflib.logging.LogMgmt)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator#
+	 * setLogger(com.movielabs.mddflib.logging.LogMgmt)
 	 */
 	@Override
 	public void setLogger(LogMgmt logMgr) {
 		this.loggingMgr = logMgr;
-		
+
 	}
 }
