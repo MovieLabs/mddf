@@ -303,7 +303,12 @@ public class LogNavPanel extends JPanel {
 			 * processed (i.e. /foo/myFile.xml vs /bar/myFile.xml).
 			 */
 			int suffix = 1;
-			String label = targetFile.getName();
+			String label = "";
+			if(targetFile != null){
+				label = targetFile.getName();
+			}else {
+				label = "Validator";
+			}
 			String qualifiedName = label;
 			fileFolder = (LogEntryFolder) rootLogNode.getChild(label);
 			while (fileFolder != null) {

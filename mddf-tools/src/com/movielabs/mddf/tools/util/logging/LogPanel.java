@@ -415,9 +415,12 @@ public class LogPanel extends JPanel {
 					celltext = Integer.toString(entry.getLine());
 				}
 				break;
-			case "File": 
+			case "File":
 				celltext = entry.getSrcFileNode().getLabel();
-				tTipText = entry.getFile().getAbsolutePath();
+				File targetFile = entry.getFile();
+				if (targetFile != null) {
+					tTipText = entry.getFile().getAbsolutePath();
+				}
 				break;
 			case "Reference":
 				celltext = entry.getReference();
