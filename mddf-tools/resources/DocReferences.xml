@@ -93,6 +93,12 @@
 				<RelURL></RelURL>
 			</Version>
 		</Ref>
+		<Ref id="mmm_locType">
+			<Version id="1.5">
+				<Label>Section 2.2.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
 	</Specification>
 	<Specification id="MMM-BP" label="BP-META-MMMD">
 		<!-- Used by ManifestValidator.validateId() -->
