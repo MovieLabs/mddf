@@ -30,9 +30,13 @@ import java.util.Map;
 import net.sf.json.JSONArray;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.jdom2.filter.Filters;
+import org.jdom2.xpath.XPathExpression;
+
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.AbstractValidator;
+import com.movielabs.mddflib.util.PathUtilities;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -130,14 +134,14 @@ public class ManifestValidator extends AbstractValidator {
 		curFile = xmlManifestFile;
 		curFileName = xmlManifestFile.getName();
 		curFileIsValid = true;
-		curRootEl = null;  
-		validateXml(xmlManifestFile,docRootEl);
+		curRootEl = null;
+		validateXml(xmlManifestFile, docRootEl);
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 			return false;
 		}
-		curRootEl = docRootEl;  
+		curRootEl = docRootEl;
 		String msg = "Schema validation check PASSED";
 		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 		if (validateC) {
@@ -270,8 +274,9 @@ public class ManifestValidator extends AbstractValidator {
 		// srcRef = "Section 8.3.1, TR-META-MMM (v1.5)";
 		validateVocab(manifestNSpace, "AudioVisual", manifestNSpace, "Type", allowed, srcRef, true);
 
-	}
+		validateLocations();
 
+	}
 
 	/**
 	 * @return
@@ -286,12 +291,12 @@ public class ManifestValidator extends AbstractValidator {
 
 		allowed = cmVocab.optJSONArray("ColorType");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm003");
-		allOK =  validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", allowed, srcRef, true)
+		allOK = validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", allowed, srcRef, true)
 				&& allOK;
 
 		allowed = cmVocab.optJSONArray("PictureFormat");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm004");
-		allOK =  validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", allowed, srcRef, true)
+		allOK = validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", allowed, srcRef, true)
 				&& allOK;
 
 		allowed = cmVocab.optJSONArray("ReleaseType");
@@ -309,8 +314,9 @@ public class ManifestValidator extends AbstractValidator {
 		allowed = cmVocab.optJSONArray("EntryClass");
 		srcRef = LogReference.getRef("CM", mdVersion, "cm008");
 		allOK = validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef, true) && allOK;
-		
-		// --------------- Validate language codes ----------------------------------------
+
+		// --------------- Validate language codes
+		// ----------------------------------------
 		/*
 		 * Language codes in INVENTORY:
 		 */
@@ -356,13 +362,56 @@ public class ManifestValidator extends AbstractValidator {
 		allOK = validateLanguage(manifestNSpace, "ExcludedLanguage", null, null) && allOK;
 		allOK = validateLanguage(manifestNSpace, "AppName", null, "@language") && allOK;
 		allOK = validateLanguage(manifestNSpace, "GalleryName", null, "@language") && allOK;
-		
 
 		validateRatings();
-		
+
 		// ====================================
 		// TODO: DIGITAL ASSET METADATA
 
 		return allOK;
+	}
+
+	// ########################################################################
+
+	/**
+	 * Validate a local <tt>ContainerLocation</tt>. These should be a
+	 * <i>relative</i> path where the base location is that of the XML file
+	 * being processed. Note that network locations (i.e, full URLs) are
+	 * <b>not</b> verified.
+	 */
+	protected void validateLocations() {
+		String pre = manifestNSpace.getPrefix();
+		String baseLoc = curFile.getAbsolutePath();
+		LogReference srcRef = LogReference.getRef("MMM", "1.5", "mmm_locType");		
+		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + pre + ":ContainerLocation", Filters.element(), null,
+				manifestNSpace);
+		List<Element> cLocElList = xpExp01.evaluate(curRootEl);
+		outterLoop: for (int i = 0; i < cLocElList.size(); i++) {
+			Element clocEl = cLocElList.get(i);
+			String containerPath = clocEl.getTextNormalize(); 
+			if (containerPath.startsWith("file:")) {
+				String errMsg = "Invalid syntax for local file location";
+				String details ="Location of a local file must be specified as a relative path";
+				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId); 
+				continue outterLoop;
+			}
+			if (!PathUtilities.isRelative(containerPath)) {
+				// We do not validate absolute or network-based URLs
+				continue outterLoop;
+			}
+			try {
+				String targetLoc = PathUtilities.convertToAbsolute(baseLoc, containerPath); 
+				File target = new File(targetLoc);
+				if(!target.exists()){
+					String errMsg = "Referenced container not found"; 
+					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, clocEl, errMsg, null, null, logMsgSrcId); 
+					continue outterLoop;
+					
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }
