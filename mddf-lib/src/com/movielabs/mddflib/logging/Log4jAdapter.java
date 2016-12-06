@@ -39,17 +39,27 @@ public class Log4jAdapter implements org.apache.logging.log4j.Logger {
 	private LogMgmt toolLog;
 	private int tag;
 	private String moduleID;
-	private File file; 
+	private File file;
 
 	public Log4jAdapter(LogMgmt toolLog, int tag, String moduleID) {
 		this.toolLog = toolLog;
 		this.tag = tag;
 		this.moduleID = moduleID;
-		this.file = null; 
+		this.file = null;
 	}
 
 	public void setFile(File currentFile) {
 		this.file = currentFile;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.logging.log4j.Logger#debug(java.lang.String)
+	 */
+	@Override
+	public void debug(String msg) {
+		sendToLog(msg, LogMgmt.LEV_DEBUG);
 	}
 
 	/*
@@ -72,6 +82,29 @@ public class Log4jAdapter implements org.apache.logging.log4j.Logger {
 		sendToLog(msg, LogMgmt.LEV_ERR);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.logging.log4j.Logger#fatal(java.lang.String)
+	 */
+	@Override
+	public void fatal(String msg) {
+		sendToLog(msg, LogMgmt.LEV_FATAL);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.logging.log4j.Logger#log(org.apache.logging.log4j.Level,
+	 * java.lang.String)
+	 */
+	@Override
+	public void log(Level arg0, String arg1) {
+		throw new UnsupportedOperationException(); // TODO Auto-generated method
+													// stub
+
+	}
+
 	private void sendToLog(String msg, int level) {
 		/*
 		 * avails-lib will format messages relating to the excel with row number
@@ -80,10 +113,10 @@ public class Log4jAdapter implements org.apache.logging.log4j.Logger {
 		 */
 		if (msg.startsWith("Row ")) {
 			String[] parts = msg.split(":", 2);
-			msg = parts[1]; 
+			msg = parts[1];
 			int row;
 			try {
-				String rowS = parts[0].replaceFirst("Row[\\s]+", ""); 
+				String rowS = parts[0].replaceFirst("Row[\\s]+", "");
 				row = Integer.parseInt(rowS);
 				toolLog.log(level, tag, msg, file, row, moduleID, null, null);
 				return;
@@ -170,18 +203,6 @@ public class Log4jAdapter implements org.apache.logging.log4j.Logger {
 	 */
 	@Override
 	public void debug(Object arg0) {
-		throw new UnsupportedOperationException(); // TODO Auto-generated method
-													// stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.logging.log4j.Logger#debug(java.lang.String)
-	 */
-	@Override
-	public void debug(String arg0) {
 		throw new UnsupportedOperationException(); // TODO Auto-generated method
 													// stub
 
@@ -1554,18 +1575,6 @@ public class Log4jAdapter implements org.apache.logging.log4j.Logger {
 	 */
 	@Override
 	public void fatal(Object arg0) {
-		throw new UnsupportedOperationException(); // TODO Auto-generated method
-													// stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.logging.log4j.Logger#fatal(java.lang.String)
-	 */
-	@Override
-	public void fatal(String arg0) {
 		throw new UnsupportedOperationException(); // TODO Auto-generated method
 													// stub
 
@@ -3122,19 +3131,6 @@ public class Log4jAdapter implements org.apache.logging.log4j.Logger {
 	 */
 	@Override
 	public void log(Level arg0, Object arg1) {
-		throw new UnsupportedOperationException(); // TODO Auto-generated method
-													// stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.logging.log4j.Logger#log(org.apache.logging.log4j.Level,
-	 * java.lang.String)
-	 */
-	@Override
-	public void log(Level arg0, String arg1) {
 		throw new UnsupportedOperationException(); // TODO Auto-generated method
 													// stub
 
