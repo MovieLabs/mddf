@@ -564,6 +564,21 @@ public class ValidationController {
 			e1.printStackTrace();
 			return null;
 		}
+		String templateVersion = as.getVersion();
+		switch (templateVersion) {
+		case "1.7":
+			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + templateVersion + " format",
+					xslxFile, MODULE_ID);
+			break;
+		case "1.6":
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported XLSX format (" + templateVersion + ")",
+					xslxFile, MODULE_ID);
+			return null;
+		default:
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ",
+					xslxFile, MODULE_ID);
+			return null;
+		}
 		String inFileName = xslxFile.getName();
 		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
 		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp);
