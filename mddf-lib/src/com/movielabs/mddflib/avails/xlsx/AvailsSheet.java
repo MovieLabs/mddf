@@ -42,6 +42,8 @@ public class AvailsSheet {
 	private HashMap<String, Integer> headerMap;
 	private org.apache.logging.log4j.Logger logger;
 	private Sheet excelSheet;
+	private String version = "unk";
+	private boolean noPrefix = true;
 
 	/**
 	 * Create an object representing a single sheet of a spreadsheet
@@ -70,42 +72,78 @@ public class AvailsSheet {
 	 */
 	private void ingest(Sheet excelSheet) {
 		DataFormatter dataF = new DataFormatter();
+		/*
+		 * The spread sheet may be formatted with either one or two rows of
+		 * column headers. First step is determine which is the case.
+		 */
 		Row headerRow1 = excelSheet.getRow(0);
 		Row headerRow2 = excelSheet.getRow(1);
 		if (headerRow2.getPhysicalNumberOfCells() < 1) {
 			return;
 		}
-		if (headerRow1.getPhysicalNumberOfCells() != headerRow2.getPhysicalNumberOfCells()) {
-			String msg = "Sheet " + excelSheet.getSheetName() + ": : Invalid column headers";
-			logger.error(msg);
-			return;
+		Iterator<Cell> cellIt = headerRow1.cellIterator();
+		boolean use2 = false;
+		while (cellIt.hasNext() && !use2) {
+			Cell next = cellIt.next();
+			String value = dataF.formatCellValue(next);
+			if (value.equalsIgnoreCase("AvailTrans")) {
+				use2 = true;
+			}
 		}
+		Row headerRow;
+		if (use2) {
+			logger.debug("XSLT Column headers in ROW 2");
+			headerRow = headerRow2;
+		} else {
+			logger.debug("XSLT Column headers in ROW 1");
+			headerRow = headerRow1;
+		}
+		// ................
 		headerList = new ArrayList<String>();
 		headerMap = new HashMap<String, Integer>();
-		for (Cell secondaryCell : headerRow2) {
-			int idx = secondaryCell.getColumnIndex();
-			Cell primaryCell = headerRow1.getCell(idx);
-			String value1 = dataF.formatCellValue(primaryCell);
-			String value2 = dataF.formatCellValue(secondaryCell);
-			if ((value1 != null) && !value1.isEmpty() && (value2 != null) && !value2.isEmpty()) {
-				String key = value1 + "/" + value2;
+		for (Cell headerCell : headerRow) {
+			int idx = headerCell.getColumnIndex();
+			String value = dataF.formatCellValue(headerCell);
+			if ((value != null) && !value.isEmpty()) {
+				String key = value; 
 				headerList.add(key);
 				headerMap.put(key, new Integer(idx));
-			}
+			} 
+		}
+		logger.debug("Found " + headerList.size() + " defined columns");
+
+		// VERSION check and support..
+		/*
+		 * There is no explicit identification in a spreadsheet of the template
+		 * version being used. Instead we need to infer based on what the column
+		 * headers are.
+		 * 
+		 */
+		if (this.getColumnIdx("Avail/ALID") >= 0) {
+			version = "1.7";
+		} else if (this.getColumnIdx("Avail/AltID") >= 0) {
+			version = "1.6";
 		}
 		// ...............................................
 		/*
 		 * Skip over the header rows and process all data rows...
-		 */ 
+		 */
 		for (int idxR = 2; idxR < excelSheet.getLastRowNum(); idxR++) {
 			Row nextRow = excelSheet.getRow(idxR);
-			if(nextRow == null){
+			if (nextRow == null) {
 				break;
 			}
 			if (isAvail(nextRow)) {
 				rows.add(nextRow);
 			}
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	public String getVersion() {
+		return version;
 	}
 
 	/**
@@ -159,6 +197,10 @@ public class AvailsSheet {
 	 * @return column number or -1 if key does not match a know column header.
 	 */
 	public int getColumnIdx(String key) {
+		if(noPrefix){
+			String[] parts = key.split("/");
+			key = parts[1];
+		}
 		Integer colIdx = headerMap.get(key);
 		if (colIdx == null) {
 			return -1;
