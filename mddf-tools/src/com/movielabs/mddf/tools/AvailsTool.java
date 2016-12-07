@@ -44,8 +44,8 @@ import com.movielabs.mddflib.logging.LogMgmt;
  *
  */
 public class AvailsTool extends ValidatorTool {
-	private static final String AVAIL_APP_VER = "v0.9";
-	private static final String AVAIL_DOC_VER = "v0.9";
+	public static final String AVAIL_APP_VER = "v0.9.1";
+	private static final String AVAIL_DOC_VER = "v0.9.1";
 
 	/**
 	 * Launch the application.
