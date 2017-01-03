@@ -16,7 +16,7 @@ IN THIS DIRECTORY will manage the entire process:
 To Prep:
    
    These instructions assume all necessary files are transfered between then
-   the various target platforms using a USB. Prior to begining:
+   the various target platforms using a USB. Prior to beginning:
 
 	MAKE SURE that the version specified in the build.xml in THIS directory
 	for BOTH ${app.version.cmm} and ${app.version.avail} is correct as 
@@ -48,7 +48,9 @@ To Run:
                    can be ignored. The DMG file will still be created... it just
                    won't be acceptable to the Apple store.
                    
-                2) from command line, run
+                2) the deploy-init task may fail due to inability to delete files
+                   in  the "${proj.home}/packager/deploy/bundles" directory. To
+                   fix, from command line, run
                 
                       chflags -R nouchg /PATH/TO/DIRECTORY/WITH/LOCKED/FILES/
                       
