@@ -54,7 +54,7 @@ public class RatingSystem {
 	public static final Namespace mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.1/md");
 	private static final String idXPath = "./mdcr:RatingSystem/mdcr:RatingSystemID/mdcr:System";
 	private static Map<String, RatingSystem> cache = new HashMap<String, RatingSystem>();
-	private static String curVer = "v2.2.6";
+	private static String curVer = "v2.3";
 	private static Element cmrRootEl = null;
 
 	private XPathFactory xpfac = XPathFactory.instance();
