@@ -22,6 +22,13 @@ The software in this repository is intended to replace that contained in the fol
 * availstool
 * cpe-preprocessing
 
+## Versions
+
+The latest releases are:
+
+* mddf-lib: v1.0.4
+* Manifest Validator: v1.2.1
+* Avails Validator: v0.9.1
 
 ## Software Organization & Roadmap:
 
