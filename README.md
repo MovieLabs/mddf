@@ -28,7 +28,7 @@ The latest releases are:
 
 * mddf-lib: v1.0.4
 * Manifest Validator: v1.2.1
-* Avails Validator: v0.9.1
+* Avails Validator: v1.0
 
 ## Software Organization & Roadmap:
 
