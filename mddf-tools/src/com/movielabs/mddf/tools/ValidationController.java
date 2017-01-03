@@ -45,6 +45,7 @@ import com.movielabs.mddf.tools.resources.Foo;
 import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.avails.xlsx.AvailSS;
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
+import com.movielabs.mddflib.avails.xlsx.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.avails.xml.XmlBuilder;
 import com.movielabs.mddflib.logging.DefaultLogging;
@@ -87,7 +88,7 @@ public class ValidationController {
 	private Context context;
 	private LogMgmt logMgr;
 
-	private boolean saveAsXml = false;
+	private boolean saveAsXml = true;
 
 	/**
 	 * [Implementation DEFERED a/o 2016-04-11] Run preprocesssing functions via
@@ -536,6 +537,12 @@ public class ValidationController {
 		return extension.toLowerCase();
 	}
 
+	private String changeFileType(String inFileName, String fType) {
+		int ptr = inFileName.lastIndexOf(".xlsx");
+		String changed =inFileName.substring(0, ptr)+"."+fType;
+		return changed;
+	}
+
 	/**
 	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file.
 	 * 
@@ -564,28 +571,24 @@ public class ValidationController {
 			e1.printStackTrace();
 			return null;
 		}
-		String templateVersion = as.getVersion();
+		Version templateVersion = as.getVersion();
 		switch (templateVersion) {
-		case "1.7":
+		case V1_7:
+		case V1_6:
 			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + templateVersion + " format",
 					xslxFile, MODULE_ID);
 			break;
-		case "1.6":
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported XLSX format (" + templateVersion + ")",
-					xslxFile, MODULE_ID);
-			return null;
 		default:
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ",
-					xslxFile, MODULE_ID);
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", xslxFile, MODULE_ID);
 			return null;
 		}
 		String inFileName = xslxFile.getName();
 		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
 		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp);
-
-		String outFilePath = xslxFile.getAbsolutePath().replaceFirst(".xlsx", ".xml");
-		File xmlFile = new File(outFilePath);
-		XmlBuilder xBuilder = new XmlBuilder(logMgr);
+		String outFileName = changeFileType(inFileName, "xml");
+		String outFilePDir = xslxFile.getParent();
+		File xmlFile = new File(outFilePDir, outFileName);
+		XmlBuilder xBuilder = new XmlBuilder(logMgr, templateVersion);
 		xBuilder.setVersion("2.2");
 		try {
 			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(as, shortDesc);
