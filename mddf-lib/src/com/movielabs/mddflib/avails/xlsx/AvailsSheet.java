@@ -35,6 +35,10 @@ import org.apache.poi.ss.usermodel.Sheet;
  * Represents an individual sheet of an Excel spreadsheet
  */
 public class AvailsSheet {
+	public static enum Version {
+		V1_7, V1_6, UNK
+	};
+
 	private ArrayList<Row> rows;
 	private AvailSS parent;
 	private String name;
@@ -42,7 +46,7 @@ public class AvailsSheet {
 	private HashMap<String, Integer> headerMap;
 	private org.apache.logging.log4j.Logger logger;
 	private Sheet excelSheet;
-	private String version = "unk";
+	private Version version = Version.UNK;
 	private boolean noPrefix = true;
 
 	/**
@@ -105,10 +109,10 @@ public class AvailsSheet {
 			int idx = headerCell.getColumnIndex();
 			String value = dataF.formatCellValue(headerCell);
 			if ((value != null) && !value.isEmpty()) {
-				String key = value; 
+				String key = value;
 				headerList.add(key);
 				headerMap.put(key, new Integer(idx));
-			} 
+			}
 		}
 		logger.debug("Found " + headerList.size() + " defined columns");
 
@@ -120,9 +124,9 @@ public class AvailsSheet {
 		 * 
 		 */
 		if (this.getColumnIdx("Avail/ALID") >= 0) {
-			version = "1.7";
+			version = Version.V1_7;
 		} else if (this.getColumnIdx("Avail/AltID") >= 0) {
-			version = "1.6";
+			version = Version.V1_6;
 		}
 		// ...............................................
 		/*
@@ -142,7 +146,7 @@ public class AvailsSheet {
 	/**
 	 * @return
 	 */
-	public String getVersion() {
+	public Version getVersion() {
 		return version;
 	}
 
@@ -197,7 +201,7 @@ public class AvailsSheet {
 	 * @return column number or -1 if key does not match a know column header.
 	 */
 	public int getColumnIdx(String key) {
-		if(noPrefix){
+		if (noPrefix) {
 			String[] parts = key.split("/");
 			key = parts[1];
 		}

@@ -36,6 +36,7 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.output.DOMOutputter;
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
+import com.movielabs.mddflib.avails.xlsx.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 
@@ -72,9 +73,16 @@ public class XmlBuilder {
 	private DefaultMetadata mdHelper_basic;
 	private EpisodeMetadata mdHelper_episode;
 	private SeasonMetadata mdHelper_season;
+	private Version templateVersion;
 
-	public XmlBuilder(LogMgmt logger) {
+	/**
+	 * @param logger
+	 * @param sstVersion
+	 *            the template version used by the spreadsheet
+	 */
+	public XmlBuilder(LogMgmt logger, Version sstVersion) {
 		this.logger = logger;
+		this.templateVersion = sstVersion;
 		mdHelper_basic = new DefaultMetadata(this);
 		mdHelper_episode = new EpisodeMetadata(this);
 		mdHelper_season = new SeasonMetadata(this);
@@ -160,11 +168,23 @@ public class XmlBuilder {
 		root.addNamespaceDeclaration(SchemaWrapper.xsiNSpace);
 		doc.setRootElement(root);
 
-		// build document components row by row....
+		// build document components row by row.
 		try {
-			for (Row row : aSheet.getRows()) {
-				RowToXmlHelper xmlConverter = new RowToXmlHelper(aSheet, row);
-				xmlConverter.makeAvail(this);
+			switch (templateVersion) {
+			case V1_7:
+				for (Row row : aSheet.getRows()) {
+					RowToXmlHelper xmlConverter = new RowToXmlHelper(aSheet, row);
+					xmlConverter.makeAvail(this);
+				}
+				break;
+			case V1_6:
+				for (Row row : aSheet.getRows()) {
+					RowToXmlHelper xmlConverter = new RowToXmlHelperV1_6(aSheet, row);
+					xmlConverter.makeAvail(this);
+				}
+				break;
+			default:
+				break;
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

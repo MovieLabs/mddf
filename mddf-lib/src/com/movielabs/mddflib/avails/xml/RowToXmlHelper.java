@@ -48,9 +48,9 @@ public class RowToXmlHelper {
 	static final String MISSING = "--FUBAR (missing)";
 	protected Row row;
 	protected XmlBuilder xb;
-	AvailsSheet sheet;
+	protected AvailsSheet sheet;
 	private String workType = "";
-	private DataFormatter dataF = new DataFormatter();
+	protected DataFormatter dataF = new DataFormatter();
 
 	/**
 	 * @param fields
@@ -428,7 +428,7 @@ public class RowToXmlHelper {
 	 * @param colKey
 	 * @return
 	 */
-	String getData(String colKey) {
+	protected String getData(String colKey) {
 		int cellIdx = sheet.getColumnIdx(colKey);
 		if (cellIdx < 0) {
 			return null;
@@ -446,9 +446,10 @@ public class RowToXmlHelper {
 	 * @param colKey
 	 * @return
 	 */
-	Pedigree getPedigreedData(String colKey) {
+	protected Pedigree getPedigreedData(String colKey) {
 		int cellIdx = sheet.getColumnIdx(colKey);
 		if (cellIdx < 0) {
+			System.out.println("getPedigreedData:: MISSING COL for key [" + colKey + "]");
 			return null;
 		}
 		Cell sourceCell = row.getCell(cellIdx);
