@@ -277,23 +277,23 @@ body {
 						</td>
 						<td width="75%" valign="top">
 							<h3 class="title">Release Notes and Executables</h3>
-							<h3 class="subtitle">Release 0.9.1</h3>
+							<h3 class="subtitle">Release 1.0</h3>
 							<div class="entry">
 								<h4>Status: Stable - released for review & comments</h4>
 								<p>
 									<strong>Documentation:</strong>
 								</p>
 								<ul>
-									<li><a href='./UsersGuide.html'>Version 0.9.1 User's Guide</a></li>
+									<li><a href='./UsersGuide.html'>Version 1.0 User's Guide</a></li>
 									<li>Main page for <a href="../">Avails Validator</a></li>
 								</ul>
 								<h4>Executable</h4>
 								<ul>
-									<li>Windows:&nbsp;<a href="./AvailsValidator-0.9.1.exe">AvailsValidator-0.9.1.exe</a></li>
-									<li>Mac OS-X:&nbsp;<a href="./AvailsValidator-0.9.1.dmg">AvailsValidator-0.9.1.dmg</a>&nbsp;or&nbsp;<a
-										href="./AvailsValidator-0.9.1.pkg">AvailsValidator-0.9.1.pkg</a></li>
-									<li>Linux:&nbsp;<a href="./availsvalidator-0.9.1.deb">availsValidator-0.9.1.deb</a>&nbsp;or&nbsp;<a
-										href="./availsvalidator-0.9.1-1.x86_64.rpm">availsValidator-0.9.1-1.x86_64.rpm</a></li>
+									<li>Windows:&nbsp;<a href="./AvailsValidator-1.0.exe">AvailsValidator-1.0.exe</a></li>
+									<li>Mac OS-X:&nbsp;<a href="./AvailsValidator-1.0.dmg">AvailsValidator-1.0.dmg</a>&nbsp;or&nbsp;<a
+										href="./AvailsValidator-1.0.pkg">AvailsValidator-1.0.pkg</a></li>
+									<li>Linux:&nbsp;<a href="./availsvalidator-1.0.deb">availsValidator-1.0.deb</a>&nbsp;or&nbsp;<a
+										href="./availsvalidator-1.0-1.x86_64.rpm">availsValidator-1.0-1.x86_64.rpm</a></li>
 								</ul>
 								<p>Source code is on GitHub. If you would like more
 									information, please contact us.</p>
@@ -308,7 +308,7 @@ body {
 											or v2.2 of the EMA Content Availability Metadata
 											specification.</li>
 
-										<li>XLSX must be specified in conformance with v1.7 of
+										<li>XLSX must be specified in conformance with v1.7 or v1.6 of
 											the Avails Spreadsheet Template.</li>
 									</ul>
 									Specifications and templates may be obtained from the MovieLabs
@@ -325,6 +325,7 @@ body {
 								</ul>
 								<h4>New Features and Bug Fixes:</h4> 
 								<ul>
+									<li>Validation Excel Avails based on v1.6 templates</li>
 									<li>improved control, display, and filtering of logging output</li>
 									<li>markers in XML editor refresh after re-validation</li>
 									<li>allows either 1 or 2 rows of column headers in XLSX files</li>
@@ -336,8 +337,8 @@ body {
 								<ul>
 									<li>Validation of XML Avails based on versions of the
 										specification prior to V2.1 is not supported.</li>
-									<li>Validation of Excel Avails based on versions of the
-										specification prior to V1.7 is not supported.</li>
+									<li>Validation of v1.6 Excel Avails does not properly handle ratings specific to
+									sub-regions of a country (i.e., a province or canton).</li>
 									<li>Excel files must be in <tt>xlsx</tt> format.
 									</li>
 									<li>Validation of Excel Avails files is limited to a single sheet.</li>
