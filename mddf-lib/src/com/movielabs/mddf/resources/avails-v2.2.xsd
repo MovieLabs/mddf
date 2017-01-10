@@ -6,15 +6,7 @@
 	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
 	<!-- XMLDSIG Schema can be found at http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd#%20%20%20%20xmldsig-core-schema.xsd -->
 	<!--EMA CONTENT AVAILABILITY METADATA (Avails)-->
-	<!--Verson 2.2 DRAFT-->
-	<xs:complexType name="TransCondDate-type">
-		<xs:sequence>
-			<xs:element name="Event" type="xs:string"/>
-			<xs:element name="Condition" type="xs:string"/>
-			<xs:element name="Locale" type="md:Region-type"/>
-			<xs:element name="Lag" type="xs:duration"/>
-		</xs:sequence>
-	</xs:complexType>
+	<!--Verson 2.2-->
 	<xs:complexType name="AvailDisposition-type">
 		<xs:sequence>
 			<xs:element name="EntryType" type="xs:string"/>

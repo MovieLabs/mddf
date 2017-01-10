@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2014 rel. 2 (x64) (http://www.altova.com) by Craig Seidel (private) -->
-<xs:schema xmlns:avails="http://www.movielabs.com/schema/avails/v2.2/avails" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:md="http://www.movielabs.com/schema/md/v2.4/md" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.4" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.movielabs.com/schema/avails/v2.2/avails" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.2">
-	<xs:import namespace="http://www.movielabs.com/schema/md/v2.4/md" schemaLocation="md-v2.4.xsd"/>
-	<xs:import namespace="http://www.movielabs.com/schema/mdmec/v2.4" schemaLocation="mdmec-v2.4.xsd"/>
+<xs:schema xmlns:avails="http://www.movielabs.com/schema/avails/v2.2.1/avails" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:md="http://www.movielabs.com/schema/md/v2.5/md" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.5" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.movielabs.com/schema/avails/v2.2.1/avails" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.2.1">
+	<xs:import namespace="http://www.movielabs.com/schema/md/v2.5/md" schemaLocation="md-v2.5.xsd"/>
+	<xs:import namespace="http://www.movielabs.com/schema/mdmec/v2.5" schemaLocation="mdmec-v2.5.xsd"/>
 	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
 	<!-- XMLDSIG Schema can be found at http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd#%20%20%20%20xmldsig-core-schema.xsd -->
 	<!--EMA CONTENT AVAILABILITY METADATA (Avails)-->
-	<!--Verson 2.2-->
+	<!--Verson 2.2.1 (CM 2.5)-->
 	<xs:complexType name="AvailDisposition-type">
 		<xs:sequence>
 			<xs:element name="EntryType" type="xs:string"/>
