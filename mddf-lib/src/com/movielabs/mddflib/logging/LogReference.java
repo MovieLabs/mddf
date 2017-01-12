@@ -51,7 +51,27 @@ public class LogReference {
 	private String label;
 	private String uri;
 
+	/**
+	 * Return a <tt>LogReference</tt> to documentation matching the query
+	 * arguments. The arguments are:
+	 * <ul>
+	 * <li>standard: indicates an MDDF standard using the appropriate code
+	 * (e.g., 'MMM' for Common Media Manifest Metadata)</li>
+	 * <li>version: indicates version of the standard</li>
+	 * <li>refID: indicates topic.</li>
+	 * </ul>
+	 * If a match for a topic can not be found, earlier versions of the document
+	 * will be checked. A <tt>null</tt> value indicates no matches for the
+	 * specified query could be found.
+	 * 
+	 * @param standard
+	 * @param version
+	 * @param refID
+	 * @return
+	 */
 	public static LogReference getRef(String standard, String version, String refID) {
+		// System.out.println("LogRef request for " + standard + ", ver=" +
+		// version+", refID="+refID);
 		if (rootEl == null) {
 			try {
 				loadXml(new File(srcPath));
@@ -65,13 +85,53 @@ public class LogReference {
 		XPathExpression<Element> xpExpression = xpfac.compile(xPath, Filters.element());
 		Element definingEl = xpExpression.evaluateFirst(rootEl);
 		if (definingEl == null) {
-			return null;
+			String priorVer = getPriorVersion(standard, version);
+			if (priorVer == null) {
+				// System.out.println("Null LogRef for " + standard + ", ver=" +
+				// version+", refID="+refID);
+				return null;
+			} else {
+				return getRef(standard, priorVer, refID);
+			}
 		} else {
 			Element specEl = definingEl.getParentElement().getParentElement();
 			String specName = specEl.getAttributeValue("label");
 			String label = definingEl.getChildTextNormalize("Label") + ", " + specName + " (v" + version + ")";
 			String url = definingEl.getChildTextNormalize("RelURL");
 			return new LogReference(label, url);
+		}
+	}
+
+	/**
+	 * @param standard
+	 * @param curVersion
+	 * @return
+	 */
+	private static String getPriorVersion(String standard, String curVersion) {
+		String xPath = "./Specification[@id='" + standard + "']";
+		XPathExpression<Element> xpExpression = xpfac.compile(xPath, Filters.element());
+		Element definingEl = xpExpression.evaluateFirst(rootEl);
+		String versionList = definingEl.getAttributeValue("versions");
+		if (versionList == null || (versionList.isEmpty())) {
+			return null;
+		}
+		String[] supportedVersions = versionList.split(", ");
+		/*
+		 * Versions are listed from oldest to most recent. We are looking for
+		 * the version prior to the current version. Start by finding ptr to
+		 * current version.
+		 */
+		int ptr = -1;
+		for (int i = 0; i < supportedVersions.length; i++) {
+			if (supportedVersions[i].equals(curVersion)) {
+				ptr = i;
+				break;
+			}
+		}
+		if (ptr <= 0) {
+			return null;
+		} else {
+			return supportedVersions[ptr - 1];
 		}
 	}
 
