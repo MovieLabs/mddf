@@ -43,11 +43,12 @@ import com.movielabs.mddflib.util.xml.RatingSystem;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
- * Validates a XML file for conformance with the <tt>Common Metadata (md)</tt>
- * specification as defined in <tt>TR-META-CM (v2.4)</tt>. Extending subclasses
- * will provide additional customization to check for conformance with
- * specifications built on top of the CM (e.g., as conforming to the Common
- * Media Manifest (CMM) as specified in <tt>TR-META-MMM (v1.5)</tt>)
+ * Base class for implementation of validators of a XML file for conformance
+ * with the <tt>Common Metadata (md)</tt> specification as defined in
+ * <tt>TR-META-CM (v2.4)</tt>. Extending subclasses will provide additional
+ * customization to check for conformance with specifications built on top of
+ * the CM (e.g., as conforming to the Common Media Manifest (CMM) as specified
+ * in <tt>TR-META-MMM (v1.5)</tt>)
  * 
  * 
  * @author L. Levin, Critical Architectures LLC
@@ -82,7 +83,7 @@ public abstract class AbstractValidator extends XmlIngester {
 		XrefCounter(String elType, String elId) {
 			super();
 			this.elType = elType;
-			this.elId = elId; 
+			this.elId = elId;
 		}
 
 		int increment() {
@@ -90,7 +91,7 @@ public abstract class AbstractValidator extends XmlIngester {
 			return count;
 		}
 
-		void validate() { 
+		void validate() {
 			if (count > 0) {
 				return;
 			} else {
@@ -133,7 +134,7 @@ public abstract class AbstractValidator extends XmlIngester {
 		}
 
 	}
- 
+
 	protected Namespace rootNS;
 	protected String rootPrefix;
 
@@ -152,7 +153,6 @@ public abstract class AbstractValidator extends XmlIngester {
 		this.validateC = validateC;
 		logMsgSrcId = LOGMSG_ID;
 	}
- 
 
 	/**
 	 * Validate everything that is not fully specified via the XSD.
@@ -478,8 +478,7 @@ public abstract class AbstractValidator extends XmlIngester {
 	// ########################################################################
 
 	protected void validateRatings() {
-		XPathExpression<Element> xpExp01 = xpfac.compile(".//md:Rating", Filters.element(), null,
-				 mdNSpace);
+		XPathExpression<Element> xpExp01 = xpfac.compile(".//md:Rating", Filters.element(), null, mdNSpace);
 		List<Element> ratingElList = xpExp01.evaluate(curRootEl);
 		rLoop: for (int i = 0; i < ratingElList.size(); i++) {
 			Element ratingEl = ratingElList.get(i);
@@ -493,7 +492,7 @@ public abstract class AbstractValidator extends XmlIngester {
 				continue;
 			}
 			Element valueEl = ratingEl.getChild("Value", mdNSpace);
-			String rating = valueEl.getTextNormalize(); 
+			String rating = valueEl.getTextNormalize();
 			if (!rSystem.isValid(rating)) {
 				String msg = "Invalid Rating for RatingSystem";
 				String explanation = "The " + system + " Rating System does not include the '" + rating + "'";
@@ -548,6 +547,7 @@ public abstract class AbstractValidator extends XmlIngester {
 			}
 		}
 	}
+
 	/**
 	 * Validate a language entry conforms to RFC5646. The source of the entry is
 	 * the <i>child</i> node. The child may be:
@@ -582,7 +582,7 @@ public abstract class AbstractValidator extends XmlIngester {
 				text = getSpecifiedValue(targetEl, childNS, child);
 			}
 			if (text != null) {
-				// treat as case-insensitive 
+				// treat as case-insensitive
 				text = text.toUpperCase();
 				String[] langSubfields = text.split("-");
 				/* 1st field should be specified in RFC5646 */
@@ -719,7 +719,7 @@ public abstract class AbstractValidator extends XmlIngester {
 					}
 				} else {
 					String checkString = "\"" + text.toLowerCase() + "\"";
-					if (!optionsString.contains(checkString)) { 
+					if (!optionsString.contains(checkString)) {
 						logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, null, srcRef, logMsgSrcId);
 						allOK = false;
 						curFileIsValid = false;
