@@ -40,7 +40,7 @@ public class AvailsSheet {
 	};
 
 	private ArrayList<Row> rows;
-	private AvailSS parent;
+	private AvailsWrkBook parent;
 	private String name;
 	private ArrayList<String> headerList;
 	private HashMap<String, Integer> headerMap;
@@ -57,7 +57,7 @@ public class AvailsSheet {
 	 * @param name
 	 *            the name of the spreadsheet
 	 */
-	public AvailsSheet(AvailSS parent, Sheet excelSheet) {
+	public AvailsSheet(AvailsWrkBook parent, Sheet excelSheet) {
 		this.parent = parent;
 		this.excelSheet = excelSheet;
 		logger = parent.getLogger();
@@ -234,7 +234,7 @@ public class AvailsSheet {
 	 * 
 	 * @return the parent of this sheet
 	 */
-	public AvailSS getAvailSS() {
+	public AvailsWrkBook getAvailSS() {
 		return parent;
 	}
 

@@ -43,7 +43,7 @@ import org.xml.sax.SAXParseException;
 import com.movielabs.mddf.tools.ValidatorTool.Context;
 import com.movielabs.mddf.tools.resources.Foo;
 import com.movielabs.mddflib.avails.validation.AvailValidator;
-import com.movielabs.mddflib.avails.xlsx.AvailSS;
+import com.movielabs.mddflib.avails.xlsx.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.Pedigree;
@@ -547,9 +547,9 @@ public class ValidationController {
 		((Log4jAdapter) log4j).setFile(xslxFile);
 		boolean autoCorrect = false;
 		boolean exitOnError = false;
-		AvailSS ss;
+		AvailsWrkBook ss;
 		try {
-			ss = new AvailSS(xslxFile, log4j, exitOnError, autoCorrect);
+			ss = new AvailsWrkBook(xslxFile, log4j, exitOnError, autoCorrect);
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();

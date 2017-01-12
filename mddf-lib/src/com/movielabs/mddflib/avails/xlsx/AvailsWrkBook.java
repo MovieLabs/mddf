@@ -42,7 +42,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * Represents an Excel spreadsheet comprising multiple individual sheets, each
  * of which are represented by an AvailsSheet object
  */
-public class AvailSS {
+public class AvailsWrkBook {
 	private File file;
 	private ArrayList<AvailsSheet> sheets;
 	private Logger logger;
@@ -64,7 +64,7 @@ public class AvailSS {
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	public AvailSS(File file, Logger logger, boolean exitOnError, boolean cleanupData)
+	public AvailsWrkBook(File file, Logger logger, boolean exitOnError, boolean cleanupData)
 			throws FileNotFoundException, IOException {
 		this.file = file;
 		this.logger = logger;
