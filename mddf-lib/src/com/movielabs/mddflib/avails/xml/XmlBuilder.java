@@ -41,7 +41,9 @@ import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 
 /**
- * Code and functionality formerly in AvailsSheet.
+ * Build an XML representation of an Avails that has been specified in XLSX
+ * format. The XML may be constructed as either a W3C DOM document or a JDOM2
+ * Document.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
