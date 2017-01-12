@@ -1,4 +1,44 @@
 {
+	"Manifest": 
+	{
+		"ExperienceType": 
+		[
+			"external"
+		],
+
+		"ExperienceAppType": 
+		[
+			"nav",
+			"game",
+			"Immersive",
+			"Mixed-Media",
+			"other"
+		],
+		
+		"AudiovisualType": 
+		[
+			"Main",
+			"Promotion",
+			"Bonus",
+			"Other"
+		],
+
+		"PictureGroupType": 
+		[
+			"Retail",
+			"App",
+			"Gallery"
+		],
+
+		"TimedEventType": 
+		[
+			"Synchronous",
+			"Pause",
+			"Stop",
+			"Substitution"
+		]
+	},
+
 	"CM": 
 	{
 		"WorkType": 
@@ -224,7 +264,6 @@
 			"YO",
 			"ZU"
 		]
-		
 	},
 
 	"Style": 
@@ -390,7 +429,7 @@
 			"LocalizationOffering",
 			"Promotion",
 			"GEMACountry",
-			"GEMACategory", 
+			"GEMACategory",
 			"Tier-postTax",
 			"SRP-postTax",
 			"WSP-postTax",
@@ -406,8 +445,8 @@
 			"SuppressionLiftDate-postTax",
 			"RentalDuration-postTax",
 			"WatchDuration-postTax",
-			"FixedEndDate-postTax", 
-			"LocalizationOffering-postTax", 
+			"FixedEndDate-postTax",
+			"LocalizationOffering-postTax",
 			"GEMACountry-postTax",
 			"GEMACategory-postTax"
 		],

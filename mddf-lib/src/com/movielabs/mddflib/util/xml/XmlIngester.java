@@ -25,13 +25,11 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,9 +63,6 @@ import org.xml.sax.SAXParseException;
 
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
-import com.movielabs.mddflib.util.xml.XmlIngester.Input;
-import com.movielabs.mddflib.util.xml.XmlIngester.ResourceResolver;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
@@ -555,11 +550,46 @@ public abstract class XmlIngester {
 	}
 
 	/**
+	 * Identify the XSD version for the document's <i>primary</i> MDDF namespace
+	 * (i.e., Manifest, Avails, MDMec, etc.)
+	 * 
+	 * @param docRootEl
+	 * @return
+	 */
+	public static String identifyXsdVersion(Element docRootEl) {
+		String nSpaceUri = docRootEl.getNamespaceURI();
+		String schemaType = null;
+		if (nSpaceUri.contains("manifest")) {
+			schemaType = "manifest";
+		} else if (nSpaceUri.contains("avails")) {
+			schemaType = "avails";
+		} else if (nSpaceUri.contains("mdmec")) {
+			schemaType = "mdmec";
+		} else {
+			return null;
+		}
+		String schemaPrefix = XmlIngester.SCHEMA_PREFIX + schemaType + "/v";
+		String schemaVer = nSpaceUri.replace(schemaPrefix, "");
+		schemaVer = schemaVer.replace("/" + schemaType, "");
+		return schemaVer;
+	}
+
+	/**
+	 * Configure all XML-related functions to work with the specified version of
+	 * the Manifest XSD. This includes setting the correct version of the Common
+	 * Metadata XSD that is used with the specified Manifest version. If the
+	 * <tt>manifestSchemaVer</tt> is not supported by the current version of
+	 * <tt>mddf-lib</tt> an <tt>IllegalArgumentException</tt> will be thrown.
+	 * 
 	 * @param manifestSchemaVer
 	 * @throws IllegalArgumentException
 	 */
 	public static void setManifestVersion(String manifestSchemaVer) throws IllegalArgumentException {
 		switch (manifestSchemaVer) {
+		case "1.6":
+			MAN_VER = "1.6";
+			MD_VER = "2.5";
+			break;
 		case "1.5":
 			MAN_VER = "1.5";
 			MD_VER = "2.4";
@@ -571,12 +601,16 @@ public abstract class XmlIngester {
 		default:
 			throw new IllegalArgumentException("Unsupported Manifest Schema version " + manifestSchemaVer);
 		}
-		/* Since MDMEC isnt used for Manifest, set to NULL */
+		/* Since MDMEC isn't used for Manifest, set to NULL */
 		MDMEC_VER = null;
 		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
 		manifestNSpace = Namespace.getNamespace("manifest", NSPACE_MANIFEST_PREFIX + MAN_VER + NSPACE_MANIFEST_SUFFIX);
 	}
 
+	/**
+	 * @param mecSchemaVer
+	 * @throws IllegalArgumentException
+	 */
 	public static void setMdMecVersion(String mecSchemaVer) throws IllegalArgumentException {
 		switch (mecSchemaVer) {
 		case "2.4":
@@ -591,11 +625,22 @@ public abstract class XmlIngester {
 		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
 	}
 
-	/**
+	/** 
+	 * Configure all XML-related functions to work with the specified version of
+	 * the Avails XSD. This includes setting the correct version of the Common
+	 * Metadata and MDMEC XSD that are used with the specified Avails version.
+	 * If the <tt>availSchemaVer</tt> is not supported by the current version of
+	 * <tt>mddf-lib</tt> an <tt>IllegalArgumentException</tt> will be thrown.
+	 * 
 	 * @param availSchemaVer
+	 * @throws IllegalArgumentException
 	 */
 	public static void setAvailVersion(String availSchemaVer) throws IllegalArgumentException {
 		switch (availSchemaVer) {
+		case "2.2.1":
+			MD_VER = "2.5";
+			MDMEC_VER = "2.5";
+			break;
 		case "2.2":
 		case "2.1":
 			MD_VER = "2.4";
