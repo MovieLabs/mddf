@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.filter.Filters;
@@ -98,6 +100,8 @@ public class ManifestValidator extends AbstractValidator {
 	}
 
 	public static final String LOGMSG_ID = "ManifestValidator";
+	private static JSONObject manifestVocab;
+	private static JSONObject availVocab;
 
 	static {
 		id2typeMap = new HashMap<String, String>();
@@ -113,7 +117,13 @@ public class ManifestValidator extends AbstractValidator {
 		 * vocab set for validating Common Metadata will be loaded by the parent
 		 * class AbstractValidator.
 		 */
-
+		try {
+			manifestVocab = loadVocab(vocabRsrcPath, "Manifest");
+			availVocab = loadVocab(vocabRsrcPath, "Avail");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -135,6 +145,12 @@ public class ManifestValidator extends AbstractValidator {
 		curFileName = xmlManifestFile.getName();
 		curFileIsValid = true;
 		curRootEl = null;
+
+		String schemaVer = identifyXsdVersion(docRootEl);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, srcFile, logMsgSrcId);
+		setManifestVersion(schemaVer);
+		rootNS = manifestNSpace;
+
 		validateXml(xmlManifestFile, docRootEl);
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
@@ -252,28 +268,36 @@ public class ManifestValidator extends AbstractValidator {
 		// start with Common Metadata spec..
 		boolean cmOk = validateCMVocab();
 
-		// Now do any defined in Media Manifestspec..
-		JSONArray allowed = new JSONArray();
-		String[] vs1 = { "Retail", "App", "Gallery" };
-		allowed.addAll(Arrays.asList(vs1));
-		LogReference srcRef = LogReference.getRef("MMM", "1.5", "mmm001");
-		// srcRef = "Section 6.2, TR-META-MMM (v1.5)";
+		// Now do any defined in the Manifest spec..  
+		JSONArray allowed;  
+		
+		allowed = manifestVocab.optJSONArray("PictureGroupType");
+		LogReference srcRef = LogReference.getRef("MMM", MAN_VER, "mmm001");
 		validateVocab(manifestNSpace, "PictureGroup", manifestNSpace, "Type", allowed, srcRef, true);
-
-		allowed = new JSONArray();
-		String[] vs2 = { "Synchronous", "Pause", "Stop", "Substitution" };
-		allowed.addAll(Arrays.asList(vs2));
-		srcRef = LogReference.getRef("MMM", "1.5", "mmm002");
-		// srcRef = "Section 7.2.3, TR-META-MMM (v1.5)";
+ 
+		allowed= manifestVocab.optJSONArray("TimedEventType");
+		srcRef = LogReference.getRef("MMM", MAN_VER, "mmm002");
 		validateVocab(manifestNSpace, "TimedEvent", manifestNSpace, "Type", allowed, srcRef, true);
 
-		allowed = new JSONArray();
-		String[] vs3 = { "Main", "Promotion", "Bonus", "Other" };
-		allowed.addAll(Arrays.asList(vs3));
-		srcRef = LogReference.getRef("MMM", "1.5", "mmm003");
-		// srcRef = "Section 8.3.1, TR-META-MMM (v1.5)";
-		validateVocab(manifestNSpace, "AudioVisual", manifestNSpace, "Type", allowed, srcRef, true);
+		allowed = manifestVocab.optJSONArray("ExperienceType");
+		srcRef = LogReference.getRef("CM", MAN_VER, "mmm_expType");
+		validateVocab(manifestNSpace, "Experience", manifestNSpace, "Type", allowed, srcRef, true);
 
+		allowed = manifestVocab.optJSONArray("AudiovisualType");
+		srcRef = LogReference.getRef("MMM", MAN_VER, "mmm003");
+		validateVocab(manifestNSpace, "Audiovisual", manifestNSpace, "Type", allowed, srcRef, true);
+
+		allowed = manifestVocab.optJSONArray("ExperienceAppType");
+		srcRef = LogReference.getRef("CM", MAN_VER, "mmm_expAppType");
+		validateVocab(manifestNSpace, "Experience", manifestNSpace, "Type", allowed, srcRef, true);
+
+		allowed = cmVocab.optJSONArray("Parent@relationshipType");
+		srcRef = LogReference.getRef("CM", MD_VER, "cm007");
+		validateVocab(manifestNSpace, "ExperienceChild", manifestNSpace, "Relationship", allowed, srcRef, true);
+
+		allowed = availVocab.optJSONArray("ExperienceCondition");
+		srcRef = LogReference.getRef("CM", MD_VER, "cm007");
+		validateVocab(manifestNSpace, "ExperienceID", null, "@condition", allowed, srcRef, true);
 		validateLocations();
 
 	}
@@ -282,37 +306,36 @@ public class ManifestValidator extends AbstractValidator {
 	 * @return
 	 */
 	protected boolean validateCMVocab() {
-		boolean allOK = true;
-		String mdVersion = "2.4";
+		boolean allOK = true; 
 
 		JSONArray allowed = cmVocab.optJSONArray("WorkType");
-		LogReference srcRef = LogReference.getRef("CM", mdVersion, "cm002");
+		LogReference srcRef = LogReference.getRef("CM", MD_VER, "cm002");
 		allOK = validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, srcRef, true) && allOK;
 
 		allowed = cmVocab.optJSONArray("ColorType");
-		srcRef = LogReference.getRef("CM", mdVersion, "cm003");
+		srcRef = LogReference.getRef("CM", MD_VER, "cm003");
 		allOK = validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", allowed, srcRef, true)
 				&& allOK;
 
 		allowed = cmVocab.optJSONArray("PictureFormat");
-		srcRef = LogReference.getRef("CM", mdVersion, "cm004");
+		srcRef = LogReference.getRef("CM", MD_VER, "cm004");
 		allOK = validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", allowed, srcRef, true)
 				&& allOK;
 
 		allowed = cmVocab.optJSONArray("ReleaseType");
-		srcRef = LogReference.getRef("CM", mdVersion, "cm005");
+		srcRef = LogReference.getRef("CM", MD_VER, "cm005");
 		allOK = validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, srcRef, true) && allOK;
 
 		allowed = cmVocab.optJSONArray("TitleAlternate@type");
-		srcRef = LogReference.getRef("CM", mdVersion, "cm006");
+		srcRef = LogReference.getRef("CM", MD_VER, "cm006");
 		allOK = validateVocab(mdNSpace, "TitleAlternate", null, "@type", allowed, srcRef, true) && allOK;
 
 		allowed = cmVocab.optJSONArray("Parent@relationshipType");
-		srcRef = LogReference.getRef("CM", mdVersion, "cm007");
+		srcRef = LogReference.getRef("CM", MD_VER, "cm007");
 		allOK = validateVocab(mdNSpace, "Parent", null, "@relationshipType", allowed, srcRef, true) && allOK;
 
 		allowed = cmVocab.optJSONArray("EntryClass");
-		srcRef = LogReference.getRef("CM", mdVersion, "cm008");
+		srcRef = LogReference.getRef("CM", MD_VER, "cm008");
 		allOK = validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef, true) && allOK;
 
 		// --------------- Validate language codes
@@ -382,17 +405,17 @@ public class ManifestValidator extends AbstractValidator {
 	protected void validateLocations() {
 		String pre = manifestNSpace.getPrefix();
 		String baseLoc = curFile.getAbsolutePath();
-		LogReference srcRef = LogReference.getRef("MMM", "1.5", "mmm_locType");		
+		LogReference srcRef = LogReference.getRef("MMM", "1.5", "mmm_locType");
 		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + pre + ":ContainerLocation", Filters.element(), null,
 				manifestNSpace);
 		List<Element> cLocElList = xpExp01.evaluate(curRootEl);
 		outterLoop: for (int i = 0; i < cLocElList.size(); i++) {
 			Element clocEl = cLocElList.get(i);
-			String containerPath = clocEl.getTextNormalize(); 
+			String containerPath = clocEl.getTextNormalize();
 			if (containerPath.startsWith("file:")) {
 				String errMsg = "Invalid syntax for local file location";
-				String details ="Location of a local file must be specified as a relative path";
-				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId); 
+				String details = "Location of a local file must be specified as a relative path";
+				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId);
 				continue outterLoop;
 			}
 			if (!PathUtilities.isRelative(containerPath)) {
@@ -400,13 +423,13 @@ public class ManifestValidator extends AbstractValidator {
 				continue outterLoop;
 			}
 			try {
-				String targetLoc = PathUtilities.convertToAbsolute(baseLoc, containerPath); 
+				String targetLoc = PathUtilities.convertToAbsolute(baseLoc, containerPath);
 				File target = new File(targetLoc);
-				if(!target.exists()){
-					String errMsg = "Referenced container not found"; 
-					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, clocEl, errMsg, null, null, logMsgSrcId); 
+				if (!target.exists()) {
+					String errMsg = "Referenced container not found";
+					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, clocEl, errMsg, null, null, logMsgSrcId);
 					continue outterLoop;
-					
+
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

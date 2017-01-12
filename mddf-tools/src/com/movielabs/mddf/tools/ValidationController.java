@@ -506,21 +506,14 @@ public class ValidationController {
 			return;
 		}
 		logMgr.log(LogMgmt.LEV_INFO, logTag, "Validating file as a " + schemaType, srcFile, MODULE_ID);
-		String schemaPrefix = XmlIngester.SCHEMA_PREFIX + schemaType + "/v";
-		String schemaVer = nSpaceUri.replace(schemaPrefix, "");
-		schemaVer = schemaVer.replace("/" + schemaType, "");
-		logMgr.log(LogMgmt.LEV_DEBUG, logTag, "Using Schema Version " + schemaVer, srcFile, MODULE_ID);
 		switch (logTag) {
 		case LogMgmt.TAG_MANIFEST:
-			XmlIngester.setManifestVersion(schemaVer);
 			validateManifest(docRootEl, srcFile, uxProfile, useCases);
 			break;
 		case LogMgmt.TAG_AVAIL:
-			XmlIngester.setAvailVersion(schemaVer);
 			validateAvail(docRootEl, pedigreeMap, srcFile);
 			break;
 		case LogMgmt.TAG_MEC:
-			XmlIngester.setMdMecVersion(schemaVer);
 			validateMEC(docRootEl, srcFile);
 			break;
 		}
@@ -680,6 +673,10 @@ public class ValidationController {
 	protected void validateManifest(Element docRootEl, File srcFile, String uxProfile, List<String> useCases)
 			throws IOException, JDOMException {
 		boolean isValid = true;
+
+		String schemaVer = ManifestValidator.identifyXsdVersion(docRootEl);
+		ManifestValidator.setManifestVersion(schemaVer);
+		
 		List<String> profileNameList = identifyProfiles(docRootEl, srcFile, uxProfile);
 		if (profileNameList.isEmpty()) {
 			ManifestValidator tool1 = new ManifestValidator(validateC, logMgr);

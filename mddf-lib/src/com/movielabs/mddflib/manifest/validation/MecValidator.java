@@ -25,23 +25,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
-import org.jdom2.Namespace;
-import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathExpression;
-
-import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
-import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.AbstractValidator;
-import com.movielabs.mddflib.util.xml.RatingSystem;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -49,11 +36,7 @@ public class MecValidator extends AbstractValidator {
 
 	public static final String LOGMSG_ID = "MecValidator";
 
-	static final String DOC_VER = "2.4";
-	// static final LogReference AVAIL_RQMT_srcRef =
-	// LogReference.getRef("AVAIL", DOC_VER, "avail01");
-
-	private static Properties iso3166_1_codes;
+	static final String DOC_VER = "2.4"; 
 
 	static {
 		id2typeMap = new HashMap<String, String>();
@@ -83,7 +66,6 @@ public class MecValidator extends AbstractValidator {
 	public MecValidator(boolean validateC, LogMgmt loggingMgr) {
 		super(loggingMgr);
 		this.validateC = validateC;
-		rootNS = mdmecNSpace;
 		rootPrefix = "mdmec:";
 
 		logMsgSrcId = LOGMSG_ID;
@@ -95,6 +77,12 @@ public class MecValidator extends AbstractValidator {
 		curFile = xmlFile;
 		curFileName = xmlFile.getName();
 		curFileIsValid = true;
+		
+		String schemaVer = identifyXsdVersion(  docRootEl);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, srcFile, logMsgSrcId);
+		setMdMecVersion(schemaVer);
+		rootNS = mdmecNSpace;
+		
 		validateXml(xmlFile, docRootEl);
 		// }
 		if (!curFileIsValid) {
@@ -153,8 +141,7 @@ public class MecValidator extends AbstractValidator {
 	 * @return
 	 */
 	protected boolean validateCMVocab() {
-		boolean allOK = true;
-		String mdVersion = "2.4";
+		boolean allOK = true; 
 
 		/*
 		 * Validate use of Country identifiers....
