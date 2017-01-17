@@ -167,6 +167,8 @@ public class AvailValidator extends AbstractValidator {
 
 	private static JSONArray genericAvailTypes;
 
+	private static JSONObject workTypeStruct;
+
 	private Map<Object, Pedigree> pedigreeMap;
 
 	static {
@@ -188,6 +190,8 @@ public class AvailValidator extends AbstractValidator {
 			JSONObject availStruct = loadJSON(availRsrcPath);
 			availTypeStruct = availStruct.getJSONObject("AvailType");
 			genericAvailTypes = availTypeStruct.getJSONArray("common");
+
+			workTypeStruct = availStruct.getJSONObject("WorkTypeStruct");
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -215,14 +219,13 @@ public class AvailValidator extends AbstractValidator {
 		curFileName = xmlFile.getName();
 		this.pedigreeMap = pedigreeMap;
 		curFileIsValid = true;
-		
-		String schemaVer = identifyXsdVersion(  docRootEl);
+
+		String schemaVer = identifyXsdVersion(docRootEl);
 		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, srcFile, logMsgSrcId);
 		setAvailVersion(schemaVer);
 		rootNS = availsNSpace;
-		
-		
-		validateXml(xmlFile, docRootEl); 
+
+		validateXml(xmlFile, docRootEl);
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
@@ -297,7 +300,7 @@ public class AvailValidator extends AbstractValidator {
 	private boolean validateAvailVocab() {
 		boolean allOK = true;
 		Namespace primaryNS = availsNSpace;
-		String doc = "AVAIL"; 
+		String doc = "AVAIL";
 
 		JSONArray allowed = availVocab.optJSONArray("AvailType");
 		LogReference srcRef = LogReference.getRef(doc, AVAIL_VER, "avail01");
@@ -361,7 +364,7 @@ public class AvailValidator extends AbstractValidator {
 	 * @return
 	 */
 	protected boolean validateCMVocab() {
-		boolean allOK = true; 
+		boolean allOK = true;
 		Namespace primaryNS = availsNSpace;
 		/*
 		 * Validate use of Country identifiers....
@@ -460,7 +463,6 @@ public class AvailValidator extends AbstractValidator {
 				curFileIsValid = false;
 			}
 		}
-
 		// ===========================================================
 		/*
 		 * Match the Avail/AvailType with all child Asset/WorkTypes as
@@ -506,7 +508,7 @@ public class AvailValidator extends AbstractValidator {
 
 		JSONObject structureDef = availTypeStruct.getJSONObject(availType);
 		if (structureDef == null || structureDef.isNullObject()) {
-			System.out.println("No structureDef for AvailTye='" + availType + "'");
+			System.out.println("No structureDef for AvailType='" + availType + "'");
 			return;
 		}
 		JSONArray allAllowedWTypes = getAllowedWTypes(availType);
@@ -516,9 +518,9 @@ public class AvailValidator extends AbstractValidator {
 		List<Element> availTypeElList = xpExp01.evaluate(curRootEl);
 		/* Loop thru all the Avail instances... */
 		for (int i = 0; i < availTypeElList.size(); i++) {
-			AvailRqmt[] allRqmts = getRequirements(availType);
 			Element availTypeEl = availTypeElList.get(i);
 			Element availEl = availTypeEl.getParentElement();
+			AvailRqmt[] allRqmts = getRequirements(availType);
 			// Now get the descendant WorkType element
 			XPathExpression<Element> xpExp02 = xpfac.compile("./" + rootPrefix + "Asset/" + rootPrefix + "WorkType",
 					Filters.element(), null, availsNSpace);
@@ -545,10 +547,12 @@ public class AvailValidator extends AbstractValidator {
 						}
 					}
 				}
+				// Check if Asset's structure is compatible with the WorkType
+				validateAssetStructure(wrkTypeEl);
 
 			}
 			/*
-			 * Last step for each Avail is to check accumulated counts for any
+			 * Next step for each Avail is to check accumulated counts for any
 			 * violation of a cardinality constraint.
 			 */
 
@@ -563,6 +567,67 @@ public class AvailValidator extends AbstractValidator {
 
 	}
 
+	/**
+	 * Make sure that each Asset has a structure compatible with it's WorkType.
+	 * 
+	 * @param wrkTypeEl
+	 * 
+	 */
+	private void validateAssetStructure(Element wrkTypeEl) {
+		// Retrieve structure defs specific to the WorkType
+		String wtValue = wrkTypeEl.getText();
+		JSONObject wtStrucDef = workTypeStruct.optJSONObject(wtValue);
+		if (wtStrucDef == null) {
+			System.out.println("No structureDef for WorkType='" + wtValue + "'");
+			return;
+		}
+		String availPrefix = availsNSpace.getPrefix() + ":";
+		String mdPrefix = mdNSpace.getPrefix() + ":";
+		Element assetEl = wrkTypeEl.getParentElement();
+		JSONArray rqmts = wtStrucDef.getJSONArray("requirement");
+		for (int i = 0; i < rqmts.size(); i++) {
+			JSONObject nextRqmt = rqmts.getJSONObject(i);
+			String docRef = nextRqmt.optString("docRef");
+			String xpathDef = nextRqmt.optString("xpath");
+			int min = nextRqmt.optInt("min", 0);
+			int max = nextRqmt.optInt("max", -1);
+			/*
+			 * replace namespace placeholders with actual prefix being used
+			 */
+			String t1 = xpathDef.replaceAll("\\{avail\\}", availPrefix);
+			String t2 = t1.replaceAll("\\{md\\}", mdPrefix);
+			// Now format an XPath
+			String xpath = "./" + t2;
+			System.out.println("AvailValidator:validateAssetStructure:: "+xpath );
+			XPathExpression<Element> xpExp = xpfac.compile(xpath, Filters.element(), null, availsNSpace, mdNSpace);
+			List<Element> assetElList = xpExp.evaluate(assetEl);
+			// check cardinality
+			int count = assetElList.size();
+			if (min > 0 && (count < min)) {
+				String msg = "Invalid Asset structure for specified WorkType";
+				String[] xpParts = xpath.split("\\[");
+				String explanation = "Asset requires minimum of " + min + " of child " + xpParts[0] + " elements";
+				LogReference srcRef = null;
+				if (docRef != null) {
+					srcRef = LogReference.getRef("AVAIL", DOC_VER, docRef);
+					logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, assetEl, msg, explanation, srcRef, logMsgSrcId);
+					curFileIsValid = false;
+				}
+			}
+			if (max > -1 && (count > max)) {
+				String msg = "Invalid Asset structure for specified WorkType";
+				String[] xpParts = xpath.split("/\\[");
+				String explanation = "Asset permits maximum of " + max + " of child " + xpParts[0] + " elements";
+				LogReference srcRef = null;
+				if (docRef != null) {
+					srcRef = LogReference.getRef("AVAIL", DOC_VER, docRef);
+					logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, assetEl, msg, explanation, srcRef, logMsgSrcId);
+					curFileIsValid = false;
+				}
+			}
+		} 
+
+	}
 	// ######################################################################
 
 	/**
@@ -598,12 +663,14 @@ public class AvailValidator extends AbstractValidator {
 		JSONArray reqmts = structureDef.getJSONArray("requirement");
 		for (int i = 0; i < reqmts.size(); i++) {
 			JSONObject nextRqmt = reqmts.getJSONObject(i);
-			JSONArray wtArray = nextRqmt.getJSONArray("WorkType");
-			allowedWTypes.addAll(wtArray);
+			JSONArray wtArray = nextRqmt.optJSONArray("WorkType");
+			if (wtArray != null) {
+				allowedWTypes.addAll(wtArray);
+			}
 		}
 		return allowedWTypes;
 	}
- 
+
 	/**
 	 * Log an issue after first determining the appropriate <i>target</i> to
 	 * associate with the log entry. The target indicates a construct within a

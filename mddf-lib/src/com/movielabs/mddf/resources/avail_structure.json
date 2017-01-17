@@ -51,5 +51,82 @@
 				
 			]
 		}
+	},
+
+	"WorkTypeStruct": 
+	{
+		"Movie": 
+		{ 
+			"requirement": 
+			[
+				{
+					"docRef": "avail00n",
+					"min": "1",
+					"max": "1", 
+					"xpath": "{avail}Metadata[../{avail}WorkType/text()='Movie']"
+				}
+			]
+		},
+		"Short": 
+		{
+			"requirement": 
+			[
+				{
+					"docRef": "avail00n",
+					"min": "1",
+					"max": "1", 
+					"xpath": "{avail}Metadata[../{avail}WorkType/text()='Short']"
+				}
+			]
+		},
+
+		"Series": 
+		{
+			
+		},
+
+		"Season": 
+		{
+			"requirement": 
+			[
+				{
+					"docRef": "avail00n",
+					"min": "1",
+					"max": "1", 
+					"xpath": "{avail}SeasonMetadata[../{avail}WorkType/text()='Season']"
+				}
+			]
+		},
+
+		"Episode": 
+		{			
+			"requirement": 
+			[
+				{
+					"docRef": "avail00n",
+					"min": "1",
+					"max": "1", 
+					"xpath": "{avail}EpisodeMetadata[../{avail}WorkType/text()='Episode']"
+				},
+				{
+					"docRef": "avail00n",
+					"min": "1",
+					"max": "1", 
+					"xpath": "{avail}EpisodeMetadata/{avail}AltIdentifier"
+				},
+				{
+					"docRef": "avail00n",
+					"min": "1",
+					"max": "1", 
+					"xpath": "{avail}EpisodeMetadata/{avail}EpisodeNumber/{md}Number"
+				},
+				{
+					"docRef": "avail00n",
+					"min": "1",
+					"max": "1", 
+					"xpath": "{avail}EpisodeMetadata/{avail}TitleInternalAlias"
+				}
+			]
+		}
 	}
 }
