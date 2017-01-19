@@ -119,10 +119,10 @@ public abstract class XmlIngester {
 	}
 
 	protected static JSONObject loadJSON(String rsrcPath) throws JDOMException, IOException {
-		StringBuilder builder = new StringBuilder();
 		InputStream inp = XmlIngester.class.getResourceAsStream(rsrcPath);
 		InputStreamReader isr = new InputStreamReader(inp, "UTF-8");
 		BufferedReader reader = new BufferedReader(isr);
+		StringBuilder builder = new StringBuilder();
 		String line;
 		while ((line = reader.readLine()) != null) {
 			builder.append(line);
