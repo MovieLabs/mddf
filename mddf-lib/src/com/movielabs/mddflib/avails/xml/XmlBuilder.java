@@ -422,10 +422,24 @@ public class XmlBuilder {
 		case "xs:anyURI":
 			break;
 		case "xs:duration":
-			// input is 'hh:mm:ss'
-			// output as 'PThhHmmMssS'
-			formattedValue = "PT" + formattedValue.replaceFirst(":", "H");
-			formattedValue = formattedValue.replaceFirst(":", "M") + "S";
+			/**
+			 * Input is one of the following:
+			 * <ul>
+			 * <li>hh</li>
+			 * <li>hh:mm</li>
+			 * <li>hh:mm:ss</li>
+			 * </ul>
+			 * The output format is 'PThhHmmMssS'
+			 */ 
+			String parts[] = formattedValue.split(":");
+			String xmlValue = "PT" + parts[0]+"H";
+			if(parts.length>1){
+				xmlValue = xmlValue+parts[1]+"M"; 
+				if(parts.length>2){
+					xmlValue = xmlValue+parts[2]+"S";
+				}
+			}
+			formattedValue = xmlValue; 
 			break;
 		case "xs:boolean":
 			if (formattedValue.equals("Yes")) {
