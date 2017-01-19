@@ -389,7 +389,16 @@ public class RowToXmlHelper {
 
 	void addRegion(Element parentEl, String regionType, Namespace ns, String cellKey) {
 		Element regionEl = new Element(regionType, ns);
-		Element countryEl = process(regionEl, "country", xb.getMdNSpace(), cellKey);
+		Pedigree pg = getPedigreedData(cellKey);
+		String value = pg.getRawValue();
+		Element countryEl = null;
+		if (isSpecified(value)) {
+			if (value.length() > 2) {
+				countryEl = process(regionEl, "countryRegion", xb.getMdNSpace(), cellKey);
+			} else {
+				countryEl = process(regionEl, "country", xb.getMdNSpace(), cellKey);
+			}
+		}
 		if (countryEl != null) {
 			parentEl.addContent(regionEl);
 		}
