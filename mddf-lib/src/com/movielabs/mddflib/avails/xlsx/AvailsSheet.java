@@ -132,7 +132,7 @@ public class AvailsSheet {
 		/*
 		 * Skip over the header rows and process all data rows...
 		 */
-		for (int idxR = 2; idxR < excelSheet.getLastRowNum(); idxR++) {
+		for (int idxR = 2; idxR <= excelSheet.getLastRowNum(); idxR++) {
 			Row nextRow = excelSheet.getRow(idxR);
 			if (nextRow == null) {
 				break;
