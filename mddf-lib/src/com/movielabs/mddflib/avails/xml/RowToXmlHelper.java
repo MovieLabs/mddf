@@ -257,6 +257,7 @@ public class RowToXmlHelper {
 			switch (tName) {
 			case "Tier":
 			case "Category":
+			case "LicenseFee":
 				process(termEl, "Text", xb.getAvailsNSpace(), prefix + "PriceValue");
 				break;
 			case "WSP":
@@ -265,8 +266,17 @@ public class RowToXmlHelper {
 				} else if (workType.equals("Season")) {
 					tName = "SeasonWSP";
 				}
+			case "EpisodeWSP":
+			case "SeasonWSP":
+			case "SRP":
 			case "DMRP":
 			case "SMRP":
+			case "TPR-SRP":
+			case "TPR-WSP":
+			case "TPR-EpisodeWSP":
+			case "TPR-SeasonWSP":
+			case "TPR-DMRP":
+			case "TPR-SMRP":
 				Element moneyEl = process(termEl, "Money", xb.getAvailsNSpace(), prefix + "PriceValue");
 				Pedigree curPGee = getPedigreedData(prefix + "PriceCurrency");
 				if (moneyEl != null && isSpecified(curPGee)) {
