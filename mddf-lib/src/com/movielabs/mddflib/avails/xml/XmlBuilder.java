@@ -41,9 +41,9 @@ import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 
 /**
- * Build an XML representation of an Avails that has been specified in XLSX
- * format. The XML may be constructed as either a W3C DOM document or a JDOM2
- * Document.
+ * <tt>XmlBuilder</tt> creates an XML representation of an Avails that has been
+ * specified as an XLSX document. The XML may be constructed as either a W3C DOM
+ * document or a JDOM2 Document.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -430,16 +430,16 @@ public class XmlBuilder {
 			 * <li>hh:mm:ss</li>
 			 * </ul>
 			 * The output format is 'PThhHmmMssS'
-			 */ 
+			 */
 			String parts[] = formattedValue.split(":");
-			String xmlValue = "PT" + parts[0]+"H";
-			if(parts.length>1){
-				xmlValue = xmlValue+parts[1]+"M"; 
-				if(parts.length>2){
-					xmlValue = xmlValue+parts[2]+"S";
+			String xmlValue = "PT" + parts[0] + "H";
+			if (parts.length > 1) {
+				xmlValue = xmlValue + parts[1] + "M";
+				if (parts.length > 2) {
+					xmlValue = xmlValue + parts[2] + "S";
 				}
 			}
-			formattedValue = xmlValue; 
+			formattedValue = xmlValue;
 			break;
 		case "xs:boolean":
 			if (formattedValue.equals("Yes")) {
