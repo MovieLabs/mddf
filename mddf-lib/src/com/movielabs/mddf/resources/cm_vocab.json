@@ -405,7 +405,12 @@
 		[
 			"HD",
 			"SD",
-			"UHD"
+			"UHD",
+			"3D",
+			"3DHD",
+			"3DSD",
+			"3DUHD"
+			
 		],
 
 		"Term@termName": 
@@ -417,6 +422,7 @@
 			"SeasonWSP",
 			"DMRP",
 			"SMRP",
+			"LicenseFee",
 			"Category",
 			"Included",
 			"AnnounceDate",
@@ -430,25 +436,12 @@
 			"Promotion",
 			"GEMACountry",
 			"GEMACategory",
-			"Tier-postTax",
 			"SRP-postTax",
 			"WSP-postTax",
 			"EpisodeWSP-postTax",
 			"SeasonWSP-postTax",
 			"DMRP-postTax",
-			"SMRP-postTax",
-			"Category-postTax",
-			"Included-postTax",
-			"AnnounceDate-postTax",
-			"PreorderStart-postTax",
-			"PreorderFulfillDate-postTax",
-			"SuppressionLiftDate-postTax",
-			"RentalDuration-postTax",
-			"WatchDuration-postTax",
-			"FixedEndDate-postTax",
-			"LocalizationOffering-postTax",
-			"GEMACountry-postTax",
-			"GEMACategory-postTax"
+			"SMRP-postTax"
 		],
 
 		"SharedEntitlement@ecosystem": 
