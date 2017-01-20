@@ -28,12 +28,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -41,6 +42,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
@@ -51,17 +53,64 @@ import com.movielabs.mddflib.avails.xlsx.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
- * Build an XLSX representation of an Avails that has been specified as an XML
- * document.
+ * <tt>XlsxBuilder</tt> creates an XLSX representation of an Avails that has
+ * been specified as an XML document.
+ * 
+ * <h3>Usage</h3>
+ * <p>
+ * Invoking the constructor will result in the immediate generation of a XLSX
+ * workbook. The workbook will contain a separate worksheet for TV avails and
+ * movie avails. The <tt>export()</tt> method can then be used to write the
+ * worksheet to a file.
+ * </p>
+ * <h3>Output</h3>
+ * <p>
+ * The generated worksheets will be based on the
+ * <a href="http://www.movielabs.com/md/avails/">Avails spreadsheet template for
+ * Film and TV</a>. The specific version of the template that will be used may
+ * be specified when invoking the constructor.
+ * </p>
+ * <p>
+ * An Avails Excel workbook is expected to contain a single spreadsheet with
+ * <i>either</i> move avails <i>or</i>TV avails. In contrast, a single Avails
+ * XML document may contain a mix of both TV and movie avails. An
+ * <tt>XlsxBuilder</tt> will deal with this by generating from each XML file a
+ * single Excel file with two separate worksheets: one for any movie avails
+ * contained in the XML and another for any TV avails. With the exception of
+ * including more than one sheet in a single workbook, the output of the
+ * <tt>XlsxBuilder</tt> will fully conform to the version of the Avails
+ * spreadsheet template that is being used.
+ * </p>
+ * 
+ * <h3>Limitations</h3>
+ * <p>
+ * The Excel version of Avails does not support all of the semantics available
+ * via the XML format. As a result, some information contained in an XML Avails
+ * document may be lost when converting to the XLSX format. Warning messages
+ * will be added to the log output when a situation is encountered that results
+ * in a loss of information.
+ * </p>
+ * 
+ * <h3>Version Support</h3>
+ * <p>
+ * <tt>XlsxBuilder</tt> has the ability to ingest multiple versions of the XML
+ * Avails schema and output multiple versions of the XSLX Avails schema. The
+ * specifics of how to match between specific XML versions and specific XSLX
+ * versions is determined by the contents of the <tt>Mappings.json</tt> file.
+ * </p>
  * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
 public class XlsxBuilder {
+	private static final String DURATION_REGEX = "P([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\\.[0-9]+)?S)?)?";
+	private static DecimalFormat durFieldFmt = new DecimalFormat("00");
 	private static JSONObject mappings;
+	private static Pattern p_xsDuration;
 	protected XPathFactory xpfac = XPathFactory.instance();
 	private LogMgmt logger;
 	private Version xlsxVersion;
@@ -103,8 +152,19 @@ public class XlsxBuilder {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		/*
+		 * Compile Pattern used to identify an xs:duration value that requires
+		 * translation before being added to the spreadsheet.
+		 * 
+		 */
+		p_xsDuration = Pattern.compile(DURATION_REGEX);
 	}
 
+	/**
+	 * @param docRootEl
+	 * @param xlsxVersion
+	 * @param logger
+	 */
 	public XlsxBuilder(Element docRootEl, Version xlsxVersion, LogMgmt logger) {
 		this.logger = logger;
 		this.xlsxVersion = xlsxVersion;
@@ -176,13 +236,32 @@ public class XlsxBuilder {
 	/**
 	 * 
 	 */
+	private void addMovieAvails() {
+		if (movieAvailsList.isEmpty()) {
+			return;
+		} 
+		addAvails("Movie", movieAvailsList);
+	}
+
+	/**
+	 * 
+	 */
 	private void addTvAvails() {
+		/*
+		 * XLSX format will only support TV avails of type 'episode' or
+		 * 'season'. Anything else will have been filtered out when the Avails
+		 * were sorted.
+		 */
 		if (tvAvailsList.isEmpty()) {
 			return;
 		}
-		XSSFSheet sheet = workbook.createSheet("TV");
+		addAvails("TV", tvAvailsList);
+	}
+
+	private void addAvails(String category, List<Element> availList) {
+		XSSFSheet sheet = workbook.createSheet(category);
 		// get mappings that will be used for this specific sheet..
-		JSONObject mappingDefs = mappingVersion.getJSONObject("TV");
+		JSONObject mappingDefs = mappingVersion.getJSONObject(category);
 		List<String> colIdList = new ArrayList<String>();
 		colIdList.addAll(mappingDefs.keySet());
 		/*
@@ -192,46 +271,36 @@ public class XlsxBuilder {
 		addHeaderRows(sheet, colIdList);
 
 		/* Initialize xpaths that implement the data mappings */
-		Map<String, Map<String, XPathExpression>> xpathSets = initializeMappings(mappingDefs);
+		Map<String, Map<String, List<XPathExpression>>> xpathSets = initializeMappings(mappingDefs);
 
-		/*
-		 * XLSX format will only support TV avails of type 'episode' or
-		 * 'season'. Anything else will have been filtered out when the Avails
-		 * were sorted.
-		 */
-		for (int i = 0; i < tvAvailsList.size(); i++) {
-			Element availEl = tvAvailsList.get(i);
+		for (int i = 0; i < availList.size(); i++) {
+			Element availEl = availList.get(i);
 			/*
 			 * one row is added for each combination of Asset and Transaction
 			 * included in the Avail which means there are usually multiple rows
 			 * for each Avail. Start by getting the info that will be common to
 			 * each row.
 			 */
-			Map<String, String> commonData = new HashMap<String, String>();
-			Map<String, XPathExpression> availMappings = xpathSets.get("Avail");
-			Iterator<String> colIt = availMappings.keySet().iterator();
-			while (colIt.hasNext()) {
-				String colId = colIt.next();
-				XPathExpression xpe = availMappings.get(colId);
-				if (xpe != null) {
-					Element targetEl = (Element) xpe.evaluateFirst(availEl);
-					if (targetEl != null) {
-						String value = targetEl.getTextNormalize();
-						commonData.put(colId, value);
-					}
-				}
-			}
+			Map<String, List<XPathExpression>> availMappings = xpathSets.get("Avail");
+			Map<String, String> commonData = extractData(availEl, availMappings, "");
 			/*
 			 * now identify each Asset that is a child of this Avail and prepare
 			 * its data.
 			 */
 			List<Element> assetList = availEl.getChildren("Asset", availsNSpace);
+			Map<String, List<XPathExpression>> assetMappings = xpathSets.get("AvailAsset");
+			Map<String, List<XPathExpression>> metadataMappings = xpathSets.get("AvailMetadata");
 			List<Map<String, String>> perAssetData = new ArrayList<Map<String, String>>(assetList.size());
 			for (int j = 0; j < assetList.size(); j++) {
 				Element assetEl = assetList.get(j);
-				Map<String, String> assetData = extractAssetData(assetEl, "AvailAsset", xpathSets);
+				/*
+				 * Mappings for Assets are in some cases dependent on the
+				 * WorkType so 1st step is get that value
+				 */
+				String context = assetEl.getChildTextNormalize("WorkType", availsNSpace);
+				Map<String, String> assetData = extractData(assetEl, assetMappings, context);
 				assetData.putAll(commonData);
-				Map<String, String> assetMetadataData = extractAssetData(assetEl, "AvailMetadata", xpathSets);
+				Map<String, String> assetMetadataData = extractData(assetEl, metadataMappings, context);
 				assetData.putAll(assetMetadataData);
 				// now save it
 				perAssetData.add(assetData);
@@ -241,10 +310,11 @@ public class XlsxBuilder {
 			 * prepare its data.
 			 */
 			List<Element> transList = availEl.getChildren("Transaction", availsNSpace);
+			Map<String, List<XPathExpression>> transMappings = xpathSets.get("AvailTrans");
 			List<Map<String, String>> perTransData = new ArrayList<Map<String, String>>(transList.size());
 			for (int j = 0; j < transList.size(); j++) {
 				Element transEl = transList.get(j);
-				Map<String, String> transData = extractTransData(transEl, xpathSets.get("AvailTrans"));
+				Map<String, String> transData = extractData(transEl, transMappings, "");
 				// now save it
 				perTransData.add(transData);
 			}
@@ -263,66 +333,129 @@ public class XlsxBuilder {
 	}
 
 	/**
-	 * @param transEl
-	 * @param xpathSets
+	 * @param baseEl
+	 * @param mappings
+	 * @param context
 	 * @return
 	 */
-	private Map<String, String> extractTransData(Element transEl, Map<String, XPathExpression> mappings) {
-		Map<String, String> transData = new HashMap<String, String>();
+	private Map<String, String> extractData(Element baseEl, Map<String, List<XPathExpression>> mappings,
+			String context) {
+		Map<String, String> dataMap = new HashMap<String, String>();
+		/* Now continue with everything else */
 		Iterator<String> keyIt = mappings.keySet().iterator();
 		while (keyIt.hasNext()) {
 			String mappingKey = keyIt.next();
-			XPathExpression xpe = mappings.get(mappingKey);
-			if (xpe != null) {
-				Element targetEl = (Element) xpe.evaluateFirst(transEl);
-				if (targetEl != null) {
-					String value = targetEl.getTextNormalize();
-					transData.put(mappingKey, value);
-				}
-			}
-		}
-		return transData;
-	}
-
-	/**
-	 * @param assetEl
-	 * @param xpathSets
-	 * @return
-	 */
-	private Map<String, String> extractAssetData(Element assetEl, String category,
-			Map<String, Map<String, XPathExpression>> xpathSets) {
-		Map<String, String> assetData = new HashMap<String, String>();
-		Map<String, XPathExpression> assetMappings = xpathSets.get(category);
-		/*
-		 * Mappings for Assets are in some cases dependent on the WorkType so
-		 * 1st step is get that value
-		 */
-		String workType = assetEl.getChildTextNormalize("WorkType", availsNSpace);
-		/* Now continue with everything else */
-		Iterator<String> keyIt = assetMappings.keySet().iterator();
-		while (keyIt.hasNext()) {
-			String mappingKey = keyIt.next();
-			XPathExpression xpe = null;
+			List<XPathExpression> xpeList = null;
 			if (mappingKey.contains("#")) {
 				String[] parts = mappingKey.split("#");
-				if (parts[1].equals(workType)) {
-					xpe = assetMappings.get(mappingKey);
+				if (parts[1].equals(context)) {
+					xpeList = mappings.get(mappingKey);
 					mappingKey = parts[0];
 				}
 			} else {
-				xpe = assetMappings.get(mappingKey);
+				xpeList = mappings.get(mappingKey);
 			}
-			if (xpe != null) {
-				Element targetEl = (Element) xpe.evaluateFirst(assetEl);
-				if (targetEl != null) {
-					String value = targetEl.getTextNormalize();
-					assetData.put(mappingKey, value);
-					// System.out.println("mKey " + mappingKey + "='" + value +
-					// "'");
+			if (xpeList != null) {
+				for (int i = 0; i < xpeList.size(); i++) {
+					XPathExpression xpe = xpeList.get(i);
+					Object target = xpe.evaluateFirst(baseEl);
+					if (target != null) {
+						String value = null;
+						if (target instanceof Element) {
+							Element targetEl = (Element) target;
+							value = targetEl.getTextNormalize();
+						} else if (target instanceof Attribute) {
+							Attribute targetAt = (Attribute) target;
+							value = targetAt.getValue();
+						}
+						if (value != null) {
+							/*
+							 * check for special cases where value has to be
+							 * translated. This mainly happens with durations
+							 * where XSD specifies xs:duration syntax.
+							 */
+							value = convertDuration(value);
+							// ....................
+							dataMap.put(mappingKey, value);
+							break;
+						}
+					}
 				}
 			}
 		}
-		return assetData;
+		return dataMap;
+	}
+
+	/**
+	 * Convert any string formatted in compliance with W3C xs:Duration syntax to
+	 * <tt>hh:mm:ss</tt> syntax. Inputs that do not match the xs:duration syntax
+	 * will be returned unchanged. After conversion any trailing fields with a
+	 * zero value will be dropped (i.e., hh:mm:00s becomes hh:mm). The first
+	 * field will always indicate hours, even if it contains a zero value (i.e.,
+	 * 00:mm:00s becomes 00:mm).
+	 * 
+	 * @param input
+	 * @return
+	 */
+	private String convertDuration(String input) {
+		Matcher m = p_xsDuration.matcher(input);
+		if (!m.matches()) {
+			return input;
+		}
+		String temp1 = input.replaceFirst("P", "");
+		String[] parts = temp1.split("T");
+		long totalHrs = 0;
+		long totalMin = 0;
+		long totalSec = 0;
+		if (!parts[0].isEmpty()) {
+			/* ignore Y and M, and only allow D fields */
+			if (parts[0].contains("Y") || parts[0].contains("M")) {
+				logger.log(LogMgmt.LEV_WARN, logMsgDefaultTag,
+						"Conversion of duration '" + input + "' will ignore YEAR and MONTH fields", null, logMsgSrcId);
+			}
+			Pattern dp = Pattern.compile("[0-9]+D");
+			Matcher dm = dp.matcher(parts[0]);
+			if (dm.find()) {
+				String dayPart = dm.group();
+				totalHrs = totalHrs + Integer.parseInt(dayPart.replace("D", ""));
+			}
+			// covert accumulated days to hours
+			totalHrs = totalHrs * 24;
+
+		}
+		if (parts.length > 1 && (!parts[1].isEmpty())) {
+			// handle H, M, and S fields
+			Pattern dp = Pattern.compile("[0-9]+H");
+			Matcher dm = dp.matcher(parts[1]);
+			if (dm.find()) {
+				String hourPart = dm.group();
+				totalHrs = totalHrs + Integer.parseInt(hourPart.replace("H", ""));
+			}
+			dp = Pattern.compile("[0-9]+M");
+			dm = dp.matcher(parts[1]);
+			if (dm.find()) {
+				String mmPart = dm.group();
+				totalMin = Integer.parseInt(mmPart.replace("M", ""));
+			}
+			dp = Pattern.compile("[0-9]+S");
+			dm = dp.matcher(parts[1]);
+			if (dm.find()) {
+				String ssPart = dm.group();
+				totalSec = Integer.parseInt(ssPart.replace("S", ""));
+			}
+
+		}
+		String hh = Integer.toString((int) totalHrs);
+		String mm = Integer.toString((int) totalMin);
+		String ss = Integer.toString((int) totalSec);
+		String output = durFieldFmt.format(totalHrs);
+		if ((totalMin + totalSec) > 0) {
+			output = output + ":" + durFieldFmt.format(totalMin);
+			if (totalSec > 0) {
+				output = output + ":" + durFieldFmt.format(totalSec);
+			}
+		}
+		return output;
 	}
 
 	/**
@@ -349,78 +482,75 @@ public class XlsxBuilder {
 	 * @param mappingDefs
 	 * @return
 	 */
-	private Map<String, Map<String, XPathExpression>> initializeMappings(JSONObject mappingDefs) {
-		Map<String, Map<String, XPathExpression>> organizedMappings = new HashMap<String, Map<String, XPathExpression>>();
+	private Map<String, Map<String, List<XPathExpression>>> initializeMappings(JSONObject mappingDefs) {
+		Map<String, Map<String, List<XPathExpression>>> organizedMappings = new HashMap<String, Map<String, List<XPathExpression>>>();
 		List<String> colIdList = new ArrayList<String>();
 		colIdList.addAll(mappingDefs.keySet());
 		// .....................................
 		/* AVAIL-related mappings.... */
-		Map<String, XPathExpression> availMappings = new HashMap<String, XPathExpression>();
-		for (int j = 0; j < colIdList.size(); j++) {
-			String colKey = colIdList.get(j);
-			if (colKey.startsWith("Avail:")) {
-				String mapping = mappingDefs.optString(colKey, "foo");
-				availMappings.put(colKey, createXPath(mapping));
-			}
-		}
+		Map<String, List<XPathExpression>> availMappings = initCategoryMappings(mappingDefs, "Avail");
 		/*
 		 * Special Case: an Avail-related column that doesn't start with
 		 * 'Avail:'
 		 */
 		String colKey = "Disposition:EntryType";
 		String mapping = mappingDefs.optString(colKey, "foo");
-		availMappings.put(colKey, createXPath(mapping));
+		List<XPathExpression> xpeList = new ArrayList<XPathExpression>();
+		xpeList.add(createXPath(mapping));
+		availMappings.put(colKey, xpeList);
 		organizedMappings.put("Avail", availMappings);
 		// ..........................................
-		/*
-		 * Asset and Metadata mappings are more complex in that they **may** be
-		 * dependent on the Asseet's WorkType.
-		 */
-		// ..........................................
-		Map<String, XPathExpression> assetMappings = new HashMap<String, XPathExpression>();
-		for (int j = 0; j < colIdList.size(); j++) {
-			colKey = colIdList.get(j);
-			if (colKey.startsWith("AvailAsset:")) {
-				Object value = mappingDefs.opt(colKey);
-				if (value instanceof String) {
-					mapping = (String) value;
-					assetMappings.put(colKey, createXPath(mapping));
-				} else if (value instanceof JSONObject) {
-					JSONObject mappingSet = (JSONObject) value;
-					Iterator<String> typeIt = mappingSet.keySet().iterator();
-					while (typeIt.hasNext()) {
-						String nextType = typeIt.next();
-						mapping = mappingSet.optString(nextType, "foo");
-						assetMappings.put(colKey + "#" + nextType, createXPath(mapping));
-					}
-				}
-			}
-		}
+		Map<String, List<XPathExpression>> assetMappings = initCategoryMappings(mappingDefs, "AvailAsset");
 		organizedMappings.put("AvailAsset", assetMappings);
 		// .....................................
-		Map<String, XPathExpression> metadataMappings = new HashMap<String, XPathExpression>();
+		Map<String, List<XPathExpression>> metadataMappings = initCategoryMappings(mappingDefs, "AvailMetadata");
+		organizedMappings.put("AvailMetadata", metadataMappings);
+		// .....................................
+		Map<String, List<XPathExpression>> transMappings = initCategoryMappings(mappingDefs, "AvailTrans");
+		organizedMappings.put("AvailTrans", transMappings);
+		return organizedMappings;
+	}
+
+	private Map<String, List<XPathExpression>> initCategoryMappings(JSONObject mappingDefs, String category) {
+		List<String> colIdList = new ArrayList<String>();
+		colIdList.addAll(mappingDefs.keySet());
+		Map<String, List<XPathExpression>> mappingLists = new HashMap<String, List<XPathExpression>>();
 		for (int j = 0; j < colIdList.size(); j++) {
-			colKey = colIdList.get(j);
-			if (colKey.startsWith("AvailMetadata:")) {
+			String colKey = colIdList.get(j);
+			if (colKey.startsWith(category + ":")) {
 				Object value = mappingDefs.opt(colKey);
+				String mapping;
 				if (value instanceof String) {
 					mapping = (String) value;
-					metadataMappings.put(colKey, createXPath(mapping));
+					if (!mapping.equals("foo")) {
+						List<XPathExpression> xpeList = new ArrayList<XPathExpression>();
+						xpeList.add(createXPath(mapping));
+						mappingLists.put(colKey, xpeList);
+					}
 				} else if (value instanceof JSONObject) {
 					JSONObject mappingSet = (JSONObject) value;
 					Iterator<String> typeIt = mappingSet.keySet().iterator();
 					while (typeIt.hasNext()) {
 						String nextType = typeIt.next();
 						mapping = mappingSet.optString(nextType, "foo");
-						metadataMappings.put(colKey + "#" + nextType, createXPath(mapping));
+						if (!mapping.equals("foo")) {
+							List<XPathExpression> xpeList = new ArrayList<XPathExpression>();
+							xpeList.add(createXPath(mapping));
+							mappingLists.put(colKey + "#" + nextType, xpeList);
+						}
 					}
+				} else if (value instanceof JSONArray) {
+					JSONArray mappingSet = (JSONArray) value;
+					List<XPathExpression> xpeList = new ArrayList<XPathExpression>();
+					for (int i = 0; i < mappingSet.size(); i++) {
+						mapping = mappingSet.getString(i);
+						xpeList.add(createXPath(mapping));
+					}
+					mappingLists.put(colKey, xpeList);
 				}
 			}
 		}
-		organizedMappings.put("AvailMetadata", metadataMappings);
-		// .....................................
-		Map<String, XPathExpression> transMappings = new HashMap<String, XPathExpression>();
-		return organizedMappings;
+		return mappingLists;
 	}
 
 	private XPathExpression createXPath(String mapping) {
@@ -432,20 +562,16 @@ public class XlsxBuilder {
 		 */
 		String t1 = mapping.replaceAll("\\{avail\\}", availPrefix);
 		String t2 = t1.replaceAll("\\{md\\}", mdPrefix);
-		// Now format an XPath
 		String xpath = "./" + t2;
-		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, availsNSpace, mdNSpace);
-		return xpExpression;
-	}
-
-	/**
-	 * 
-	 */
-	private void addMovieAvails() {
-		if (movieAvailsList.isEmpty()) {
-			return;
+		// Now compile the XPath
+		XPathExpression xpExpression;
+		if (xpath.matches(".*/@[\\w]++$")) {
+			// must be an attribute value we're after..
+			xpExpression = xpfac.compile(xpath, Filters.attribute(), null, availsNSpace, mdNSpace);
+		} else {
+			xpExpression = xpfac.compile(xpath, Filters.element(), null, availsNSpace, mdNSpace);
 		}
-		XSSFSheet sheet = workbook.createSheet("Movie");
+		return xpExpression;
 	}
 
 	/**
@@ -523,7 +649,7 @@ public class XlsxBuilder {
 	 * @param availNsPrefix
 	 * @throws IllegalArgumentException
 	 */
-	public void setXmlVersion(String availSchemaVer) throws IllegalArgumentException {
+	private void setXmlVersion(String availSchemaVer) throws IllegalArgumentException {
 		switch (availSchemaVer) {
 		case "2.2.1":
 			MD_VER = "2.5";
