@@ -202,6 +202,7 @@ public class AvailValidator extends AbstractValidator {
 
 	/**
 	 * @param validateC
+	 * @param loggingMgr
 	 */
 	public AvailValidator(boolean validateC, LogMgmt loggingMgr) {
 		super(loggingMgr);
@@ -212,7 +213,28 @@ public class AvailValidator extends AbstractValidator {
 		logMsgDefaultTag = LogMgmt.TAG_AVAIL;
 	}
 
-	public boolean process(File xmlFile, Element docRootEl, Map<Object, Pedigree> pedigreeMap)
+	/**
+	 * Validate a single Avails document. The Avails data is structured as an
+	 * XML document regardless of the original source file's format. This means
+	 * that when an Avails has been provided as an Excel file, it will have
+	 * already been converted to an XML document. Invoking the
+	 * <tt>process()</tt> method will validate that XML regardless of its
+	 * original source format. The <tt>pedigreeMap</tt> will link a specific
+	 * element in the XML being processed back to its original source (i.e.,
+	 * either a row and cell in an Excel spreadsheet or a line in an XML file).
+	 * 
+	 * @param docRootEl
+	 *            root of the Avail
+	 * @param pedigreeMap
+	 *            links XML Elements to their original source (used for logging
+	 *            only)
+	 * @param srcFile
+	 *            is source from which XML was obtained (used for logging only)
+	 * @return
+	 * @throws IOException
+	 * @throws JDOMException
+	 */
+	public boolean process(Element docRootEl, Map<Object, Pedigree> pedigreeMap, File xmlFile)
 			throws IOException, JDOMException {
 		curRootEl = null;
 		curFile = xmlFile;
@@ -598,7 +620,7 @@ public class AvailValidator extends AbstractValidator {
 			String t2 = t1.replaceAll("\\{md\\}", mdPrefix);
 			// Now format an XPath
 			String xpath = "./" + t2;
-			System.out.println("AvailValidator:validateAssetStructure:: "+xpath );
+			System.out.println("AvailValidator:validateAssetStructure:: " + xpath);
 			XPathExpression<Element> xpExp = xpfac.compile(xpath, Filters.element(), null, availsNSpace, mdNSpace);
 			List<Element> assetElList = xpExp.evaluate(assetEl);
 			// check cardinality
@@ -625,7 +647,7 @@ public class AvailValidator extends AbstractValidator {
 					curFileIsValid = false;
 				}
 			}
-		} 
+		}
 
 	}
 	// ######################################################################
