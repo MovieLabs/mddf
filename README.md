@@ -24,11 +24,13 @@ The software in this repository is intended to replace that contained in the fol
 
 ## Versions
 
-The latest releases are:
+The latest STABLE releases are:
 
 * mddf-lib: v1.0.4
 * Manifest Validator: v1.2.1
 * Avails Validator: v1.0
+
+The current DEVLOPMENT release is mddf-lib v1.1. Refer to ChangeLog.md for a list of specific enhancements and bug fixes.
 
 ## Software Organization & Roadmap:
 
@@ -45,6 +47,7 @@ The mddf-tools software currently implements two applications:
    - **Avails Validator Tool**: may be used to
       - validate an Avails file specified as either XML or XLSX
       - translate an XLSX-formatted Avails to the equivalent XML
+      - translate an XML-formatted Avails to the equivalent XLSX
    
    - **Manifest Validator**: validates that a CMM, MMC, or MEC file conforms with:
      - the CMM schema
