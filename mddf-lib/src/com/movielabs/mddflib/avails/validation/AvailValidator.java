@@ -37,6 +37,7 @@ import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 
+import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
@@ -186,7 +187,7 @@ public class AvailValidator extends AbstractValidator {
 			 * Load JSON that defines various constraints on structure of an
 			 * Avails
 			 */
-			String availRsrcPath = "/com/movielabs/mddf/resources/avail_structure.json";
+			String availRsrcPath = MddfContext.RSRC_PATH + "avail_structure.json";
 			JSONObject availStruct = loadJSON(availRsrcPath);
 			availTypeStruct = availStruct.getJSONObject("AvailType");
 			genericAvailTypes = availTypeStruct.getJSONArray("common");
