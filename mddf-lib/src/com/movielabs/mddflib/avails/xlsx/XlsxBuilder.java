@@ -49,6 +49,7 @@ import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
+import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -666,8 +667,8 @@ public class XlsxBuilder {
 		AVAIL_VER = availSchemaVer;
 		Namespace.getNamespace("md", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
 		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
-		availsNSpace = Namespace.getNamespace("avails",
-				"http://www.movielabs.com/schema/avails/v" + AVAIL_VER + "/avails");
+		availsNSpace =Namespace.getNamespace("avails",
+				MddfContext.NSPACE_AVAILS_PREFIX + AVAIL_VER + MddfContext.NSPACE_AVAILS_SUFFIX);
 	}
 
 	/**
