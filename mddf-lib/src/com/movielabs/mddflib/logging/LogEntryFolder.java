@@ -28,6 +28,12 @@ import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.jdom2.Document;
+import org.jdom2.Element;
+
+import com.movielabs.mddf.MddfContext.FILE_FMT;
+import com.movielabs.mddf.MddfContext.MDDF_TYPE;
+
 /**
  * @author L. Levin, Critical Architectures LLC
  *
@@ -36,7 +42,9 @@ public class LogEntryFolder extends LogEntry {
 
 	private ArrayList<LogEntryNode> msgList;
 	private int level;
-
+	private MDDF_TYPE mddfType;
+	private FILE_FMT mddfFormat;
+	private Document xmlDoc = null;
 	/**
 	 * @param label
 	 * @param severityLevel
@@ -46,10 +54,6 @@ public class LogEntryFolder extends LogEntry {
 		this.setTag(label);
 		this.level = severityLevel;
 		msgList = new ArrayList<LogEntryNode>();
-	}
-
-	public void setFile(File myFile) {
-		this.myFile = myFile;
 	}
 
 	/**
@@ -85,6 +89,10 @@ public class LogEntryFolder extends LogEntry {
 		msgList.add(entryNode);
 	}
 
+	public void setFile(File myFile) {
+		this.myFile = myFile;
+	}
+
 	public File getFile() {
 		if (myFile != null) {
 			return myFile;
@@ -93,6 +101,39 @@ public class LogEntryFolder extends LogEntry {
 			LogEntryFolder fileEntry = (LogEntryFolder) getPath()[1];
 			return fileEntry.myFile;
 		}
+	}
+
+	/**
+	 * @param type
+	 */
+	public void setMddfType(MDDF_TYPE type) {
+		mddfType = type;
+	}
+
+	public MDDF_TYPE getMddfType() {
+		return mddfType;
+	}
+
+	/**
+	 * @param format
+	 */
+	public void setMddfFormat(FILE_FMT format) {
+		mddfFormat = format; 
+	}
+
+	public FILE_FMT getMddfFormat() {
+		return mddfFormat;
+	}
+
+	/**
+	 * @param doc
+	 */
+	public void setXml(Document doc) {
+		xmlDoc = doc;
+	}
+
+	public Document getXml() {
+		return xmlDoc;
 	}
 
 	public DefaultMutableTreeNode getChild(String id) {
