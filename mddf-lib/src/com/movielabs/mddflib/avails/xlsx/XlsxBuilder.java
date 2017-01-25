@@ -240,7 +240,7 @@ public class XlsxBuilder {
 	private void addMovieAvails() {
 		if (movieAvailsList.isEmpty()) {
 			return;
-		} 
+		}
 		addAvails("Movie", movieAvailsList);
 	}
 
@@ -636,7 +636,8 @@ public class XlsxBuilder {
 			cell1.setCellStyle(headerStyle);
 			cell2.setCellStyle(headerStyle);
 		}
-
+		// need to add an empty row cause spec sez Avails start on Row 4 :(
+		Row row3 = sheet.createRow(2);
 	}
 
 	/**
@@ -667,7 +668,7 @@ public class XlsxBuilder {
 		AVAIL_VER = availSchemaVer;
 		Namespace.getNamespace("md", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
 		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
-		availsNSpace =Namespace.getNamespace("avails",
+		availsNSpace = Namespace.getNamespace("avails",
 				MddfContext.NSPACE_AVAILS_PREFIX + AVAIL_VER + MddfContext.NSPACE_AVAILS_SUFFIX);
 	}
 
