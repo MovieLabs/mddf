@@ -237,8 +237,10 @@ public class XmlBuilder {
 		 * do we handle?
 		 */
 		String alid = alidPedigree.getRawValue();
+		logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_DEBUG, null, "Looking for Avail with ALID=["+alid+"]", null, null, moduleId);
 		Element availEL = availElRegistry.get(alid);
 		if (availEL == null) {
+			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_DEBUG, null, "Building Avail with ALID=["+alid+"]", null, null, moduleId);
 			availEL = new Element("Avail", getAvailsNSpace());
 			/*
 			 * No data value for the Avail element itself but for purposes of
