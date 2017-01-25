@@ -40,6 +40,7 @@ import org.jdom2.xpath.XPathExpression;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.xml.RatingSystem;
+import com.movielabs.mddflib.util.xml.XsdValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
@@ -55,14 +56,6 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  *
  */
 public abstract class AbstractValidator extends XmlIngester {
-
-	/**
-	 * @param loggingMgr
-	 */
-	public AbstractValidator(LogMgmt loggingMgr) {
-		super(loggingMgr);
-		// TODO Auto-generated constructor stub
-	}
 
 	/**
 	 * Used to facilitate keeping track of cross-references and identifying
@@ -145,11 +138,22 @@ public abstract class AbstractValidator extends XmlIngester {
 	protected Map<String, Map<String, XrefCounter>> idXRefCounts;
 	protected Map<String, Map<String, Element>> id2XmlMappings;
 
+
+	protected XsdValidation vHelper;
+
+	/**
+	 * @param loggingMgr
+	 */
+	public AbstractValidator(LogMgmt loggingMgr) {
+		super(loggingMgr);
+		vHelper = new XsdValidation(loggingMgr);
+	}
+	
 	/**
 	 * @param validateC
 	 */
 	public AbstractValidator(boolean validateC, LogMgmt loggingMgr) {
-		super(loggingMgr);
+		this(loggingMgr);
 		this.validateC = validateC;
 		logMsgSrcId = LOGMSG_ID;
 	}
@@ -468,6 +472,22 @@ public abstract class AbstractValidator extends XmlIngester {
 			}
 		}
 
+	}
+	
+
+	/**
+	 * returns true if string defines a non-negative integer value
+	 * 
+	 * @param indexValue
+	 * @return
+	 */
+	public boolean isValidIndex(String indexValue) {
+		try {
+			int iv = Integer.parseInt(indexValue);
+			return (iv >= 0);
+		} catch (NumberFormatException e) {
+			return false;
+		}
 	}
 
 	/**
