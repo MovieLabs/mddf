@@ -127,7 +127,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected JComboBox<String> profileCB;
 	protected File fileInputDir = null;
 	protected File fileOutDir = new File("./temp"); // null;
-	protected ValidationController preProcessor;
+	protected ValidationController controller;
 	protected JMenuBar menuBar;
 	protected HeaderPanel headerPanel;
 	protected JPanel optionsPanel;
@@ -630,7 +630,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			consoleLogger = new AdvLogPanel();
 			LogNavPanel logNav = ((AdvLogPanel) consoleLogger).getLogNavPanel();
 			// listen for user selections..
-			logNav.addListener(this);
+			logNav.addListener(this); 
 			/*
 			 * configure based on last saved user-specific settings..
 			 */
@@ -764,8 +764,8 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	 */
 	protected void setAvailableUseCase(String selectedProfile) {
 		getUseCaseDialog();
-		preProcessor = getPreProcessor();
-		String[] useCases = preProcessor.getSupportedUseCases(selectedProfile);
+		controller = getController();
+		String[] useCases = controller.getSupportedUseCases(selectedProfile);
 		useCaseDialog.setAvailableUseCases(useCases);
 	}
 
@@ -844,9 +844,9 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 		frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		// Converter.outputJson = false;
-		preProcessor = getPreProcessor();
+		controller = getController();
 		try {
-			preProcessor.runScript(scriptPath);
+			controller.runScript(scriptPath);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -869,10 +869,10 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		String srcPath = fileInputDir.getAbsolutePath();
 		updateUsageHistory(srcPath);
 		fileOutDir.getAbsolutePath();
-		preProcessor = getPreProcessor();
-		preProcessor.setValidation(true, validateConstraintsCBox.isSelected(), validateBestPracCBox.isSelected());
+		controller = getController();
+		controller.setValidation(true, validateConstraintsCBox.isSelected(), validateBestPracCBox.isSelected());
 		try {
-			preProcessor.validate(srcPath, uxProfile, useCases);
+			controller.validate(srcPath, uxProfile, useCases);
 			refreshEditor(srcPath);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -926,11 +926,11 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	/**
 	 * @return
 	 */
-	protected ValidationController getPreProcessor() {
-		if (preProcessor == null) {
-			preProcessor = new ValidationController(context, consoleLogger);
+	public ValidationController getController() {
+		if (controller == null) {
+			controller = new ValidationController(context, consoleLogger);
 		}
-		return preProcessor;
+		return controller;
 	}
 
 	/**

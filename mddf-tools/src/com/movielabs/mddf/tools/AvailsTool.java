@@ -95,12 +95,12 @@ public class AvailsTool extends ValidatorTool {
 		String srcPath = fileInputDir.getAbsolutePath();
 		updateUsageHistory(srcPath);
 		fileOutDir.getAbsolutePath();
-		preProcessor = getPreProcessor();
-		preProcessor.setValidation(true, true, false);
+		controller = getController();
+		controller.setValidation(true, true, false);
 		inputSrcTFieldLocked = true;
 		consoleLogger.collapse();
 		try {
-			preProcessor.validate(srcPath, null, null);
+			controller.validate(srcPath, null, null);
 			refreshEditor(srcPath);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
