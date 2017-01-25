@@ -30,6 +30,7 @@ import org.jdom2.JDOMException;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.AbstractValidator;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
+import com.movielabs.mddflib.util.xml.XsdValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 public class MecValidator extends AbstractValidator {
@@ -107,9 +108,9 @@ public class MecValidator extends AbstractValidator {
 	 * @param xmlFile
 	 */
 	protected boolean validateXml(File srcFile, Element docRootEl) {
-		String xsdFile = XmlIngester.defaultRsrcLoc + "mdmec-v" + XmlIngester.MDMEC_VER + ".xsd";
+		String xsdFile = XsdValidation.defaultRsrcLoc + "mdmec-v" + XmlIngester.MDMEC_VER + ".xsd";
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		curFileIsValid = validateXml(srcFile, docRootEl, xsdFile, logMsgSrcId);
+		curFileIsValid = vHelper.validateXml(srcFile, docRootEl, xsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
 

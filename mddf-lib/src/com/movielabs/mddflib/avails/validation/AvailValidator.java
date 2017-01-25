@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -42,8 +40,8 @@ import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.AbstractValidator;
-import com.movielabs.mddflib.util.xml.RatingSystem;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
+import com.movielabs.mddflib.util.xml.XsdValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
@@ -272,9 +270,9 @@ public class AvailValidator extends AbstractValidator {
 	 * @param xmlFile
 	 */
 	protected boolean validateXml(File srcFile, Element docRootEl) {
-		String xsdFile = XmlIngester.defaultRsrcLoc + "avails-v" + XmlIngester.AVAIL_VER + ".xsd";
+		String xsdFile = XsdValidation.defaultRsrcLoc + "avails-v" + XmlIngester.AVAIL_VER + ".xsd";
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		curFileIsValid = validateXml(srcFile, docRootEl, xsdFile, logMsgSrcId);
+		curFileIsValid = vHelper.validateXml(srcFile, docRootEl, xsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
 

@@ -173,7 +173,7 @@ public class ManifestValidator extends AbstractValidator {
 	 */
 	protected boolean validateXml(File srcFile, Element docRootEl) {
 		String manifestXsdFile = "./resources/manifest-v" + XmlIngester.MAN_VER + ".xsd";
-		curFileIsValid = validateXml(srcFile, docRootEl, manifestXsdFile, logMsgSrcId);
+		curFileIsValid = vHelper.validateXml(srcFile, docRootEl, manifestXsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
 
