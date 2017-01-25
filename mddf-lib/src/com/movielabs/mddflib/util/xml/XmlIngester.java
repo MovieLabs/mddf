@@ -61,6 +61,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import net.sf.json.JSON;
@@ -72,26 +73,26 @@ import net.sf.json.JSONSerializer;
  *
  */
 public abstract class XmlIngester {
-	public static final String SCHEMA_PREFIX = "http://www.movielabs.com/schema/";
-	public static final String NSPACE_MANIFEST_PREFIX = "http://www.movielabs.com/schema/manifest/v";
-	public static final String NSPACE_MANIFEST_SUFFIX = "/manifest";
 	public static String MD_VER = "2.3";
 	public static String MDMEC_VER = "2.3";
 	public static String MAN_VER = "1.4";
 	public static String AVAIL_VER = "1.7";
 	public static Namespace xsiNSpace = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+
 	public static Namespace mdNSpace = Namespace.getNamespace("md",
-			"http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
+			MddfContext.NSPACE_CMD_PREFIX + MD_VER + MddfContext.NSPACE_CMD_SUFFIX);
+
 	public static Namespace mdmecNSpace = Namespace.getNamespace("mdmec",
-			"http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER);
+			MddfContext.NSPACE_MDMEC_PREFIX + MDMEC_VER + MddfContext.NSPACE_MDMEC_SUFFIX);
+
 	public static Namespace manifestNSpace = Namespace.getNamespace("manifest",
-			NSPACE_MANIFEST_PREFIX + MAN_VER + NSPACE_MANIFEST_SUFFIX);
+			MddfContext.NSPACE_MANIFEST_PREFIX + MAN_VER + MddfContext.NSPACE_MANIFEST_SUFFIX);
 	public static Namespace availsNSpace = Namespace.getNamespace("avails",
-			"http://www.movielabs.com/schema/avails/v" + AVAIL_VER + "/avails");
+			MddfContext.NSPACE_AVAILS_PREFIX + AVAIL_VER + MddfContext.NSPACE_AVAILS_SUFFIX);
 
 	protected static XPathFactory xpfac = XPathFactory.instance();
 
-	protected static String vocabRsrcPath = "/com/movielabs/mddf/resources/cm_vocab.json";
+	protected static String vocabRsrcPath = MddfContext.RSRC_PATH + "cm_vocab.json";
 	protected static File srcFile;
 	protected static File sourceFolder;
 	private static JSONObject vocabResource = null;
@@ -493,20 +494,20 @@ public abstract class XmlIngester {
 	 * @throws IOException
 	 *             it the specified file can not be found or read.
 	 */
-	public static Element getAsXml(File inputFile) throws SAXParseException, IOException {
+	public static Document getAsXml(File inputFile) throws SAXParseException, IOException {
 		InputStreamReader isr;
 		isr = new InputStreamReader(new FileInputStream(inputFile), "UTF-8");
 		SAXBuilder builder = new SAXBuilder();
 		builder.setJDOMFactory(new LocatedJDOMFactory());
-		Document validatedDoc;
+		Document xmlDoc;
 		try {
-			validatedDoc = builder.build(isr);
+			xmlDoc = builder.build(isr);
 		} catch (JDOMException e) {
 			SAXParseException cause = (SAXParseException) e.getCause();
 			throw cause;
 		}
-		Element rootEl = validatedDoc.getRootElement();
-		return rootEl;
+//		Element rootEl = validatedDoc.getRootElement();
+		return xmlDoc;
 	}
 
 	public static JSONObject getAsJson(File inputFile) throws IOException {
@@ -568,12 +569,11 @@ public abstract class XmlIngester {
 		} else {
 			return null;
 		}
-		String schemaPrefix = XmlIngester.SCHEMA_PREFIX + schemaType + "/v";
+		String schemaPrefix = MddfContext.SCHEMA_PREFIX + schemaType + "/v";
 		String schemaVer = nSpaceUri.replace(schemaPrefix, "");
 		schemaVer = schemaVer.replace("/" + schemaType, "");
 		return schemaVer;
 	}
-
 	/**
 	 * Configure all XML-related functions to work with the specified version of
 	 * the Manifest XSD. This includes setting the correct version of the Common
@@ -604,7 +604,8 @@ public abstract class XmlIngester {
 		/* Since MDMEC isn't used for Manifest, set to NULL */
 		MDMEC_VER = null;
 		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
-		manifestNSpace = Namespace.getNamespace("manifest", NSPACE_MANIFEST_PREFIX + MAN_VER + NSPACE_MANIFEST_SUFFIX);
+		manifestNSpace = Namespace.getNamespace("manifest",
+				MddfContext.NSPACE_MANIFEST_PREFIX + MAN_VER + MddfContext.NSPACE_MANIFEST_SUFFIX);
 	}
 
 	/**
@@ -625,7 +626,7 @@ public abstract class XmlIngester {
 		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
 	}
 
-	/** 
+	/**
 	 * Configure all XML-related functions to work with the specified version of
 	 * the Avails XSD. This includes setting the correct version of the Common
 	 * Metadata and MDMEC XSD that are used with the specified Avails version.
