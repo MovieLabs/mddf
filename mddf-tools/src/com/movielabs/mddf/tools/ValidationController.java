@@ -36,12 +36,15 @@ import org.apache.commons.cli.ParseException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
 import org.xml.sax.SAXParseException;
 
+import com.movielabs.mddf.MddfContext;
+import com.movielabs.mddf.MddfContext.FILE_FMT;
+import com.movielabs.mddf.MddfContext.MDDF_TYPE;
 import com.movielabs.mddf.tools.ValidatorTool.Context;
 import com.movielabs.mddf.tools.resources.Foo;
+import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
+import com.movielabs.mddf.tools.util.logging.LogNavPanel;
 import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.avails.xlsx.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
@@ -87,8 +90,7 @@ public class ValidationController {
 	private boolean validateBP = false;
 	private Context context;
 	private LogMgmt logMgr;
-
-	private boolean saveAsXml = true;
+	private LogNavPanel logNav = null;
 
 	/**
 	 * [Implementation DEFERED a/o 2016-04-11] Run preprocesssing functions via
@@ -268,6 +270,16 @@ public class ValidationController {
 	public ValidationController(Context context, LogMgmt logMgr) {
 		this.context = context;
 		this.logMgr = logMgr;
+		/*
+		 * Determine if we are running in an interactive mode via a GUI. If so,
+		 * there is a need at various stages to provide the logging UI with
+		 * additional status updates.
+		 */
+		if (logMgr instanceof AdvLogPanel) {
+			logNav = ((AdvLogPanel) logMgr).getLogNavPanel();
+		} else {
+			logNav = null;
+		}
 		logMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_ACTION, "Initializing Validator", null, MODULE_ID);
 	}
 
@@ -428,10 +440,10 @@ public class ValidationController {
 			try {
 				validateFile(srcFile, uxProfile, useCases);
 			} catch (Exception e) {
+				e.printStackTrace();
 				String msg = e.getMessage();
 				if (msg == null) {
 					msg = "Unspecified Exception while validating";
-					e.printStackTrace();
 				}
 				String loc = e.getStackTrace()[0].toString();
 				String details = "Exception while validating; " + loc;
@@ -449,8 +461,9 @@ public class ValidationController {
 		}
 		logMgr.setCurrentFile(srcFile);
 		Map<Object, Pedigree> pedigreeMap = null;
-		Element docRootEl = null;
+		Document xmlDoc = null; 
 		if (fileType.equals("xlsx")) {
+			/* The XLSX format is only supported with AVAILS files */
 			Map<String, Object> results = convertSpreadsheet(srcFile);
 			if (results == null) {
 				String msg = "Unable to convert Excel to XML";
@@ -459,18 +472,21 @@ public class ValidationController {
 			} else {
 				srcFile = (File) results.get("xlsx");
 				pedigreeMap = (Map<Object, Pedigree>) results.get("pedigree");
-				Document xmlDoc = (Document) results.get("xml");
-				docRootEl = xmlDoc.getRootElement();
+				xmlDoc = (Document) results.get("xml");
 			}
 		} else if (fileType.equals("xml")) {
 			try {
-				docRootEl = XmlIngester.getAsXml(srcFile);
+				xmlDoc = XmlIngester.getAsXml(srcFile);
 			} catch (SAXParseException e) {
 				int ln = e.getLineNumber();
 				String errMsg = "Invalid XML on or before line " + e.getLineNumber();
 				String supplemental = e.getMessage();
 				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, srcFile, ln, MODULE_ID, supplemental, null);
 				return;
+			}
+			if (logNav != null) {
+				FILE_FMT fileFmt = MddfContext.identifyMddfFormat(xmlDoc.getRootElement());
+				logNav.setMddfFormat(srcFile, fileFmt);
 			}
 		} else {
 			/*
@@ -487,33 +503,42 @@ public class ValidationController {
 		/*
 		 * Identify type of XML file (i.e., Manifest, Avail, etc)
 		 */
+		Element docRootEl = xmlDoc.getRootElement();
 		String nSpaceUri = docRootEl.getNamespaceURI();
 		String schemaType = null;
+		MDDF_TYPE mddfType = null;
 		int logTag = -1;
 		if (nSpaceUri.contains("manifest")) {
 			schemaType = "manifest";
 			logTag = LogMgmt.TAG_MANIFEST;
+			mddfType = MDDF_TYPE.MANIFEST;
 		} else if (nSpaceUri.contains("avails")) {
 			schemaType = "avails";
 			logTag = LogMgmt.TAG_AVAIL;
+			mddfType = MDDF_TYPE.AVAILS;
 		} else if (nSpaceUri.contains("mdmec")) {
 			schemaType = "mdmec";
 			logTag = LogMgmt.TAG_MEC;
+			mddfType = MDDF_TYPE.MEC;
 		} else {
 			String errMsg = "Validation terminated: Unable to identify file type.";
 			String supplemental = "Root has unrecognized namespace " + nSpaceUri;
 			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, srcFile, -1, MODULE_ID, supplemental, null);
 			return;
 		}
+		if (logNav != null) {
+			logNav.setFileMddfType(srcFile, mddfType);
+			logNav.setXml(srcFile, xmlDoc);
+		}
 		logMgr.log(LogMgmt.LEV_INFO, logTag, "Validating file as a " + schemaType, srcFile, MODULE_ID);
-		switch (logTag) {
-		case LogMgmt.TAG_MANIFEST:
+		switch (mddfType) {
+		case MANIFEST:
 			validateManifest(docRootEl, srcFile, uxProfile, useCases);
 			break;
-		case LogMgmt.TAG_AVAIL:
-			validateAvail(docRootEl, pedigreeMap, srcFile);
+		case AVAILS:
+			boolean isValid = validateAvail(docRootEl, pedigreeMap, srcFile);
 			break;
-		case LogMgmt.TAG_MEC:
+		case MEC:
 			validateMEC(docRootEl, srcFile);
 			break;
 		}
@@ -532,12 +557,20 @@ public class ValidationController {
 
 	private String changeFileType(String inFileName, String fType) {
 		int ptr = inFileName.lastIndexOf(".xlsx");
-		String changed =inFileName.substring(0, ptr)+"."+fType;
+		String changed = inFileName.substring(0, ptr) + "." + fType;
 		return changed;
 	}
 
 	/**
 	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file.
+	 * The result <tt>Map</tt> that is returned will contain:
+	 * <ul>
+	 * <li>
+	 * <tt>xlsx<tt>: the xlsx File that was passed as the input argument</li>
+	 * <li><tt>xml<tt>: the JDOM2 Document that was created from the xlsx</li>
+	 * <li><tt>pedigree<tt>: the <tt>Pedigree</tt> map that was created by the
+	 * <tt>XmlBuilder</tt> during the conversion process.</li>
+	 * </ul>
 	 * 
 	 * @param xslxFile
 	 * @return
@@ -567,32 +600,28 @@ public class ValidationController {
 		Version templateVersion = as.getVersion();
 		switch (templateVersion) {
 		case V1_7:
+			if (logNav != null) {
+				logNav.setMddfFormat(xslxFile, FILE_FMT.AVAILS_1_7);
+			}
+			break;
 		case V1_6:
-			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + templateVersion + " format",
-					xslxFile, MODULE_ID);
+			if (logNav != null) {
+				logNav.setMddfFormat(xslxFile, FILE_FMT.AVAILS_1_6);
+			}
 			break;
 		default:
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", xslxFile, MODULE_ID);
 			return null;
 		}
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + templateVersion + " format", xslxFile,
+				MODULE_ID);
 		String inFileName = xslxFile.getName();
 		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
 		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp);
-		String outFileName = changeFileType(inFileName, "xml");
-		String outFilePDir = xslxFile.getParent();
-		File xmlFile = new File(outFilePDir, outFileName);
 		XmlBuilder xBuilder = new XmlBuilder(logMgr, templateVersion);
 		xBuilder.setVersion("2.2");
 		try {
 			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(as, shortDesc);
-			if (saveAsXml) {
-				// Save as XML
-				Format myFormat = Format.getPrettyFormat();
-				XMLOutputter outputter = new XMLOutputter(myFormat);
-				OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(xmlFile), "UTF-8");
-				outputter.output(xmlJDomDoc, osw);
-				osw.close();
-			}
 			Map<Object, Pedigree> pedigreeMap = xBuilder.getPedigreeMap();
 			Map<String, Object> results = new HashMap<String, Object>();
 			results.put("xlsx", xslxFile);
@@ -623,25 +652,21 @@ public class ValidationController {
 	 * @throws IOException
 	 * @throws JDOMException
 	 */
-	protected void validateAvail(Element docRootEl, Map<Object, Pedigree> pedigreeMap, File srcFile)
+	protected boolean validateAvail(Element docRootEl, Map<Object, Pedigree> pedigreeMap, File srcFile)
 			throws IOException, JDOMException {
 		boolean isValid = true;
 		AvailValidator tool1 = new AvailValidator(validateC, logMgr);
-		isValid = tool1.process(srcFile, docRootEl, pedigreeMap);
+		isValid = tool1.process(docRootEl, pedigreeMap, srcFile);
 		if (!isValid) {
 			String msg = "Validation FAILED; Terminating processing of file";
 			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, srcFile, -1, MODULE_ID, null, null);
 
-			return;
+			return isValid;
 		}
-		if (!validateC) {
-			return;
-		}
-		// TODO: Work-in-progress!!!!
-
 		// ----------------------------------------------------------------
 		String msg = "AVAIL Validation completed";
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, srcFile, -1, MODULE_ID, null, null);
+		return isValid;
 	}
 
 	protected void validateMEC(Element docRootEl, File srcFile) throws IOException, JDOMException {
@@ -676,7 +701,7 @@ public class ValidationController {
 
 		String schemaVer = ManifestValidator.identifyXsdVersion(docRootEl);
 		ManifestValidator.setManifestVersion(schemaVer);
-		
+
 		List<String> profileNameList = identifyProfiles(docRootEl, srcFile, uxProfile);
 		if (profileNameList.isEmpty()) {
 			ManifestValidator tool1 = new ManifestValidator(validateC, logMgr);

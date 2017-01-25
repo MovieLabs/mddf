@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,11 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.jdom2.Document;
+import com.movielabs.mddf.MddfContext.FILE_FMT;
+import com.movielabs.mddf.MddfContext.MDDF_TYPE;
+import com.movielabs.mddf.tools.TranslatorDialog;
+import com.movielabs.mddf.tools.ValidationController;
 import com.movielabs.mddf.tools.ValidatorTool;
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
@@ -59,8 +65,16 @@ import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
+import com.movielabs.mddflib.util.Translator;
 
 /**
+ * A <tt>JPanel</tt> that displays a <tt>JTree</tt> containing all log entries
+ * hierarchically grouped first by the file, then by severity, and finally by
+ * the category of problem (i.e., best practices, XML, CM, etc.). A
+ * context-sensitive pop-up menu that is displayed when user right-clicks on a
+ * tree node provides a mechanism for performing various operations on a file
+ * (e.g., re-validation, editing, translation).
+ * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
@@ -76,21 +90,34 @@ public class LogNavPanel extends JPanel {
 	public class TreePopupMenu extends JPopupMenu {
 
 		private File target;
-		private TreePath selectionPath;
 		private boolean isXml;
 		private LogEntryFolder node;
 
 		public TreePopupMenu(TreePath selPath) {
-			this.selectionPath = selPath;
+			/*
+			 * Step 1: get the context (i.e., what was selected and what is is
+			 * the state & status of whatever is associated with the selected
+			 * node).
+			 */
 			int depth = selPath.getPathCount();
 			node = (LogEntryFolder) selPath.getLastPathComponent();
 			LogEntryFolder fileFolder = (LogEntryFolder) selPath.getPathComponent(1);
 			this.target = fileFolder.getFile();
+			if (target == null) {
+				return;
+			}
 			isXml = target.getAbsolutePath().endsWith(".xml");
-
+			int maxErrLevelFound = fileFolder.getHighestLevel();
+			boolean fileSelected = (node == fileFolder);
+			MDDF_TYPE mddfType = fileFolder.getMddfType();
+			/*
+			 * Step 2: Now we can construct the pop-up and enable/disable
+			 * specific menu items based on the context.
+			 * 
+			 */
 			JMenuItem runMItem = new JMenuItem("Re-Validate");
 			runMItem.setToolTipText("Re-run validation checks on selection");
-			runMItem.setEnabled(node == fileFolder);
+			runMItem.setEnabled(fileSelected);
 			add(runMItem);
 			runMItem.addActionListener(new ActionListener() {
 
@@ -123,10 +150,36 @@ public class LogNavPanel extends JPanel {
 				}
 			});
 
-			// add(new JSeparator());
+			add(new JSeparator());
+			if (mddfType == MDDF_TYPE.AVAILS) {
+				JMenuItem xlateLogMItem = new JMenuItem("Translate");
+				add(xlateLogMItem);
+				xlateLogMItem.setEnabled(maxErrLevelFound < LogMgmt.LEV_ERR);
+				xlateLogMItem.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						TranslatorDialog xlateDialog = TranslatorDialog.getDialog();
+						Document doc = fileFolder.getXml();
+						FILE_FMT curFmt = fileFolder.getMddfFormat();
+						File srcFile = fileFolder.getFile();
+						xlateDialog.setContext(curFmt, srcFile);
+						xlateDialog.setVisible(true);
+						EnumSet<FILE_FMT> selections = xlateDialog.getSelections();
+						if (!selections.isEmpty()) {
+							ValidatorTool curTool = ValidatorTool.getTool();
+							ValidationController controller = curTool.getController();
+							Translator.translateAvails(doc, selections, xlateDialog.getOutputDir(),
+									xlateDialog.getOutputFilePrefix(), parentLogger);
+						}
+					}
+				});
+				add(new JSeparator());
+			}
 
 			JMenuItem deleteLogMItem = new JMenuItem("Delete from Log");
 			add(deleteLogMItem);
+			deleteLogMItem.setEnabled(false); // not yet implemented
 			deleteLogMItem.addActionListener(new ActionListener() {
 
 				@Override
@@ -304,9 +357,9 @@ public class LogNavPanel extends JPanel {
 			 */
 			int suffix = 1;
 			String label = "";
-			if(targetFile != null){
+			if (targetFile != null) {
 				label = targetFile.getName();
-			}else {
+			} else {
 				label = "Validator";
 			}
 			String qualifiedName = label;
@@ -377,6 +430,34 @@ public class LogNavPanel extends JPanel {
 	}
 
 	/**
+	 * Set the MDDF file type for the indicated file.
+	 * 
+	 * @param targetFile
+	 * @param logTag
+	 */
+	public void setFileMddfType(File targetFile, MDDF_TYPE type) {
+		LogEntryFolder fileFolder = getFileFolder(targetFile);
+		if (fileFolder != null) {
+			fileFolder.setMddfType(type);
+		}
+
+	}
+
+	public void setMddfFormat(File targetFile, FILE_FMT format) {
+		LogEntryFolder fileFolder = getFileFolder(targetFile);
+		if (fileFolder != null) {
+			fileFolder.setMddfFormat(format);
+		}
+	}
+
+	public void setXml(File targetFile, Document docRootEl) {
+		LogEntryFolder fileFolder = getFileFolder(targetFile);
+		if (fileFolder != null) {
+			fileFolder.setXml(docRootEl);
+		}
+	}
+
+	/**
 	 * 
 	 */
 	public void clearLog() {
@@ -433,8 +514,8 @@ public class LogNavPanel extends JPanel {
 			byLevel.add(tagNode);
 		}
 		/* now create a new LogEntryNode and add it to folder. */
-		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, byTargetFile, line, moduleID, masterSeqNum++, tooltip,
-				srcRef);
+		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, byTargetFile, line, moduleID, masterSeqNum++,
+				tooltip, srcRef);
 		tagNode.addMsg(entryNode);
 		treeModel.nodeChanged(tagNode);
 		return entryNode;
@@ -493,4 +574,5 @@ public class LogNavPanel extends JPanel {
 		}
 
 	}
+
 }
