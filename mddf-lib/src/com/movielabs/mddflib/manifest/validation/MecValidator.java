@@ -110,7 +110,7 @@ public class MecValidator extends AbstractValidator {
 	protected boolean validateXml(File srcFile, Element docRootEl) {
 		String xsdFile = XsdValidation.defaultRsrcLoc + "mdmec-v" + XmlIngester.MDMEC_VER + ".xsd";
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		curFileIsValid = vHelper.validateXml(srcFile, docRootEl, xsdFile, logMsgSrcId);
+		curFileIsValid = xsdHelper.validateXml(srcFile, docRootEl, xsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
 
