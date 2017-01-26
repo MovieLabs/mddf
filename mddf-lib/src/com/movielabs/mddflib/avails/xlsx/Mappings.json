@@ -13,13 +13,11 @@
 			"Avail:ReportingID": "{avail}Transaction/{avail}ReportingID",
 			"Avail:ServiceProvider": "{avail}ServiceProvider/{md}DisplayName",
 			"Avail:UV_ID": "{avail}SharedEntitlement[@ecosystem='UVVU']/{avail}EcosystemID",
-			
 			"AvailAsset:ContentID": "@contentID",
 			"AvailAsset:EditID": "{avail}Metadata/{avail}EditEIDR-URN",
 			"AvailAsset:Metadata": "foo",
 			"AvailAsset:TitleID": "{avail}Metadata/{avail}TitleEIDR-URN",
 			"AvailAsset:WorkType": "{avail}WorkType",
-			
 			"AvailMetadata:Any": "foo",
 			"AvailMetadata:CaptionExemption": "{avail}EpisodeMetadata/{avail}USACaptionsExemptionReason",
 			"AvailMetadata:CaptionIncluded": "foo",
@@ -27,14 +25,13 @@
 			"AvailMetadata:LocalizationType": "{avail}Metadata/{avail}LocalizationOffering",
 			"AvailMetadata:RatingReason": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Reason",
 			"AvailMetadata:RatingSystem": "{avail}eMetadata/{avail}Ratings/{md}Rating/{md}System",
-			"AvailMetadata:RatingValue":   "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Value",
+			"AvailMetadata:RatingValue": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Value",
 			"AvailMetadata:ReleaseHistoryOriginal": "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='original']",
-			"AvailMetadata:ReleaseHistoryPhysicalHV":  "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']",
-			"AvailMetadata:ReleaseYear": "{avail}Metadata/{avail}ReleaseDate", 
+			"AvailMetadata:ReleaseHistoryPhysicalHV": "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']",
+			"AvailMetadata:ReleaseYear": "{avail}Metadata/{avail}ReleaseDate",
 			"AvailMetadata:TitleDisplayUnlimited": "{avail}Metadata/{avail}TitleDisplayUnlimited",
 			"AvailMetadata:TitleInternalAlias": "{avail}Metadata/{avail}TitleInternalAlias",
 			"AvailMetadata:TotalRunTime": "{avail}Metadata/{avail}RunLength",
-			
 			"AvailTrans:AllowedLanguages": "{avail}AllowedLanguage",
 			"AvailTrans:AnnounceDate": "{avail}Term/{avail}Event[../@termName='AnnounceDate']",
 			"AvailTrans:AssetLanguage": "{avail}AssetLanguage",
@@ -45,6 +42,7 @@
 				"{avail}End",
 				"{avail}EndCondition"
 			],
+
 			"AvailTrans:FixedEndDate": "{avail}Term/{avail}Event[../@termName='FixedEndDate']",
 			"AvailTrans:FormatProfile": "{avail}FormatProfile",
 			"AvailTrans:HDR": "{avail}FormatProfile/@HDR",
@@ -57,18 +55,21 @@
 			"AvailTrans:OtherTerms": "foo",
 			"AvailTrans:PriceCurrency": "{avail}Term/{avail}Money/@currency",
 			"AvailTrans:PriceType": "{avail}Term/@termName",
-			"AvailTrans:PriceValue": [
-			    "{avail}Term/{avail}Money",
-			    "{avail}Term/{avail}Text"
+			"AvailTrans:PriceValue": 
+			[
+				"{avail}Term/{avail}Money",
+				"{avail}Term/{avail}Text"
 			],
+
 			"AvailTrans:RentalDuration": "{avail}Term/{avail}Duration[../@termName='RentalDuration']",
-			"AvailTrans:SpecialPreOrderFulfillDate":  "{avail}Term/{avail}Event[../@termName='PreOrderFulfillDate']",
+			"AvailTrans:SpecialPreOrderFulfillDate": "{avail}Term/{avail}Event[../@termName='PreOrderFulfillDate']",
 			"AvailTrans:SRP": "{avail}Term/{avail}Money[../@termName='SRP']",
 			"AvailTrans:Start": 
 			[
 				"{avail}Start",
 				"{avail}StartCondition"
 			],
+
 			"AvailTrans:SuppressionLiftDate": "{avail}Term/{avail}Event[../@termName='SuppressionLiftDate']",
 			"AvailTrans:Territory": 
 			[
@@ -79,7 +80,7 @@
 			"AvailTrans:WatchDuration": "{avail}Term/{avail}Duration[../@termName='WatchDuration']",
 			"AvailTrans:WCG": "{avail}FormatProfile/@WCG"
 		},
-		
+
 		"TV": 
 		{
 			"Avail:ALID": "{avail}ALID",
@@ -121,10 +122,11 @@
 				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}NumberOfEpisodes"
 			},
 
-			"AvailMetadata:EpisodeID": 
-			{
-				"Episode": "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier"
-			},
+			"AvailMetadata:EpisodeID":  
+				[
+					"{avail}EpisodeMetadata/{avail}EditEIDR-URN",
+					"{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier"
+				] ,
 
 			"AvailMetadata:EpisodeNumber": 
 			{
@@ -233,6 +235,7 @@
 				"{avail}End",
 				"{avail}EndCondition"
 			],
+
 			"AvailTrans:FixedEndDate": "{avail}Term/{avail}Event[../@termName='FixedEndDate']",
 			"AvailTrans:FormatProfile": "{avail}FormatProfile",
 			"AvailTrans:HDR": "{avail}FormatProfile/@HDR",
@@ -245,18 +248,21 @@
 			"AvailTrans:OtherTerms": "foo",
 			"AvailTrans:PriceCurrency": "{avail}Term/{avail}Money/@currency",
 			"AvailTrans:PriceType": "{avail}Term/@termName",
-			"AvailTrans:PriceValue": [
-			    "{avail}Term/{avail}Money",
-			    "{avail}Term/{avail}Text"
+			"AvailTrans:PriceValue": 
+			[
+				"{avail}Term/{avail}Money",
+				"{avail}Term/{avail}Text"
 			],
+
 			"AvailTrans:RentalDuration": "{avail}Term/{avail}Duration[../@termName='RentalDuration']",
-			"AvailTrans:SpecialPreOrderFulfillDate":  "{avail}Term/{avail}Event[../@termName='PreOrderFulfillDate']",
+			"AvailTrans:SpecialPreOrderFulfillDate": "{avail}Term/{avail}Event[../@termName='PreOrderFulfillDate']",
 			"AvailTrans:SRP": "{avail}Term/{avail}Money[../@termName='SRP']",
 			"AvailTrans:Start": 
 			[
 				"{avail}Start",
 				"{avail}StartCondition"
 			],
+
 			"AvailTrans:SuppressionLiftDate": "{avail}Term/{avail}Event[../@termName='SuppressionLiftDate']",
 			"AvailTrans:Territory": 
 			[
