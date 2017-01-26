@@ -40,6 +40,7 @@ import org.jdom2.xpath.XPathExpression;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.xml.RatingSystem;
+import com.movielabs.mddflib.util.xml.StructureValidation;
 import com.movielabs.mddflib.util.xml.XsdValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -49,7 +50,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  * <tt>TR-META-CM (v2.4)</tt>. Extending subclasses will provide additional
  * customization to check for conformance with specifications built on top of
  * the CM (e.g., as conforming to the Common Media Manifest (CMM) as specified
- * in <tt>TR-META-MMM (v1.5)</tt>)
+ * in <tt>TR-META-MMM (v1.5)</tt>).
  * 
  * 
  * @author L. Levin, Critical Architectures LLC
@@ -139,14 +140,17 @@ public abstract class AbstractValidator extends XmlIngester {
 	protected Map<String, Map<String, Element>> id2XmlMappings;
 
 
-	protected XsdValidation vHelper;
+	protected XsdValidation xsdHelper;
+
+	protected StructureValidation structHelper;
 
 	/**
 	 * @param loggingMgr
 	 */
 	public AbstractValidator(LogMgmt loggingMgr) {
 		super(loggingMgr);
-		vHelper = new XsdValidation(loggingMgr);
+		xsdHelper = new XsdValidation(loggingMgr);
+		structHelper = new StructureValidation(this, logMsgSrcId);
 	}
 	
 	/**
