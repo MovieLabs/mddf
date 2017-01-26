@@ -29,7 +29,7 @@ import java.io.IOException;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public interface LogMgmt {
+public interface LogMgmt extends IssueLogger {
 
 	public static String[] logLevels = { "Debug", "Notice", "Warning", "Error", "Fatal", "Info" };
 	public static final int LEV_DEBUG = 0;

@@ -35,6 +35,8 @@ import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
+import com.movielabs.mddf.MddfContext;
+
 /**
  * Provides mechanism for linking a <tt>LogEntry</tt> to reference material that
  * may be used to obtain information regarding why a problem was determined to
@@ -52,26 +54,37 @@ public class LogReference {
 	private String uri;
 
 	/**
-	 * Return a <tt>LogReference</tt> to documentation matching the query
-	 * arguments. The arguments are:
-	 * <ul>
-	 * <li>standard: indicates an MDDF standard using the appropriate code
-	 * (e.g., 'MMM' for Common Media Manifest Metadata)</li>
-	 * <li>version: indicates version of the standard</li>
-	 * <li>refID: indicates topic.</li>
-	 * </ul>
-	 * If a match for a topic can not be found, earlier versions of the document
-	 * will be checked. A <tt>null</tt> value indicates no matches for the
-	 * specified query could be found.
+	 * Identical to <tt>getRef(String standard, String refID)</tt> in that the
+	 * <tt>version</tt> argument is ignored.
 	 * 
 	 * @param standard
 	 * @param version
 	 * @param refID
 	 * @return
+	 * @deprecated
 	 */
 	public static LogReference getRef(String standard, String version, String refID) {
-		// System.out.println("LogRef request for " + standard + ", ver=" +
-		// version+", refID="+refID);
+		return getRef(standard, refID);
+	}
+
+	/**
+	 * Return a <tt>LogReference</tt> to documentation matching the query
+	 * arguments. The arguments are:
+	 * <ul>
+	 * <li>standard: indicates an MDDF standard using the appropriate code
+	 * (e.g., 'MMM' for Common Media Manifest Metadata)</li>
+	 * <li>refID: indicates topic.</li>
+	 * </ul>
+	 * If a match for a topic can not be found specific to the latest version of
+	 * the specified standard, earlier versions of the document will be checked.
+	 * A <tt>null</tt> value indicates no matches for the specified query could
+	 * be found.
+	 * 
+	 * @param standard
+	 * @param refID
+	 * @return
+	 */
+	public static LogReference getRef(String standard, String refID) {
 		if (rootEl == null) {
 			try {
 				loadXml(new File(srcPath));
@@ -80,6 +93,12 @@ public class LogReference {
 				return null;
 			}
 		}
+		String version = getPriorVersion(standard, null);
+		return resolveRef(standard, version, refID);
+	}
+
+	private static LogReference resolveRef(String standard, String version, String refID) {
+
 		String xPath = "./Specification[@id='" + standard + "']/Ref[@id='" + refID + "']/Version[@id='" + version
 				+ "']";
 		XPathExpression<Element> xpExpression = xpfac.compile(xPath, Filters.element());
@@ -87,11 +106,9 @@ public class LogReference {
 		if (definingEl == null) {
 			String priorVer = getPriorVersion(standard, version);
 			if (priorVer == null) {
-				// System.out.println("Null LogRef for " + standard + ", ver=" +
-				// version+", refID="+refID);
 				return null;
 			} else {
-				return getRef(standard, priorVer, refID);
+				return resolveRef(standard, priorVer, refID);
 			}
 		} else {
 			Element specEl = definingEl.getParentElement().getParentElement();
@@ -108,16 +125,15 @@ public class LogReference {
 	 * @return
 	 */
 	private static String getPriorVersion(String standard, String curVersion) {
-		String xPath = "./Specification[@id='" + standard + "']";
-		XPathExpression<Element> xpExpression = xpfac.compile(xPath, Filters.element());
-		Element definingEl = xpExpression.evaluateFirst(rootEl);
-		String versionList = definingEl.getAttributeValue("versions");
-		if (versionList == null || (versionList.isEmpty())) {
+		String[] supportedVersions = MddfContext.getSupportedVersions(standard);
+		if(supportedVersions==null){
 			return null;
 		}
-		String[] supportedVersions = versionList.split(", ");
+		if (curVersion == null) {
+			return supportedVersions[0];
+		}
 		/*
-		 * Versions are listed from oldest to most recent. We are looking for
+		 * Versions are listed from most recent to oldest. We are looking for
 		 * the version prior to the current version. Start by finding ptr to
 		 * current version.
 		 */
@@ -128,10 +144,10 @@ public class LogReference {
 				break;
 			}
 		}
-		if (ptr <= 0) {
+		if ((ptr < 0) || (ptr >= (supportedVersions.length - 1))) {
 			return null;
 		} else {
-			return supportedVersions[ptr - 1];
+			return supportedVersions[ptr + 1];
 		}
 	}
 

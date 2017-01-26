@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.jdom2.Element;
 import org.jdom2.located.Located;
 
 /**
@@ -60,6 +61,8 @@ public class DefaultLogging implements LogMgmt {
 	public DefaultLogging() {
 		clearLog();
 	}
+
+ 
 
 	/*
 	 * (non-Javadoc)

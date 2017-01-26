@@ -22,15 +22,18 @@
  */
 package com.movielabs.mddf;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jdom2.Element;
 
 /**
  * Defines constants and Enum types used to indicate the context of various MDDF
  * operations and requests. A primary function of the <tt>MddfContext</tt> class
- * is providing a mechanism for identifying the type and format of an MDDF file
- * (e.g. an Avails file that conforms to v2.2 of the standard and is encoded as
- * XML). <tt>MddfContext</tt> also provides constants that are used to identify and
- * locate the XSD files required for processing MDDF files.
+ * is providing a mechanism for identifying the type, version, and format of an
+ * MDDF file (e.g. an Avails file that conforms to v2.2 of the standard and is
+ * encoded as XML). <tt>MddfContext</tt> also provides constants that are used
+ * to identify and locate the XSD files required for processing MDDF files.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -56,20 +59,38 @@ public class MddfContext {
 	 */
 	public static final String RSRC_PATH = "/com/movielabs/mddf/resources/";
 
+	private static Map<String, String[]> stdsVersions;
+
+	static {
+		// --- Supported versions of standards (in order) ---
+		String[] CM_VER = { "2.5", "2.4" };
+		String[] MANIFEST_VER = { "1.6", "1.5" };
+		String[] MEC_VER = { "2.5", "2.4" };
+		String[] AVAILS_X_VER = { "2.2.1", "2.2", "2.1" };
+		String[] AVAILS_E_VER = { "1.7", "1.6" };
+
+		stdsVersions = new HashMap<String, String[]>();
+		stdsVersions.put("CM", CM_VER);
+		stdsVersions.put("MANIFEST", MANIFEST_VER);
+		stdsVersions.put("MEC", MEC_VER);
+		stdsVersions.put("AVAIL", AVAILS_X_VER);
+		stdsVersions.put("AVAIL_E", AVAILS_E_VER);
+	}
+
 	public enum MDDF_TYPE {
 		MEC, AVAILS, MANIFEST
 	};
 
 	public enum FILE_FMT {
-		AVAILS_1_6("Avail", "1.6", "xlsx"),
-		AVAILS_1_7("Avail", "1.7", "xlsx"),
-		AVAILS_2_1("Avail", "2.1","xlsx"),
-		AVAILS_2_2("Avail", "2.2", "xml"),
-		AVAILS_2_2_1("Avail", "2.2.1", "xml"),
-		MANIFEST_1_4("Manifest", "1.4", "xml"),
-		MANIFEST_1_5("Manifest", "1.5", "xml"),
+		AVAILS_1_6("Avail", "1.6", "xlsx"), 
+		AVAILS_1_7("Avail", "1.7", "xlsx"), 
+		AVAILS_2_1("Avail", "2.1", "xlsx"),
+		AVAILS_2_2("Avail", "2.2", "xml"), 
+		AVAILS_2_2_1("Avail", "2.2.1", "xml"), 
+		MANIFEST_1_4("Manifest", "1.4", "xml"), 
+		MANIFEST_1_5("Manifest", "1.5", "xml"), 
 		MANIFEST_1_6("Manifest", "1.6", "xml"),
-		MDMEC_2_4("MEC", "2.4", "xml"),
+		MDMEC_2_4("MEC", "2.4", "xml"), 
 		MDMEC_2_5("MEC", "2.5", "xml");
 
 		private String standard;
@@ -145,4 +166,7 @@ public class MddfContext {
 		return null;
 	}
 
+	public static String[] getSupportedVersions(String standard){
+		return stdsVersions.get(standard);
+	}
 }

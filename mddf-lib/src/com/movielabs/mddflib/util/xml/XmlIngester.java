@@ -46,6 +46,7 @@ import org.jdom2.xpath.XPathFactory;
 import org.xml.sax.SAXParseException;
 
 import com.movielabs.mddf.MddfContext;
+import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import net.sf.json.JSON;
@@ -56,7 +57,7 @@ import net.sf.json.JSONSerializer;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public abstract class XmlIngester {
+public abstract class XmlIngester implements IssueLogger {
 	public static String MD_VER = "2.3";
 	public static String MDMEC_VER = "2.3";
 	public static String MAN_VER = "1.4";
@@ -299,9 +300,9 @@ public abstract class XmlIngester {
 
 	}
 
-	protected void logIssue(int tag, int level, Element xmlElement, String msg, String explanation, LogReference srcRef,
+	public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
 			String moduleId) {
-		loggingMgr.logIssue(tag, level, xmlElement, msg, explanation, srcRef, moduleId);
+		loggingMgr.logIssue(tag, level, target, msg, explanation, srcRef, moduleId);
 	}
 
 	/**
