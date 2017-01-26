@@ -37,6 +37,7 @@ import org.jdom2.xpath.XPathExpression;
 
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.avails.xml.Pedigree;
+import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.AbstractValidator;
@@ -55,7 +56,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class AvailValidator extends AbstractValidator {
+public class AvailValidator extends AbstractValidator implements IssueLogger {
 
 	/**
 	 * Used to facilitate keeping track of the presence or absence of required
@@ -156,9 +157,8 @@ public class AvailValidator extends AbstractValidator {
 	}
 
 	public static final String LOGMSG_ID = "AvailValidator";
-
-	static final String DOC_VER = "2.1";
-	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL", DOC_VER, "avail01");
+ 
+	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL",  "avail01");
 
 	private static JSONObject availVocab;
 
@@ -272,7 +272,7 @@ public class AvailValidator extends AbstractValidator {
 	protected boolean validateXml(File srcFile, Element docRootEl) {
 		String xsdFile = XsdValidation.defaultRsrcLoc + "avails-v" + XmlIngester.AVAIL_VER + ".xsd";
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		curFileIsValid = vHelper.validateXml(srcFile, docRootEl, xsdFile, logMsgSrcId);
+		curFileIsValid = xsdHelper.validateXml(srcFile, docRootEl, xsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
 
@@ -324,59 +324,59 @@ public class AvailValidator extends AbstractValidator {
 		String doc = "AVAIL";
 
 		JSONArray allowed = availVocab.optJSONArray("AvailType");
-		LogReference srcRef = LogReference.getRef(doc, AVAIL_VER, "avail01");
+		LogReference srcRef = LogReference.getRef(doc, "avail01");
 		allOK = validateVocab(primaryNS, "Avail", primaryNS, "AvailType", allowed, srcRef, true) && allOK;
 
 		allowed = availVocab.optJSONArray("EntryType");
-		srcRef = LogReference.getRef(doc, AVAIL_VER, "avail02");
+		srcRef = LogReference.getRef(doc, "avail02");
 		allOK = validateVocab(primaryNS, "Disposition", primaryNS, "EntryType", allowed, srcRef, true) && allOK;
 
 		allowed = availVocab.optJSONArray("AltIdentifier@scope");
-		srcRef = LogReference.getRef(doc, AVAIL_VER, "avail03");
+		srcRef = LogReference.getRef(doc, "avail03");
 		allOK = validateVocab(primaryNS, "AltIdentifier", primaryNS, "@scope", allowed, srcRef, true) && allOK;
 
 		allowed = availVocab.optJSONArray("LocalizationOffering");
-		srcRef = LogReference.getRef(doc, AVAIL_VER, "avail03");
+		srcRef = LogReference.getRef(doc, "avail03");
 		allOK = validateVocab(primaryNS, "Metadata", primaryNS, "LocalizationOffering", allowed, srcRef, true) && allOK;
 		allOK = validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "LocalizationOffering", allowed, srcRef, true)
 				&& allOK;
 		allowed = availVocab.optJSONArray("SeasonStatus");
-		srcRef = LogReference.getRef(doc, AVAIL_VER, "avail04");
+		srcRef = LogReference.getRef(doc, "avail04");
 		allOK = validateVocab(primaryNS, "SeasonMetadata", primaryNS, "SeasonStatus", allowed, srcRef, true) && allOK;
 
 		allowed = availVocab.optJSONArray("SeriesStatus");
-		srcRef = LogReference.getRef(doc, AVAIL_VER, "avail05");
+		srcRef = LogReference.getRef(doc, "avail05");
 		allOK = validateVocab(primaryNS, "SeriesMetadata", primaryNS, "SeriesStatus", allowed, srcRef, true) && allOK;
 
 		allowed = availVocab.optJSONArray("DateTimeCondition");
-		srcRef = LogReference.getRef(doc, AVAIL_VER, "avail06");
+		srcRef = LogReference.getRef(doc, "avail06");
 		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "StartCondition", allowed, srcRef, true) && allOK;
 		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "EndCondition", allowed, srcRef, true) && allOK;
 
 		allowed = availVocab.optJSONArray("LicenseType");
-		srcRef = LogReference.getRef(doc, AVAIL_VER, "avail07");
+		srcRef = LogReference.getRef(doc, "avail07");
 		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "LicenseType", allowed, srcRef, true) && allOK;
 
 		allowed = availVocab.optJSONArray("LicenseRightsDescription");
-		srcRef = LogReference.getRef(doc, AVAIL_VER, "avail07");
+		srcRef = LogReference.getRef(doc, "avail07");
 		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "LicenseRightsDescription", allowed, srcRef, true)
 				&& allOK;
 
 		allowed = availVocab.optJSONArray("FormatProfile");
-		srcRef = LogReference.getRef(doc, AVAIL_VER, "avail07");
+		srcRef = LogReference.getRef(doc, "avail07");
 		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "FormatProfile", allowed, srcRef, true) && allOK;
 
 		allowed = availVocab.optJSONArray("ExperienceCondition");
-		srcRef = LogReference.getRef(doc, AVAIL_VER, "avail07");
+		srcRef = LogReference.getRef(doc, "avail07");
 		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "ExperienceCondition", allowed, srcRef, true)
 				&& allOK;
 
 		allowed = availVocab.optJSONArray("Term@termName");
-		srcRef = LogReference.getRef(doc, AVAIL_VER, "avail08");
+		srcRef = LogReference.getRef(doc, "avail08");
 		allOK = validateVocab(primaryNS, "Term", primaryNS, "@termName", allowed, srcRef, false) && allOK;
 
 		allowed = availVocab.optJSONArray("SharedEntitlement@ecosystem");
-		srcRef = LogReference.getRef(doc, AVAIL_VER, "avail09");
+		srcRef = LogReference.getRef(doc, "avail09");
 		allOK = validateVocab(primaryNS, "SharedEntitlement", primaryNS, "@ecosystem", allowed, srcRef, true) && allOK;
 		return allOK;
 	}
@@ -470,7 +470,7 @@ public class AvailValidator extends AbstractValidator {
 		 * 'Collection'
 		 * 
 		 */
-		LogReference srcRef = LogReference.getRef("AVAIL", DOC_VER, "avail01");
+		LogReference srcRef = LogReference.getRef("AVAIL", "avail01");
 		xpExp01 = xpfac.compile(".//" + rootPrefix + "Asset[" + rootPrefix + "BundledAsset]", Filters.element(), null,
 				availsNSpace);
 		List<Element> assetElList = xpExp01.evaluate(curRootEl);
@@ -525,7 +525,7 @@ public class AvailValidator extends AbstractValidator {
 	 * @param availType
 	 */
 	private void validateTypeCompatibility(String availType) {
-		LogReference srcRef = LogReference.getRef("AVAIL", DOC_VER, "avail01");
+		LogReference srcRef = LogReference.getRef("AVAIL",   "avail01");
 
 		JSONObject structureDef = availTypeStruct.getJSONObject(availType);
 		if (structureDef == null || structureDef.isNullObject()) {
@@ -602,50 +602,13 @@ public class AvailValidator extends AbstractValidator {
 			System.out.println("No structureDef for WorkType='" + wtValue + "'");
 			return;
 		}
-		String availPrefix = availsNSpace.getPrefix() + ":";
-		String mdPrefix = mdNSpace.getPrefix() + ":";
 		Element assetEl = wrkTypeEl.getParentElement();
 		JSONArray rqmts = wtStrucDef.getJSONArray("requirement");
 		for (int i = 0; i < rqmts.size(); i++) {
 			JSONObject nextRqmt = rqmts.getJSONObject(i);
-			String docRef = nextRqmt.optString("docRef");
-			String xpathDef = nextRqmt.optString("xpath");
-			int min = nextRqmt.optInt("min", 0);
-			int max = nextRqmt.optInt("max", -1);
-			/*
-			 * replace namespace placeholders with actual prefix being used
-			 */
-			String t1 = xpathDef.replaceAll("\\{avail\\}", availPrefix);
-			String t2 = t1.replaceAll("\\{md\\}", mdPrefix);
-			// Now format an XPath
-			String xpath = "./" + t2;
-			System.out.println("AvailValidator:validateAssetStructure:: " + xpath);
-			XPathExpression<Element> xpExp = xpfac.compile(xpath, Filters.element(), null, availsNSpace, mdNSpace);
-			List<Element> assetElList = xpExp.evaluate(assetEl);
-			// check cardinality
-			int count = assetElList.size();
-			if (min > 0 && (count < min)) {
-				String msg = "Invalid Asset structure for specified WorkType";
-				String[] xpParts = xpath.split("\\[");
-				String explanation = "Asset requires minimum of " + min + " of child " + xpParts[0] + " elements";
-				LogReference srcRef = null;
-				if (docRef != null) {
-					srcRef = LogReference.getRef("AVAIL", DOC_VER, docRef);
-					logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, assetEl, msg, explanation, srcRef, logMsgSrcId);
-					curFileIsValid = false;
-				}
-			}
-			if (max > -1 && (count > max)) {
-				String msg = "Invalid Asset structure for specified WorkType";
-				String[] xpParts = xpath.split("/\\[");
-				String explanation = "Asset permits maximum of " + max + " of child " + xpParts[0] + " elements";
-				LogReference srcRef = null;
-				if (docRef != null) {
-					srcRef = LogReference.getRef("AVAIL", DOC_VER, docRef);
-					logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, assetEl, msg, explanation, srcRef, logMsgSrcId);
-					curFileIsValid = false;
-				}
-			}
+			if(!structHelper.validateStructure(assetEl, nextRqmt)){
+				curFileIsValid = false;
+			} 
 		}
 
 	}
@@ -714,7 +677,7 @@ public class AvailValidator extends AbstractValidator {
 	 * @param srcRef
 	 * @param moduleId
 	 */
-	protected void logIssue(int tag, int level, Element xmlElement, String msg, String explanation, LogReference srcRef,
+	public void logIssue(int tag, int level, Element xmlElement, String msg, String explanation, LogReference srcRef,
 			String moduleId) {
 		Object target = null;
 		if (pedigreeMap == null) {
