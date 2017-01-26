@@ -36,6 +36,7 @@ import org.jdom2.output.XMLOutputter;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xlsx.XlsxBuilder;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.XmlIngester;
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet.Version;
 
 /**
@@ -71,16 +72,8 @@ public class Translator {
 				fileName = filePrefix + "_v2.2.xml";
 				exported = new File(dirPath, fileName);
 				// Save as XML
-				Format myFormat = Format.getPrettyFormat();
-				XMLOutputter outputter = new XMLOutputter(myFormat);
-				try {
-					OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(exported), "UTF-8");
-					outputter.output(xmlDoc, osw);
-					osw.close();
+				if(XmlIngester.writeXml(exported, xmlDoc)){
 					outputCnt++;
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 				break;
 			}
