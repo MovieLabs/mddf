@@ -340,6 +340,7 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 		allOK = validateVocab(primaryNS, "Metadata", primaryNS, "LocalizationOffering", allowed, srcRef, true) && allOK;
 		allOK = validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "LocalizationOffering", allowed, srcRef, true)
 				&& allOK;
+		
 		allowed = availVocab.optJSONArray("SeasonStatus");
 		srcRef = LogReference.getRef(doc, "avail04");
 		allOK = validateVocab(primaryNS, "SeasonMetadata", primaryNS, "SeasonStatus", allowed, srcRef, true) && allOK;
@@ -378,6 +379,19 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 		allowed = availVocab.optJSONArray("SharedEntitlement@ecosystem");
 		srcRef = LogReference.getRef(doc, "avail09");
 		allOK = validateVocab(primaryNS, "SharedEntitlement", primaryNS, "@ecosystem", allowed, srcRef, true) && allOK;
+		
+		// ===========================================================
+		/* For Transactions in US, check USACaptionsExemptionReason */
+		allowed = availVocab.optJSONArray("USACaptionsExemptionReason");
+		srcRef = LogReference.getRef(doc, "avail03");
+		allOK = validateVocab(primaryNS, "Asset", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true) && allOK;
+		allOK = validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true)
+				&& allOK;
+		allOK = validateVocab(primaryNS, "SeasonMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true)
+				&& allOK;
+		allOK = validateVocab(primaryNS, "SeriesMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true)
+				&& allOK;
+		
 		return allOK;
 	}
 
@@ -470,7 +484,7 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 		 * 'Collection'
 		 * 
 		 */
-		LogReference srcRef = LogReference.getRef("AVAIL", "avail01");
+		LogReference srcRef = LogReference.getRef("AVAIL", "struc01");
 		xpExp01 = xpfac.compile(".//" + rootPrefix + "Asset[" + rootPrefix + "BundledAsset]", Filters.element(), null,
 				availsNSpace);
 		List<Element> assetElList = xpExp01.evaluate(curRootEl);
@@ -498,8 +512,6 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 		validateTypeCompatibility("bundle");
 		validateTypeCompatibility("supplement");
 		validateTypeCompatibility("promotion");
-		// ===========================================================
-		/* For Transactions in US, check USACaptionsExemptionReason */
 
 		// ==============================================
 
@@ -525,7 +537,7 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 	 * @param availType
 	 */
 	private void validateTypeCompatibility(String availType) {
-		LogReference srcRef = LogReference.getRef("AVAIL",   "avail01");
+		LogReference srcRef = LogReference.getRef("AVAIL",   "struc01");
 
 		JSONObject structureDef = availTypeStruct.getJSONObject(availType);
 		if (structureDef == null || structureDef.isNullObject()) {
