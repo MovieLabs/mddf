@@ -22,6 +22,7 @@
  */
 package com.movielabs.mddflib.util.xml;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jdom2.Element;
@@ -33,6 +34,7 @@ import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -40,9 +42,9 @@ import net.sf.json.JSONObject;
  * structural requirements not specified via an XSD. The MDDF specifications
  * define many requirements for specific use cases as well as recommended 'best
  * practices'. These requirements and recommendations specify relationships
- * between XML elements that are not defined via the XSD. Instead they are
- * formally specified via a JSON-formatted <i>structure definition</i> file. For
- * example:
+ * between XML elements that are not defined via the XSD. In order to support
+ * validation they are instead formally specified via a JSON-formatted
+ * <i>structure definition</i> file. For example:
  * 
  * <pre>
  * <tt>
@@ -52,7 +54,7 @@ import net.sf.json.JSONObject;
 			"requirement": 
 			[
 				{
-					"docRef": "avail003",
+					"docRef": "AVAIL:struc01",
 					"min": "1",
 					"max": "1", 
 					"xpath": "{avail}SeasonMetadata[../{avail}WorkType/text()='Season']"
@@ -85,17 +87,67 @@ public class StructureValidation {
 
 	public boolean validateStructure(Element target, JSONObject rqmt) {
 		boolean curFileIsValid = true;
-		String docRef = rqmt.optString("docRef");
-		String docStandard = null;
-		String docSection = null;
-		if (docRef != null) {
-			String[] parts = docRef.split(":");
-			docStandard= parts[0];
-			docSection = parts[1];
-		}
-		String xpathDef = rqmt.optString("xpath");
+
 		int min = rqmt.optInt("min", 0);
 		int max = rqmt.optInt("max", -1);
+		String docRef = rqmt.optString("docRef");
+
+		Object xpaths = rqmt.opt("xpath");
+		List<XPathExpression<Element>> xpeList = new ArrayList<XPathExpression<Element>>();
+		String targetList = ""; // for use if error msg is required
+		if (xpaths instanceof String) {
+			String xpathDef = (String) xpaths;
+			xpeList.add(resolveXPath(xpathDef));
+
+			String[] xpParts = xpathDef.split("\\[");
+			targetList = xpParts[0];
+		} else if (xpaths instanceof JSONArray) {
+			JSONArray xpArray = (JSONArray) xpaths;
+			for (int i = 0; i < xpArray.size(); i++) {
+				String xpathDef = xpArray.getString(i);
+				xpeList.add(resolveXPath(xpathDef));
+				String[] xpParts = xpathDef.split("\\[");
+				if (i < 1) {
+					targetList = xpParts[0];
+				} else if (i == (xpArray.size() - 1)) {
+					targetList = targetList + ", or " + xpParts[0];
+				} else {
+					targetList = targetList + ", " + xpParts[0];
+				}
+			}
+		}
+		targetList = targetList.replaceAll("\\{\\w+\\}", "");
+
+		List<Element> matchedElList = new ArrayList<Element>();
+		for (int i = 0; i < xpeList.size(); i++) {
+			XPathExpression<Element> xpExp = xpeList.get(i);
+			List<Element> nextElList = xpExp.evaluate(target);
+			matchedElList.addAll(nextElList);
+		}
+
+		// check cardinality
+		int count = matchedElList.size();
+		if (min > 0 && (count < min)) {
+			String elName = target.getName();
+			String msg = "Invalid " + elName + " structure: missing child elements";
+			String explanation = elName + " requires minimum of " + min + " of child " + targetList + " elements";
+			LogReference srcRef = resolveDocRef(docRef);
+			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
+			curFileIsValid = false;
+		}
+		if (max > -1 && (count > max)) {
+			String elName = target.getName();
+			String msg = "Invalid " + elName + " structure: too many child elements";
+			String explanation = elName + " permits maximum of " + max + " of child " + targetList + " elements";
+			LogReference srcRef = resolveDocRef(docRef);
+			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
+			curFileIsValid = false;
+		}
+
+		return curFileIsValid;
+	}
+
+	private XPathExpression<Element> resolveXPath(String xpathDef) {
 		/*
 		 * replace namespace placeholders with actual prefix being used
 		 */
@@ -105,35 +157,19 @@ public class StructureValidation {
 		String xpath = "./" + t2;
 		XPathExpression<Element> xpExp = xpfac.compile(xpath, Filters.element(), null, XmlIngester.availsNSpace,
 				XmlIngester.mdNSpace);
-		List<Element> assetElList = xpExp.evaluate(target);
-		// check cardinality
-		int count = assetElList.size();
-		if (min > 0 && (count < min)) {
-			String elName = target.getName();
-			String msg = "Invalid "+elName+" structure: missing child elements";
-			String[] xpParts = xpath.split("\\[");
-			String explanation = elName+" requires minimum of " + min + " of child " + xpParts[0] + " elements";
-			LogReference srcRef = null;
-			if (docRef != null) {
-				srcRef = LogReference.getRef(docStandard, docSection);
-			}
-			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
-			curFileIsValid = false;
-		}
-		if (max > -1 && (count > max)) {
-			String elName = target.getName();
-			String msg = "Invalid "+elName+" structure: too many child elements";
-			String[] xpParts = xpath.split("/\\[");
-			String explanation = elName+" permits maximum of " + max + " of child " + xpParts[0] + " elements";
-			LogReference srcRef = null;
-			if (docRef != null) {
-				srcRef = LogReference.getRef(docStandard, docSection);
-			}
-			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
-			curFileIsValid = false;
-		}
-
-		return curFileIsValid;
+		return xpExp;
 	}
 
+	private LogReference resolveDocRef(String docRef) {
+		String docStandard = null;
+		String docSection = null;
+		LogReference srcRef = null;
+		if (docRef != null) {
+			String[] parts = docRef.split(":");
+			docStandard = parts[0];
+			docSection = parts[1];
+			srcRef = LogReference.getRef(docStandard, docSection);
+		}
+		return srcRef;
+	}
 }
