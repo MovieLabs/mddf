@@ -10,16 +10,11 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.List;
-
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Color;
-import javax.swing.border.LineBorder;
-
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
 
@@ -30,9 +25,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.awt.event.ActionEvent;
-import java.awt.Dialog.ModalityType;
 
 public class TranslatorDialog extends JDialog {
 
@@ -46,6 +42,8 @@ public class TranslatorDialog extends JDialog {
 	private EnumSet<FILE_FMT> selections;
 	private JLabel curFmtLabel;
 	private String curFmtPrefix = "Current Format: ";
+	private FILE_FMT curFmt;
+	private static Set<JCheckBox>supported = new HashSet();
 
 	/**
 	 * Launch the application.
@@ -174,7 +172,13 @@ public class TranslatorDialog extends JDialog {
 		selectAllBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				for (int i = 0; i < cBoxList.size(); i++) {
-					cBoxList.get(i).setSelected(true);
+					JCheckBox cbx = cBoxList.get(i); 
+					cbx.setSelected(supported.contains(cbx));
+				}
+				// then clear the checkBox for the curFmt
+				JCheckBox cBox = cBoxMap.get(curFmt);
+				if (cBox != null) {
+					cBox.setSelected(false);
 				}
 			}
 		});
@@ -256,6 +260,9 @@ public class TranslatorDialog extends JDialog {
 		cBoxList.add(cbXmlV2_2_1);
 		cBoxMap.put(FILE_FMT.AVAILS_2_2_1, cbXmlV2_2_1);
 
+		/* TEMPORARY during dev... indicate which are currently working */
+		supported.add(cbXlsxV1_7);
+		supported.add(cbXmlV2_2);
 	}
 
 	protected void selectDestination() {
@@ -268,6 +275,7 @@ public class TranslatorDialog extends JDialog {
 	}
 
 	public void setContext(FILE_FMT curFmt, File srcFile) {
+		this.curFmt = curFmt;
 		String srcFileName = srcFile.getName();
 		// strip file-type suffix...
 		srcFileName = srcFileName.replaceAll("\\.\\w+$", "");
@@ -278,7 +286,8 @@ public class TranslatorDialog extends JDialog {
 		curFmtLabel.setText(curFmtPrefix+ curFmt.toString());
 		// first enable all..
 		for (int i = 0; i < cBoxList.size(); i++) {
-			cBoxList.get(i).setEnabled(true);
+			JCheckBox cbx = cBoxList.get(i);
+			cbx.setEnabled(supported.contains(cbx));
 		}
 		// then disable the checkBox for the curFmt
 		JCheckBox cBox = cBoxMap.get(curFmt);
