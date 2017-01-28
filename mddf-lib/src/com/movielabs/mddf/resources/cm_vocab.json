@@ -14,7 +14,7 @@
 			"Mixed-Media",
 			"other"
 		],
-		
+
 		"AudiovisualType": 
 		[
 			"Main",
@@ -353,6 +353,16 @@
 			"Manifestation"
 		],
 
+		"USACaptionsExemptionReason": 
+		[
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6"
+		],
+
 		"LocalizationOffering": 
 		[
 			"sub",
@@ -410,7 +420,6 @@
 			"3DHD",
 			"3DSD",
 			"3DUHD"
-			
 		],
 
 		"Term@termName": 
