@@ -180,49 +180,61 @@
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
-		<Ref id="avail02">
+		<Ref id="struc01" desc="asset structure of the avail">
+			<Version id="2.1">
+				<Label>Section 2.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+		<Ref id="avail02" desc="EntryType vocab">
 			<Version id="2.1">
 				<Label>Section 2.2.1</Label>
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
-		<Ref id="avail03">
+		<Ref id="struc02" desc="asset metadata">
+			<Version id="2.2">
+				<Label>Section 2.2.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+		<Ref id="avail03" desc="AvailMetadata vocab">
 			<Version id="2.1">
 				<Label>Section 2.2.2.1</Label>
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
-		<Ref id="avail04">
+		<Ref id="avail04" desc="SeasonStatus vocab">
 			<Version id="2.1">
 				<Label>Section 2.2.2.4</Label>
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
-		<Ref id="avail05">
+		<Ref id="avail05" desc="SeriesStatus vocab">
 			<Version id="2.1">
 				<Label>Section 2.2.2.5</Label>
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
-		<Ref id="avail06">
+		<Ref id="avail06" desc="DT encoding">
 			<Version id="2.1">
-				<Label>Section 1.3</Label>
+				<Label>Section 1.8</Label>
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
-		<Ref id="avail07">
+		<Ref id="avail07" desc="Transaction vocab">
 			<Version id="2.1">
 				<Label>Section 2.2.3</Label>
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
-		<Ref id="avail08">
+		<Ref id="avail08" desc="termName vocab">
 			<Version id="2.1">
 				<Label>Section 2.2.3.1</Label>
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
-		<Ref id="avail09">
+		<Ref id="avail09" desc="SharedEntitlement vocab">
 			<Version id="2.1">
 				<Label>Section 2.2.4</Label>
 				<RelURL></RelURL>
