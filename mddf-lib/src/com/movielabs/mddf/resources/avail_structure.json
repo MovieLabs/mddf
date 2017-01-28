@@ -56,25 +56,33 @@
 	"WorkTypeStruct": 
 	{
 		"Movie": 
-		{ 
+		{
 			"requirement": 
 			[
 				{
-					"docRef": "avail00n",
+					"docRef": "AVAIL:avail01",
 					"min": "1",
-					"max": "1", 
+					"max": "1",
+					"xpath": "../{avail}AvailType[text()='single']"
+				},
+
+				{
+					"docRef": "AVAIL:struc02",
+					"min": "1",
+					"max": "1",
 					"xpath": "{avail}Metadata[../{avail}WorkType/text()='Movie']"
 				}
 			]
 		},
+
 		"Short": 
 		{
 			"requirement": 
 			[
 				{
-					"docRef": "avail00n",
+					"docRef": "AVAIL:struc02",
 					"min": "1",
-					"max": "1", 
+					"max": "1",
 					"xpath": "{avail}Metadata[../{avail}WorkType/text()='Short']"
 				}
 			]
@@ -90,41 +98,55 @@
 			"requirement": 
 			[
 				{
-					"docRef": "avail00n",
+					"docRef": "AVAIL:struc02",
 					"min": "1",
-					"max": "1", 
+					"max": "1",
 					"xpath": "{avail}SeasonMetadata[../{avail}WorkType/text()='Season']"
 				}
 			]
 		},
 
 		"Episode": 
-		{			
+		{
 			"requirement": 
 			[
 				{
-					"docRef": "avail00n",
+					"docRef": "AVAIL:avail01",
 					"min": "1",
-					"max": "1", 
+					"max": "1",
+					"xpath": "../{avail}AvailType[text()='episode']"
+				},
+
+				{
+					"docRef": "AVAIL:struc02",
+					"min": "1",
+					"max": "1",
 					"xpath": "{avail}EpisodeMetadata[../{avail}WorkType/text()='Episode']"
 				},
+
 				{
-					"docRef": "avail00n",
+					"docRef": "AVAIL:avail00n",
 					"min": "1",
-					"max": "1", 
-					"xpath": "{avail}EpisodeMetadata/{avail}AltIdentifier"
-				},
-				{
-					"docRef": "avail00n",
-					"min": "1",
-					"max": "1", 
+					"max": "1",
 					"xpath": "{avail}EpisodeMetadata/{avail}EpisodeNumber/{md}Number"
 				},
+
 				{
-					"docRef": "avail00n",
+					"docRef": "AVAIL:avail00n",
 					"min": "1",
-					"max": "1", 
+					"max": "1",
 					"xpath": "{avail}EpisodeMetadata/{avail}TitleInternalAlias"
+				},
+
+				{
+					"docRef": "AVAIL:avail00n",
+					"min": "1",
+					"max": "2",
+					"xpath": 
+					[
+						"{avail}EpisodeMetadata/{avail}AltIdentifier",
+						"{avail}EpisodeMetadata/{avail}EditEIDR-URN"
+					]
 				}
 			]
 		}
