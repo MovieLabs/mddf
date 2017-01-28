@@ -24,7 +24,7 @@
 			"AvailMetadata:CompanyDisplayCredit": "{avail}Metadata/{avail}CompanyDisplayCredit/{md}DisplayString",
 			"AvailMetadata:LocalizationType": "{avail}Metadata/{avail}LocalizationOffering",
 			"AvailMetadata:RatingReason": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Reason",
-			"AvailMetadata:RatingSystem": "{avail}eMetadata/{avail}Ratings/{md}Rating/{md}System",
+			"AvailMetadata:RatingSystem": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}System",
 			"AvailMetadata:RatingValue": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Value",
 			"AvailMetadata:ReleaseHistoryOriginal": "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='original']",
 			"AvailMetadata:ReleaseHistoryPhysicalHV": "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']",
