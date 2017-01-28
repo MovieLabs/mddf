@@ -40,7 +40,7 @@ public interface LogMgmt extends IssueLogger {
 	public static final int LEV_INFO = 5;
 
 	public static String[] logTags = { "Manifest", "CPE Model", "Profile", "Best Prac.", "Action", "Other", "Avail",
-			"Common MD", "Rating", "XML", "MEC" };
+			"Common MD", "Rating", "XML", "MEC", "XLSX" };
 	public static final int TAG_MANIFEST = 0;
 	public static final int TAG_MODEL = 1;
 	public static final int TAG_PROFILE = 2;
@@ -52,7 +52,8 @@ public interface LogMgmt extends IssueLogger {
 	public static final int TAG_MD = 7;
 	public static final int TAG_CR = 8;
 	public static final int TAG_XSD = 9;
-	public static int TAG_MEC = 10;
+	public static final int TAG_MEC = 10;
+	public static final int TAG_XLSX = 11;
 
 	/**
 	 * @param levInfo
