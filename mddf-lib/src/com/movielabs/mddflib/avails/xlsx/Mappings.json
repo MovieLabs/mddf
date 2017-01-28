@@ -5,7 +5,7 @@
 		{
 			"Avail:ALID": "{avail}ALID",
 			"Avail:AvailID": "{avail}Transaction/@TransactionID",
-			"Avail:BundledALIDs": "foo",
+			"Avail:BundledALIDs": "n.a",
 			"Disposition:EntryType": "{avail}Disposition/{avail}EntryType",
 			"Avail:DisplayName": "{avail}Licensor/{md}DisplayName",
 			"Avail:DMA_ID": "{avail}SharedEntitlement[@ecosystem='DMA']/{avail}EcosystemID",
@@ -15,12 +15,12 @@
 			"Avail:UV_ID": "{avail}SharedEntitlement[@ecosystem='UVVU']/{avail}EcosystemID",
 			"AvailAsset:ContentID": "@contentID",
 			"AvailAsset:EditID": "{avail}Metadata/{avail}EditEIDR-URN",
-			"AvailAsset:Metadata": "foo",
+			"AvailAsset:Metadata": "n.a",
 			"AvailAsset:TitleID": "{avail}Metadata/{avail}TitleEIDR-URN",
 			"AvailAsset:WorkType": "{avail}WorkType",
-			"AvailMetadata:Any": "foo",
-			"AvailMetadata:CaptionExemption": "{avail}EpisodeMetadata/{avail}USACaptionsExemptionReason",
-			"AvailMetadata:CaptionIncluded": "foo",
+			"AvailMetadata:Any": "n.a",
+			"AvailMetadata:CaptionExemption": "{avail}Metadata/{avail}USACaptionsExemptionReason",
+			"AvailMetadata:CaptionIncluded": "n.a",
 			"AvailMetadata:CompanyDisplayCredit": "{avail}Metadata/{avail}CompanyDisplayCredit/{md}DisplayString",
 			"AvailMetadata:LocalizationType": "{avail}Metadata/{avail}LocalizationOffering",
 			"AvailMetadata:RatingReason": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Reason",
@@ -32,7 +32,7 @@
 			"AvailMetadata:TitleDisplayUnlimited": "{avail}Metadata/{avail}TitleDisplayUnlimited",
 			"AvailMetadata:TitleInternalAlias": "{avail}Metadata/{avail}TitleInternalAlias",
 			"AvailMetadata:TotalRunTime": "{avail}Metadata/{avail}RunLength",
-			"AvailTrans:AllowedLanguages": "{avail}AllowedLanguage",
+			"AvailTrans:AllowedLanguages": "*{avail}AllowedLanguage",
 			"AvailTrans:AnnounceDate": "{avail}Term/{avail}Event[../@termName='AnnounceDate']",
 			"AvailTrans:AssetLanguage": "{avail}AssetLanguage",
 			"AvailTrans:ContractID": "{avail}ContractID",
@@ -47,18 +47,18 @@
 			"AvailTrans:FormatProfile": "{avail}FormatProfile",
 			"AvailTrans:HDR": "{avail}FormatProfile/@HDR",
 			"AvailTrans:HFR": "{avail}FormatProfile/@HFR",
-			"AvailTrans:HoldbackLanguage": "{avail}HoldbackLanguage",
+			"AvailTrans:HoldbackLanguage": "*{avail}HoldbackLanguage",
 			"AvailTrans:LicenseRightsDescription": "{avail}LicenseRightsDescription",
 			"AvailTrans:LicenseType": "{avail}LicenseType",
 			"AvailTrans:NGAudio": "{avail}FormatProfile/@NGAudio",
 			"AvailTrans:OtherInstructions": "{avail}OtherInstructions",
-			"AvailTrans:OtherTerms": "foo",
-			"AvailTrans:PriceCurrency": "{avail}Term/{avail}Money/@currency",
-			"AvailTrans:PriceType": "{avail}Term/@termName",
+			"AvailTrans:OtherTerms": "n.a",
+			"AvailTrans:PriceCurrency": "{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money/@currency",
+			"AvailTrans:PriceType": "{avail}Term/@termName[.='Tier' or .='WSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
 			"AvailTrans:PriceValue": 
 			[
-				"{avail}Term/{avail}Money",
-				"{avail}Term/{avail}Text"
+				"{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
+				"{avail}Term[@termName[.='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
 			],
 
 			"AvailTrans:RentalDuration": "{avail}Term/{avail}Duration[../@termName='RentalDuration']",
@@ -93,7 +93,7 @@
 			"Avail:ServiceProvider": "{avail}ServiceProvider/{md}DisplayName",
 			"Avail:UV_ID": "{avail}SharedEntitlement[@ecosystem='UVVU']/{avail}EcosystemID",
 			"AvailAsset:EpisodeContentID": "@contentID",
-			"AvailAsset:Metadata": "foo",
+			"AvailAsset:Metadata": "n.a",
 			"AvailAsset:SeasonContentID": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeasonContentID",
@@ -107,9 +107,15 @@
 			},
 
 			"AvailAsset:WorkType": "{avail}WorkType",
-			"AvailMetadata:Any": "foo",
-			"AvailMetadata:CaptionExemption": "{avail}EpisodeMetadata/{avail}USACaptionsExemptionReason",
-			"AvailMetadata:CaptionIncluded": "foo",
+			"AvailMetadata:Any": "n.a",
+			"AvailMetadata:CaptionExemption": 
+			{
+				"episode": "{avail}EpisodeMetadata/{avail}USACaptionsExemptionReason",
+				"season": "{avail}SeasonMetadata/{avail}USACaptionsExemptionReason",
+				"series": "{avail}SeriesMetadata/{avail}USACaptionsExemptionReason"
+			},
+
+			"AvailMetadata:CaptionIncluded": "n.a",
 			"AvailMetadata:CompanyDisplayCredit": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString",
@@ -122,11 +128,11 @@
 				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}NumberOfEpisodes"
 			},
 
-			"AvailMetadata:EpisodeID":  
-				[
-					"{avail}EpisodeMetadata/{avail}EditEIDR-URN",
-					"{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier"
-				] ,
+			"AvailMetadata:EpisodeID": 
+			[
+				"{avail}EpisodeMetadata/{avail}EditEIDR-URN",
+				"{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier"
+			],
 
 			"AvailMetadata:EpisodeNumber": 
 			{
@@ -225,7 +231,7 @@
 			},
 
 			"AvailMetadata:TotalRunTime": "{avail}EpisodeMetadata/{avail}RunLength",
-			"AvailTrans:AllowedLanguages": "{avail}AllowedLanguage",
+			"AvailTrans:AllowedLanguages": "*{avail}AllowedLanguage",
 			"AvailTrans:AnnounceDate": "{avail}Term/{avail}Event[../@termName='AnnounceDate']",
 			"AvailTrans:AssetLanguage": "{avail}AssetLanguage",
 			"AvailTrans:ContractID": "{avail}ContractID",
@@ -240,18 +246,18 @@
 			"AvailTrans:FormatProfile": "{avail}FormatProfile",
 			"AvailTrans:HDR": "{avail}FormatProfile/@HDR",
 			"AvailTrans:HFR": "{avail}FormatProfile/@HFR",
-			"AvailTrans:HoldbackLanguage": "{avail}HoldbackLanguage",
+			"AvailTrans:HoldbackLanguage": "*{avail}HoldbackLanguage",
 			"AvailTrans:LicenseRightsDescription": "{avail}LicenseRightsDescription",
 			"AvailTrans:LicenseType": "{avail}LicenseType",
 			"AvailTrans:NGAudio": "{avail}FormatProfile/@NGAudio",
 			"AvailTrans:OtherInstructions": "{avail}OtherInstructions",
-			"AvailTrans:OtherTerms": "foo",
-			"AvailTrans:PriceCurrency": "{avail}Term/{avail}Money/@currency",
-			"AvailTrans:PriceType": "{avail}Term/@termName",
+			"AvailTrans:OtherTerms": "n.a",
+			"AvailTrans:PriceCurrency": "{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money/@currency",
+			"AvailTrans:PriceType": "{avail}Term/@termName[.='Tier' or .='WSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
 			"AvailTrans:PriceValue": 
 			[
-				"{avail}Term/{avail}Money",
-				"{avail}Term/{avail}Text"
+				"{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
+				"{avail}Term[@termName[.='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
 			],
 
 			"AvailTrans:RentalDuration": "{avail}Term/{avail}Duration[../@termName='RentalDuration']",
