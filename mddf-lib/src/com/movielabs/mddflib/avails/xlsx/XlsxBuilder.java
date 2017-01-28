@@ -112,12 +112,13 @@ public class XlsxBuilder {
 	private static DecimalFormat durFieldFmt = new DecimalFormat("00");
 	private static JSONObject mappings;
 	private static Pattern p_xsDuration;
+	private static String warnMsg1 = "XLSX xfer dropping additional XYZ values";
+	private static String warnDetail1 = "The Excel version of Avails only allows 1 value for this field. Additional XML elements will be ignored";
 	protected XPathFactory xpfac = XPathFactory.instance();
 	private LogMgmt logger;
-	private Version xlsxVersion;
 	private String rootPrefix = "avails:";
 
-	private int logMsgDefaultTag = LogMgmt.TAG_AVAIL;
+	private int logMsgDefaultTag = LogMgmt.TAG_XLSX;
 	protected String logMsgSrcId = "XlsxBuilder";
 	private String MD_VER;
 	private String MDMEC_VER;
@@ -127,12 +128,14 @@ public class XlsxBuilder {
 	private Element rootEl;
 	private ArrayList<Element> tvAvailsList;
 	private ArrayList<Element> movieAvailsList;
+	private HashSet<XPathExpression<?>> allowsMultiples = new HashSet<XPathExpression<?>>();
 	private XSSFWorkbook workbook;
 	private JSONObject mappingVersion;
 	private String availPrefix;
 	private String mdPrefix;
 	private Map<String, XSSFCellStyle> headerColors = new HashMap<String, XSSFCellStyle>();
 	private XSSFCellStyle defaultStyle;
+	private XSSFCellStyle headerStyleFill;
 
 	static {
 		/*
@@ -168,7 +171,6 @@ public class XlsxBuilder {
 	 */
 	public XlsxBuilder(Element docRootEl, Version xlsxVersion, LogMgmt logger) {
 		this.logger = logger;
-		this.xlsxVersion = xlsxVersion;
 		mappingVersion = mappings.getJSONObject(xlsxVersion.name());
 		rootEl = docRootEl;
 
@@ -232,6 +234,14 @@ public class XlsxBuilder {
 		headerStyle4.setFillPattern(CellStyle.SOLID_FOREGROUND);
 		headerStyle4.setAlignment(CellStyle.ALIGN_CENTER);
 		headerColors.put("AvailTrans", headerStyle4);
+
+		headerStyleFill = workbook.createCellStyle();
+		headerStyleFill.setFont(font);
+		XSSFColor c5 = new XSSFColor();
+		c5.setARGBHex("0c0c0c");
+		headerStyleFill.setFillForegroundColor(c5);
+		headerStyleFill.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		headerStyleFill.setAlignment(CellStyle.ALIGN_CENTER); 
 	}
 
 	/**
@@ -359,32 +369,110 @@ public class XlsxBuilder {
 			if (xpeList != null) {
 				for (int i = 0; i < xpeList.size(); i++) {
 					XPathExpression xpe = xpeList.get(i);
-					Object target = xpe.evaluateFirst(baseEl);
-					if (target != null) {
-						String value = null;
-						if (target instanceof Element) {
-							Element targetEl = (Element) target;
-							value = targetEl.getTextNormalize();
-						} else if (target instanceof Attribute) {
-							Attribute targetAt = (Attribute) target;
-							value = targetAt.getValue();
-						}
-						if (value != null) {
-							/*
-							 * check for special cases where value has to be
-							 * translated. This mainly happens with durations
-							 * where XSD specifies xs:duration syntax.
-							 */
-							value = convertDuration(value);
-							// ....................
-							dataMap.put(mappingKey, value);
-							break;
-						}
+					String value = null;
+					if (allowsMultiples.contains(xpe)) {
+						value = extractMultiple(xpe, baseEl);
+					} else {
+						value = extractSingleton(xpe, baseEl, mappingKey);
+					}
+					if (value != null) {
+						dataMap.put(mappingKey, value);
+						break;
 					}
 				}
 			}
 		}
 		return dataMap;
+	}
+
+	/**
+	 * @param xpe
+	 * @param baseEl
+	 * @return
+	 */
+	private String extractMultiple(XPathExpression xpe, Element baseEl) {
+		String value = null;
+		List targetList = xpe.evaluate(baseEl);
+		int matchCnt = 0;
+		if (targetList != null && (!targetList.isEmpty())) {
+			for (int i = 0; i < targetList.size(); i++) {
+				Object target = targetList.get(i);
+				String nextValue = null;
+				if (target instanceof Element) {
+					Element targetEl = (Element) target;
+					nextValue = targetEl.getTextNormalize();
+				} else if (target instanceof Attribute) {
+					Attribute targetAt = (Attribute) target;
+					nextValue = targetAt.getValue();
+				}
+				if (nextValue != null) {
+					matchCnt++;
+					/*
+					 * check for special cases where value has to be translated.
+					 * This mainly happens with durations where XSD specifies
+					 * xs:duration syntax.
+					 */
+					nextValue = convertDuration(nextValue);
+					if (matchCnt == 1) {
+						value = nextValue;
+					} else {
+						value = value + ", " + nextValue;
+					}
+				}
+			}
+		}
+		return value;
+
+	}
+
+	/**
+	 * Return a data value when only one Element matching an XPath may be used.
+	 * 
+	 * @param xpe
+	 * @param baseEl
+	 */
+	private String extractSingleton(XPathExpression xpe, Element baseEl, String mappingKey) {
+		String value = null;
+		List targetList = xpe.evaluate(baseEl);
+		int matchCnt = 0;
+		if (targetList != null && (!targetList.isEmpty())) {
+			for (int i = 0; i < targetList.size(); i++) {
+				Object target = targetList.get(i);
+				if (target instanceof Element) {
+					matchCnt++;
+					Element targetEl = (Element) target;
+					if (matchCnt == 1) {
+						value = targetEl.getTextNormalize();
+					} else if (matchCnt > 1) {
+						String msg = warnMsg1.replace("XYZ", mappingKey);
+						logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_WARN, targetEl, msg, warnDetail1, null,
+								logMsgSrcId);
+					}
+				} else if (target instanceof Attribute) {
+					matchCnt++;
+					Attribute targetAt = (Attribute) target;
+					if (matchCnt == 1) {
+						value = targetAt.getValue();
+					} else if (matchCnt > 1) {
+						Element targetEl = targetAt.getParent();
+						String msg = warnMsg1.replace("XYZ", mappingKey);
+						logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_WARN, targetEl, msg, warnDetail1, null,
+								logMsgSrcId);
+					}
+				}
+
+			}
+			if (value != null) {
+				/*
+				 * check for special cases where value has to be translated.
+				 * This mainly happens with durations where XSD specifies
+				 * xs:duration syntax.
+				 */
+				value = convertDuration(value);
+			}
+		}
+		return value;
+
 	}
 
 	/**
@@ -495,7 +583,7 @@ public class XlsxBuilder {
 		 * 'Avail:'
 		 */
 		String colKey = "Disposition:EntryType";
-		String mapping = mappingDefs.optString(colKey, "foo");
+		String mapping = mappingDefs.optString(colKey, "n.a");
 		List<XPathExpression> xpeList = new ArrayList<XPathExpression>();
 		xpeList.add(createXPath(mapping));
 		availMappings.put(colKey, xpeList);
@@ -523,7 +611,7 @@ public class XlsxBuilder {
 				String mapping;
 				if (value instanceof String) {
 					mapping = (String) value;
-					if (!mapping.equals("foo")) {
+					if (!mapping.equals("n.a")) {
 						List<XPathExpression> xpeList = new ArrayList<XPathExpression>();
 						xpeList.add(createXPath(mapping));
 						mappingLists.put(colKey, xpeList);
@@ -533,8 +621,8 @@ public class XlsxBuilder {
 					Iterator<String> typeIt = mappingSet.keySet().iterator();
 					while (typeIt.hasNext()) {
 						String nextType = typeIt.next();
-						mapping = mappingSet.optString(nextType, "foo");
-						if (!mapping.equals("foo")) {
+						mapping = mappingSet.optString(nextType, "n.a");
+						if (!mapping.equals("n.a")) {
 							List<XPathExpression> xpeList = new ArrayList<XPathExpression>();
 							xpeList.add(createXPath(mapping));
 							mappingLists.put(colKey + "#" + nextType, xpeList);
@@ -555,7 +643,7 @@ public class XlsxBuilder {
 	}
 
 	private XPathExpression createXPath(String mapping) {
-		if (mapping.equals("foo")) {
+		if (mapping.equals("n.a")) {
 			return null;
 		}
 		/*
@@ -563,14 +651,39 @@ public class XlsxBuilder {
 		 */
 		String t1 = mapping.replaceAll("\\{avail\\}", availPrefix);
 		String t2 = t1.replaceAll("\\{md\\}", mdPrefix);
-		String xpath = "./" + t2;
+		/*
+		 * Check for cardinality indicator. A leading '*' indicates that if
+		 * multiple elements match the xpath then their values are concatenated
+		 * into a single string of comma separated values. Otherwise when
+		 * multiple values are encountered a warning is logged and only the
+		 * first value is mapped to the excel.
+		 */
+		boolean multipleOk = t2.startsWith("*");
+		String xpath = "./" + t2.replace("*", "");
+
 		// Now compile the XPath
 		XPathExpression xpExpression;
-		if (xpath.matches(".*/@[\\w]++$")) {
+		/**
+		 * The following are examples of xpaths that return an attribute value
+		 * and that we therefore need to identity:
+		 * <ul>
+		 * <li>avail:Term/@termName</li>
+		 * <li>avail:Term[@termName[.='Tier' or .='WSP' or .='DMRP']</li>
+		 * <li>@contentID</li>
+		 * </ul>
+		 * whereas the following should NOT match:
+		 * <ul>
+		 * <li>avail:Term/avail:Event[../@termName='AnnounceDate']</li>
+		 * </ul>
+		 */
+		if (xpath.matches(".*/@[\\w]++(\\[.+\\])?")) {
 			// must be an attribute value we're after..
 			xpExpression = xpfac.compile(xpath, Filters.attribute(), null, availsNSpace, mdNSpace);
 		} else {
 			xpExpression = xpfac.compile(xpath, Filters.element(), null, availsNSpace, mdNSpace);
+		}
+		if (multipleOk) {
+			allowsMultiples.add(xpExpression);
 		}
 		return xpExpression;
 	}
@@ -621,6 +734,8 @@ public class XlsxBuilder {
 	private void addHeaderRows(XSSFSheet sheet, List<String> colIdList) {
 		Row row1 = sheet.createRow(0);
 		Row row2 = sheet.createRow(1);
+		// need to add an empty row cause spec sez Avails start on Row 4 :(
+		Row row3 = sheet.createRow(2);
 		for (int i = 0; i < colIdList.size(); i++) {
 			String colTag = colIdList.get(i);
 			String[] part = colTag.split(":");
@@ -635,9 +750,10 @@ public class XlsxBuilder {
 			}
 			cell1.setCellStyle(headerStyle);
 			cell2.setCellStyle(headerStyle);
+			// empty header cell..
+			Cell cell3 = row3.createCell(i);
+			cell3.setCellStyle(headerStyleFill);
 		}
-		// need to add an empty row cause spec sez Avails start on Row 4 :(
-		Row row3 = sheet.createRow(2);
 	}
 
 	/**
