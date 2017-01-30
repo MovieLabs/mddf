@@ -241,7 +241,7 @@ public class XlsxBuilder {
 		c5.setARGBHex("0c0c0c");
 		headerStyleFill.setFillForegroundColor(c5);
 		headerStyleFill.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		headerStyleFill.setAlignment(CellStyle.ALIGN_CENTER); 
+		headerStyleFill.setAlignment(CellStyle.ALIGN_CENTER);
 	}
 
 	/**
@@ -795,14 +795,18 @@ public class XlsxBuilder {
 	 */
 	public void export(String destPath) throws FileNotFoundException, IOException {
 		/* First adjust column widths */
-		Sheet sheetTV = workbook.getSheet("TV");
-		if (sheetTV != null) {
-			int colCount = mappingVersion.getJSONObject("TV").size();
-			for (int i = 0; i < colCount; i++) {
-				sheetTV.autoSizeColumn(i);
+		int sheetCnt = workbook.getNumberOfSheets();
+		for (int i = 0; i < sheetCnt; i++) { 
+			Sheet sheet = workbook.getSheetAt(i);
+			if (sheet != null) {
+				String name = sheet.getSheetName();
+				int colCount = mappingVersion.getJSONObject(name).size();
+				for (int j = 0; j < colCount; j++) {
+					sheet.autoSizeColumn(j);
+				}
 			}
-		}
 
+		}
 		try (FileOutputStream outputStream = new FileOutputStream(destPath)) {
 			workbook.write(outputStream);
 			logger.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "XLSX saved to " + destPath, null, logMsgSrcId);
