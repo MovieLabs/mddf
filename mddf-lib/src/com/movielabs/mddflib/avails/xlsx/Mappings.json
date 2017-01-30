@@ -5,7 +5,7 @@
 		{
 			"Avail:ALID": "{avail}ALID",
 			"Avail:AvailID": "{avail}Transaction/@TransactionID",
-			"Avail:BundledALIDs": "n.a",
+			"Avail:BundledALIDs": "*{avail}Asset[./{avail}WorkType/text()='Collection']/{avail}BundledAsset/{avail}BundledALID",
 			"Disposition:EntryType": "{avail}Disposition/{avail}EntryType",
 			"Avail:DisplayName": "{avail}Licensor/{md}DisplayName",
 			"Avail:DMA_ID": "{avail}SharedEntitlement[@ecosystem='DMA']/{avail}EcosystemID",
