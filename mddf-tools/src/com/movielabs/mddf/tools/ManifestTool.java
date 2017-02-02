@@ -38,7 +38,7 @@ import javax.swing.UIManager;
  *
  */
 public class ManifestTool extends ValidatorTool {
-	public static final String MANIFEST_APP_VER = "v1.2.1";
+	public static final String MANIFEST_APP_VER = "v1.2.2";
 	private static final String MANIFEST_DOC_VER = "v1.2.1";
 
 
