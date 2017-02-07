@@ -258,6 +258,8 @@ public class RowToXmlHelper {
 			case "Tier":
 			case "Category":
 			case "LicenseFee":
+			case "N.A.":
+			case "NA":
 				process(termEl, "Text", xb.getAvailsNSpace(), prefix + "PriceValue");
 				break;
 			case "WSP":
@@ -468,7 +470,7 @@ public class RowToXmlHelper {
 	protected Pedigree getPedigreedData(String colKey) {
 		int cellIdx = sheet.getColumnIdx(colKey);
 		if (cellIdx < 0) {
-			System.out.println("getPedigreedData:: MISSING COL for key [" + colKey + "]");
+//			System.out.println("getPedigreedData:: MISSING COL for key [" + colKey + "]");
 			return null;
 		}
 		Cell sourceCell = row.getCell(cellIdx);
