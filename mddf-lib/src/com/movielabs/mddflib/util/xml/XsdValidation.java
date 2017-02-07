@@ -113,6 +113,7 @@ public class XsdValidation {
 
 	private LogMgmt loggingMgr;
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	private Validator validator;
 
 	public XsdValidation(LogMgmt loggingMgr) {
 		this.loggingMgr = loggingMgr;
@@ -162,7 +163,7 @@ public class XsdValidation {
 		XsdErrorHandler errHandler = new XsdErrorHandler(srcFile);
 		// now do actual validation
 		try {
-			Validator validator = schema.newValidator();
+			validator = schema.newValidator();
 			validator.setErrorHandler(errHandler);
 			/*
 			 * This block of code handles a problem associated with supporting
@@ -214,7 +215,6 @@ public class XsdValidation {
 		}
 		return description;
 	}
-
 
 	// ###################################################################
 
@@ -491,6 +491,9 @@ public class XsdValidation {
 
 		private void handleMessage(int level, SAXParseException exception) throws SAXException {
 			int lineNumber = exception.getLineNumber();
+			Element invalidElement = (Element) validator
+					.getProperty("http://apache.org/xml/properties/dom/current-element-node");
+			System.out.println("Invalid element: " + invalidElement);
 			String message = parseSaxMessage(exception);
 			String explanation = "XML at line: " + lineNumber + " does not comply with schema :: " + message;
 			loggingMgr.log(level, LogMgmt.TAG_XSD, message, srcFile, lineNumber, "XmlIngester", explanation, null);
@@ -508,7 +511,8 @@ public class XsdValidation {
 		private String parseSaxMessage(SAXParseException exception) {
 			String msgType1 = "Invalid content was found starting with element";
 			String msgType2 = "is a simple type, so it cannot have attributes";
-			String msgType3 = "The content of element '[\\w]+:[\\w]+' is not complete.";
+			String msgType3 = "'([a-z]+:)?+\\w+' is not complete";
+			// "The content of element '[\\w]+:[\\w]+' is not complete.";
 			String message = exception.getMessage();
 			String primary = getPrimary(message);
 			String secondary = getSecondary(message);
@@ -530,28 +534,26 @@ public class XsdValidation {
 		}
 
 		private String getPrimary(String text) {
-			Pattern p = Pattern.compile("[a-z]+:[a-zA-Z\\-]+");
+			Pattern p = Pattern.compile("([a-z]+:)?+\\w+'"); 
 			Matcher m = p.matcher(text);
 			if (m.find()) {
 				return m.group();
-			}
-			Pattern p2 = Pattern.compile("'[a-zA-Z\\-]+'");
-			m = p2.matcher(text);
-			if (m.find()) {
-				return m.group();
-			}
+			} 
 			return "-UNKNOWN-";
 
 		}
 
 		private String getSecondary(String text) {
-			Pattern p = Pattern.compile("[a-z]+\":[a-zA-Z\\-]+");
+			String uriPrefixRegex = "\"(http:/){1}(/[a-zA-Z\\d\\.]+)+\":?";
+			String elementName = "[a-zA-Z\\d]+"; 
+			Pattern p = Pattern.compile(uriPrefixRegex+elementName);
 			Matcher m = p.matcher(text);
 			String result = "";
 			boolean hasAnother = m.find();
 			String sep = "";
 			while (hasAnother) {
 				String next = m.group();
+				next = next.replaceFirst(uriPrefixRegex, "");
 				hasAnother = m.find();
 				if (hasAnother) {
 					result = result + sep + next;
