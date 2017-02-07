@@ -24,6 +24,8 @@ package com.movielabs.mddflib.avails.xml;
 
 import org.jdom2.Element;
 
+import com.movielabs.mddflib.util.xml.RatingSystem;
+
 /**
  * @author L. Levin, Critical Architectures LLC
  *
@@ -196,10 +198,29 @@ public class DefaultMetadata {
 		ratings.addContent(rat);
 
 		row.addRegion(rat, "Region", xb.getMdNSpace(), "AvailTrans/Territory");
-		row.process(rat, "System", xb.getMdNSpace(), "AvailMetadata/RatingSystem");
+		Element rSysEl = row.process(rat, "System", xb.getMdNSpace(), "AvailMetadata/RatingSystem");
 		row.process(rat, "Value", xb.getMdNSpace(), "AvailMetadata/RatingValue");
-		row.process(rat, "Reason", xb.getMdNSpace(), "AvailMetadata/RatingReason", ",");
-
+		/*
+		 * IF RatingSys provides defined reason codes then look for a comma
+		 * separated listed of codes ELSE allow any single string value (i.e.,
+		 * commas do not denote multiple reasons).
+		 * 
+		 */
+		String system = rSysEl.getText();
+		RatingSystem rSystem = RatingSystem.factory(system);
+		/*
+		 * Note that the 'system' has not yet been validated so we may have a
+		 * null rSystem!
+		 */
+		if (rSystem == null || !(rSystem.providesReasons())) {
+			row.process(rat, "Reason", xb.getMdNSpace(), "AvailMetadata/RatingReason", null);
+		} else {
+			Element[] reasonList = row.process(rat, "Reason", xb.getMdNSpace(), "AvailMetadata/RatingReason", ",");
+			// if (reasonList != null) {
+			// System.out.println("Rating for rSystem " + system + " has " +
+			// reasonList.length + " reasons");
+			// }
+		}
 		parentEl.addContent(ratings);
 	}
 
