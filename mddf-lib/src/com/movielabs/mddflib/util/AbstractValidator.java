@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -108,8 +107,13 @@ public abstract class AbstractValidator extends XmlIngester {
 
 	protected static JSONArray rfc5646;
 
-	static {
+	protected static HashSet<String> specialRatings = new HashSet<String>();
 
+	static {
+		specialRatings.add("ALL");
+		specialRatings.add("UNRATED");
+		specialRatings.add("ADULT");
+		specialRatings.add("PROSCRIBED");
 		try {
 			cmVocab = loadVocab(vocabRsrcPath, "CM");
 
@@ -139,7 +143,6 @@ public abstract class AbstractValidator extends XmlIngester {
 	protected Map<String, Map<String, XrefCounter>> idXRefCounts;
 	protected Map<String, Map<String, Element>> id2XmlMappings;
 
-
 	protected XsdValidation xsdHelper;
 
 	protected StructureValidation structHelper;
@@ -152,7 +155,7 @@ public abstract class AbstractValidator extends XmlIngester {
 		xsdHelper = new XsdValidation(loggingMgr);
 		structHelper = new StructureValidation(this, logMsgSrcId);
 	}
-	
+
 	/**
 	 * @param validateC
 	 */
@@ -477,7 +480,6 @@ public abstract class AbstractValidator extends XmlIngester {
 		}
 
 	}
-	
 
 	/**
 	 * returns true if string defines a non-negative integer value
@@ -517,18 +519,19 @@ public abstract class AbstractValidator extends XmlIngester {
 			}
 			Element valueEl = ratingEl.getChild("Value", mdNSpace);
 			String rating = valueEl.getTextNormalize();
-			if (!rSystem.isValid(rating)) {
-				String msg = "Invalid Rating for RatingSystem";
-				String explanation = "The " + system + " Rating System does not include the '" + rating + "'";
-				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, valueEl, msg, explanation, null, logMsgSrcId);
-				curFileIsValid = false;
-			} else if (rSystem.isDeprecated(rating)) {
-				String msg = "Deprecated Rating";
-				String explanation = "The " + system + " Rating System has deprecated the '" + rating
-						+ "' rating. A more recent rating should be used if one is available";
-				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, valueEl, msg, explanation, null, logMsgSrcId);
+			if (!specialRatings.contains(rating)) {
+				if (!rSystem.isValid(rating)) {
+					String msg = "Invalid Rating for RatingSystem";
+					String explanation = "The " + system + " Rating System does not include the '" + rating + "'";
+					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, valueEl, msg, explanation, null, logMsgSrcId);
+					curFileIsValid = false;
+				} else if (rSystem.isDeprecated(rating)) {
+					String msg = "Deprecated Rating";
+					String explanation = "The " + system + " Rating System has deprecated the '" + rating
+							+ "' rating. A more recent rating should be used if one is available";
+					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, valueEl, msg, explanation, null, logMsgSrcId);
+				}
 			}
-
 			/*
 			 * Is the RatingSystem in use in the specified country or
 			 * countryRegion?
@@ -537,7 +540,6 @@ public abstract class AbstractValidator extends XmlIngester {
 			LogReference srcRef = LogReference.getRef("CM", "2.4", "cm_regions");
 			Element regionEl = ratingEl.getChild("Region", mdNSpace);
 			String region = null;
-			String subRegion = null;
 			Element target = regionEl.getChild("country", mdNSpace);
 			if (target == null) {
 				target = regionEl.getChild("countryRegion", mdNSpace);
@@ -551,7 +553,7 @@ public abstract class AbstractValidator extends XmlIngester {
 					String explanation = "The " + system
 							+ " Rating System has not been officially adopted in SubRegion '" + region + "'";
 					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, target, msg, explanation, null, logMsgSrcId);
-					curFileIsValid = false;
+					// curFileIsValid = false;
 				}
 			} else {
 				region = target.getText();
@@ -566,7 +568,25 @@ public abstract class AbstractValidator extends XmlIngester {
 					String explanation = "The " + system + " Rating System has not been officially adopted in Region '"
 							+ region + "'";
 					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, target, msg, explanation, null, logMsgSrcId);
-					curFileIsValid = false;
+					// curFileIsValid = false;
+				}
+			}
+			/*
+			 * Validation of Reasons: IF RatingSys provides defined reason codes
+			 * then validate zero or more codes ELSE allow any string value.
+			 * 
+			 */
+			if (rSystem.providesReasons()) { 
+				List<Element> reasonList = ratingEl.getChildren("Reason", mdNSpace);
+				for (int j = 0; j < reasonList.size(); j++) {
+					Element reasonEl = reasonList.get(j);
+					String reason = reasonEl.getTextNormalize();
+					if (!rSystem.hasReason(reason)) {
+						String msg = "Invalid Reason code";
+						String explanation = "Rating System uses pre-defined Reason-Codes which do not include '"+reason+"'";
+						logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, reasonEl, msg, explanation, null, logMsgSrcId);
+						curFileIsValid = false;
+					}
 				}
 			}
 		}
@@ -606,8 +626,14 @@ public abstract class AbstractValidator extends XmlIngester {
 				text = getSpecifiedValue(targetEl, childNS, child);
 			}
 			if (text != null) {
-				// treat as case-insensitive
-				text = text.toUpperCase();
+				/*
+				 * RFC4647 states matching of language codes is
+				 * case-insensitive. The codes have been converted and stored as
+				 * all lowercase so we do the same conversion to the value we
+				 * are checking.
+				 * 
+				 */
+				text = text.toLowerCase();
 				String[] langSubfields = text.split("-");
 				/* 1st field should be specified in RFC5646 */
 				boolean passed = true;
