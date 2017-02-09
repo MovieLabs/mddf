@@ -237,10 +237,12 @@ public class XmlBuilder {
 		 * do we handle?
 		 */
 		String alid = alidPedigree.getRawValue();
-		logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_DEBUG, null, "Looking for Avail with ALID=["+alid+"]", null, null, moduleId);
+		logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_DEBUG, null, "Looking for Avail with ALID=[" + alid + "]", null,
+				null, moduleId);
 		Element availEL = availElRegistry.get(alid);
 		if (availEL == null) {
-			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_DEBUG, null, "Building Avail with ALID=["+alid+"]", null, null, moduleId);
+			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_DEBUG, null, "Building Avail with ALID=[" + alid + "]", null,
+					null, moduleId);
 			availEL = new Element("Avail", getAvailsNSpace());
 			/*
 			 * No data value for the Avail element itself but for purposes of
@@ -556,6 +558,25 @@ public class XmlBuilder {
 					+ " was previously defined. Asset-specific fields in row " + row4log + " will be ignored";
 			Cell sourceCell = curRow.sheet.getCell(cidColKey, curRow.getRowNumber());
 			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_DEBUG, sourceCell, msg, details, null, moduleId);
+		}
+		/*
+		 * When dealing with a Movie or Episode, more that 1 ReleaseHistory and
+		 * Rating may be specified per-Asset. We therefore need to check for new
+		 * data on the current row and, if unique, append it to existing Asset
+		 * Metadata. The WorkType will determine which type of Metadata element
+		 * we are looking for.
+		 */
+		Element metadataEl = null;
+		switch (workType) {
+		case "Movie":
+			metadataEl = assetEl.getChild("Metadata", getAvailsNSpace());
+			mdHelper_basic.extend(metadataEl, curRow);
+			break;
+		case "Episode":
+			metadataEl = assetEl.getChild("EpisodeMetadata", getAvailsNSpace());
+			mdHelper_episode.extend(metadataEl, curRow);
+			break;
+		default:
 		}
 	}
 

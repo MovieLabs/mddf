@@ -23,6 +23,10 @@
 package com.movielabs.mddflib.avails.xml;
 
 import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 
 import com.movielabs.mddflib.util.xml.RatingSystem;
 
@@ -34,9 +38,17 @@ public class DefaultMetadata {
 
 	protected XmlBuilder xb;
 	protected String colPrefix = "";
+	protected XPathFactory xpfac = XPathFactory.instance();
+	private Namespace availNS;
+	/**
+	 * Used to determine where to insert any <tt>ReleaseHistory</tt> elements
+	 * when <i>finalizing</i>.
+	 */
+	protected Element releaseHistPredecessor = null;
 
 	DefaultMetadata(XmlBuilder xb) {
 		this.xb = xb;
+
 	}
 
 	/**
@@ -48,11 +60,18 @@ public class DefaultMetadata {
 	 * @return
 	 */
 	protected void createAssetMetadata(Element assetEl, RowToXmlHelper row) {
-		Element metadata = new Element("Metadata", xb.getAvailsNSpace());
+		availNS = xb.getAvailsNSpace();
+		Element metadata = new Element("Metadata", availNS);
 		addTitles(metadata, row);
 
-		addEIDR(metadata, "EditEIDR-URN", "AvailAsset/EditID", row);
-		addEIDR(metadata, "TitleEIDR-URN", "AvailAsset/TitleID", row);
+		Element idEl = addEIDR(metadata, "EditEIDR-URN", "AvailAsset/EditID", row);
+		if (idEl != null) {
+			releaseHistPredecessor = idEl;
+		}
+		idEl = addEIDR(metadata, "TitleEIDR-URN", "AvailAsset/TitleID", row);
+		if (idEl != null) {
+			releaseHistPredecessor = idEl;
+		}
 
 		addStandardMetadata(metadata, row);
 
@@ -61,10 +80,10 @@ public class DefaultMetadata {
 		assetEl.addContent(metadata);
 	}
 
-	protected void addEIDR(Element metadata, String childName, String colKey, RowToXmlHelper row) {
+	protected Element addEIDR(Element metadata, String childName, String colKey, RowToXmlHelper row) {
 		Pedigree pg = row.getPedigreedData(colKey);
 		if (!row.isSpecified(pg)) {
-			return;
+			return null;
 		}
 		String idValue = pg.getRawValue();
 		// what's the namespace (i.e., encoding fmt)?
@@ -72,9 +91,10 @@ public class DefaultMetadata {
 		if (namespace.equals("eider-5240")) {
 			idValue = idValue.replaceFirst("10.5240/", "urn:eidr:10.5240:");
 		}
-		Element idEl = row.mGenericElement(childName, idValue, xb.getAvailsNSpace());
+		Element idEl = row.mGenericElement(childName, idValue, availNS);
 		metadata.addContent(idEl);
 		xb.addToPedigree(idEl, pg);
+		return idEl;
 
 	}
 
@@ -114,32 +134,39 @@ public class DefaultMetadata {
 		if (!row.isSpecified(titleDuPg)) {
 			titleDuPg = titleAliasPg;
 		}
-		Element e = row.mGenericElement("TitleDisplayUnlimited", titleDuPg.getRawValue(), xb.getAvailsNSpace());
+		Element e = row.mGenericElement("TitleDisplayUnlimited", titleDuPg.getRawValue(), availNS);
 		xb.addToPedigree(e, titleDuPg);
 		metadata.addContent(e);
-
+		releaseHistPredecessor = e;
 		// TitleInternalAlias
 		if (xb.isRequired("TitleInternalAlias", "avails") || row.isSpecified(titleAliasPg)) {
-			e = row.mGenericElement("TitleInternalAlias", titleAliasPg.getRawValue(), xb.getAvailsNSpace());
+			e = row.mGenericElement("TitleInternalAlias", titleAliasPg.getRawValue(), availNS);
 			metadata.addContent(e);
 			xb.addToPedigree(e, titleAliasPg);
+			releaseHistPredecessor = e;
 		}
 	}
 
 	protected void addStandardMetadata(Element metadata, RowToXmlHelper row) {
-
-		row.process(metadata, "ReleaseDate", xb.getAvailsNSpace(), "AvailMetadata/ReleaseYear");
-		row.process(metadata, "RunLength", xb.getAvailsNSpace(), "AvailMetadata/TotalRunTime");
+		Element nextEl = null;
+		nextEl = row.process(metadata, "ReleaseDate", availNS, "AvailMetadata/ReleaseYear");
+		if (nextEl != null) {
+			releaseHistPredecessor = nextEl;
+		}
+		nextEl = row.process(metadata, "RunLength", availNS, "AvailMetadata/TotalRunTime");
+		if (nextEl != null) {
+			releaseHistPredecessor = nextEl;
+		}
 
 		addReleaseHistory(metadata, "original", "AvailMetadata/ReleaseHistoryOriginal", row);
 		addReleaseHistory(metadata, "DVD", "AvailMetadata/ReleaseHistoryPhysicalHV", row);
 
-		row.process(metadata, "USACaptionsExemptionReason", xb.getAvailsNSpace(), "AvailMetadata/CaptionExemption");
+		row.process(metadata, "USACaptionsExemptionReason", availNS, "AvailMetadata/CaptionExemption");
 
 		addContentRating(metadata, row);
 
-		row.process(metadata, "EncodeID", xb.getAvailsNSpace(), "AvailAsset/EncodeID");
-		row.process(metadata, "LocalizationOffering", xb.getAvailsNSpace(), "AvailMetadata/LocalizationType");
+		row.process(metadata, "EncodeID", availNS, "AvailAsset/EncodeID");
+		row.process(metadata, "LocalizationOffering", availNS, "AvailMetadata/LocalizationType");
 
 	}
 
@@ -149,7 +176,7 @@ public class DefaultMetadata {
 	 * @param colKey
 	 */
 	void addSequenceInfo(RowToXmlHelper row, Element metadataEl, String childName, String colKey) {
-		Element childEl = new Element(childName, xb.getAvailsNSpace());
+		Element childEl = new Element(childName, availNS);
 		Element numberEl = row.process(childEl, "Number", xb.getMdNSpace(), colKey);
 		if (numberEl != null) {
 			metadataEl.addContent(childEl);
@@ -167,14 +194,43 @@ public class DefaultMetadata {
 		if (!row.isSpecified(pg)) {
 			return;
 		}
-		Element rh = new Element("ReleaseHistory", xb.getAvailsNSpace());
+		/*
+		 * Before adding another rating to a pre-existing set we check for
+		 * uniqueness and ignore duplicates. Uniqueness is based on 3 values :
+		 * ReleaseType, DistrTerritory, and Date.
+		 */
+		String rDate = row.getData(cellKey);
+		String rTerr = row.getData("AvailTrans/Territory");
+
+		Namespace mdNS = xb.getMdNSpace();
+		String mdPrefix = mdNS.getPrefix();
+		String avPrefix = availNS.getPrefix();
+
+		String xpath = "./" + avPrefix + ":ReleaseHistory[./" + mdPrefix + ":ReleaseType='" + type + "' and .//"
+				+ mdPrefix + ":country='" + rTerr + "' and ./" + mdPrefix + ":Date='" + rDate + "']";
+		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, availNS,
+				xb.getMdNSpace());
+		Element matching = xpExpression.evaluateFirst(parentEl);
+		if (matching != null) {
+			// ignore pre-existing match
+			System.out.println("ignore pre-existing match:: " + type + "-" + rTerr + "-" + rDate);
+			return;
+		}
+
+		Element rh = new Element("ReleaseHistory", availNS);
 		Element rt = new Element("ReleaseType", xb.getMdNSpace());
 		rt.setText(type);
 		rh.addContent(rt);
+		row.addRegion(rh, "DistrTerritory", xb.getMdNSpace(), "AvailTrans/Territory");
 		Element dateEl = row.mGenericElement("Date", pg.getRawValue(), xb.getMdNSpace());
 		rh.addContent(dateEl);
 		xb.addToPedigree(dateEl, pg);
-		parentEl.addContent(rh);
+		/*
+		 * Append after releaseHistPredecessor
+		 */
+		int idx = parentEl.indexOf(releaseHistPredecessor) + 1;
+		parentEl.addContent(idx, rh);
+		releaseHistPredecessor = rh;
 	}
 
 	protected void addContentRating(Element parentEl, RowToXmlHelper row) {
@@ -189,11 +245,33 @@ public class DefaultMetadata {
 		if (!add) {
 			return;
 		}
-		Element ratings = new Element("Ratings", xb.getAvailsNSpace());
-
 		/*
-		 * XML can support multiple Rating instances but Excel only allows 1
+		 * 
 		 */
+		Element ratings = parentEl.getChild("Ratings", availNS);
+		if (ratings == null) {
+			ratings = new Element("Ratings", availNS);
+			parentEl.addContent(ratings);
+		} else {
+			/*
+			 * Before adding another rating to a pre-existing set we check for
+			 * uniqueness and ignore duplicates.
+			 */
+			Namespace mdNS = xb.getMdNSpace();
+			String mdPrefix = mdNS.getPrefix();
+			String xpath = "./" + mdPrefix + ":Rating[./" + mdPrefix + ":System='" + ratingSystem + "' and ./"
+					+ mdPrefix + ":Value='" + ratingValue + "']";
+			XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, availNS,
+					xb.getMdNSpace());
+			Element matching = xpExpression.evaluateFirst(ratings);
+			if (matching != null) {
+				// ignore pre-existing match
+				// System.out.println("ignore pre-existing match::
+				// "+ratingSystem+"-"+ratingValue);
+				return;
+			}
+		}
+
 		Element rat = new Element("Rating", xb.getMdNSpace());
 		ratings.addContent(rat);
 
@@ -216,12 +294,7 @@ public class DefaultMetadata {
 			row.process(rat, "Reason", xb.getMdNSpace(), "AvailMetadata/RatingReason", null);
 		} else {
 			Element[] reasonList = row.process(rat, "Reason", xb.getMdNSpace(), "AvailMetadata/RatingReason", ",");
-			// if (reasonList != null) {
-			// System.out.println("Rating for rSystem " + system + " has " +
-			// reasonList.length + " reasons");
-			// }
 		}
-		parentEl.addContent(ratings);
 	}
 
 	/**
@@ -230,7 +303,7 @@ public class DefaultMetadata {
 	 */
 	protected void addCredits(Element metadata, RowToXmlHelper row) {
 		if (row.isSpecified(row.getData("AvailMetadata/CompanyDisplayCredit"))) {
-			Element cdcEl = new Element("CompanyDisplayCredit", xb.getAvailsNSpace());
+			Element cdcEl = new Element("CompanyDisplayCredit", availNS);
 			row.process(cdcEl, "DisplayString", xb.getMdNSpace(), "AvailMetadata/CompanyDisplayCredit");
 			metadata.addContent(cdcEl);
 		}
@@ -258,7 +331,7 @@ public class DefaultMetadata {
 			// ??? Not sure how to handle
 			namespace = "user";
 		}
-		Element altIdEl = new Element(childName, xb.getAvailsNSpace());
+		Element altIdEl = new Element(childName, availNS);
 		xb.addToPedigree(altIdEl, pg);
 
 		Element nsEl = row.mGenericElement("Namespace", namespace, xb.getMdNSpace());
@@ -270,6 +343,17 @@ public class DefaultMetadata {
 
 		parentEl.addContent(altIdEl);
 
+	}
+
+	/**
+	 * @param metadataEl
+	 * @param row
+	 */
+	public void extend(Element metadataEl, RowToXmlHelper row) {
+		addContentRating(metadataEl, row);
+
+		addReleaseHistory(metadataEl, "original", "AvailMetadata/ReleaseHistoryOriginal", row);
+		addReleaseHistory(metadataEl, "DVD", "AvailMetadata/ReleaseHistoryPhysicalHV", row);
 	}
 
 }
