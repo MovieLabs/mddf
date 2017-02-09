@@ -81,6 +81,7 @@ import net.sf.json.JSONObject;
 public class ValidationController {
 
 	public static final String MODULE_ID = "Validator";
+	private static File tempDir = new File("./tmp");
 	private static String[] supportedProfiles = null;
 	private static HashMap<String, ProfileValidator> profileMap = null;
 	private static Options options = null;
@@ -91,6 +92,13 @@ public class ValidationController {
 	private Context context;
 	private LogMgmt logMgr;
 	private LogNavPanel logNav = null;
+	
+	{
+
+		if(!tempDir.exists()){
+			tempDir.mkdirs();
+		}
+	}
 
 	/**
 	 * [Implementation DEFERED a/o 2016-04-11] Run preprocesssing functions via
@@ -461,7 +469,7 @@ public class ValidationController {
 		}
 		logMgr.setCurrentFile(srcFile);
 		Map<Object, Pedigree> pedigreeMap = null;
-		Document xmlDoc = null; 
+		Document xmlDoc = null;
 		if (fileType.equals("xlsx")) {
 			/* The XLSX format is only supported with AVAILS files */
 			Map<String, Object> results = convertSpreadsheet(srcFile);
@@ -537,6 +545,10 @@ public class ValidationController {
 			break;
 		case AVAILS:
 			boolean isValid = validateAvail(docRootEl, pedigreeMap, srcFile);
+			if (!isValid && (fileType.equals("xlsx"))) {
+				File outputLoc = new File(tempDir, "TRACE_" + srcFile.getName().replace("xlsx", "xml"));
+				XmlIngester.writeXml(outputLoc, xmlDoc);
+			}
 			break;
 		case MEC:
 			validateMEC(docRootEl, srcFile);
