@@ -41,8 +41,8 @@ public class DefaultMetadata {
 	protected XPathFactory xpfac = XPathFactory.instance();
 	private Namespace availNS;
 	/**
-	 * Used to determine where to insert any <tt>ReleaseHistory</tt> elements
-	 * when <i>finalizing</i>.
+	 * Used to determine where to insert any <tt>ReleaseHistory</tt> elements as
+	 * these may be inserted out of sequence.
 	 */
 	protected Element releaseHistPredecessor = null;
 
