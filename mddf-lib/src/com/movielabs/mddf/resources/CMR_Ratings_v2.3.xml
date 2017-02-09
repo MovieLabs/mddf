@@ -7292,7 +7292,7 @@ PO Box 9244 Victoria BC V8W 9J2</mdcr:ContactString>
         <md:country>JP</md:country>
         <mdcr:RegionName>JAPAN</mdcr:RegionName>
       </mdcr:Region>
-      <mdcr:System>ERIN</mdcr:System>
+      <mdcr:System>EIRIN</mdcr:System>
     </mdcr:RatingSystemID>
     <mdcr:AdoptiveRegion>
       <md:country>JP</md:country>
@@ -7310,7 +7310,7 @@ PO Box 9244 Victoria BC V8W 9J2</mdcr:ContactString>
       <mdcr:URL>http://www.eirin.jp/</mdcr:URL>
       <mdcr:OrgType>other</mdcr:OrgType>
     </mdcr:RatingsOrg>
-    <mdcr:Rating ratingID="G.">
+    <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/JP/ERIN/1/G.</mdcr:URI>
       <mdcr:LinkToLogo>./imageCache/JP-ERIN-G.jpg</mdcr:LinkToLogo>
