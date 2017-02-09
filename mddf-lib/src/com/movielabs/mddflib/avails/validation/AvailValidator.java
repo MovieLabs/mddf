@@ -689,7 +689,7 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 	 * @param srcRef
 	 * @param moduleId
 	 */
-	public void logIssue(int tag, int level, Element xmlElement, String msg, String explanation, LogReference srcRef,
+	public void logIssue(int tag, int level, Object xmlElement, String msg, String explanation, LogReference srcRef,
 			String moduleId) {
 		Object target = null;
 		if (pedigreeMap == null) {
