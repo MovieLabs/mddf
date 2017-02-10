@@ -508,12 +508,20 @@ public abstract class AbstractValidator extends XmlIngester {
 		List<Element> ratingElList = xpExp01.evaluate(curRootEl);
 		rLoop: for (int i = 0; i < ratingElList.size(); i++) {
 			Element ratingEl = ratingElList.get(i);
-			String system = ratingEl.getChildTextNormalize("System", mdNSpace);
+			Element rSysEl = ratingEl.getChild("System", mdNSpace);
+			String system = rSysEl.getTextNormalize( );
+			if(system.isEmpty()){
+				String msg = "Rating System not specified";
+				String explanation = null;
+				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, rSysEl, msg, explanation, null, logMsgSrcId);
+				curFileIsValid = false;
+				continue;
+			}
 			RatingSystem rSystem = RatingSystem.factory(system);
 			if (rSystem == null) {
 				String msg = "Unrecognized Rating System '" + system + "'";
 				String explanation = null;
-				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, ratingEl, msg, explanation, null, logMsgSrcId);
+				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, rSysEl, msg, explanation, null, logMsgSrcId);
 				curFileIsValid = false;
 				continue;
 			}
