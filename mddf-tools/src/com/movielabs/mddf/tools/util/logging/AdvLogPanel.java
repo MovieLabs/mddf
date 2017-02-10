@@ -42,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
@@ -79,6 +80,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	private File curInputFile;
 	private int minLevel = LogMgmt.LEV_WARN;
 	private boolean infoIncluded = true;
+	private JTextField statusTextField;
 
 	public AdvLogPanel() {
 		treeView = new LogNavPanel(this);
@@ -164,7 +166,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		return saveLogMenu;
 	}
 
-	public JMenuItem createSaveLogMenu() { 
+	public JMenuItem createSaveLogMenu() {
 		return createSaveLogMenu(tableView);
 	}
 
@@ -237,7 +239,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		}
 		if (key.endsWith(".xml")) {
 			SimpleXmlEditor editor = EditorMgr.getSingleton().getEditor(logEntry, this);
-			if(editor != null){
+			if (editor != null) {
 				editor.setVisible(true);
 			}
 		} else {
@@ -324,8 +326,10 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		treeView.collapse();
 
 	}
- 
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.movielabs.mddflib.logging.LogMgmt#getFileFolder(java.io.File)
 	 */
 	@Override
@@ -430,12 +434,19 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 
 	protected void append(int level, int tag, String msg, File xmlFile, int line, String moduleID, String tooltip,
 			LogReference srcRef) {
+
 		if (level < minLevel) {
 			return;
 		}
-		if ((level == LogMgmt.LEV_INFO) && (!infoIncluded)) {
-			return;
+		if (level == LogMgmt.LEV_INFO) {
+			if (statusTextField != null) {
+				statusTextField.setText(msg);
+			}
+			if (!infoIncluded) {
+				return;
+			}
 		}
+
 		List<LogEntryNode> entryList = new ArrayList<LogEntryNode>();
 		LogEntryNode entry = treeView.append(level, tag, msg, xmlFile, line, moduleID, tooltip, srcRef);
 		entryList.add(entry);
@@ -483,5 +494,10 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	 */
 	public LogNavPanel getLogNavPanel() {
 		return treeView;
+	}
+
+	public void setStatusDisplay(JTextField txtStatus) {
+		statusTextField = txtStatus;
+
 	}
 }

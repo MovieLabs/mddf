@@ -28,15 +28,10 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.swing.JToolBar;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.jdom2.JDOMException;
-
-import com.movielabs.mddf.tools.util.xml.EditorMgr;
-import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
-import com.movielabs.mddflib.logging.LogEntryFolder;
-import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
@@ -44,6 +39,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
  *
  */
 public class AvailsTool extends ValidatorTool {
+
 	public static final String AVAIL_APP_VER = "v1.1";
 	private static final String AVAIL_DOC_VER = "v1.1";
 
@@ -98,18 +94,12 @@ public class AvailsTool extends ValidatorTool {
 		controller = getController();
 		controller.setValidation(true, true, false);
 		inputSrcTFieldLocked = true;
-		consoleLogger.collapse();
-		try {
-			controller.validate(srcPath, null, null);
-			refreshEditor(srcPath);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			consoleLogger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, e.getMessage(), null, "UI");
-		}
+		consoleLogger.collapse(); 
+		// ....................................................
+		runInBackground(srcPath, null, null);
+		// .................................................
 		frame.setCursor(null); // turn off the wait cursor
 		consoleLogger.expand();
 		inputSrcTFieldLocked = false;
 	}
-
 }

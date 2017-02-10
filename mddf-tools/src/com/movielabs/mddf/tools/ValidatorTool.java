@@ -79,7 +79,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 
-import com.movielabs.mddf.tools.ValidationController;
+import com.movielabs.mddf.tools.ValidationController; 
 import com.movielabs.mddf.tools.util.AboutDialog;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
 import com.movielabs.mddf.tools.util.logging.LogNavPanel;
@@ -97,6 +97,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 
 /**
  * @author L. Levin, Critical Architectures LLC
@@ -106,6 +108,56 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 	public static enum Context {
 		MANIFEST, AVAILS
+	}
+
+	public boolean running = false;
+
+	public class ValidationWorker extends SwingWorker<Void, StatusMsg> {
+
+		private ValidationController controller;
+		private String srcPath;
+		private String uxProfile;
+		private List<String> useCases;
+
+		public ValidationWorker(ValidationController controller, String srcPath, String uxProfile,
+				List<String> useCases) {
+			this.controller = controller;
+			this.srcPath = srcPath;
+			this.uxProfile = uxProfile;
+			this.useCases = useCases;
+		}
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			setRunningState(true);
+			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			getTxtStatus().setText("Starting.....");
+			consoleLogger.collapse(); 
+			try {
+				controller.validate(srcPath, uxProfile, useCases);
+				refreshEditor(srcPath);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				consoleLogger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, e.getMessage(), null, "UI");
+				getTxtStatus().setText( e.getMessage());
+			}
+			consoleLogger.expand();
+			((Component) consoleLogger).invalidate();
+			((Component) consoleLogger).repaint();
+			frame.setCursor(null); // turn off the wait cursor
+			setRunningState(false);
+			return null;
+		}
+
+	}
+
+	public static class StatusMsg {
+		private final String msg;
+
+		StatusMsg(String msg) {
+			this.msg = msg;
+		}
 	}
 
 	protected static final int MAX_RECENT = 8;
@@ -147,6 +199,10 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	private JMenu fileRecentMenu;
 	protected boolean inputSrcTFieldLocked = false;
 	protected FileFilter inputFileFilter = new FileNameExtensionFilter("XML file", "xml");
+	private JPanel statusPanel;
+	private JTextField txtStatus;
+	private JMenuItem openFileMI;
+	private JMenuItem runScriptMI;
 
 	/**
 	 * Returns the singleton instance of the currently executing tool.
@@ -223,8 +279,8 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		});
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		consoleLogger = getConsoleLogPanel();
-		JPanel statusPanel = new JPanel();
-		frame.getContentPane().add(statusPanel, BorderLayout.SOUTH);
+
+		frame.getContentPane().add(getStatusPanel(), BorderLayout.SOUTH);
 
 		mainPanel = new JPanel();
 		frame.getContentPane().add(mainPanel, BorderLayout.CENTER);
@@ -262,6 +318,16 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		return validatorToolBar;
 	}
 
+	void setRunningState(boolean state) {
+		this.running = state;
+		boolean enableUI = !running;
+		openFileMI.setEnabled(enableUI);
+		openFileMI.setEnabled(enableUI);
+		runScriptMI.setEnabled(enableUI);
+		editFileBtn.setEnabled(enableUI);
+		inputSrcTField.setEnabled(enableUI);
+	}
+
 	/**
 	 * @return
 	 */
@@ -272,6 +338,10 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			editFileBtn.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
+					if(running){
+						editFileBtn.setEnabled(false);
+						return;
+					}
 					editFile();
 				}
 			});
@@ -307,6 +377,10 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			runValidatorBtn.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
+					if(running){
+						runValidatorBtn.setEnabled(false);
+						return;
+					}
 					runTool();
 				}
 			});
@@ -325,6 +399,17 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		return headerPanel;
 	}
 
+	/**
+	 * @return
+	 */
+	protected Component getStatusPanel() {
+		if (statusPanel == null) {
+			statusPanel = new JPanel();
+			statusPanel.add(getTxtStatus());
+		}
+		return statusPanel;
+	}
+
 	protected JMenuBar getMenuBar() {
 		if (menuBar == null) {
 			menuBar = new JMenuBar();
@@ -332,7 +417,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			JMenu fileMenu = new JMenu("File");
 			menuBar.add(fileMenu);
 
-			JMenuItem openFileMI = new JMenuItem("Open File...");
+			openFileMI = new JMenuItem("Open File...");
 			openFileMI.addActionListener(new ActionListener() {
 
 				@Override
@@ -345,8 +430,8 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 			fileMenu.add(getFileRecentMenu());
 
-			JMenuItem menuItem1 = new JMenuItem("Run Script..");
-			menuItem1.addActionListener(new ActionListener() {
+			runScriptMI = new JMenuItem("Run Script..");
+			runScriptMI.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -354,7 +439,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 				}
 
 			});
-			fileMenu.add(menuItem1);
+			fileMenu.add(runScriptMI);
 
 			JMenuItem menuItem2 = new JMenuItem("Exit");
 			menuItem2.addActionListener(new ActionListener() {
@@ -628,9 +713,10 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected LoggerWidget getConsoleLogPanel() {
 		if (consoleLogger == null) {
 			consoleLogger = new AdvLogPanel();
+			((AdvLogPanel) consoleLogger).setStatusDisplay(getTxtStatus());
 			LogNavPanel logNav = ((AdvLogPanel) consoleLogger).getLogNavPanel();
 			// listen for user selections..
-			logNav.addListener(this); 
+			logNav.addListener(this);
 			/*
 			 * configure based on last saved user-specific settings..
 			 */
@@ -659,6 +745,10 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 				@Override
 				public void mouseClicked(MouseEvent e) {
+					if(running){
+						inputSrcTField.setEnabled(false);
+						return;
+					}
 					openFile();
 				}
 			});
@@ -667,6 +757,9 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	}
 
 	protected void openFile() {
+		if(running){
+			return;
+		}
 		// trigger the FileChooser dialog
 		File targetFile = FileChooserDialog.getPath("Source Folder", null, inputFileFilter, "srcManifest", tool.frame,
 				JFileChooser.FILES_AND_DIRECTORIES);
@@ -685,7 +778,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	 *            the fileInputDir to set
 	 */
 	protected void setFileInputDir(File target) {
-		if (inputSrcTFieldLocked) {
+		if (inputSrcTFieldLocked || running) {
 			/*
 			 * runTool() locks and unlocks this field to deal with a minor but
 			 * annoying bug resulting from it's collapsing the log tree.
@@ -871,26 +964,26 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		fileOutDir.getAbsolutePath();
 		controller = getController();
 		controller.setValidation(true, validateConstraintsCBox.isSelected(), validateBestPracCBox.isSelected());
-		try {
-			controller.validate(srcPath, uxProfile, useCases);
-			refreshEditor(srcPath);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			consoleLogger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, e.getMessage(), fileInputDir, "UI");
-		}
+		// ....................................................
+		runInBackground(srcPath,uxProfile, useCases);
+		// .................................................
 		frame.setCursor(null); // turn off the wait cursor
 		consoleLogger.expand();
 		inputSrcTFieldLocked = false;
 	}
 
+	protected void runInBackground(String srcPath, String uxProfile, List<String> useCases) {
+		SwingWorker<Void, StatusMsg> worker = new ValidationWorker(controller, srcPath, uxProfile, useCases);
+		worker.execute();
+	}
+
 	/**
-	 * If there is already an Editor for the specified file, update the log-entries
-	 * markers
+	 * If there is already an Editor for the specified file, update the
+	 * log-entries markers
 	 * 
 	 * @param srcPath
 	 */
-	protected void refreshEditor(String srcPath) { 
+	protected void refreshEditor(String srcPath) {
 		SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath);
 		if (xmlEditor != null) {
 			LogEntryFolder logFolder = consoleLogger.getFileFolder(xmlEditor.getCurFile());
@@ -957,4 +1050,14 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		System.exit(0);
 	}
 
+	public JTextField getTxtStatus() {
+		if (txtStatus == null) {
+			txtStatus = new JTextField();
+			txtStatus.setText("Status:");
+			txtStatus.setBackground(UIManager.getColor("OptionPane.questionDialog.titlePane.background"));
+			txtStatus.setEditable(false);
+			txtStatus.setColumns(90);
+		}
+		return txtStatus;
+	}
 }
