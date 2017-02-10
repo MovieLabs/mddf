@@ -35,13 +35,13 @@ public class EpisodeMetadata extends DefaultMetadata {
 	/**
 	 * @param xb
 	 */
-	EpisodeMetadata(XmlBuilder xb) {
+	public EpisodeMetadata(XmlBuilder xb) {
 		super(xb);
 		colPrefix = "Episode";
 		seasonMdBuilder = new SeasonMetadata(xb);
 	}
 
-	protected void createAssetMetadata(Element parentEl, RowToXmlHelper row) {
+	public  void createAssetMetadata(Element parentEl, RowToXmlHelper row) {
 		Element episodeMetadataEl = new Element(colPrefix + "Metadata", xb.getAvailsNSpace());
 		addTitles(episodeMetadataEl, row);
 

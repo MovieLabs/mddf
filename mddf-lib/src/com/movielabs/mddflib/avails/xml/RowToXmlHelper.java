@@ -253,7 +253,6 @@ public class RowToXmlHelper {
 		if (isSpecified(pg)) {
 			String tName = pg.getRawValue();
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
-			transactionEl.addContent(termEl);
 			switch (tName) {
 			case "Tier":
 			case "Category":
@@ -291,6 +290,8 @@ public class RowToXmlHelper {
 			}
 			termEl.setAttribute("termName", tName);
 			xb.addToPedigree(termEl, pg);
+			transactionEl.addContent(termEl);
+			System.out.println("row "+ row.getRowNum( )+" added "+tName+" term");
 		}
 
 		/*

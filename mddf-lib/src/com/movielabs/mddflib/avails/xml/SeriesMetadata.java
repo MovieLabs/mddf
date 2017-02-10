@@ -33,12 +33,12 @@ public class SeriesMetadata extends DefaultMetadata {
 	/**
 	 * @param xb
 	 */
-	SeriesMetadata(XmlBuilder xb) {
+	public SeriesMetadata(XmlBuilder xb) {
 		super(xb);
 		colPrefix = "Series";
 	}
 
-	protected void createAssetMetadata(Element parentEl, RowToXmlHelper row) {
+	public void createAssetMetadata(Element parentEl, RowToXmlHelper row) {
 		Element seriesMetadataEl = new Element(colPrefix + "Metadata", xb.getAvailsNSpace());
 		String key = colPrefix + "ContentID";
 		row.process(seriesMetadataEl, key, xb.getAvailsNSpace(), "AvailAsset/" + key);

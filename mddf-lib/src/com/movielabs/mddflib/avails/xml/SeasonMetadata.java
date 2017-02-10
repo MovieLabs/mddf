@@ -35,13 +35,13 @@ public class SeasonMetadata extends DefaultMetadata {
 	/**
 	 * @param xb
 	 */
-	SeasonMetadata(XmlBuilder xb) {
+	public SeasonMetadata(XmlBuilder xb) {
 		super(xb);
 		colPrefix = "Season";
 		seriesMdBuilder = new SeriesMetadata(xb);
 	}
 
-	protected void createAssetMetadata(Element parentEl, RowToXmlHelper row) {
+	public void createAssetMetadata(Element parentEl, RowToXmlHelper row) {
 		Element seasonMetadataEl = new Element(colPrefix + "Metadata", xb.getAvailsNSpace());
 		String key = colPrefix + "ContentID";
 		row.process(seasonMetadataEl, key, xb.getAvailsNSpace(), "AvailAsset/" + key);
