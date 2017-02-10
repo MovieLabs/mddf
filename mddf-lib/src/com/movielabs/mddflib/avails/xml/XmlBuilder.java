@@ -169,18 +169,24 @@ public class XmlBuilder {
 		root.addNamespaceDeclaration(mdMecNSpace);
 		root.addNamespaceDeclaration(SchemaWrapper.xsiNSpace);
 		doc.setRootElement(root);
+		String msg = "Processing spreadsheet; RowCount="+aSheet.getRowCount();
+		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 
 		// build document components row by row.
 		try {
 			switch (templateVersion) {
 			case V1_7:
 				for (Row row : aSheet.getRows()) {
+					msg = "Converting row "+row.getRowNum();
+					logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 					RowToXmlHelper xmlConverter = new RowToXmlHelper(aSheet, row);
 					xmlConverter.makeAvail(this);
 				}
 				break;
 			case V1_6:
 				for (Row row : aSheet.getRows()) {
+					msg = "Converting row "+row.getRowNum();
+					logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 					RowToXmlHelper xmlConverter = new RowToXmlHelperV1_6(aSheet, row);
 					xmlConverter.makeAvail(this);
 				}
@@ -189,7 +195,8 @@ public class XmlBuilder {
 				break;
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			msg = "Fatal Exception while ingesting XLSX file";
+			logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 			e.printStackTrace();
 			return null;
 		}
@@ -201,10 +208,11 @@ public class XmlBuilder {
 			int index = nextAvailEl.indexOf(sDescEl) + 1;
 			nextAvailEl.addContent(index, avail2TransMap.get(nextAvailEl));
 			nextAvailEl.addContent(index, avail2AssetMap.get(nextAvailEl));
-
+			finalizeAssetMetadata(nextAvailEl);
 			root.addContent(nextAvailEl);
 		}
-
+		msg = "Completed ingesting XLSX file";
+		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 		return doc;
 	}
 
@@ -611,6 +619,34 @@ public class XmlBuilder {
 		default:
 			mdHelper_basic.createAssetMetadata(assetEl, row);
 			return;
+		}
+	}
+
+	/**
+	 * @param availEl
+	 */
+	private void finalizeAssetMetadata(Element availEl) {
+		List<Element> assetList = availEl.getChildren("Asset", availsNSpace);
+		for (Element nextEl : assetList){ 
+			String assetWorkType = nextEl.getChildText("WorkType", availsNSpace);
+			Element mdEl = null;
+			switch (assetWorkType) {
+			case "Season":
+				mdEl = nextEl.getChild("SeasonMetadata", availsNSpace);
+				break;
+			case "Episode":
+				mdEl = nextEl.getChild("EpisodeMetadata", availsNSpace);
+				break;
+			case "Series":
+				mdEl = nextEl.getChild("SeriesMetadata", availsNSpace);
+				break;
+			default:
+				mdEl = nextEl.getChild("Metadata", availsNSpace);
+				break;
+			}
+			if(mdEl != null){
+				mdHelper_basic.finalize(mdEl);
+			}
 		}
 	}
 }

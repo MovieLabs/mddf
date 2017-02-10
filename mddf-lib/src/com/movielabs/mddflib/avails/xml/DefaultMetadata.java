@@ -22,6 +22,8 @@
  */
 package com.movielabs.mddflib.avails.xml;
 
+import java.util.List;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
@@ -31,6 +33,8 @@ import org.jdom2.xpath.XPathFactory;
 import com.movielabs.mddflib.util.xml.RatingSystem;
 
 /**
+ * A reusable builder of an <tt>&lt;avails:Metadata&gt;</tt> elements.
+ * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
@@ -40,38 +44,35 @@ public class DefaultMetadata {
 	protected String colPrefix = "";
 	protected XPathFactory xpfac = XPathFactory.instance();
 	private Namespace availNS;
+
 	/**
 	 * Used to determine where to insert any <tt>ReleaseHistory</tt> elements as
 	 * these may be inserted out of sequence.
 	 */
-	protected Element releaseHistPredecessor = null;
+	// protected Element releaseHistPredecessor = null;
 
-	DefaultMetadata(XmlBuilder xb) {
+	public DefaultMetadata(XmlBuilder xb) {
 		this.xb = xb;
 
 	}
 
 	/**
-	 * Construct Element instantiating the <tt>AvailMetadata-type</tt>. This
-	 * method may be extended or overridden by sub-classes specific to a given
-	 * work type (i.e., Episode, Season, etc.)
+	 * Construct a new Element instantiating the <tt>AvailMetadata-type</tt>
+	 * using the data in a single spreadsheet row. The new element will be
+	 * appended to the <tt>assetEl</tt>. This method may be extended or
+	 * overridden by sub-classes specific to a given work type (i.e., Episode,
+	 * Season, etc.).
 	 * 
 	 * @param assetEl
 	 * @return
 	 */
-	protected void createAssetMetadata(Element assetEl, RowToXmlHelper row) {
+	public void createAssetMetadata(Element assetEl, RowToXmlHelper row) {
 		availNS = xb.getAvailsNSpace();
 		Element metadata = new Element("Metadata", availNS);
 		addTitles(metadata, row);
 
 		Element idEl = addEIDR(metadata, "EditEIDR-URN", "AvailAsset/EditID", row);
-		if (idEl != null) {
-			releaseHistPredecessor = idEl;
-		}
 		idEl = addEIDR(metadata, "TitleEIDR-URN", "AvailAsset/TitleID", row);
-		if (idEl != null) {
-			releaseHistPredecessor = idEl;
-		}
 
 		addStandardMetadata(metadata, row);
 
@@ -137,26 +138,24 @@ public class DefaultMetadata {
 		Element e = row.mGenericElement("TitleDisplayUnlimited", titleDuPg.getRawValue(), availNS);
 		xb.addToPedigree(e, titleDuPg);
 		metadata.addContent(e);
-		releaseHistPredecessor = e;
 		// TitleInternalAlias
 		if (xb.isRequired("TitleInternalAlias", "avails") || row.isSpecified(titleAliasPg)) {
 			e = row.mGenericElement("TitleInternalAlias", titleAliasPg.getRawValue(), availNS);
 			metadata.addContent(e);
 			xb.addToPedigree(e, titleAliasPg);
-			releaseHistPredecessor = e;
 		}
 	}
 
 	protected void addStandardMetadata(Element metadata, RowToXmlHelper row) {
 		Element nextEl = null;
 		nextEl = row.process(metadata, "ReleaseDate", availNS, "AvailMetadata/ReleaseYear");
-		if (nextEl != null) {
-			releaseHistPredecessor = nextEl;
-		}
 		nextEl = row.process(metadata, "RunLength", availNS, "AvailMetadata/TotalRunTime");
-		if (nextEl != null) {
-			releaseHistPredecessor = nextEl;
-		}
+		/*
+		 * add a TEMPORARY holder for all ReleaseHistory elements. This will be
+		 * removed later when the Metadata is FINALIZED.
+		 */
+		Element rhtEl = new Element("ReleaseHistoryTEMP");
+		metadata.addContent(rhtEl);
 
 		addReleaseHistory(metadata, "original", "AvailMetadata/ReleaseHistoryOriginal", row);
 		addReleaseHistory(metadata, "DVD", "AvailMetadata/ReleaseHistoryPhysicalHV", row);
@@ -175,7 +174,7 @@ public class DefaultMetadata {
 	 * @param childName
 	 * @param colKey
 	 */
-	void addSequenceInfo(RowToXmlHelper row, Element metadataEl, String childName, String colKey) {
+	protected void addSequenceInfo(RowToXmlHelper row, Element metadataEl, String childName, String colKey) {
 		Element childEl = new Element(childName, availNS);
 		Element numberEl = row.process(childEl, "Number", xb.getMdNSpace(), colKey);
 		if (numberEl != null) {
@@ -189,7 +188,7 @@ public class DefaultMetadata {
 	 * @param cellKey
 	 * @param row
 	 */
-	void addReleaseHistory(Element parentEl, String type, String cellKey, RowToXmlHelper row) {
+	protected void addReleaseHistory(Element parentEl, String type, String cellKey, RowToXmlHelper row) {
 		Pedigree pg = row.getPedigreedData(cellKey);
 		if (!row.isSpecified(pg)) {
 			return;
@@ -213,7 +212,8 @@ public class DefaultMetadata {
 		Element matching = xpExpression.evaluateFirst(parentEl);
 		if (matching != null) {
 			// ignore pre-existing match
-			System.out.println("ignore pre-existing match:: " + type + "-" + rTerr + "-" + rDate);
+			// System.out.println("ignore pre-existing match:: " + type + "-" +
+			// rTerr + "-" + rDate);
 			return;
 		}
 
@@ -228,12 +228,16 @@ public class DefaultMetadata {
 		/*
 		 * Append after releaseHistPredecessor
 		 */
-		int idx = parentEl.indexOf(releaseHistPredecessor) + 1;
-		parentEl.addContent(idx, rh);
-		releaseHistPredecessor = rh;
+		Element ReleaseHistoryTEMP = parentEl.getChild("ReleaseHistoryTEMP");
+		ReleaseHistoryTEMP.addContent(rh);
 	}
 
 	protected void addContentRating(Element parentEl, RowToXmlHelper row) {
+		Element ratings = parentEl.getChild("Ratings", availNS);
+		if (ratings == null) {
+			ratings = new Element("Ratings", availNS);
+			parentEl.addContent(ratings);
+		}
 		String ratingSystem = row.getData("AvailMetadata/RatingSystem");
 		String ratingValue = row.getData("AvailMetadata/RatingValue");
 		/*
@@ -245,31 +249,23 @@ public class DefaultMetadata {
 		if (!add) {
 			return;
 		}
+
 		/*
-		 * 
+		 * Before adding another rating to a pre-existing set we check for
+		 * uniqueness and ignore duplicates.
 		 */
-		Element ratings = parentEl.getChild("Ratings", availNS);
-		if (ratings == null) {
-			ratings = new Element("Ratings", availNS);
-			parentEl.addContent(ratings);
-		} else {
-			/*
-			 * Before adding another rating to a pre-existing set we check for
-			 * uniqueness and ignore duplicates.
-			 */
-			Namespace mdNS = xb.getMdNSpace();
-			String mdPrefix = mdNS.getPrefix();
-			String xpath = "./" + mdPrefix + ":Rating[./" + mdPrefix + ":System='" + ratingSystem + "' and ./"
-					+ mdPrefix + ":Value='" + ratingValue + "']";
-			XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, availNS,
-					xb.getMdNSpace());
-			Element matching = xpExpression.evaluateFirst(ratings);
-			if (matching != null) {
-				// ignore pre-existing match
-				// System.out.println("ignore pre-existing match::
-				// "+ratingSystem+"-"+ratingValue);
-				return;
-			}
+		Namespace mdNS = xb.getMdNSpace();
+		String mdPrefix = mdNS.getPrefix();
+		String xpath = "./" + mdPrefix + ":Rating[./" + mdPrefix + ":System='" + ratingSystem + "' and ./" + mdPrefix
+				+ ":Value='" + ratingValue + "']";
+		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, availNS,
+				xb.getMdNSpace());
+		Element matching = xpExpression.evaluateFirst(ratings);
+		if (matching != null) {
+			// ignore pre-existing match
+			// System.out.println("ignore pre-existing match::
+			// "+ratingSystem+"-"+ratingValue);
+			return;
 		}
 
 		Element rat = new Element("Rating", xb.getMdNSpace());
@@ -346,6 +342,9 @@ public class DefaultMetadata {
 	}
 
 	/**
+	 * Add additional metadata to an already existing
+	 * <tt>&lt;avails:Metadata&gt;</tt> element
+	 * 
 	 * @param metadataEl
 	 * @param row
 	 */
@@ -354,6 +353,26 @@ public class DefaultMetadata {
 
 		addReleaseHistory(metadataEl, "original", "AvailMetadata/ReleaseHistoryOriginal", row);
 		addReleaseHistory(metadataEl, "DVD", "AvailMetadata/ReleaseHistoryPhysicalHV", row);
+	}
+
+	public void finalize(Element metadataEl) {
+		Element rhTempEl = metadataEl.getChild("ReleaseHistoryTEMP");
+		if (rhTempEl == null) {
+			return;
+		}
+		List<Element> rhElList = rhTempEl.getChildren("ReleaseHistory", availNS); 
+		int ptr = metadataEl.indexOf(rhTempEl) + 1;
+		for (int i = 0; i < rhElList.size(); i++) {
+			Element nextEl = rhElList.get(i);
+			nextEl.detach();
+			metadataEl.addContent(ptr, nextEl);
+		}
+		rhTempEl.detach();
+		
+		Element ratings = metadataEl.getChild("Ratings", availNS);
+		if(ratings.getChildren().isEmpty()){
+			ratings.detach();
+		}
 	}
 
 }
