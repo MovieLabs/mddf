@@ -157,8 +157,8 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 	}
 
 	public static final String LOGMSG_ID = "AvailValidator";
- 
-	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL",  "avail01");
+
+	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL", "avail01");
 
 	private static JSONObject availVocab;
 
@@ -235,6 +235,8 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 	 */
 	public boolean process(Element docRootEl, Map<Object, Pedigree> pedigreeMap, File xmlFile)
 			throws IOException, JDOMException {
+		String msg = "Begining validation of Avails...";
+		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
 		curRootEl = null;
 		curFile = xmlFile;
 		curFileName = xmlFile.getName();
@@ -248,12 +250,12 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 
 		validateXml(xmlFile, docRootEl);
 		if (!curFileIsValid) {
-			String msg = "Schema validation check FAILED";
+			msg = "Schema validation check FAILED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
 			// return false;
 		} else {
 			curRootEl = docRootEl; // getAsXml(xmlFile);
-			String msg = "Schema validation check PASSED";
+			msg = "Schema validation check PASSED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
 			if (validateC) {
 				validateConstraints();
@@ -280,7 +282,7 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 	 * Validate everything that is not fully specified via the XSD.
 	 */
 	protected void validateConstraints() {
-		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Validating constraints", curFile, LOGMSG_ID);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.LEV_INFO, "Validating constraints", curFile, LOGMSG_ID);
 		super.validateConstraints();
 
 		SchemaWrapper availSchema = SchemaWrapper.factory("avails-v" + XmlIngester.AVAIL_VER);
@@ -340,7 +342,7 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 		allOK = validateVocab(primaryNS, "Metadata", primaryNS, "LocalizationOffering", allowed, srcRef, true) && allOK;
 		allOK = validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "LocalizationOffering", allowed, srcRef, true)
 				&& allOK;
-		
+
 		allowed = availVocab.optJSONArray("SeasonStatus");
 		srcRef = LogReference.getRef(doc, "avail04");
 		allOK = validateVocab(primaryNS, "SeasonMetadata", primaryNS, "SeasonStatus", allowed, srcRef, true) && allOK;
@@ -379,19 +381,20 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 		allowed = availVocab.optJSONArray("SharedEntitlement@ecosystem");
 		srcRef = LogReference.getRef(doc, "avail09");
 		allOK = validateVocab(primaryNS, "SharedEntitlement", primaryNS, "@ecosystem", allowed, srcRef, true) && allOK;
-		
+
 		// ===========================================================
 		/* For Transactions in US, check USACaptionsExemptionReason */
 		allowed = availVocab.optJSONArray("USACaptionsExemptionReason");
 		srcRef = LogReference.getRef(doc, "avail03");
-		allOK = validateVocab(primaryNS, "Asset", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true) && allOK;
-		allOK = validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true)
+		allOK = validateVocab(primaryNS, "Asset", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true)
 				&& allOK;
-		allOK = validateVocab(primaryNS, "SeasonMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true)
-				&& allOK;
-		allOK = validateVocab(primaryNS, "SeriesMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true)
-				&& allOK;
-		
+		allOK = validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef,
+				true) && allOK;
+		allOK = validateVocab(primaryNS, "SeasonMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef,
+				true) && allOK;
+		allOK = validateVocab(primaryNS, "SeriesMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef,
+				true) && allOK;
+
 		return allOK;
 	}
 
@@ -399,6 +402,8 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 	 * @return
 	 */
 	protected boolean validateCMVocab() {
+
+		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.LEV_INFO, "Validating use of controlled vocabulary...", curFile, LOGMSG_ID);
 		boolean allOK = true;
 		Namespace primaryNS = availsNSpace;
 		/*
@@ -435,6 +440,7 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 	 * @return
 	 */
 	private void validateUsage() {
+		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.LEV_INFO, "Validating structure...", curFile, LOGMSG_ID);
 		/*
 		 * Check terms associated with Pre-Orders: If LicenseType is 'POEST'
 		 * than (1) a SuppressionLiftDate term is required and (2) a
@@ -537,7 +543,7 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 	 * @param availType
 	 */
 	private void validateTypeCompatibility(String availType) {
-		LogReference srcRef = LogReference.getRef("AVAIL",   "struc01");
+		LogReference srcRef = LogReference.getRef("AVAIL", "struc01");
 
 		JSONObject structureDef = availTypeStruct.getJSONObject(availType);
 		if (structureDef == null || structureDef.isNullObject()) {
@@ -618,9 +624,9 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 		JSONArray rqmts = wtStrucDef.getJSONArray("requirement");
 		for (int i = 0; i < rqmts.size(); i++) {
 			JSONObject nextRqmt = rqmts.getJSONObject(i);
-			if(!structHelper.validateStructure(assetEl, nextRqmt)){
+			if (!structHelper.validateStructure(assetEl, nextRqmt)) {
 				curFileIsValid = false;
-			} 
+			}
 		}
 
 	}
