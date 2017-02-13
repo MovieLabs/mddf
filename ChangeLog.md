@@ -14,7 +14,7 @@ The latest release of the core mddf-lib is v1.1.1. The tool releases based on th
 
 #### mddf-lib v1.1.1
 
-* Bug Fix: When converting Availf from XLSX to XML multiple ReleaseHistory and Rating elements for a 
+* Bug Fix: When converting Avail from XLSX to XML multiple ReleaseHistory and Rating elements for a 
          single Asset are now transfered even if defined on multiple rows.
 
 #### mddf-lib v1.1
@@ -35,7 +35,7 @@ The latest release of the core mddf-lib is v1.1.1. The tool releases based on th
 
 #### v1.1.1
 
-* Enhancement: Added status message dispalay at bottom of frame to indicate progress
+* Enhancement: Added status message display at bottom of frame to indicate progress
 
 #### v1.1
 
@@ -45,7 +45,7 @@ The latest release of the core mddf-lib is v1.1.1. The tool releases based on th
 
 #### v1.2.3
 
-* Enhancement: Added status message dispalay at bottom of frame to indicate progress
+* Enhancement: Added status message display at bottom of frame to indicate progress
 
 #### v1.2.2
 
