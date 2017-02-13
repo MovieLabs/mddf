@@ -169,7 +169,7 @@ public class XmlBuilder {
 		root.addNamespaceDeclaration(mdMecNSpace);
 		root.addNamespaceDeclaration(SchemaWrapper.xsiNSpace);
 		doc.setRootElement(root);
-		String msg = "Processing spreadsheet; RowCount="+aSheet.getRowCount();
+		String msg = "Processing spreadsheet; RowCount=" + aSheet.getRowCount();
 		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 
 		// build document components row by row.
@@ -177,7 +177,7 @@ public class XmlBuilder {
 			switch (templateVersion) {
 			case V1_7:
 				for (Row row : aSheet.getRows()) {
-					msg = "Converting row "+row.getRowNum();
+					msg = "Converting row " + row.getRowNum();
 					logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 					RowToXmlHelper xmlConverter = new RowToXmlHelper(aSheet, row);
 					xmlConverter.makeAvail(this);
@@ -185,7 +185,7 @@ public class XmlBuilder {
 				break;
 			case V1_6:
 				for (Row row : aSheet.getRows()) {
-					msg = "Converting row "+row.getRowNum();
+					msg = "Converting row " + row.getRowNum();
 					logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 					RowToXmlHelper xmlConverter = new RowToXmlHelperV1_6(aSheet, row);
 					xmlConverter.makeAvail(this);
@@ -627,7 +627,7 @@ public class XmlBuilder {
 	 */
 	private void finalizeAssetMetadata(Element availEl) {
 		List<Element> assetList = availEl.getChildren("Asset", availsNSpace);
-		for (Element nextEl : assetList){ 
+		for (Element nextEl : assetList) {
 			String assetWorkType = nextEl.getChildText("WorkType", availsNSpace);
 			Element mdEl = null;
 			switch (assetWorkType) {
@@ -644,9 +644,13 @@ public class XmlBuilder {
 				mdEl = nextEl.getChild("Metadata", availsNSpace);
 				break;
 			}
-			if(mdEl != null){
+			if (mdEl != null) {
 				mdHelper_basic.finalize(mdEl);
 			}
 		}
+	}
+
+	void appendToLog(String msg, int logLevel, Cell target) {
+		logger.logIssue(LogMgmt.TAG_AVAIL, logLevel, target, msg, null, null, moduleId);
 	}
 }

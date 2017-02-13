@@ -30,6 +30,7 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
+import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
  * Code and functionality formerly in SheetRow. The XML generated reflects a
@@ -291,7 +292,7 @@ public class RowToXmlHelper {
 			termEl.setAttribute("termName", tName);
 			xb.addToPedigree(termEl, pg);
 			transactionEl.addContent(termEl);
-			System.out.println("row "+ row.getRowNum( )+" added "+tName+" term");
+			System.out.println("row " + row.getRowNum() + " added " + tName + " term");
 		}
 
 		/*
@@ -471,13 +472,15 @@ public class RowToXmlHelper {
 	protected Pedigree getPedigreedData(String colKey) {
 		int cellIdx = sheet.getColumnIdx(colKey);
 		if (cellIdx < 0) {
-//			System.out.println("getPedigreedData:: MISSING COL for key [" + colKey + "]");
 			return null;
 		}
 		Cell sourceCell = row.getCell(cellIdx);
 		String value = dataF.formatCellValue(sourceCell);
 		if (value == null) {
 			value = "";
+		}
+		if (sourceCell != null && (sourceCell.getCellType() == Cell.CELL_TYPE_FORMULA)) { 
+			xb.appendToLog("Use of Excel Formulas not supported", LogMgmt.LEV_ERR, sourceCell);
 		}
 		Pedigree ped = new Pedigree(sourceCell, value);
 
