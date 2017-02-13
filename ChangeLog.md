@@ -5,13 +5,19 @@
 
 ## Versioning
 
-The latest STABLE release of the core mddf-lib is v1.1. The tool releases based on the latest version of the core software are: 
+The latest release of the core mddf-lib is v1.1.1. The tool releases based on the latest version of the core software are: 
 
-* Manifest Validator: v1.2.2
-* Avails Validator: v1.1
- 
+* Manifest Validator: v1.2.3
+* Avails Validator: v1.1.1
 
-### mddf-lib Changes for v1.1
+### mddf-lib Changes:
+
+#### mddf-lib v1.1.1
+
+* Bug Fix: When converting Availf from XLSX to XML multiple ReleaseHistory and Rating elements for a 
+         single Asset are now transfered even if defined on multiple rows.
+
+#### mddf-lib v1.1
 
 * Bug Fix: Avails Asset metadata usage was not properly validated.
 * Bug Fix: Conversion of Avails from XLSX to XML did not correctly translate durations to xs:duration format.
@@ -25,10 +31,22 @@ The latest STABLE release of the core mddf-lib is v1.1. The tool releases based 
   * from XLSX v1.6 to XLSX v1.7
 * Update: Ratings are now validated using v2.3 of the Common Metadata Ratings (CMR) data-set.
 
-### Avails Validator Changes
+### Avails Validator Changes:
+
+#### v1.1.1
+
+* Enhancement: Added status message dispalay at bottom of frame to indicate progress
+
+#### v1.1
 
 * Enhancement: Conversion of Avails from XML to XLSX is now supported.
 
-### Manifest Validator Changes
+### Manifest Validator Changes:
 
-Uses mddf-lib v1.1 but no changes to end functionality
+#### v1.2.3
+
+* Enhancement: Added status message dispalay at bottom of frame to indicate progress
+
+#### v1.2.2
+
+* Uses mddf-lib v1.1.1 but no changes to end functionality
