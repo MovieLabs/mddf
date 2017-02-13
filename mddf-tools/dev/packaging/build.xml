@@ -3,10 +3,10 @@
 	xmlns:fx="javafx:com.sun.javafx.tools.ant">
 	<property name="proj.home" value="${basedir}/../.." />
 	<property name="mddf-lib.home" value="${proj.home}/../mddf-lib" />
-	<property name="mddf-lib.version" value="1.1" />
+	<property name="mddf-lib.version" value="1.1.1" />
 	<property name="appPack.dir" value="${proj.home}/packager" />
-	<property name="app.version.cmm" value="1.2.2" />
-	<property name="app.version.avail" value="1.1" />
+	<property name="app.version.cmm" value="1.2.3" />
+	<property name="app.version.avail" value="1.1.1" />
 	<property name="proj.appDev" value="${proj.home}/dev/packaging" />
 	<property name="proj.rsrcFolder" value="${proj.home}/resources" />
 	<property name="proj.package" value="com/movielabs/mddf/tools" />
