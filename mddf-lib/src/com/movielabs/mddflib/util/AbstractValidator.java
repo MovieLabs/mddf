@@ -509,8 +509,8 @@ public abstract class AbstractValidator extends XmlIngester {
 		rLoop: for (int i = 0; i < ratingElList.size(); i++) {
 			Element ratingEl = ratingElList.get(i);
 			Element rSysEl = ratingEl.getChild("System", mdNSpace);
-			String system = rSysEl.getTextNormalize( );
-			if(system.isEmpty()){
+			String system = rSysEl.getTextNormalize();
+			if (system.isEmpty()) {
 				String msg = "Rating System not specified";
 				String explanation = null;
 				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, rSysEl, msg, explanation, null, logMsgSrcId);
@@ -584,14 +584,15 @@ public abstract class AbstractValidator extends XmlIngester {
 			 * then validate zero or more codes ELSE allow any string value.
 			 * 
 			 */
-			if (rSystem.providesReasons()) { 
+			if (rSystem.providesReasons()) {
 				List<Element> reasonList = ratingEl.getChildren("Reason", mdNSpace);
 				for (int j = 0; j < reasonList.size(); j++) {
 					Element reasonEl = reasonList.get(j);
 					String reason = reasonEl.getTextNormalize();
 					if (!rSystem.hasReason(reason)) {
 						String msg = "Invalid Reason code";
-						String explanation = "Rating System uses pre-defined Reason-Codes which do not include '"+reason+"'";
+						String explanation = "Rating System uses pre-defined Reason-Codes which do not include '"
+								+ reason + "'";
 						logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, reasonEl, msg, explanation, null, logMsgSrcId);
 						curFileIsValid = false;
 					}
@@ -768,7 +769,7 @@ public abstract class AbstractValidator extends XmlIngester {
 			if (text != null) {
 				if (caseSensitive) {
 					if (!expected.contains(text)) {
-						String explanation = "Values are case-sensitive";
+						String explanation = "Value specified does not match one of the allowed strings. Note that string-matching is case-sensitive";
 						// TODO: Is this ERROR or WARNING???
 						logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
 						allOK = false;
