@@ -40,25 +40,7 @@ public class MecValidator extends AbstractValidator {
 	static final String DOC_VER = "2.4"; 
 
 	static {
-		id2typeMap = new HashMap<String, String>();
-
-		try {
-			/*
-			 * There is no controlled vocab that is specific to a MEC file. Note
-			 * the vocab set for validating Common Metadata will be loaded by
-			 * the parent class AbstractValidator.
-			 */
-
-			/*
-			 * ISO codes are simple so we use Properties
-			 */
-			String iso3166RsrcPath = "/com/movielabs/mddf/resources/ISO3166-1.properties";
-			iso3166_1_codes = loadProperties(iso3166RsrcPath);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		id2typeMap = new HashMap<String, String>(); 
 	}
 
 	/**
