@@ -23,7 +23,6 @@ package com.movielabs.mddflib.manifest.validation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,8 +99,6 @@ public class ManifestValidator extends AbstractValidator {
 	}
 
 	public static final String LOGMSG_ID = "ManifestValidator";
-	private static JSONObject manifestVocab;
-	private static JSONObject availVocab;
 
 	static {
 		id2typeMap = new HashMap<String, String>();
@@ -111,19 +108,6 @@ public class ManifestValidator extends AbstractValidator {
 		id2typeMap.put("InteractiveTrackID", "interactiveid");
 		id2typeMap.put("ProductID", "alid");
 		id2typeMap.put("ContentID", "cid");
-
-		/*
-		 * Is there a controlled vocab that is specific to a Manifest? Note the
-		 * vocab set for validating Common Metadata will be loaded by the parent
-		 * class AbstractValidator.
-		 */
-		try {
-			manifestVocab = loadVocab(vocabRsrcPath, "Manifest");
-			availVocab = loadVocab(vocabRsrcPath, "Avail");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -268,14 +252,19 @@ public class ManifestValidator extends AbstractValidator {
 		// start with Common Metadata spec..
 		boolean cmOk = validateCMVocab();
 
-		// Now do any defined in the Manifest spec..  
-		JSONArray allowed;  
-		
+		JSONObject manifestVocab = (JSONObject) getMddfResource("manifest", MAN_VER);
+		if (manifestVocab == null) {
+			return;
+		}
+
+		// Now do any defined in the Manifest spec..
+		JSONArray allowed;
+
 		allowed = manifestVocab.optJSONArray("PictureGroupType");
 		LogReference srcRef = LogReference.getRef("MMM", MAN_VER, "mmm001");
 		validateVocab(manifestNSpace, "PictureGroup", manifestNSpace, "Type", allowed, srcRef, true);
- 
-		allowed= manifestVocab.optJSONArray("TimedEventType");
+
+		allowed = manifestVocab.optJSONArray("TimedEventType");
 		srcRef = LogReference.getRef("MMM", MAN_VER, "mmm002");
 		validateVocab(manifestNSpace, "TimedEvent", manifestNSpace, "Type", allowed, srcRef, true);
 
@@ -291,13 +280,13 @@ public class ManifestValidator extends AbstractValidator {
 		srcRef = LogReference.getRef("CM", MAN_VER, "mmm_expAppType");
 		validateVocab(manifestNSpace, "Experience", manifestNSpace, "Type", allowed, srcRef, true);
 
-		allowed = cmVocab.optJSONArray("Parent@relationshipType");
-		srcRef = LogReference.getRef("CM", MD_VER, "cm007");
-		validateVocab(manifestNSpace, "ExperienceChild", manifestNSpace, "Relationship", allowed, srcRef, true);
+		JSONObject availVocab = (JSONObject) getMddfResource("avail", AVAIL_VER);
+		if (availVocab != null) {
+			allowed = availVocab.optJSONArray("ExperienceCondition");
+			srcRef = LogReference.getRef("CM", MD_VER, "cm007");
+			validateVocab(manifestNSpace, "ExperienceID", null, "@condition", allowed, srcRef, true);
+		}
 
-		allowed = availVocab.optJSONArray("ExperienceCondition");
-		srcRef = LogReference.getRef("CM", MD_VER, "cm007");
-		validateVocab(manifestNSpace, "ExperienceID", null, "@condition", allowed, srcRef, true);
 		validateLocations();
 
 	}
@@ -306,7 +295,11 @@ public class ManifestValidator extends AbstractValidator {
 	 * @return
 	 */
 	protected boolean validateCMVocab() {
-		boolean allOK = true; 
+		boolean allOK = true;
+		JSONObject cmVocab = (JSONObject) getMddfResource("cm", MD_VER);
+		if (cmVocab == null) {
+			return false;
+		}
 
 		JSONArray allowed = cmVocab.optJSONArray("WorkType");
 		LogReference srcRef = LogReference.getRef("CM", MD_VER, "cm002");
@@ -337,6 +330,11 @@ public class ManifestValidator extends AbstractValidator {
 		allowed = cmVocab.optJSONArray("EntryClass");
 		srcRef = LogReference.getRef("CM", MD_VER, "cm008");
 		allOK = validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef, true) && allOK;
+
+		allowed = cmVocab.optJSONArray("Parent@relationshipType");
+		srcRef = LogReference.getRef("CM", MD_VER, "cm007");
+		allOK = validateVocab(manifestNSpace, "ExperienceChild", manifestNSpace, "Relationship", allowed, srcRef, true)
+				&& allOK;
 
 		// --------------- Validate language codes
 		// ----------------------------------------

@@ -29,13 +29,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 
+import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.xml.RatingSystem;
@@ -100,11 +99,9 @@ public abstract class AbstractValidator extends XmlIngester {
 
 	public static final String LOGMSG_ID = "AbstractValidator";
 
-	protected static HashMap<String, String> id2typeMap;
-	protected static JSONObject cmVocab;
+	protected static HashMap<String, String> id2typeMap; 
 
 	protected static Properties iso3166_1_codes;
-
 	protected static JSONArray rfc5646;
 
 	protected static HashSet<String> specialRatings = new HashSet<String>();
@@ -114,17 +111,15 @@ public abstract class AbstractValidator extends XmlIngester {
 		specialRatings.add("UNRATED");
 		specialRatings.add("ADULT");
 		specialRatings.add("PROSCRIBED");
-		try {
-			cmVocab = loadVocab(vocabRsrcPath, "CM");
-
+		try { 
 			/*
-			 * Language codes are in CM vocab
+			 * Language codes are in their own file
 			 */
-			rfc5646 = cmVocab.optJSONArray("RFC5646");
+			rfc5646 = (JSONArray) getMddfResource("rfc5646");
 			/*
 			 * ISO region/country codes are simple so we use Properties
 			 */
-			String iso3166RsrcPath = "/com/movielabs/mddf/resources/ISO3166-1.properties";
+			String iso3166RsrcPath = MddfContext.RSRC_PATH + "ISO3166-1.properties";
 			iso3166_1_codes = loadProperties(iso3166RsrcPath);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -742,6 +737,14 @@ public abstract class AbstractValidator extends XmlIngester {
 	 */
 	protected boolean validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
 			JSONArray expected, LogReference srcRef, boolean caseSensitive) {
+		if (expected == null || expected.isEmpty()) {
+			/*
+			 * The version of the schema being used does not define an
+			 * enumerated set of valid terms for the target element.
+			 * 
+			 */
+			return true;
+		}
 		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
 				Filters.element(), null, primaryNS);
 		List<Element> elementList = xpExpression.evaluate(curRootEl);

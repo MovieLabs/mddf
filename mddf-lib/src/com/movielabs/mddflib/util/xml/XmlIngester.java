@@ -32,7 +32,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -59,9 +61,9 @@ import net.sf.json.JSONSerializer;
  */
 public abstract class XmlIngester implements IssueLogger {
 	public static String MD_VER = "2.3";
-	public static String MDMEC_VER = "2.3";
-	public static String MAN_VER = "1.4";
-	public static String AVAIL_VER = "1.7";
+	public static String MDMEC_VER = "2.4";
+	public static String MAN_VER = "1.5";
+	public static String AVAIL_VER = "2.1";
 	public static Namespace xsiNSpace = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 
 	public static Namespace mdNSpace = Namespace.getNamespace("md",
@@ -75,12 +77,12 @@ public abstract class XmlIngester implements IssueLogger {
 	public static Namespace availsNSpace = Namespace.getNamespace("avails",
 			MddfContext.NSPACE_AVAILS_PREFIX + AVAIL_VER + MddfContext.NSPACE_AVAILS_SUFFIX);
 
-	protected static XPathFactory xpfac = XPathFactory.instance();
+	protected static XPathFactory xpfac = XPathFactory.instance(); 
+	
+	private static Map<String, Object> rsrcCache = new HashMap();
 
-	protected static String vocabRsrcPath = MddfContext.RSRC_PATH + "cm_vocab.json";
 	protected static File srcFile;
-	protected static File sourceFolder;
-	private static JSONObject vocabResource = null;
+	protected static File sourceFolder; 
 
 	protected File curFile;
 	protected String curFileName;
@@ -96,12 +98,46 @@ public abstract class XmlIngester implements IssueLogger {
 		this.loggingMgr = loggingMgr;
 	}
 
-	protected static JSONObject loadVocab(String rsrcPath, String vocabSet) throws JDOMException, IOException {
-		if (vocabResource == null) {
-			vocabResource = loadJSON(rsrcPath);
+	protected static Object getMddfResource(String rsrcId) {
+		String rsrcPath = MddfContext.RSRC_PATH + rsrcId + ".json";
+		JSONObject rsrc = (JSONObject) rsrcCache.get(rsrcPath);
+		if (rsrc == null) {
+			try {
+				rsrc = loadJSON(rsrcPath);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
+			rsrcCache.put(rsrcPath, rsrc);
 		}
-		JSONObject vocabulary = vocabResource.getJSONObject(vocabSet);
-		return vocabulary;
+		Object jsonRsrc = rsrc.get(rsrcId);
+		return jsonRsrc;
+	}
+
+	/**
+	 * Return resource defining a version-specific controlled vocabulary set.
+	 * 
+	 * @param rsrcId
+	 * @param rsrcVersion
+	 * @return a JSONObject or <tt>null</tt. if the resource is not accesible or
+	 *         is not valid JSON
+	 */
+	protected static Object getMddfResource(String rsrcId, String rsrcVersion) {
+		String rsrcPath = MddfContext.RSRC_PATH + "vocab_" + rsrcId + "_v" + rsrcVersion + ".json";
+		JSONObject rsrc = (JSONObject) rsrcCache.get(rsrcPath);
+		if (rsrc == null) {
+			try {
+				rsrc = loadJSON(rsrcPath);
+			} catch (Exception e) {
+				System.out.println("Missing MDDF Resc " + rsrcPath);
+				e.printStackTrace();
+				return null;
+			}
+			rsrcCache.put(rsrcPath, rsrc);
+		}
+		Object jsonRsrc = rsrc.get(rsrcId);
+		return jsonRsrc;
 	}
 
 	protected static JSONObject loadJSON(String rsrcPath) throws JDOMException, IOException {
@@ -128,7 +164,7 @@ public abstract class XmlIngester implements IssueLogger {
 		}
 		return props;
 	}
- 
+
 	/**
 	 * Identify all ALID and determine which experience is used when the ALID is
 	 * accessed by a consumer.
@@ -338,7 +374,7 @@ public abstract class XmlIngester implements IssueLogger {
 			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(outputLoc), "UTF-8");
 			outputter.output(xmlDoc, osw);
 			osw.close();
-		} catch (IOException e) { 
+		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -496,5 +532,5 @@ public abstract class XmlIngester implements IssueLogger {
 		availsNSpace = Namespace.getNamespace("avails",
 				"http://www.movielabs.com/schema/avails/v" + AVAIL_VER + "/avails");
 	}
- 
+
 }

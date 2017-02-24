@@ -1,0 +1,88 @@
+{
+	"cm": 
+	{
+		"WorkType": 
+		[
+			"Album",
+			"Song",
+			"Music Video",
+			"Ring Tone",
+			"Other Music",
+			"Movie",
+			"Short",
+			"Series",
+			"Season",
+			"Episode",
+			"Non-episodic Show",
+			"Promotion",
+			"Ad",
+			"Excerpt",
+			"Supplemental",
+			"Collection",
+			"Franchise",
+			"App",
+			"Gallery",
+			"Other"
+		],
+
+		"ColorType": 
+		[
+			"color",
+			"bandw",
+			"colorized",
+			"composite",
+			"unknown"
+		],
+
+		"PictureFormat": 
+		[
+			"Letterbox",
+			"Pillarbox",
+			"Full",
+			"Stretch",
+			"Pan and Scan",
+			"Other"
+		],
+
+		"ReleaseType": 
+		[
+			"original",
+			"Broadcast",
+			"DVD",
+			"Blu-ray",
+			"Hospitality",
+			"PayTV",
+			"InternetBuy",
+			"InternetRent",
+			"Theatrical",
+			"VOD"
+		],
+
+		"TitleAlternate@type": 
+		[
+			"alternative",
+			"misspelling",
+			"StartsWith"
+		],
+
+		"Parent@relationshipType": 
+		[
+			"isclipof",
+			"isepisodeof",
+			"isseasonof",
+			"ispartof",
+			"isderivedfrom",
+			"iscompositeof",
+			"issupplementto",
+			"ispromotionfor"
+		],
+
+		"EntryClass": 
+		[
+			"Episode",
+			"Installment",
+			"Part",
+			"Season"
+		]
+	}
+}

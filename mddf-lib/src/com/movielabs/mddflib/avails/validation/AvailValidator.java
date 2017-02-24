@@ -160,8 +160,6 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 
 	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL", "avail01");
 
-	private static JSONObject availVocab;
-
 	private static JSONObject availTypeStruct;
 
 	private static JSONArray genericAvailTypes;
@@ -173,13 +171,7 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 	static {
 		id2typeMap = new HashMap<String, String>();
 
-		try {
-			/*
-			 * Is there a controlled vocab that is specific to a Manifest? Note
-			 * the vocab set for validating Common Metadata will be loaded by
-			 * the parent class AbstractValidator.
-			 */
-			availVocab = loadVocab(vocabRsrcPath, "Avail");
+		try { 
 
 			/*
 			 * Load JSON that defines various constraints on structure of an
@@ -236,7 +228,7 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 	public boolean process(Element docRootEl, Map<Object, Pedigree> pedigreeMap, File xmlFile)
 			throws IOException, JDOMException {
 		String msg = "Begining validation of Avails...";
-		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
 		curRootEl = null;
 		curFile = xmlFile;
 		curFileName = xmlFile.getName();
@@ -244,15 +236,14 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 		curFileIsValid = true;
 
 		String schemaVer = identifyXsdVersion(docRootEl);
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, srcFile, logMsgSrcId);
+		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Avails Schema Version " + schemaVer, srcFile, logMsgSrcId);
 		setAvailVersion(schemaVer);
 		rootNS = availsNSpace;
 
 		validateXml(xmlFile, docRootEl);
 		if (!curFileIsValid) {
 			msg = "Schema validation check FAILED";
-			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
-			// return false;
+			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId); 
 		} else {
 			curRootEl = docRootEl; // getAsXml(xmlFile);
 			msg = "Schema validation check PASSED";
@@ -324,6 +315,11 @@ public class AvailValidator extends AbstractValidator implements IssueLogger {
 		boolean allOK = true;
 		Namespace primaryNS = availsNSpace;
 		String doc = "AVAIL";
+
+		JSONObject availVocab = (JSONObject) getMddfResource("avail", AVAIL_VER);
+		if(availVocab==null){
+			return false;
+		}
 
 		JSONArray allowed = availVocab.optJSONArray("AvailType");
 		LogReference srcRef = LogReference.getRef(doc, "avail01");

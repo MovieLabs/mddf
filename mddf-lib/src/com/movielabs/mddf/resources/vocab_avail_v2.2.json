@@ -1,0 +1,154 @@
+{ 
+	"avail": 
+	{
+		"AvailType": 
+		[
+			"single",
+			"episode",
+			"season",
+			"series",
+			"miniseries",
+			"collection",
+			"bundle",
+			"supplement",
+			"promotion"
+		],
+
+		"EntryType": 
+		[
+			"Full Delete",
+			"Full Extract"
+		],
+
+		"AltIdentifier@scope": 
+		[
+			"Title",
+			"Edit",
+			"Manifestation"
+		],
+
+		"USACaptionsExemptionReason": 
+		[
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6"
+		],
+
+		"LocalizationOffering": 
+		[
+			"sub",
+			"dub",
+			"subdub",
+			"any"
+		],
+
+		"SeasonStatus": 
+		[
+			"Partial"
+		],
+
+		"SeriesStatus": 
+		[
+			"Concluded",
+			"Continuing",
+			"Pending"
+		],
+
+		"LicenseType": 
+		[
+			"EST",
+			"VOD",
+			"SVOD",
+			"POEST"
+		],
+		
+		"Language@asset":
+		[
+			"subtitle",
+			"audio",
+			"subdub"
+		],
+
+		"LicenseRightsDescription": 
+		[
+			
+			"Next Day TV",
+			"POD"
+		],
+
+		"FormatProfile": 
+		[
+			"UHD",
+			"HD",
+			"SD",
+			"3D",
+			"3DUHD",
+			"3DHD",
+			"3DSD"
+		],
+
+		"FormatProfile@HDR": 
+		[
+			"true",
+			"HDR10", 
+			"DV"
+		],
+		
+		"Term@termName": 
+		[
+			"Tier",
+			"SRP",
+			"WSP",
+			"EpisodeWSP",
+			"SeasonWSP",
+			"DMRP",
+			"SMRP",
+			"LicenseFee",
+			"Category",
+			"Included",
+			"AnnounceDate",
+			"PreorderFulfillDate",
+			"SuppressionLiftDate",
+			"RentalDuration",
+			"WatchDuration",
+			"FixedEndDate",
+			"LocalizationOffering",
+			"GEMACountry",
+			"GEMACategory",
+			"SRP-PostTax",
+			"WSP-PostTax",
+			"EpisodeWSP-PostTax",
+			"SeasonWSP-PostTax",
+			"DMRP-PostTax",
+			"SMRP-PostTax",
+			"N.A."
+		],
+
+		"SharedEntitlement@ecosystem": 
+		[
+			"MA",
+			"DMA",
+			"UVVU"
+		],
+
+		"ExperienceCondition": 
+		[
+			"Unavailable",
+			"Pre-offer",
+			"Pre-order",
+			"Hold",
+			"For-sale",
+			"Acquired"
+		],
+
+		"DateTimeCondition": 
+		[
+			"Open",
+			"Immediate",
+			"ESTStart"
+		]
+	}
+}
