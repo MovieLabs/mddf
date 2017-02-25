@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
@@ -99,23 +101,37 @@ public abstract class AbstractValidator extends XmlIngester {
 
 	public static final String LOGMSG_ID = "AbstractValidator";
 
-	protected static HashMap<String, String> id2typeMap; 
+	protected static HashMap<String, String> id2typeMap;
 
 	protected static Properties iso3166_1_codes;
-	protected static JSONArray rfc5646;
 
 	protected static HashSet<String> specialRatings = new HashSet<String>();
+
+	private static JSONArray iso639_2;
+
+	private static JSONArray iso639_3;
+
+	private static JSONArray unM49;
+
+	private static JSONArray rfc5646Variant;
+
+	private static JSONArray rfc5646Script;
 
 	static {
 		specialRatings.add("ALL");
 		specialRatings.add("UNRATED");
 		specialRatings.add("ADULT");
 		specialRatings.add("PROSCRIBED");
-		try { 
+		try {
 			/*
 			 * Language codes are in their own file
 			 */
-			rfc5646 = (JSONArray) getMddfResource("rfc5646");
+			JSONObject rfc5646 = getMddfResource("rfc5646");
+			iso639_2 = rfc5646.getJSONArray("iso639-2");
+			iso639_3 = rfc5646.getJSONArray("iso639-3");
+			unM49 = rfc5646.getJSONArray("UN-M49");
+			rfc5646Variant = rfc5646.getJSONArray("variant");
+			rfc5646Script = rfc5646.getJSONArray("script");
 			/*
 			 * ISO region/country codes are simple so we use Properties
 			 */
@@ -606,6 +622,11 @@ public abstract class AbstractValidator extends XmlIngester {
 	 * <li><tt>null</tt>, in which case the text value of the <tt>primaryEl</tt>
 	 * will be used.</li>
 	 * </ul>
+	 * <p>
+	 * Use of RFC5646 is limited to a subset of the complete syntax in that only
+	 * the <tt>Language</tt>, <tt>Region</tt>, and <tt>Variant</tt> subtags are
+	 * supported. Use of the <tt>Script</tt> subtag is not supported.
+	 * </p>
 	 * 
 	 * @param primaryNS
 	 * @param primaryEl
@@ -614,70 +635,138 @@ public abstract class AbstractValidator extends XmlIngester {
 	 * @return
 	 */
 	protected boolean validateLanguage(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
-		String mdVersion = "2.4";
-		LogReference srcRef = LogReference.getRef("CM", mdVersion, "cm_lang");
-		int tag4log = getLogTag(primaryNS, childNS);
 		boolean allOK = true;
 		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
 				Filters.element(), null, primaryNS);
 		List<Element> elementList = xpExpression.evaluate(curRootEl);
+		int tag4log = getLogTag(primaryNS, childNS);
 		for (int i = 0; i < elementList.size(); i++) {
 			Element targetEl = (Element) elementList.get(i);
 			String text;
 			if (child == null) {
 				text = targetEl.getTextNormalize();
-			} else {
-				text = getSpecifiedValue(targetEl, childNS, child);
-			}
-			if (text != null) {
-				/*
-				 * RFC4647 states matching of language codes is
-				 * case-insensitive. The codes have been converted and stored as
-				 * all lowercase so we do the same conversion to the value we
-				 * are checking.
-				 * 
-				 */
-				text = text.toLowerCase();
-				String[] langSubfields = text.split("-");
-				/* 1st field should be specified in RFC5646 */
-				boolean passed = true;
-				if (!rfc5646.contains(langSubfields[0])) {
-					passed = false;
-				} else if ((langSubfields.length > 1) && (!iso3166_1_codes.containsKey(langSubfields[1]))) {
-					passed = false;
+				if (!checkLangTag(text)) {
+					reportLangError(targetEl, tag4log, text);
 				}
-				if (!passed) {
-					/*
-					 * Build an appropriate log entry based on nature and
-					 * structure of the value source
-					 */
-					String errMsg = null;
-					Element logMsgEl = null;
-					String textAsLogged;
-					if (child == null) {
-						logMsgEl = targetEl;
-						textAsLogged = logMsgEl.getTextNormalize();
-						errMsg = "Unrecognized value '" + textAsLogged + "' for " + primaryEl;
-					} else if (!child.startsWith("@")) {
-						Element subElement = targetEl.getChild(child, childNS);
-						logMsgEl = subElement;
-						if (subElement != null) {
-							textAsLogged = logMsgEl.getTextNormalize();
-							errMsg = "Unrecognized value '" + textAsLogged + "' for " + primaryEl + "/" + child;
-						}
-					} else {
-						String targetAttb = child.replaceFirst("@", "");
-						textAsLogged = targetEl.getAttributeValue(targetAttb);
-						logMsgEl = targetEl;
-						errMsg = "Unrecognized value '" + textAsLogged + "' for attribute " + child;
+			} else if (child.startsWith("@")) {
+				// dealing with an attribute
+				String targetAttb = child.replaceFirst("@", "");
+				text = targetEl.getAttributeValue(targetAttb);
+				if (!checkLangTag(text)) {
+					reportLangError(targetEl, tag4log, text);
+				}
+			} else {
+				// dealing with one or more child elements
+				List<Element> langElList = targetEl.getChildren(child, childNS);
+				for (int j = 0; j < langElList.size(); j++) {
+					Element langEl = (Element) langElList.get(j);
+					text = langEl.getTextNormalize();
+					if (!checkLangTag(text)) {
+						reportLangError(langEl, tag4log, text);
 					}
-					logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, null, srcRef, logMsgSrcId);
-					allOK = false;
-					curFileIsValid = false;
 				}
 			}
 		}
 		return allOK;
+	}
+
+	private boolean checkLangTag(String text) {
+		/*
+		 * RFC4647 states matching of language codes is case-insensitive. The
+		 * codes have been converted and stored as all lowercase so we do the
+		 * same conversion of the value we are checking.
+		 * 
+		 */
+		text = text.toLowerCase(); 
+		String[] langSubfields = text.split("-");
+		boolean passed = true;
+		/*
+		 * 1st field should be specified in ISO639-2 or ISO639-3 and will be
+		 * MANDATORY
+		 */
+		String subTag = langSubfields[0];
+		switch (subTag.length()) {
+		case 2:
+			passed = iso639_2.contains(subTag);
+			break;
+		case 3:
+			passed = iso639_3.contains(subTag);
+			break;
+		default:
+			passed = false;
+		}
+		if (!passed) {
+			return false;
+		}
+		if (langSubfields.length < 2) {
+			return true;
+		}
+
+		/*
+		 * 2nd field will be script or region or a variant. Which it is can be
+		 * determined by the length of string.
+		 */
+		subTag = langSubfields[1];
+		boolean foundRegion = false;
+		switch (subTag.length()) {
+		case 2:
+		case 3:
+			passed = iso3166_1_codes.containsKey(subTag.toUpperCase());
+			foundRegion = true;
+			break;
+		case 4:
+			passed = rfc5646Script.contains(subTag);
+			break;
+		default:
+			passed = rfc5646Variant.contains(subTag);
+		}
+		if (!passed) {
+			return false;
+		}
+		if (langSubfields.length < 3) {
+			return true;
+		}
+
+		/*
+		 * 3rd field may be region or a variant. Make sure we didn't already
+		 * process a region in subtag #2.
+		 */
+		subTag = langSubfields[2];
+		boolean foundVariant = false;
+		if ((subTag.length() == 2) && !foundRegion) {
+			passed = iso3166_1_codes.containsKey(subTag.toUpperCase());
+		} else {
+			passed = rfc5646Variant.contains(subTag);
+			foundVariant = true;
+		}
+		if (!passed) {
+			return false;
+		}
+		if (langSubfields.length < 4) {
+			return true;
+		}
+
+		/*
+		 * 4th field can only be a variant. Make sure we didn't already process
+		 * a variant in prior subtag.
+		 */
+		if (foundVariant) {
+			passed = false;
+		} else {
+			passed = rfc5646Variant.contains(langSubfields[3]);
+		}
+		return passed;
+	}
+
+	private void reportLangError(Element targetEl, int tag4log, String langTag) {
+		/*
+		 * Build an appropriate log entry based on nature and structure of the
+		 * value source
+		 */
+		String errMsg = "Invalid Language code value '" + langTag + "'";
+		String details = "Language encoding must conform to RFC5646 syntax and use registered subtag value";
+		LogReference srcRef = LogReference.getRef("CM", MD_VER, "cm_lang");
+		logIssue(tag4log, LogMgmt.LEV_ERR, targetEl, errMsg, details, srcRef, logMsgSrcId);
 	}
 
 	protected boolean validateRegion(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
@@ -790,26 +879,6 @@ public abstract class AbstractValidator extends XmlIngester {
 			}
 		}
 		return allOK;
-	}
-
-	/**
-	 * @param targetEl
-	 * @param childNS
-	 * @param child
-	 * @return
-	 */
-	private String getSpecifiedValue(Element targetEl, Namespace childNS, String child) {
-		String text = null;
-		if (!child.startsWith("@")) {
-			Element subElement = targetEl.getChild(child, childNS);
-			if (subElement != null) {
-				text = subElement.getTextNormalize();
-			}
-		} else {
-			String targetAttb = child.replaceFirst("@", "");
-			text = targetEl.getAttributeValue(targetAttb);
-		}
-		return text;
 	}
 
 	/**

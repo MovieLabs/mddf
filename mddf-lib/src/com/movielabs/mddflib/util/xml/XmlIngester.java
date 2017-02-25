@@ -77,12 +77,12 @@ public abstract class XmlIngester implements IssueLogger {
 	public static Namespace availsNSpace = Namespace.getNamespace("avails",
 			MddfContext.NSPACE_AVAILS_PREFIX + AVAIL_VER + MddfContext.NSPACE_AVAILS_SUFFIX);
 
-	protected static XPathFactory xpfac = XPathFactory.instance(); 
-	
-	private static Map<String, Object> rsrcCache = new HashMap();
+	protected static XPathFactory xpfac = XPathFactory.instance();
+
+	private static Map<String, JSONObject> rsrcCache = new HashMap<String, JSONObject>();
 
 	protected static File srcFile;
-	protected static File sourceFolder; 
+	protected static File sourceFolder;
 
 	protected File curFile;
 	protected String curFileName;
@@ -98,9 +98,9 @@ public abstract class XmlIngester implements IssueLogger {
 		this.loggingMgr = loggingMgr;
 	}
 
-	protected static Object getMddfResource(String rsrcId) {
+	protected static JSONObject getMddfResource(String rsrcId) {
 		String rsrcPath = MddfContext.RSRC_PATH + rsrcId + ".json";
-		JSONObject rsrc = (JSONObject) rsrcCache.get(rsrcPath);
+		JSONObject rsrc = rsrcCache.get(rsrcPath);
 		if (rsrc == null) {
 			try {
 				rsrc = loadJSON(rsrcPath);
@@ -111,7 +111,7 @@ public abstract class XmlIngester implements IssueLogger {
 			}
 			rsrcCache.put(rsrcPath, rsrc);
 		}
-		Object jsonRsrc = rsrc.get(rsrcId);
+		JSONObject jsonRsrc = rsrc.getJSONObject(rsrcId);
 		return jsonRsrc;
 	}
 
@@ -120,8 +120,8 @@ public abstract class XmlIngester implements IssueLogger {
 	 * 
 	 * @param rsrcId
 	 * @param rsrcVersion
-	 * @return a JSONObject or <tt>null</tt. if the resource is not accesible or
-	 *         is not valid JSON
+	 * @return a JSONObject or <tt>null</tt. if the resource is not accessible
+	 *         or is not valid JSON
 	 */
 	protected static Object getMddfResource(String rsrcId, String rsrcVersion) {
 		String rsrcPath = MddfContext.RSRC_PATH + "vocab_" + rsrcId + "_v" + rsrcVersion + ".json";
