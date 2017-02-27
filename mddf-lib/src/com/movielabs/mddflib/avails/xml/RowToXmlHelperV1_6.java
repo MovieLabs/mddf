@@ -22,7 +22,6 @@
  */
 package com.movielabs.mddflib.avails.xml;
 
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
@@ -93,6 +92,19 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelper {
 		default:
 			return colKey;
 		}
+	}
+
+	/**
+	 * Filter out deprecated PriceType terms. Since v1.6 is the 'base' version,
+	 * there are no deprecated vocabulary and the implementation simply returns
+	 * the input <tt>value</tt>.
+	 * 
+	 * @param colKey
+	 * @param value
+	 * @return
+	 */
+	protected Pedigree filterDeprecated(Pedigree pg) {
+		return pg;
 	}
 
 }

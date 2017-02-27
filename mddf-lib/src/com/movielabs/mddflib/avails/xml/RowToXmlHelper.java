@@ -33,8 +33,8 @@ import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
- * Code and functionality formerly in SheetRow. The XML generated reflects a
- * "best effort" in that there is no guarantee that it is valid.
+ * Create XML document from a v1.7 Excel spreadsheet. The XML generated reflects
+ * a "best effort" in that there is no guarantee that it is valid.
  * <p>
  * This class is intended to have a low footprint in terms of memory usage so as
  * to facilitate processing of sheets with large row counts. Note that Excel
@@ -240,7 +240,10 @@ public class RowToXmlHelper {
 	 * <li>the use of columns implicitly linked to specific <tt>termName</tt>
 	 * </li>
 	 * </ol>
-	 * An example of the 2nd approach is the 'WatchDuration' column.
+	 * An example of the 2nd approach is the 'WatchDuration' column. What makes
+	 * the handling even more complex is that a term that was handled via
+	 * 'PriceType' in one version of the Excel may be handled via a dedicated
+	 * column in another version.
 	 * </p>
 	 * 
 	 * @param transactionEl
@@ -251,6 +254,8 @@ public class RowToXmlHelper {
 		 * May be multiple 'terms'. Start with one specified via the PriceType
 		 */
 		Pedigree pg = getPedigreedData(prefix + "PriceType");
+
+		pg = filterDeprecated(pg);
 		if (isSpecified(pg)) {
 			String tName = pg.getRawValue();
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
@@ -292,7 +297,6 @@ public class RowToXmlHelper {
 			termEl.setAttribute("termName", tName);
 			xb.addToPedigree(termEl, pg);
 			transactionEl.addContent(termEl);
-			System.out.println("row " + row.getRowNum() + " added " + tName + " term");
 		}
 
 		/*
@@ -305,6 +309,24 @@ public class RowToXmlHelper {
 		termEl = addTerm(transactionEl, prefix + "RentalDuration", "RentalDuration", "Duration");
 		termEl = addTerm(transactionEl, prefix + "WatchDuration", "WatchDuration", "Duration");
 		termEl = addTerm(transactionEl, prefix + "FixedEndDate", "FixedEndDate", "Event");
+	}
+
+	/**
+	 * Filter out deprecated PriceType terms. This essentially means terms that
+	 * are now handled via a unique column.
+	 * 
+	 * @param pg
+	 * @return
+	 */
+	protected Pedigree filterDeprecated(Pedigree pg) {
+		String value = pg.getRawValue();
+		switch (value) {
+		case "SRP":
+			String errMsg = "The value '" + value + "' is not a valid PriceType for v1.7 Excel";
+			xb.appendToLog(errMsg, LogMgmt.LEV_ERR, (Cell) pg.getSource());
+			return null;
+		}
+		return pg;
 	}
 
 	private Element addTerm(Element parent, String src, String termName, String subElName) {
@@ -419,7 +441,13 @@ public class RowToXmlHelper {
 	}
 
 	/**
-	 * Process start or end conditions for a Transaction.
+	 * Process start or end conditions for a Transaction. The expected value is
+	 * <ul>
+	 * <li>YYYY-MM-DD for a date.</li>
+	 * <li>ISO 8601 Date+Time (i.e., <tt>YYYY-MM-DDTHH:MM:SS</tt>) when time is
+	 * included, or</li>
+	 * <li>a key word such as "Immediate"</li>
+	 * </ul>
 	 * 
 	 * @param parentEl
 	 * @param childName
@@ -479,7 +507,7 @@ public class RowToXmlHelper {
 		if (value == null) {
 			value = "";
 		}
-		if (sourceCell != null && (sourceCell.getCellType() == Cell.CELL_TYPE_FORMULA)) { 
+		if (sourceCell != null && (sourceCell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
 			xb.appendToLog("Use of Excel Formulas not supported", LogMgmt.LEV_ERR, sourceCell);
 		}
 		Pedigree ped = new Pedigree(sourceCell, value);
