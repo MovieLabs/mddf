@@ -56,6 +56,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.jdom2.Document;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddf.MddfContext.MDDF_TYPE;
+import com.movielabs.mddf.tools.MaskerDialog;
 import com.movielabs.mddf.tools.TranslatorDialog;
 import com.movielabs.mddf.tools.ValidationController;
 import com.movielabs.mddf.tools.ValidatorTool;
@@ -174,6 +175,26 @@ public class LogNavPanel extends JPanel {
 						}
 					}
 				});
+				
+
+				JMenuItem maskAvailsMItem = new JMenuItem("Export Obfuscated");
+				add(maskAvailsMItem);
+//				maskAvailsMItem.setEnabled(maxErrLevelFound < LogMgmt.LEV_ERR);
+				maskAvailsMItem.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						MaskerDialog xlateDialog = MaskerDialog.getDialog();
+						Document doc = fileFolder.getXml();
+						FILE_FMT curFmt = fileFolder.getMddfFormat();
+						File srcFile = fileFolder.getFile();
+						xlateDialog.setContext(srcFile);
+						xlateDialog.setVisible(true); 
+					}
+				});
+				
+				
+				
 				add(new JSeparator());
 			}
 

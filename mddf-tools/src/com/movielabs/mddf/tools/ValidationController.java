@@ -45,6 +45,7 @@ import com.movielabs.mddf.tools.ValidatorTool.Context;
 import com.movielabs.mddf.tools.resources.Foo;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
 import com.movielabs.mddf.tools.util.logging.LogNavPanel;
+import com.movielabs.mddflib.Obfuscator;
 import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.avails.xlsx.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
@@ -92,10 +93,10 @@ public class ValidationController {
 	private Context context;
 	private LogMgmt logMgr;
 	private LogNavPanel logNav = null;
-	
+
 	{
 
-		if(!tempDir.exists()){
+		if (!tempDir.exists()) {
 			tempDir.mkdirs();
 		}
 	}
@@ -455,7 +456,7 @@ public class ValidationController {
 				}
 				String loc = e.getStackTrace()[0].toString();
 				String details = "Exception while validating; " + loc;
-				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, details, null);
+				logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, details, null);
 			}
 		}
 	}
@@ -567,11 +568,11 @@ public class ValidationController {
 		return extension.toLowerCase();
 	}
 
-	private String changeFileType(String inFileName, String fType) {
-		int ptr = inFileName.lastIndexOf(".xlsx");
-		String changed = inFileName.substring(0, ptr) + "." + fType;
-		return changed;
-	}
+	// private String changeFileType(String inFileName, String fType) {
+	// int ptr = inFileName.lastIndexOf(".xlsx");
+	// String changed = inFileName.substring(0, ptr) + "." + fType;
+	// return changed;
+	// }
 
 	/**
 	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file.
@@ -621,8 +622,12 @@ public class ValidationController {
 				logNav.setMddfFormat(xslxFile, FILE_FMT.AVAILS_1_6);
 			}
 			break;
-		default:
+		case UNK:
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", xslxFile, MODULE_ID);
+			break;
+		default:
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported template version " + templateVersion,
+					xslxFile, MODULE_ID);
 			return null;
 		}
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + templateVersion + " format", xslxFile,
@@ -679,6 +684,47 @@ public class ValidationController {
 		String msg = "AVAIL Validation completed";
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, srcFile, -1, MODULE_ID, null, null);
 		return isValid;
+	}
+
+	public void obfuscateAvail(File inFile, File outFile, Map<String, String> replacementMap) {
+		System.out.println("Obfuscate " + inFile.getName());
+		System.out.println("Output to " + outFile.getName());
+		Document xmlDoc;
+		String fileType = extractFileType(inFile.getAbsolutePath());
+		if (fileType.equals("xlsx")) {
+			Map<String, Object> results = convertSpreadsheet(inFile);
+			if (results == null) {
+				String msg = "Obfuscation failed: Unable to convert Excel to XML";
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, inFile, -1, MODULE_ID, null, null);
+				return;
+			}
+			xmlDoc = (Document) results.get("xml");
+		} else if (fileType.equals("xml")) {
+			try {
+				xmlDoc = XmlIngester.getAsXml(inFile);
+			} catch (SAXParseException e) {
+				int ln = e.getLineNumber();
+				String errMsg = "Processing terminate due to invalid XML on or before line " + e.getLineNumber();
+				String supplemental = e.getMessage();
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, inFile, ln, MODULE_ID, supplemental, null);
+				return;
+			} catch (IOException e) {
+				e.printStackTrace();
+				String errMsg = "Processing terminate due to invalid XML file";
+				String supplemental = e.getMessage();
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, inFile, -1, MODULE_ID, supplemental, null);
+				return;
+			}
+		} else {
+			String errMsg = "File type '" + fileType + "' is not supported";
+			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, inFile, -1, MODULE_ID, null, null);
+			return;
+		}
+		Document changedDoc = Obfuscator.process(xmlDoc, replacementMap, logMgr);
+
+		String msg = "Obfuscated output in " + outFile.getAbsolutePath();
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, inFile, -1, MODULE_ID, null, null);
+
 	}
 
 	protected void validateMEC(Element docRootEl, File srcFile) throws IOException, JDOMException {
