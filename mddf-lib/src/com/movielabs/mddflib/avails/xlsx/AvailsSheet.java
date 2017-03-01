@@ -48,6 +48,7 @@ public class AvailsSheet {
 	private Sheet excelSheet;
 	private Version version = Version.UNK;
 	private boolean noPrefix = true;
+	private boolean isForTV;
 
 	/**
 	 * Create an object representing a single sheet of a spreadsheet
@@ -116,6 +117,22 @@ public class AvailsSheet {
 		}
 		logger.debug("Found " + headerList.size() + " defined columns");
 
+		/*
+		 * TYPE Check: Is this for movies or TV? The current rule is that this
+		 * is defined by the name of the worksheet.
+		 */
+		switch (name) {
+		case "TV":
+			isForTV = true;
+			break;
+		case "Movies":
+			isForTV = false;
+			break;
+		default:
+			logger.fatal("Unrecognized sheet name: Must be 'TV' or 'Movies'");
+			return;
+		}
+
 		// VERSION check and support..
 		/*
 		 * There is no explicit identification in a spreadsheet of the template
@@ -125,7 +142,7 @@ public class AvailsSheet {
 		 */
 		if (this.getColumnIdx("Avail/ALID") >= 0) {
 			version = Version.V1_7;
-		} else if (this.getColumnIdx("Avail/AltID") >= 0) {
+		} else if ((this.getColumnIdx("Avail/AltID") >= 0) || (this.getColumnIdx("Avail/EpisodeAltID") >= 0)) {
 			version = Version.V1_6;
 		}
 		// ...............................................
@@ -148,6 +165,13 @@ public class AvailsSheet {
 	 */
 	public Version getVersion() {
 		return version;
+	}
+
+	/**
+	 * @return the isForTV
+	 */
+	public boolean isForTV() {
+		return isForTV;
 	}
 
 	/**
