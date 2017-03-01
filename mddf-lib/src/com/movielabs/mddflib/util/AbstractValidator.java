@@ -671,13 +671,27 @@ public abstract class AbstractValidator extends XmlIngester {
 	}
 
 	private boolean checkLangTag(String text) {
+		if (text == null) {
+			/*
+			 * something was missing. If it was REQ the XSD-based (i.e., schema)
+			 * validation will flag it.
+			 */
+			return true;
+		}
+		if (text.isEmpty()) {
+			/*
+			 * The habit some folks have is to enter a required element (which
+			 * passes schema check) but leave the value empty. THAT IS AN ERROR!
+			 */
+			return false;
+		}
 		/*
 		 * RFC4647 states matching of language codes is case-insensitive. The
 		 * codes have been converted and stored as all lowercase so we do the
 		 * same conversion of the value we are checking.
 		 * 
 		 */
-		text = text.toLowerCase(); 
+		text = text.toLowerCase();
 		String[] langSubfields = text.split("-");
 		boolean passed = true;
 		/*
