@@ -50,8 +50,9 @@ public class RowToXmlHelper {
 	protected Row row;
 	protected XmlBuilder xb;
 	protected AvailsSheet sheet;
-	private String workType = "";
+	protected String workType = "";
 	protected DataFormatter dataF = new DataFormatter();
+	private Pedigree workTypePedigree;
 
 	/**
 	 * @param fields
@@ -60,17 +61,17 @@ public class RowToXmlHelper {
 		super();
 		this.sheet = sheet;
 		this.row = row;
-
+		/*
+		 * Need to save the current workType for use in Transaction/Terms
+		 */
+		workTypePedigree = getPedigreedData("AvailAsset/WorkType");
+		this.workType = workTypePedigree.getRawValue();
+		System.out.println("WorkType='"+workType+"'");
 	}
 
 	protected void makeAvail(XmlBuilder xb) {
 		this.xb = xb;
-		Element avail = xb.getAvailElement(this);
-		/*
-		 * Need to save the current workType for use in Transaction/Terms
-		 */
-		Pedigree pg = getPedigreedData("AvailAsset/WorkType");
-		this.workType = pg.getRawValue();
+		Element avail = xb.getAvailElement(this); 
 
 		/*
 		 * Assets can be defined redundantly on multiple lines so the XmlBuilder
@@ -133,14 +134,11 @@ public class RowToXmlHelper {
 	 * @param workTypePedigree
 	 * @return
 	 */
-	protected Element buildAsset() {
-		Pedigree workTypePedigree = getPedigreedData("AvailAsset/WorkType");
-		String workType = workTypePedigree.getRawValue();
+	protected Element buildAsset() { 
 		Namespace availNS = xb.getAvailsNSpace();
 		Element assetEl = new Element("Asset", availNS);
 		Element wtEl = new Element("WorkType", availNS);
-		String assetWorkType = workTypePedigree.getRawValue();
-		wtEl.setText(assetWorkType);
+		wtEl.setText(workType);
 		xb.addToPedigree(wtEl, workTypePedigree);
 		assetEl.addContent(wtEl);
 		/*
@@ -148,10 +146,10 @@ public class RowToXmlHelper {
 		 * the Asset.
 		 */
 		String cidPrefix = "";
-		switch (assetWorkType) {
+		switch (workType) {
 		case "Season":
 		case "Episode":
-			cidPrefix = assetWorkType;
+			cidPrefix = workType;
 			break;
 		default:
 		}
@@ -163,7 +161,7 @@ public class RowToXmlHelper {
 		xb.addToPedigree(attEl, pg);
 		xb.addToPedigree(assetEl, pg);
 
-		xb.createAssetMetadata(assetEl, assetWorkType, this);
+		xb.createAssetMetadata(assetEl, workType, this);
 
 		pg = getPedigreedData("Avail/BundledALIDs");
 		if (isSpecified(pg)) {

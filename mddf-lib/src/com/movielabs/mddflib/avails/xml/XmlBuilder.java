@@ -169,7 +169,7 @@ public class XmlBuilder {
 		root.addNamespaceDeclaration(mdMecNSpace);
 		root.addNamespaceDeclaration(SchemaWrapper.xsiNSpace);
 		doc.setRootElement(root);
-		String msg = "Processing spreadsheet; RowCount=" + aSheet.getRowCount();
+		String msg = "Processing spreadsheet '"+aSheet.getName()+"'; RowCount=" + aSheet.getRowCount();
 		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 
 		// build document components row by row.
@@ -617,6 +617,7 @@ public class XmlBuilder {
 		case "Series":
 			return;
 		default:
+			// must be a Movie
 			mdHelper_basic.createAssetMetadata(assetEl, row);
 			return;
 		}

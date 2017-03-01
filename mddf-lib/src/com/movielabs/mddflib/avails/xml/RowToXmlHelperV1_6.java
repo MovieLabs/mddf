@@ -76,15 +76,38 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelper {
 		case "AvailTrans/AssetLanguage":
 			return "AvailTrans/StoreLanguage";
 		case "Avail/ALID":
-			return "AvailMetadata/AltID";
+			if (sheet.isForTV()) {
+				/*
+				 * ALID replaces EpisodeAltID or SeasonAltID depending on
+				 * whether it's an episode or season avail.
+				 */
+
+				if (workType.equals("Episode")) {
+					return "AvailMetadata/EpisodeAltID";
+				} else if (workType.equals("Season")) {
+					return "AvailMetadata/SeasonAltID";
+				} else {
+					return null;
+				}
+			} else {
+				return "AvailMetadata/AltID";
+			}
 		case "AvailAsset/EditID":
 			return "AvailAsset/ProductID";
 		case "AvailAsset/TitleID":
 			return "AvailAsset/ContentID";
+		// ?????????????????????????????????
 		case "AvailAsset/ContentID":
 			return "AvailMetadata/AltID";
+		// ..................................
 		case "AvailTrans/AllowedLanguages":
 			return "AvailTrans/HoldbackExclusionLanguage";
+		case "AvailMetadata/EpisodeID":
+			return "AvailMetadata/EpisodeAltID";
+		case "AvailMetadata/SeasonID":
+			return "AvailMetadata/SeasonAltID";
+		case "AvailMetadata/SeriesID":
+			return "AvailMetadata/SeriesAltID";
 		case "Avail/BundledALIDs":
 		case "AvailTrans/PriceCurrency":
 		case "AvailTrans/AnnounceDate":
