@@ -42,8 +42,7 @@ public class DefaultMetadata {
 
 	protected XmlBuilder xb;
 	protected String colPrefix = "";
-	protected XPathFactory xpfac = XPathFactory.instance();
-	private Namespace availNS;
+	protected XPathFactory xpfac = XPathFactory.instance(); 
 
 	/**
 	 * Used to determine where to insert any <tt>ReleaseHistory</tt> elements as
@@ -66,9 +65,8 @@ public class DefaultMetadata {
 	 * @param assetEl
 	 * @return
 	 */
-	public void createAssetMetadata(Element assetEl, RowToXmlHelper row) {
-		availNS = xb.getAvailsNSpace();
-		Element metadata = new Element("Metadata", availNS);
+	public void createAssetMetadata(Element assetEl, RowToXmlHelper row) { 
+		Element metadata = new Element("Metadata", xb.getAvailsNSpace());
 		addTitles(metadata, row);
 
 		Element idEl = addEIDR(metadata, "EditEIDR-URN", "AvailAsset/EditID", row);
@@ -92,7 +90,7 @@ public class DefaultMetadata {
 		if (namespace.equals("eider-5240")) {
 			idValue = idValue.replaceFirst("10.5240/", "urn:eidr:10.5240:");
 		}
-		Element idEl = row.mGenericElement(childName, idValue, availNS);
+		Element idEl = row.mGenericElement(childName, idValue, xb.getAvailsNSpace());
 		metadata.addContent(idEl);
 		xb.addToPedigree(idEl, pg);
 		return idEl;
@@ -135,12 +133,12 @@ public class DefaultMetadata {
 		if (!row.isSpecified(titleDuPg)) {
 			titleDuPg = titleAliasPg;
 		}
-		Element e = row.mGenericElement("TitleDisplayUnlimited", titleDuPg.getRawValue(), availNS);
+		Element e = row.mGenericElement("TitleDisplayUnlimited", titleDuPg.getRawValue(), xb.getAvailsNSpace());
 		xb.addToPedigree(e, titleDuPg);
 		metadata.addContent(e);
 		// TitleInternalAlias
 		if (xb.isRequired("TitleInternalAlias", "avails") || row.isSpecified(titleAliasPg)) {
-			e = row.mGenericElement("TitleInternalAlias", titleAliasPg.getRawValue(), availNS);
+			e = row.mGenericElement("TitleInternalAlias", titleAliasPg.getRawValue(), xb.getAvailsNSpace());
 			metadata.addContent(e);
 			xb.addToPedigree(e, titleAliasPg);
 		}
@@ -148,8 +146,8 @@ public class DefaultMetadata {
 
 	protected void addStandardMetadata(Element metadata, RowToXmlHelper row) {
 		Element nextEl = null;
-		nextEl = row.process(metadata, "ReleaseDate", availNS, "AvailMetadata/ReleaseYear");
-		nextEl = row.process(metadata, "RunLength", availNS, "AvailMetadata/TotalRunTime");
+		nextEl = row.process(metadata, "ReleaseDate", xb.getAvailsNSpace(), "AvailMetadata/ReleaseYear");
+		nextEl = row.process(metadata, "RunLength", xb.getAvailsNSpace(), "AvailMetadata/TotalRunTime");
 		/*
 		 * add a TEMPORARY holder for all ReleaseHistory elements. This will be
 		 * removed later when the Metadata is FINALIZED.
@@ -160,12 +158,12 @@ public class DefaultMetadata {
 		addReleaseHistory(metadata, "original", "AvailMetadata/ReleaseHistoryOriginal", row);
 		addReleaseHistory(metadata, "DVD", "AvailMetadata/ReleaseHistoryPhysicalHV", row);
 
-		row.process(metadata, "USACaptionsExemptionReason", availNS, "AvailMetadata/CaptionExemption");
+		row.process(metadata, "USACaptionsExemptionReason", xb.getAvailsNSpace(), "AvailMetadata/CaptionExemption");
 
 		addContentRating(metadata, row);
 
-		row.process(metadata, "EncodeID", availNS, "AvailAsset/EncodeID");
-		row.process(metadata, "LocalizationOffering", availNS, "AvailMetadata/LocalizationType");
+		row.process(metadata, "EncodeID", xb.getAvailsNSpace(), "AvailAsset/EncodeID");
+		row.process(metadata, "LocalizationOffering", xb.getAvailsNSpace(), "AvailMetadata/LocalizationType");
 
 	}
 
@@ -175,7 +173,7 @@ public class DefaultMetadata {
 	 * @param colKey
 	 */
 	protected void addSequenceInfo(RowToXmlHelper row, Element metadataEl, String childName, String colKey) {
-		Element childEl = new Element(childName, availNS);
+		Element childEl = new Element(childName, xb.getAvailsNSpace());
 		Element numberEl = row.process(childEl, "Number", xb.getMdNSpace(), colKey);
 		if (numberEl != null) {
 			metadataEl.addContent(childEl);
@@ -203,11 +201,11 @@ public class DefaultMetadata {
 
 		Namespace mdNS = xb.getMdNSpace();
 		String mdPrefix = mdNS.getPrefix();
-		String avPrefix = availNS.getPrefix();
+		String avPrefix = xb.getAvailsNSpace().getPrefix();
 
 		String xpath = "./" + avPrefix + ":ReleaseHistory[./" + mdPrefix + ":ReleaseType='" + type + "' and .//"
 				+ mdPrefix + ":country='" + rTerr + "' and ./" + mdPrefix + ":Date='" + rDate + "']";
-		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, availNS,
+		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, xb.getAvailsNSpace(),
 				xb.getMdNSpace());
 		Element matching = xpExpression.evaluateFirst(parentEl);
 		if (matching != null) {
@@ -217,7 +215,7 @@ public class DefaultMetadata {
 			return;
 		}
 
-		Element rh = new Element("ReleaseHistory", availNS);
+		Element rh = new Element("ReleaseHistory", xb.getAvailsNSpace());
 		Element rt = new Element("ReleaseType", xb.getMdNSpace());
 		rt.setText(type);
 		rh.addContent(rt);
@@ -233,9 +231,9 @@ public class DefaultMetadata {
 	}
 
 	protected void addContentRating(Element parentEl, RowToXmlHelper row) {
-		Element ratings = parentEl.getChild("Ratings", availNS);
+		Element ratings = parentEl.getChild("Ratings", xb.getAvailsNSpace());
 		if (ratings == null) {
-			ratings = new Element("Ratings", availNS);
+			ratings = new Element("Ratings", xb.getAvailsNSpace());
 			parentEl.addContent(ratings);
 		}
 		String ratingSystem = row.getData("AvailMetadata/RatingSystem");
@@ -258,7 +256,7 @@ public class DefaultMetadata {
 		String mdPrefix = mdNS.getPrefix();
 		String xpath = "./" + mdPrefix + ":Rating[./" + mdPrefix + ":System='" + ratingSystem + "' and ./" + mdPrefix
 				+ ":Value='" + ratingValue + "']";
-		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, availNS,
+		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, xb.getAvailsNSpace(),
 				xb.getMdNSpace());
 		Element matching = xpExpression.evaluateFirst(ratings);
 		if (matching != null) {
@@ -299,7 +297,7 @@ public class DefaultMetadata {
 	 */
 	protected void addCredits(Element metadata, RowToXmlHelper row) {
 		if (row.isSpecified(row.getData("AvailMetadata/CompanyDisplayCredit"))) {
-			Element cdcEl = new Element("CompanyDisplayCredit", availNS);
+			Element cdcEl = new Element("CompanyDisplayCredit", xb.getAvailsNSpace());
 			row.process(cdcEl, "DisplayString", xb.getMdNSpace(), "AvailMetadata/CompanyDisplayCredit");
 			metadata.addContent(cdcEl);
 		}
@@ -327,7 +325,7 @@ public class DefaultMetadata {
 			// ??? Not sure how to handle
 			namespace = "user";
 		}
-		Element altIdEl = new Element(childName, availNS);
+		Element altIdEl = new Element(childName, xb.getAvailsNSpace());
 		xb.addToPedigree(altIdEl, pg);
 
 		Element nsEl = row.mGenericElement("Namespace", namespace, xb.getMdNSpace());
@@ -360,7 +358,7 @@ public class DefaultMetadata {
 		if (rhTempEl == null) {
 			return;
 		}
-		List<Element> rhElList = rhTempEl.getChildren("ReleaseHistory", availNS); 
+		List<Element> rhElList = rhTempEl.getChildren("ReleaseHistory", xb.getAvailsNSpace()); 
 		int ptr = metadataEl.indexOf(rhTempEl) + 1;
 		for (int i = 0; i < rhElList.size(); i++) {
 			Element nextEl = rhElList.get(i);
@@ -369,7 +367,7 @@ public class DefaultMetadata {
 		}
 		rhTempEl.detach();
 		
-		Element ratings = metadataEl.getChild("Ratings", availNS);
+		Element ratings = metadataEl.getChild("Ratings", xb.getAvailsNSpace());
 		if(ratings.getChildren().isEmpty()){
 			ratings.detach();
 		}
