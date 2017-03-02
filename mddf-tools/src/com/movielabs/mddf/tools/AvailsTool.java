@@ -40,7 +40,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
  */
 public class AvailsTool extends ValidatorTool {
 
-	public static final String AVAIL_APP_VER = "v1.1";
+	public static final String AVAIL_APP_VER = "v1.1.2";
 	private static final String AVAIL_DOC_VER = "v1.1";
 
 	/**
