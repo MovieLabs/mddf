@@ -5,17 +5,24 @@
 
 ## Versioning
 
-The latest release of the core mddf-lib is v1.1.1. The tool releases based on the latest version of the core software are: 
+The latest release of the core mddf-lib is v1.1.2. The tool releases based on the latest version of the core software are: 
 
-* Manifest Validator: v1.2.3
-* Avails Validator: v1.1.1
+* Manifest Validator: v1.2.4
+* Avails Validator: v1.1.2
 
 ### mddf-lib Changes:
 
+#### mddf-lib v1.1.2
+
+* Bug Fix: Validation of controlled (i.e., enummerated) vocabulary did not correctly use appropriate schema version when checking.
+* Bug Fix: Validation of language tags ignored case of multiple languages being specified.
+* Bug Fix: Processing of TV Avails specified in Excel v1.6 format did not correctly identify version of template as v1.6
+* Bug Fix: Validation of TV Avails specified in Excel v1.6 format did not check EpisodeAltID, SeasonAltID, and SeriesAltID
+
+
 #### mddf-lib v1.1.1
 
-* Bug Fix: When converting Avail from XLSX to XML multiple ReleaseHistory and Rating elements for a 
-         single Asset are now transfered even if defined on multiple rows.
+* Bug Fix: When converting Avail from XLSX to XML multiple ReleaseHistory and Rating elements for a single Asset are now transfered even if defined on multiple rows.
 
 #### mddf-lib v1.1
 
@@ -33,6 +40,10 @@ The latest release of the core mddf-lib is v1.1.1. The tool releases based on th
 
 ### Avails Validator Changes:
 
+#### v1.1.2
+
+* Bug fixes associated with upgrade to mddf-lib v1.1.2
+
 #### v1.1.1
 
 * Enhancement: Added status message display at bottom of frame to indicate progress
@@ -42,6 +53,10 @@ The latest release of the core mddf-lib is v1.1.1. The tool releases based on th
 * Enhancement: Conversion of Avails from XML to XLSX is now supported.
 
 ### Manifest Validator Changes:
+
+#### v1.1.4
+
+* Bug fixes associated with upgrade to mddf-lib v1.1.2
 
 #### v1.2.3
 
