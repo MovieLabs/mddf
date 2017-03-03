@@ -92,6 +92,15 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelper {
 			} else {
 				return "AvailMetadata/AltID";
 			}
+		case "Avail/ExceptionFlag":
+			if (sheet.isForTV()) {
+				/*
+				 * This handles a typo in the v1.6 template for TV Avails
+				 */
+				return "Avail/ExceptionsFlag";
+			} else {
+				return "Avail/ExceptionFlag";
+			}
 		case "AvailAsset/EditID":
 			return "AvailAsset/ProductID";
 		case "AvailAsset/TitleID":
