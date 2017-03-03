@@ -67,7 +67,7 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 	 */
 	public List<String> getSupportedProfiles() {
 		List<String> pidList = new ArrayList<String>();
-		pidList.add("IP-01");
+		pidList.add("IP-1");
 		return pidList;
 	}
 
