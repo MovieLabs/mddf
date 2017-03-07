@@ -57,7 +57,12 @@ public class SeasonMetadata extends DefaultMetadata {
 		addSequenceInfo(row, seasonMetadataEl, colPrefix + "Number", "AvailMetadata/" + colPrefix + "Number");
 
 		row.process(seasonMetadataEl, "ReleaseDate", xb.getAvailsNSpace(), "AvailMetadata/ReleaseYear");
-
+		/*
+		 * add a TEMPORARY holder for all ReleaseHistory elements. This will be
+		 * removed later when the Metadata is FINALIZED.
+		 */
+		Element rhtEl = new Element("ReleaseHistoryTEMP");
+		seasonMetadataEl.addContent(rhtEl);
 		addReleaseHistory(seasonMetadataEl, "original", "AvailMetadata/ReleaseHistoryOriginal", row);
 		addReleaseHistory(seasonMetadataEl, "DVD", "AvailMetadata/ReleaseHistoryPhysicalHV", row);
 

@@ -22,11 +22,14 @@
  */
 package com.movielabs.mddflib.avails.xml;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.jdom2.filter.ElementFilter;
 import org.jdom2.filter.Filters;
+import org.jdom2.util.IteratorIterable;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
@@ -42,7 +45,7 @@ public class DefaultMetadata {
 
 	protected XmlBuilder xb;
 	protected String colPrefix = "";
-	protected XPathFactory xpfac = XPathFactory.instance(); 
+	protected XPathFactory xpfac = XPathFactory.instance();
 
 	/**
 	 * Used to determine where to insert any <tt>ReleaseHistory</tt> elements as
@@ -65,7 +68,7 @@ public class DefaultMetadata {
 	 * @param assetEl
 	 * @return
 	 */
-	public void createAssetMetadata(Element assetEl, RowToXmlHelper row) { 
+	public void createAssetMetadata(Element assetEl, RowToXmlHelper row) {
 		Element metadata = new Element("Metadata", xb.getAvailsNSpace());
 		addTitles(metadata, row);
 
@@ -354,23 +357,40 @@ public class DefaultMetadata {
 	}
 
 	public void finalize(Element metadataEl) {
-		Element rhTempEl = metadataEl.getChild("ReleaseHistoryTEMP");
-		if (rhTempEl == null) {
-			return;
+		/*
+		 * Put ReleaseHistory elements in the right location. At the same time,
+		 * remove the 'place holder' element.
+		 */
+		ElementFilter rhTempFilter = new ElementFilter("ReleaseHistoryTEMP");
+		IteratorIterable<Element> targets = metadataEl.getDescendants(rhTempFilter);
+		List<Element> elList = new ArrayList<Element>();
+		targets.forEach(elList::add);
+		for(int i=0; i < elList.size();i++) {
+			Element relHistTEMP = elList.get(i);
+			List<Element> rhElList = relHistTEMP.getChildren("ReleaseHistory", xb.getAvailsNSpace());
+			Element curMDataEl = relHistTEMP.getParentElement();
+			int ptr = curMDataEl.indexOf(relHistTEMP) + 1;
+			for (int j = 0; j < rhElList.size(); j++) {
+				Element nextEl = rhElList.get(j);
+				nextEl.detach();
+				curMDataEl.addContent(ptr, nextEl);
+			}
+			relHistTEMP.detach();
 		}
-		List<Element> rhElList = rhTempEl.getChildren("ReleaseHistory", xb.getAvailsNSpace()); 
-		int ptr = metadataEl.indexOf(rhTempEl) + 1;
-		for (int i = 0; i < rhElList.size(); i++) {
-			Element nextEl = rhElList.get(i);
-			nextEl.detach();
-			metadataEl.addContent(ptr, nextEl);
-		}
-		rhTempEl.detach();
-		
-		Element ratings = metadataEl.getChild("Ratings", xb.getAvailsNSpace());
-		if(ratings.getChildren().isEmpty()){
-			ratings.detach();
-		}
+		/*
+		 * Remove empty Ratings
+		 */
+
+		ElementFilter ratingsFilter = new ElementFilter("Ratings", xb.getAvailsNSpace());
+		targets = metadataEl.getDescendants(ratingsFilter);
+		elList = new ArrayList<Element>();
+		targets.forEach(elList::add);
+		for(int i=0; i < elList.size();i++) {
+			Element ratings = elList.get(i); 
+			if (ratings.getChildren().isEmpty()) {
+				ratings.detach();
+			}
+		} 
 	}
 
 }
