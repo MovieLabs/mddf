@@ -46,6 +46,7 @@ import com.movielabs.mddf.tools.resources.Foo;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
 import com.movielabs.mddf.tools.util.logging.LogNavPanel;
 import com.movielabs.mddflib.Obfuscator;
+import com.movielabs.mddflib.Obfuscator.Target;
 import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.avails.xlsx.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
@@ -686,7 +687,7 @@ public class ValidationController {
 		return isValid;
 	}
 
-	public void obfuscateAvail(File inFile, File outFile, Map<String, String> replacementMap) {
+	public void obfuscateAvail(File inFile, File outFile, Map<Target, String> replacementMap) {
 		System.out.println("Obfuscate " + inFile.getName());
 		System.out.println("Output to " + outFile.getName());
 		Document xmlDoc;
@@ -721,6 +722,7 @@ public class ValidationController {
 			return;
 		}
 		Document changedDoc = Obfuscator.process(xmlDoc, replacementMap, logMgr);
+		XmlIngester.writeXml(outFile, changedDoc);
 
 		String msg = "Obfuscated output in " + outFile.getAbsolutePath();
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, inFile, -1, MODULE_ID, null, null);

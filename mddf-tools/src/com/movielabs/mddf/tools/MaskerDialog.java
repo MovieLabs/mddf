@@ -37,6 +37,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
+import com.movielabs.mddflib.Obfuscator;
+import com.movielabs.mddflib.Obfuscator.Target;
 
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
@@ -53,8 +55,8 @@ public class MaskerDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JTextField destTextField;
 	private ArrayList<JCheckBox> cBoxList = new ArrayList<JCheckBox>();
-	private HashMap<String, JCheckBox> cBoxMap = new HashMap<String, JCheckBox>();
-	private HashMap<String, JTextField> tFieldMap = new HashMap<String, JTextField>();
+	private HashMap<Target, JCheckBox> cBoxMap = new HashMap<Target, JCheckBox>();
+	private HashMap<Target, JTextField> tFieldMap = new HashMap<Target, JTextField>();
 	private JTextField fileNameField;
 	private String ttipFileName = "Default name is same as input file's. Change either the file name or the directory unless you want to overwite the input file.";
 	private File curSrcFile;
@@ -224,9 +226,11 @@ public class MaskerDialog extends JDialog {
 		gbc_lblReplacementValue.gridx = 2;
 		gbc_lblReplacementValue.gridy = 4;
 		contentPanel.add(lblReplacementValue, gbc_lblReplacementValue);
-		JCheckBox cbTermMoney = new JCheckBox("Term/Money");
+		// ....................................
+		Target target = Target.Money;
+		JCheckBox cbTermMoney = new JCheckBox(target.toString());
 		cbTermMoney.setHorizontalAlignment(SwingConstants.LEFT);
-		cbTermMoney.setToolTipText("refered to as 'PriceValue' when formatted as Excel");
+		cbTermMoney.setToolTipText(target.getToolTip());
 		GridBagConstraints gbc_cbTermMoney = new GridBagConstraints();
 		gbc_cbTermMoney.gridwidth = 1;
 		gbc_cbTermMoney.gridx = 1;
@@ -234,7 +238,7 @@ public class MaskerDialog extends JDialog {
 		gbc_cbTermMoney.insets = new Insets(3, 6, 5, 6);
 		contentPanel.add(cbTermMoney, gbc_cbTermMoney);
 		cBoxList.add(cbTermMoney);
-		cBoxMap.put("Term/Money", cbTermMoney);
+		cBoxMap.put(target, cbTermMoney);
 
 		JTextField textField_Money = new JTextField();
 		GridBagConstraints gbc_textField_Money = new GridBagConstraints();
@@ -244,11 +248,13 @@ public class MaskerDialog extends JDialog {
 		gbc_textField_Money.gridy = 5;
 		contentPanel.add(textField_Money, gbc_textField_Money);
 		textField_Money.setColumns(10);
-		tFieldMap.put("Term/Money", textField_Money);
+		tFieldMap.put(target, textField_Money);
 
-		JCheckBox cbTransContract = new JCheckBox("Transaction/ContractID");
+		// ....................................
+		target = Target.ContractID;
+		JCheckBox cbTransContract = new JCheckBox(target.toString());
 		cbTransContract.setHorizontalAlignment(SwingConstants.LEFT);
-		cbTransContract.setToolTipText("not supported in Excel formatted Avails");
+		cbTransContract.setToolTipText(target.getToolTip());
 		GridBagConstraints gbc_cbTransContract = new GridBagConstraints();
 		gbc_cbTransContract.gridwidth = 1;
 		gbc_cbTransContract.gridx = 1;
@@ -256,7 +262,7 @@ public class MaskerDialog extends JDialog {
 		gbc_cbTransContract.insets = new Insets(3, 6, 5, 6);
 		contentPanel.add(cbTransContract, gbc_cbTransContract);
 		cBoxList.add(cbTransContract);
-		cBoxMap.put("Transaction/ContractID", cbTransContract);
+		cBoxMap.put(target, cbTransContract);
 
 		JTextField textField_Contract = new JTextField();
 		GridBagConstraints gbc_textField_Contract = new GridBagConstraints();
@@ -266,7 +272,7 @@ public class MaskerDialog extends JDialog {
 		gbc_textField_Contract.gridy = 6;
 		contentPanel.add(textField_Contract, gbc_textField_Contract);
 		textField_Contract.setColumns(10);
-		tFieldMap.put("Transaction/ContractID", textField_Contract);
+		tFieldMap.put(target, textField_Contract);
 	}
 
 	protected void selectDestination() {
@@ -291,10 +297,10 @@ public class MaskerDialog extends JDialog {
 		String outDirPath = destTextField.getText();
 		File outputFile = new File(outDirPath, outFileName);
 		// need to get replacement strings....
-		Map<String, String> replacementMap = new HashMap<String, String>();
-		Iterator<String> keyIt = cBoxMap.keySet().iterator();
+		Map<Target, String> replacementMap = new HashMap<Target, String>();
+		Iterator<Target> keyIt = cBoxMap.keySet().iterator();
 		while (keyIt.hasNext()) {
-			String key = keyIt.next();
+			Target key = keyIt.next();
 			JCheckBox cbx = cBoxMap.get(key);
 			if (cbx.isSelected()) {
 				JTextField jtf = tFieldMap.get(key);
