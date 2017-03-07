@@ -22,10 +22,13 @@
  */
 package com.movielabs.mddflib;
 
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -40,14 +43,46 @@ import com.movielabs.mddflib.logging.LogMgmt;
  *
  */
 public class Obfuscator {
+	public static enum Target {
+		Money("Term", "refered to as 'PriceValue' when formatted as Excel", ".//avails:Term/avails:Money"), ContractID(
+				"Transaction", "not supported in Excel formatted Avails", ".//avails:Transaction/avails:ContractID");
+
+		private String qualifier;
+		private String toolTip;
+		String xpath;
+
+		private Target(String qualifier, String toolTip, String xpath) {
+			this.qualifier = qualifier;
+			this.toolTip = toolTip;
+			this.xpath = xpath;
+		}
+
+		/**
+		 * @return the toolTip
+		 */
+		public String getToolTip() {
+			return toolTip;
+		}
+
+		public String toString() {
+			return qualifier + "/" + this.name();
+		}
+	}
+
 	private static Namespace availsNSpace;
 	private static Namespace mdNSpace;
 	private static XPathFactory xpfac = XPathFactory.instance();
 
-	public static Document process(Document xmlDoc, Map<String, String> replacementMap, LogMgmt logMgr) {
-		Map<String, XPathExpression<?>> xpeMap = initialize(xmlDoc);
-		Document cleanXxmlDoc = doReplacements(xmlDoc, xpeMap, replacementMap);
-		return cleanXxmlDoc;
+	/**
+	 * @param xmlDoc
+	 * @param replacementMap
+	 * @param logMgr
+	 * @return a new Docuement with the indicated substitutions
+	 */
+	public static Document process(Document xmlDoc, Map<Target, String> replacementMap, LogMgmt logMgr) {
+		Map<Target, XPathExpression<?>> xpeMap = initialize(xmlDoc);
+		Document cleanXmlDoc = doReplacements(xmlDoc, xpeMap, replacementMap);
+		return cleanXmlDoc;
 	}
 
 	/**
@@ -56,17 +91,36 @@ public class Obfuscator {
 	 * @param replacementMap
 	 * @return
 	 */
-	private static Document doReplacements(Document xmlDoc, Map<String, XPathExpression<?>> xpeMap,
-			Map<String, String> replacementMap) {
-		// TODO Auto-generated method stub
-
-		return null;
+	private static Document doReplacements(Document originalDoc, Map<Target, XPathExpression<?>> xpeMap,
+			Map<Target, String> replacementMap) {
+		Document cleanDoc = originalDoc.clone();
+		Element rootEl = cleanDoc.getRootElement();
+		Iterator<Target> tIt = replacementMap.keySet().iterator();
+		while (tIt.hasNext()) {
+			Target nextKey = tIt.next();
+			String replacementText = replacementMap.get(nextKey);
+			if ((replacementText != null) && (!replacementText.isEmpty())) {
+				XPathExpression<?> xpExpression = xpeMap.get(nextKey);
+				List<?> replElList = xpExpression.evaluate(rootEl);
+				for (int i = 0; i < replElList.size(); i++) {
+					Object next = replElList.get(i);
+					if (next instanceof Element) {
+						Element nextEl = (Element) next; 
+						nextEl.setText(replacementText);
+					} else if (next instanceof Attribute) {
+						Attribute nextAtt = (Attribute) next;
+						nextAtt.setValue(replacementText);
+					}
+				}
+			}
+		}
+		return cleanDoc;
 	}
 
 	/**
 	 * @param xmlDoc
 	 */
-	private static Map<String, XPathExpression<?>> initialize(Document xmlDoc) {
+	private static Map<Target, XPathExpression<?>> initialize(Document xmlDoc) {
 		List<Namespace> nsList = xmlDoc.getRootElement().getNamespacesInScope();
 		for (int i = 0; i < nsList.size(); i++) {
 			Namespace nextNS = nsList.get(i);
@@ -82,17 +136,15 @@ public class Obfuscator {
 				// ignore.
 			}
 		}
-		Map<String, XPathExpression<?>> xpeMap = new HashMap<String, XPathExpression<?>>();
-
-		String key = "Term/Money";
-		String xpath = "../avails:Term/avails:Money";
-		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, availsNSpace, mdNSpace);
-		xpeMap.put(key, xpExpression);
-
-		key = "Transaction/ContractID";
-		xpath = "./avails:Transaction/avails:ContractID";
-		xpExpression = xpfac.compile(xpath, Filters.element(), null, availsNSpace, mdNSpace);
-		xpeMap.put(key, xpExpression);
+		Map<Target, XPathExpression<?>> xpeMap = new HashMap<Target, XPathExpression<?>>();
+		EnumSet<Target> targetSet = EnumSet.allOf(Target.class);
+		Iterator<Target> tIt = targetSet.iterator();
+		while (tIt.hasNext()) {
+			Target next = tIt.next();
+			XPathExpression<Element> xpExpression = xpfac.compile(next.xpath, Filters.element(), null, availsNSpace,
+					mdNSpace);
+			xpeMap.put(next, xpExpression);
+		}
 
 		return xpeMap;
 	}
