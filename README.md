@@ -49,9 +49,9 @@ The software in this repository is intended to replace that contained in the fol
 
 The latest releases are:
 
-* mddf-lib: v1.1.1
-* Manifest Validator: v1.2.3
-* Avails Validator: v1.1.1
+* mddf-lib: v1.1.2
+* Manifest Validator: v1.2.4
+* Avails Validator: v1.1.2
 
 Refer to ChangeLog.md for a list of specific enhancements and bug fixes.
 
