@@ -1,8 +1,20 @@
 ![screenshot1](mddf-tools/docs/users/md/manifest/validator/v1.1/images/MLabs_header.jpg)
 # MovieLabs Digital Distribution Framework—MDDF
 
+1 [What's New](#h_News)
+
+2 [Overview](#h_Overview)
+
+3 [Status](#h_Status)
+
+4 [Versions](#h_Versions)
+
+5 [Software Organization & Roadmap](#h_Roadmap)
+
 ---
-## What's New
+## <a name="h_News">What's New</a>
+
+* **2017-Mar-02**: mddf-lib v1.1.2 is now available. See Change Log for list of fixed bugs.
 
 * **2017-Feb-13**: mddf-lib v1.1.1 is now available. This provides several fixes relating to the translation of Avails
 from XLSX to XML. 
@@ -14,7 +26,7 @@ supported conversions are:
   * from XLSX (v1.6 or v1.7) to XML v2.2
   * from XLSX v1.6 to XLSX v1.7mddf-lib v1.
 
-## Overview:
+## <a name="h_Overview">Overview:</a>
 
 This repository contains Java software supporting the creation and usage of MDDF files including
 
@@ -25,7 +37,7 @@ This repository contains Java software supporting the creation and usage of MDDF
 
 Information on the various MDDF standards is available at <http://www.movielabs.com/md/>
 
-## Status and Relationship to Other MovieLabs Github Repositories:
+## <a name="h_Status">Status and Relationship to Other MovieLabs Github Repositories:</a>
 
 The software in this repository is intended to replace that contained in the following MovieLabs repositories:
 
@@ -33,7 +45,7 @@ The software in this repository is intended to replace that contained in the fol
 * availstool
 * cpe-preprocessing
 
-## Versions
+## <a name="h_Versions">Versions</a>
 
 The latest releases are:
 
@@ -43,7 +55,7 @@ The latest releases are:
 
 Refer to ChangeLog.md for a list of specific enhancements and bug fixes.
 
-## Software Organization & Roadmap:
+## <a name="h_Roadmap">Software Organization & Roadmap:</a>
 
 There are two projects within this repository:
 
