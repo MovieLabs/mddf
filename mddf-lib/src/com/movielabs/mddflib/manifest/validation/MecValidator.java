@@ -28,12 +28,12 @@ import java.util.List;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import com.movielabs.mddflib.logging.LogMgmt;
-import com.movielabs.mddflib.util.AbstractValidator;
+import com.movielabs.mddflib.util.CMValidator;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XsdValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
-public class MecValidator extends AbstractValidator {
+public class MecValidator extends CMValidator {
 
 	public static final String LOGMSG_ID = "MecValidator";
 

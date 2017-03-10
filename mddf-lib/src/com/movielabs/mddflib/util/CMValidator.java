@@ -55,8 +55,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  * 
  * @author L. Levin, Critical Architectures LLC
  *
- */
-public abstract class AbstractValidator extends XmlIngester {
+ */public class CMValidator extends XmlIngester {
 
 	/**
 	 * Used to facilitate keeping track of cross-references and identifying
@@ -161,7 +160,7 @@ public abstract class AbstractValidator extends XmlIngester {
 	/**
 	 * @param loggingMgr
 	 */
-	public AbstractValidator(LogMgmt loggingMgr) {
+	public CMValidator(LogMgmt loggingMgr) {
 		super(loggingMgr);
 		xsdHelper = new XsdValidation(loggingMgr);
 		structHelper = new StructureValidation(this, logMsgSrcId);
@@ -170,7 +169,7 @@ public abstract class AbstractValidator extends XmlIngester {
 	/**
 	 * @param validateC
 	 */
-	public AbstractValidator(boolean validateC, LogMgmt loggingMgr) {
+	public CMValidator(boolean validateC, LogMgmt loggingMgr) {
 		this(loggingMgr);
 		this.validateC = validateC;
 		logMsgSrcId = LOGMSG_ID;
@@ -505,12 +504,7 @@ public abstract class AbstractValidator extends XmlIngester {
 		} catch (NumberFormatException e) {
 			return false;
 		}
-	}
-
-	/**
-	 * @return
-	 */
-	protected abstract boolean validateCMVocab();
+	} 
 
 	// ########################################################################
 

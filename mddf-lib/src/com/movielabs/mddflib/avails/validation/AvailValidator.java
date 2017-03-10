@@ -40,7 +40,7 @@ import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
-import com.movielabs.mddflib.util.AbstractValidator;
+import com.movielabs.mddflib.util.CMValidator;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XsdValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -56,7 +56,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class AvailValidator extends AbstractValidator implements IssueLogger {
+public class AvailValidator extends CMValidator implements IssueLogger {
 
 	/**
 	 * Used to facilitate keeping track of the presence or absence of required
