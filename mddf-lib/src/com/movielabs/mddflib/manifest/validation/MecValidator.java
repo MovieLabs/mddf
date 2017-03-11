@@ -37,10 +37,10 @@ public class MecValidator extends CMValidator {
 
 	public static final String LOGMSG_ID = "MecValidator";
 
-	static final String DOC_VER = "2.4"; 
+	static final String DOC_VER = "2.4";
 
 	static {
-		id2typeMap = new HashMap<String, String>(); 
+		id2typeMap = new HashMap<String, String>();
 	}
 
 	/**
@@ -48,8 +48,7 @@ public class MecValidator extends CMValidator {
 	 */
 	public MecValidator(boolean validateC, LogMgmt loggingMgr) {
 		super(loggingMgr);
-		this.validateC = validateC;
-		rootPrefix = "mdmec:";
+		this.validateC = validateC; 
 
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_MEC;
@@ -60,12 +59,12 @@ public class MecValidator extends CMValidator {
 		curFile = xmlFile;
 		curFileName = xmlFile.getName();
 		curFileIsValid = true;
-		
-		String schemaVer = identifyXsdVersion(  docRootEl);
+
+		String schemaVer = identifyXsdVersion(docRootEl);
 		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, srcFile, logMsgSrcId);
 		setMdMecVersion(schemaVer);
 		rootNS = mdmecNSpace;
-		
+
 		validateXml(xmlFile, docRootEl);
 		// }
 		if (!curFileIsValid) {
@@ -103,12 +102,8 @@ public class MecValidator extends CMValidator {
 		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints", curFile, LOGMSG_ID);
 		super.validateConstraints();
 
-		SchemaWrapper availSchema = SchemaWrapper.factory("mdmec-v" + XmlIngester.MDMEC_VER);
-		List<String> reqElList = availSchema.getReqElList();
-		for (int i = 0; i < reqElList.size(); i++) {
-			String key = reqElList.get(i);
-			validateNotEmpty(key);
-		}
+		SchemaWrapper mecSchema = SchemaWrapper.factory("mdmec-v" + XmlIngester.MDMEC_VER);
+		validateNotEmpty(mecSchema);
 
 		/*
 		 * Validate the usage of controlled vocab (i.e., places where XSD
@@ -124,7 +119,7 @@ public class MecValidator extends CMValidator {
 	 * @return
 	 */
 	protected boolean validateCMVocab() {
-		boolean allOK = true; 
+		boolean allOK = true;
 
 		/*
 		 * Validate use of Country identifiers....
@@ -134,7 +129,7 @@ public class MecValidator extends CMValidator {
 		// in multiple places
 		allOK = validateRegion(mdNSpace, "Region", mdNSpace, "country") && allOK;
 
-		/* Validate language codes */ 
+		/* Validate language codes */
 		allOK = validateLanguage(mdNSpace, "LocalizedInfo", null, "@language") && allOK;
 		allOK = validateLanguage(mdNSpace, "TitleAlternate", null, "@language") && allOK;
 		allOK = validateLanguage(mdNSpace, "DisplayName", null, "@language") && allOK;
@@ -146,6 +141,5 @@ public class MecValidator extends CMValidator {
 
 		return allOK;
 	}
-
 
 }
