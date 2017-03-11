@@ -180,34 +180,30 @@ public class SchemaWrapper {
 			} else if (type.startsWith("xs:")) {
 				process = true;
 			}
-//			if ((type == null) || (type.startsWith("xs:"))) {
-			if(process){
-//				if (name != null && !(name.isEmpty())) {
-					/*
-					 * parent may be null it target is not part of a sequence
-					 * w/in a complexType
-					 */
-					Element parent = getNamedAncestor(target);
-					if (parent == null) {
-						targetXPath = ".//" + getPrefix() + ":" + name;
-					} else {
-						/* find all element declarations with the parent type */
-						String parentType = parent.getAttributeValue("name");
-						String xp = ".//xs:element[@type='" + getPrefix() + ":" + parentType + "']";
-						XPathExpression<Element> xpe2 = xpfac.compile(xp, Filters.element(), null, xsNSpace);
-						List<Element> referencingList = xpe2.evaluate(rootEl);
-						for (Element refEl : referencingList) {
-							String parentName = refEl.getAttributeValue("name");
-							targetXPath = ".//" + getPrefix() + ":" + parentName + "/" + getPrefix() + ":" + name;
-						}
-					}
-					if (targetXPath != null) {
-						XPathExpression<Element> targetXpE = xpfac.compile(targetXPath, Filters.element(), null,
-								nSpace);
-						reqElXpList.add(targetXpE);
+			if (process) {
+				/*
+				 * parent may be null it target is not part of a sequence w/in a
+				 * complexType
+				 */
+				Element parent = getNamedAncestor(target);
+				if (parent == null) {
+					targetXPath = ".//" + getPrefix() + ":" + name;
+				} else {
+					/* find all element declarations with the parent type */
+					String parentType = parent.getAttributeValue("name");
+					String xp = ".//xs:element[@type='" + getPrefix() + ":" + parentType + "']";
+					XPathExpression<Element> xpe2 = xpfac.compile(xp, Filters.element(), null, xsNSpace);
+					List<Element> referencingList = xpe2.evaluate(rootEl);
+					for (Element refEl : referencingList) {
+						String parentName = refEl.getAttributeValue("name");
+						targetXPath = ".//" + getPrefix() + ":" + parentName + "/" + getPrefix() + ":" + name;
 					}
 				}
-//			}
+				if (targetXPath != null) {
+					XPathExpression<Element> targetXpE = xpfac.compile(targetXPath, Filters.element(), null, nSpace);
+					reqElXpList.add(targetXpE);
+				}
+			}
 		}
 		// add required attributes...
 		xpExpression = xpfac.compile(".//xs:attribute[@use='required']", Filters.element(), null, xsNSpace);
