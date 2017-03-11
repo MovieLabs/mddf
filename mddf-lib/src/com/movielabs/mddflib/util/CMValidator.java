@@ -21,6 +21,7 @@
  */
 package com.movielabs.mddflib.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +32,7 @@ import java.util.Properties;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
@@ -40,6 +42,7 @@ import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.xml.RatingSystem;
+import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.StructureValidation;
 import com.movielabs.mddflib.util.xml.XsdValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -55,7 +58,8 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  * 
  * @author L. Levin, Critical Architectures LLC
  *
- */public class CMValidator extends XmlIngester {
+ */
+public class CMValidator extends XmlIngester {
 
 	/**
 	 * Used to facilitate keeping track of cross-references and identifying
@@ -144,7 +148,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 	}
 
 	protected Namespace rootNS;
-	protected String rootPrefix;
+	// protected String rootPrefix;
 
 	protected boolean validateC;
 	protected Element curRootEl;
@@ -249,32 +253,40 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 		}
 	}
 
-	protected void validateNotEmpty(String key) {
+	/**
+	 * Check all Elements (or attributes) that are REQUIRED by a MDDF
+	 * Specification to provide a value actually do. This is a necessary step as
+	 * validation against the XSD only verify the presence of an Element. Thus,
+	 * an XML file with the Element <tt>&lt;Foo&gt;&lt;/Foo&gt;</tt> would pass
+	 * the XSD check even though it fails to provide a required value.
+	 * 
+	 * @param targetSchema
+	 */
+	protected void validateNotEmpty(SchemaWrapper targetSchema) { 
+		List<XPathExpression<?>> reqElXpList = targetSchema.getReqElList();
+		for (XPathExpression<?> xpExp :reqElXpList ) { 
+			List<?> elementList = xpExp.evaluate(curRootEl);
+			for(Object next : elementList){
+				String value = null;
+				String label = null;
+				Element targetEl = null;
+				if(next instanceof Element){
+					targetEl = (Element)next;
+					value = targetEl.getTextNormalize();
+					label = targetEl.getName();
+				}else if (next instanceof Attribute){
+					Attribute targetAtt = (Attribute)next;		
+					value = targetAtt.getValue();
+					targetEl  = targetAtt.getParent();
+					label = targetEl.getName()+"->"+targetAtt.getName();
+				}
 
-		String[] parts = key.split("@");
-		String elementName = parts[0];
-		XPathExpression<Element> xpExpression = xpfac.compile(".// " + rootPrefix + elementName, Filters.element(),
-				null, rootNS);
-		String label = elementName;
-		String attributeName = null;
-		if (parts.length > 1) {
-			attributeName = parts[1];
-			label = label + "[@" + attributeName + "]";
-		}
-		List<Element> elementList = xpExpression.evaluate(curRootEl);
-		for (int i = 0; i < elementList.size(); i++) {
-			Element targetEl = (Element) elementList.get(i);
-			String value = null;
-			if (attributeName == null) {
-				value = targetEl.getTextNormalize();
-			} else {
-				value = targetEl.getAttributeValue(attributeName);
-			}
-			if ((value == null) || (value.isEmpty())) {
-				String msg = label + " not specified. A value must be provided";
-				logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, targetEl, msg, null, null, logMsgSrcId);
-				curFileIsValid = false;
-			}
+				if ((value == null) || (value.isEmpty())) {
+					String msg = label + " not specified. A value must be provided";
+					logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, targetEl, msg, null, null, logMsgSrcId);
+					curFileIsValid = false;
+				}
+			} 
 		}
 	}
 
@@ -290,8 +302,8 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 	 */
 	protected HashSet<String> validateId(String elementName, String idAttribute, boolean reqUniqueness,
 			boolean chkSyntax) {
-		XPathExpression<Element> xpExpression = xpfac.compile(".// " + rootPrefix + elementName, Filters.element(),
-				null, rootNS);
+		XPathExpression<Element> xpExpression = xpfac.compile(".//" + rootNS.getPrefix() + elementName,
+				Filters.element(), null, rootNS);
 		HashSet<String> idSet = new HashSet<String>();
 
 		/*
@@ -504,11 +516,21 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 		} catch (NumberFormatException e) {
 			return false;
 		}
-	} 
+	}
 
 	// ########################################################################
 
-	protected void validateRatings() {
+	/**
+	 * Locate and validate all instances of a &lt;md:Rating&gt; Element.
+	 * Validation checks will be based on the data contained in the latest
+	 * release of the MovieLabs Common Metadata Ratings.
+	 * 
+	 * @see <a href="http://www.movielabs.com/md/ratings/index.html">MovieLabs
+	 *      Common Metadata Ratings</a>
+	 * @return
+	 */
+	protected boolean validateRatings() {
+		boolean allOK = true;
 		XPathExpression<Element> xpExp01 = xpfac.compile(".//md:Rating", Filters.element(), null, mdNSpace);
 		List<Element> ratingElList = xpExp01.evaluate(curRootEl);
 		rLoop: for (int i = 0; i < ratingElList.size(); i++) {
@@ -519,7 +541,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 				String msg = "Rating System not specified";
 				String explanation = null;
 				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, rSysEl, msg, explanation, null, logMsgSrcId);
-				curFileIsValid = false;
+				allOK = false;
 				continue;
 			}
 			RatingSystem rSystem = RatingSystem.factory(system);
@@ -527,7 +549,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 				String msg = "Unrecognized Rating System '" + system + "'";
 				String explanation = null;
 				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, rSysEl, msg, explanation, null, logMsgSrcId);
-				curFileIsValid = false;
+				allOK = false;
 				continue;
 			}
 			Element valueEl = ratingEl.getChild("Value", mdNSpace);
@@ -537,7 +559,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 					String msg = "Invalid Rating for RatingSystem";
 					String explanation = "The " + system + " Rating System does not include the '" + rating + "'";
 					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, valueEl, msg, explanation, null, logMsgSrcId);
-					curFileIsValid = false;
+					allOK = false;
 				} else if (rSystem.isDeprecated(rating)) {
 					String msg = "Deprecated Rating";
 					String explanation = "The " + system + " Rating System has deprecated the '" + rating
@@ -566,7 +588,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 					String explanation = "The " + system
 							+ " Rating System has not been officially adopted in SubRegion '" + region + "'";
 					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, target, msg, explanation, null, logMsgSrcId);
-					// curFileIsValid = false;
+					// allOK = false;
 				}
 			} else {
 				region = target.getText();
@@ -575,13 +597,13 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 					String msg = "Invalid code for country";
 					String explanation = "A country should be specified as a ISO 3166-1 Alpha-2 code";
 					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
-					curFileIsValid = false;
+					allOK = false;
 				} else if (!rSystem.isUsedInRegion(region)) {
 					String msg = "RatingSystem not used in specified Region";
 					String explanation = "The " + system + " Rating System has not been officially adopted in Region '"
 							+ region + "'";
 					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, target, msg, explanation, null, logMsgSrcId);
-					// curFileIsValid = false;
+					// allOK = false;
 				}
 			}
 			/*
@@ -599,11 +621,12 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 						String explanation = "Rating System uses pre-defined Reason-Codes which do not include '"
 								+ reason + "'";
 						logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, reasonEl, msg, explanation, null, logMsgSrcId);
-						curFileIsValid = false;
+						allOK = false;
 					}
 				}
 			}
 		}
+		return allOK;
 	}
 
 	/**
@@ -641,6 +664,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 				text = targetEl.getTextNormalize();
 				if (!checkLangTag(text)) {
 					reportLangError(targetEl, tag4log, text);
+					allOK = false;
 				}
 			} else if (child.startsWith("@")) {
 				// dealing with an attribute
@@ -648,6 +672,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 				text = targetEl.getAttributeValue(targetAttb);
 				if (!checkLangTag(text)) {
 					reportLangError(targetEl, tag4log, text);
+					allOK = false;
 				}
 			} else {
 				// dealing with one or more child elements
@@ -657,6 +682,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 					text = langEl.getTextNormalize();
 					if (!checkLangTag(text)) {
 						reportLangError(langEl, tag4log, text);
+						allOK = false;
 					}
 				}
 			}
