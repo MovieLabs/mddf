@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -61,7 +62,8 @@ public class SchemaWrapper {
 	private Element rootEl;
 
 	private XPathFactory xpfac = XPathFactory.instance();
-	private ArrayList<String> reqElList;
+	private Namespace nSpace;
+	private ArrayList<XPathExpression<?>> reqElXpList;
 
 	public static SchemaWrapper factory(String xsdRsrc) {
 		synchronized (cache) {
@@ -103,6 +105,10 @@ public class SchemaWrapper {
 	private SchemaWrapper(String xsdRsrc) {
 		schemaXSD = getSchemaXSD(xsdRsrc);
 		rootEl = schemaXSD.getRootElement();
+		String targetNamespace = rootEl.getAttributeValue("targetNamespace");
+		String[] parts = targetNamespace.split("/");
+		String prefix = parts[parts.length - 1];
+		nSpace = Namespace.getNamespace(prefix, targetNamespace);
 		buildReqElList();
 	}
 
@@ -116,7 +122,7 @@ public class SchemaWrapper {
 		/*
 		 * WHAT ABOUT:::::> <xs:element name="Event"> <xs:simpleType> <xs:union
 		 * memberTypes="xs:dateTime xs:date"/> </xs:simpleType> </xs:element>
-		 */ 
+		 */
 		return type;
 	}
 
@@ -146,25 +152,68 @@ public class SchemaWrapper {
 	}
 
 	private void buildReqElList() {
-		reqElList = new ArrayList<String>();
+		reqElXpList = new ArrayList<XPathExpression<?>>();
 		XPathExpression<Element> xpExpression = xpfac.compile(".//xs:element", Filters.element(), null, xsNSpace);
 		List<Element> elementList = xpExpression.evaluate(rootEl);
 		for (int i = 0; i < elementList.size(); i++) {
+			String targetXPath = null;
 			Element target = (Element) elementList.get(i);
+			String name = target.getAttributeValue("name");
 			String minVal = target.getAttributeValue("minOccurs", "1");
 			if (minVal.equals("0")) {
 				// ignore optional elements
 				continue;
 			}
+			/*
+			 * Note an Element that is a complexType will not have the type
+			 * attribute so will return a null.
+			 */
 			String type = target.getAttributeValue("type");
-			if ((type != null) && (type.startsWith("xs:"))) {
-				reqElList.add(target.getAttributeValue("name"));
+			boolean process = false;
+			if (type == null) {
+				/* only <xs:simpleContent> gets processed */
+				Element el1 = target.getChild("complexType", xsNSpace);
+				if (el1 != null) {
+					Element el2 = el1.getChild("simpleContent", xsNSpace);
+					process = (el2 != null);
+				}
+			} else if (type.startsWith("xs:")) {
+				process = true;
 			}
+//			if ((type == null) || (type.startsWith("xs:"))) {
+			if(process){
+//				if (name != null && !(name.isEmpty())) {
+					/*
+					 * parent may be null it target is not part of a sequence
+					 * w/in a complexType
+					 */
+					Element parent = getNamedAncestor(target);
+					if (parent == null) {
+						targetXPath = ".//" + getPrefix() + ":" + name;
+					} else {
+						/* find all element declarations with the parent type */
+						String parentType = parent.getAttributeValue("name");
+						String xp = ".//xs:element[@type='" + getPrefix() + ":" + parentType + "']";
+						XPathExpression<Element> xpe2 = xpfac.compile(xp, Filters.element(), null, xsNSpace);
+						List<Element> referencingList = xpe2.evaluate(rootEl);
+						for (Element refEl : referencingList) {
+							String parentName = refEl.getAttributeValue("name");
+							targetXPath = ".//" + getPrefix() + ":" + parentName + "/" + getPrefix() + ":" + name;
+						}
+					}
+					if (targetXPath != null) {
+						XPathExpression<Element> targetXpE = xpfac.compile(targetXPath, Filters.element(), null,
+								nSpace);
+						reqElXpList.add(targetXpE);
+					}
+				}
+//			}
 		}
 		// add required attributes...
 		xpExpression = xpfac.compile(".//xs:attribute[@use='required']", Filters.element(), null, xsNSpace);
 		elementList = xpExpression.evaluate(rootEl);
 		for (int i = 0; i < elementList.size(); i++) {
+			String targetXPath = null;
 			Element target = (Element) elementList.get(i);
 			String attName = target.getAttributeValue("name");
 			/*
@@ -176,20 +225,22 @@ public class SchemaWrapper {
 			Element parent = getNamedAncestor(target);
 			if (parent.getName().contains("element")) {
 				String elName = parent.getAttributeValue("name");
-				String fullName = elName + "@" + attName;
-				reqElList.add(fullName); 
+				targetXPath = ".//" + getPrefix() + ":" + elName + "/@" + attName;
 			} else {
 				// dealing with a complex-type so its more indirect
 				String typeName = parent.getAttributeValue("name");
-				xpExpression = xpfac.compile(".//xs:element[contains(@type,'" + typeName + "')]", Filters.element(), null,
-						xsNSpace);
+				xpExpression = xpfac.compile(".//xs:element[contains(@type,'" + typeName + "')]", Filters.element(),
+						null, xsNSpace);
 				List<Element> innerList = xpExpression.evaluate(rootEl);
 				for (int j = 0; j < innerList.size(); j++) {
 					Element ownerEl = (Element) innerList.get(j);
 					String elName = ownerEl.getAttributeValue("name");
-					String fullName = elName + "@" + attName;
-					reqElList.add(fullName); 
+					targetXPath = ".//" + getPrefix() + ":" + elName + "/@" + attName;
 				}
+			}
+			if (targetXPath != null) {
+				XPathExpression<Attribute> targetXpE = xpfac.compile(targetXPath, Filters.attribute(), null, nSpace);
+				reqElXpList.add(targetXpE);
 			}
 		}
 	}
@@ -214,8 +265,22 @@ public class SchemaWrapper {
 	/**
 	 * @return the reqElList
 	 */
-	public ArrayList<String> getReqElList() {
-		return reqElList;
+	public ArrayList<XPathExpression<?>> getReqElList() {
+		return reqElXpList;
+	}
+
+	/**
+	 * @return the targetNamespace
+	 */
+	public Namespace getTargetNamespace() {
+		return nSpace;
+	}
+
+	/**
+	 * @return the prefix
+	 */
+	public String getPrefix() {
+		return nSpace.getPrefix();
 	}
 
 }
