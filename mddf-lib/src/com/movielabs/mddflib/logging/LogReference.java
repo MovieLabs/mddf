@@ -88,8 +88,7 @@ public class LogReference {
 		if (rootEl == null) {
 			try {
 				loadXml(new File(srcPath));
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (Exception e) { 
 				return null;
 			}
 		}
@@ -126,7 +125,7 @@ public class LogReference {
 	 */
 	private static String getPriorVersion(String standard, String curVersion) {
 		String[] supportedVersions = MddfContext.getSupportedVersions(standard);
-		if(supportedVersions==null){
+		if (supportedVersions == null) {
 			return null;
 		}
 		if (curVersion == null) {
