@@ -36,10 +36,11 @@ import org.jdom2.xpath.XPathExpression;
 
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
-import com.movielabs.mddflib.util.AbstractValidator;
+import com.movielabs.mddflib.util.CMValidator;
 import com.movielabs.mddflib.util.PathUtilities;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
+import com.movielabs.mddflib.util.xml.XsdValidation;
 
 /**
  * Validates a Manifest file as conforming to the Common Media Manifest (CMM) as
@@ -52,7 +53,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class ManifestValidator extends AbstractValidator {
+public class ManifestValidator extends CMValidator {
 
 	/**
 	 * Used to facilitate keeping track of cross-references and identifying
@@ -117,8 +118,7 @@ public class ManifestValidator extends AbstractValidator {
 		super(loggingMgr);
 		this.validateC = validateC;
 
-		rootNS = manifestNSpace;
-		rootPrefix = "manifest:";
+		rootNS = manifestNSpace; 
 
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_MANIFEST;
@@ -131,7 +131,8 @@ public class ManifestValidator extends AbstractValidator {
 		curRootEl = null;
 
 		String schemaVer = identifyXsdVersion(docRootEl);
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, srcFile, logMsgSrcId);
+		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Schema Version " + schemaVer, srcFile,
+				logMsgSrcId);
 		setManifestVersion(schemaVer);
 		rootNS = manifestNSpace;
 
@@ -156,7 +157,7 @@ public class ManifestValidator extends AbstractValidator {
 	 * @param manifestFile
 	 */
 	protected boolean validateXml(File srcFile, Element docRootEl) {
-		String manifestXsdFile = "./resources/manifest-v" + XmlIngester.MAN_VER + ".xsd";
+		String manifestXsdFile = XsdValidation.defaultRsrcLoc + "manifest-v" + XmlIngester.MAN_VER + ".xsd";
 		curFileIsValid = xsdHelper.validateXml(srcFile, docRootEl, manifestXsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
@@ -168,12 +169,9 @@ public class ManifestValidator extends AbstractValidator {
 		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, "Validating constraints", curFile, LOGMSG_ID);
 		super.validateConstraints();
 
-		SchemaWrapper availSchema = SchemaWrapper.factory("manifest-v" + XmlIngester.MAN_VER);
-		List<String> reqElList = availSchema.getReqElList();
-		for (int i = 0; i < reqElList.size(); i++) {
-			String key = reqElList.get(i);
-			validateNotEmpty(key);
-		}
+		SchemaWrapper targetSchema = SchemaWrapper.factory("manifest-v" + XmlIngester.MAN_VER);
+		validateNotEmpty(targetSchema);
+		
 		// TODO: Load from JSON file....
 		/*
 		 * Check ID for any Inventory components....
@@ -250,7 +248,19 @@ public class ManifestValidator extends AbstractValidator {
 		 * set of allowed values).
 		 */
 		// start with Common Metadata spec..
-		boolean cmOk = validateCMVocab();
+		validateCMVocab();
+
+		// Now do any defined in Avails spec..
+		validateManifestVocab();
+
+		validateLocations();
+
+	}
+
+	/**
+	 * 
+	 */
+	private void validateManifestVocab() {
 
 		JSONObject manifestVocab = (JSONObject) getMddfResource("manifest", MAN_VER);
 		if (manifestVocab == null) {
@@ -287,8 +297,6 @@ public class ManifestValidator extends AbstractValidator {
 			validateVocab(manifestNSpace, "ExperienceID", null, "@condition", allowed, srcRef, true);
 		}
 
-		validateLocations();
-
 	}
 
 	/**
@@ -298,6 +306,8 @@ public class ManifestValidator extends AbstractValidator {
 		boolean allOK = true;
 		JSONObject cmVocab = (JSONObject) getMddfResource("cm", MD_VER);
 		if (cmVocab == null) {
+			String msg = "Unable to validate controlled vocab: missing resource file";
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 			return false;
 		}
 
@@ -335,6 +345,20 @@ public class ManifestValidator extends AbstractValidator {
 		srcRef = LogReference.getRef("CM", MD_VER, "cm007");
 		allOK = validateVocab(manifestNSpace, "ExperienceChild", manifestNSpace, "Relationship", allowed, srcRef, true)
 				&& allOK;
+
+		// ----------------------------------------
+		/*
+		 * Validate use of Country identifiers....
+		 */
+		// Usage in Common Metadata XSD...
+		allOK = validateRegion(mdNSpace, "Region", mdNSpace, "country") && allOK;
+		allOK = validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country") && allOK;
+		allOK = validateRegion(mdNSpace, "CountryOfOrigin", mdNSpace, "country") && allOK;
+
+		// Usage in Manifest XSD....
+		allOK = validateRegion(manifestNSpace, "Region", mdNSpace, "country") && allOK;
+		allOK = validateRegion(manifestNSpace, "RegionIncluded", mdNSpace, "country") && allOK;
+		allOK = validateRegion(manifestNSpace, "ExcludedRegion", mdNSpace, "country") && allOK;
 
 		// --------------- Validate language codes
 		// ----------------------------------------
