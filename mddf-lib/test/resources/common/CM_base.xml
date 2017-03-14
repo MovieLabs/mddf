@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TEST ARTIFACT: This file defines an error-free base-case that can be 
+	used to create artifacts supporting specific JUnit tests relating to the 
+	Common Metadata specification. -->
+<manifest:MediaManifest
+	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.5/manifest"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.4/md" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.5/manifest manifest-v1.5.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+	<manifest:Compatibility>
+		<manifest:SpecVersion>1.5</manifest:SpecVersion>
+		<manifest:System>HTML5</manifest:System>
+		<manifest:System>Roku</manifest:System>
+		<manifest:Profile>none</manifest:Profile>
+	</manifest:Compatibility>
+	<manifest:Inventory>
+		<manifest:Audio AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Language>en</md:Language>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Audio>
+		<manifest:Video VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Picture />
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Video>
+		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:BasicMetadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+				<md:LocalizedInfo language="en" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>A large but peaceful bunny is harassed by three
+						trouble-making rodents
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+				</md:LocalizedInfo>
+				<md:RunLength>PT10M00.0S</md:RunLength>
+				<md:ReleaseYear>2008</md:ReleaseYear>
+				<md:ReleaseHistory>
+					<md:ReleaseType>original</md:ReleaseType>
+					<md:DistrTerritory>
+						<md:country>DE</md:country>
+					</md:DistrTerritory>
+					<md:Date>2016-05-22</md:Date>
+				</md:ReleaseHistory>
+				<md:ReleaseHistory>
+					<md:ReleaseType>original</md:ReleaseType>
+					<md:DistrTerritory>
+						<md:country>US</md:country>
+					</md:DistrTerritory>
+					<md:Date>2016-09-24</md:Date>
+				</md:ReleaseHistory>
+				<md:WorkType>Movie</md:WorkType>
+				<md:RatingSet>
+					<md:Rating>
+						<md:Region>
+							<md:country>DE</md:country>
+						</md:Region>
+						<md:System>FSK</md:System>
+						<md:Value>16</md:Value>
+					</md:Rating>
+					<md:Rating>
+						<md:Region>
+							<md:country>US</md:country>
+						</md:Region>
+						<md:System>MPAA</md:System>
+						<md:Value>G</md:Value>
+					</md:Rating>
+					<md:Rating>
+						<md:Region>
+							<md:country>DE</md:country>
+						</md:Region>
+						<md:System>FSK</md:System>
+						<md:Value>16</md:Value>
+					</md:Rating>
+					<md:Rating>
+						<md:Region>
+							<md:country>ZA</md:country>
+						</md:Region> 
+						<md:System>FPB</md:System>
+						<md:Value>16</md:Value>
+						<md:Reason>D</md:Reason>
+						<md:Reason>H</md:Reason>
+						<md:Reason>N</md:Reason>
+					</md:Rating> 
+				</md:RatingSet>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Director</md:JobFunction>
+						<md:JobDisplay>Director</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Job>
+						<md:JobFunction>Writer</md:JobFunction>
+						<md:JobDisplay>Writer</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Sacha Goedegebure</md:DisplayName>
+					</md:Name>
+				</md:People>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Producer</md:JobFunction>
+						<md:JobDisplay>Producer</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Ton Roosendaal</md:DisplayName>
+					</md:Name>
+				</md:People>
+				<md:PrimarySpokenLanguage>de-DE</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>en-DE</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>en</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>en-1694acad</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>yee-HK</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>cmn-Hans-CN</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>sr-Latn-RS</md:PrimarySpokenLanguage>
+			</manifest:BasicMetadata>
+		</manifest:Metadata>
+	</manifest:Inventory>
+	<manifest:Presentations>
+		<!-- the movie -->
+		<manifest:Presentation
+			PresentationID="md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:TrackMetadata>
+				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
+				<manifest:VideoTrackReference>
+					<!-- the vidtrackid must match the one used in the inventory. -->
+					<manifest:VideoTrackID>md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:VideoTrackID>
+				</manifest:VideoTrackReference>
+				<manifest:AudioTrackReference>
+					<manifest:AudioTrackID>md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:AudioTrackID>
+				</manifest:AudioTrackReference>
+			</manifest:TrackMetadata>
+		</manifest:Presentation>
+	</manifest:Presentations>
+	<manifest:Experiences>
+		<manifest:Experience version="0.1"
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq">
+			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V</manifest:ContentID>
+			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+				<!-- feature movie -->
+				<manifest:Type>Main</manifest:Type>
+				<manifest:SubType>Feature</manifest:SubType>
+				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				</manifest:PresentationID>
+			</manifest:Audiovisual>
+		</manifest:Experience>
+	</manifest:Experiences>
+	<manifest:ALIDExperienceMaps>
+		<manifest:ALIDExperienceMap>
+			<manifest:ALID>md:alid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02
+			</manifest:ALID>
+			<manifest:ExperienceID condition="Acquired">md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq
+			</manifest:ExperienceID>
+		</manifest:ALIDExperienceMap>
+	</manifest:ALIDExperienceMaps>
+</manifest:MediaManifest>
