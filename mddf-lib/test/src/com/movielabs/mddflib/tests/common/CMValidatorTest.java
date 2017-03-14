@@ -93,16 +93,7 @@ public class CMValidatorTest extends CMValidator {
 	@After
 	public void tearDown() throws Exception {
 	}
-
-	/**
-	 * Test method for
-	 * {@link com.movielabs.mddflib.util.CMValidator#validateIndexing(java.lang.String, java.lang.String, java.lang.String)}
-	 * .
-	 */
-	public void testValidateIndexing() {
-		fail("Not yet implemented");
-	}
-
+ 
 	/**
 	 * Test method for
 	 * {@link com.movielabs.mddflib.util.CMValidator#validateNotEmpty(java.lang.String)}
@@ -221,8 +212,7 @@ public class CMValidatorTest extends CMValidator {
 	@Test
 	public void testValidateRatings() {
 		initialize("CM_withErrors.xml");
-		boolean ok = validateRatings();
-		assertFalse(ok);
+		validateRatings();
 		assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 	}
@@ -235,8 +225,7 @@ public class CMValidatorTest extends CMValidator {
 	@Test
 	public void testValidateLanguage() {
 		initialize("CM_withErrors.xml");
-		boolean ok = validateLanguage(mdNSpace, "PrimarySpokenLanguage", null, null);
-		assertFalse(ok);
+		validateLanguage(mdNSpace, "PrimarySpokenLanguage", null, null); 
 		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 	}
 
@@ -264,14 +253,12 @@ public class CMValidatorTest extends CMValidator {
 		JSONObject cmVocab = (JSONObject) getMddfResource("cm", MD_VER);
 
 		JSONArray allowed = cmVocab.optJSONArray("WorkType");
-		boolean ok = validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, null, true);
-		assertFalse(ok);
+		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, null, true); 
 		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 
 		iLog.clearLog();
 		allowed = cmVocab.optJSONArray("ReleaseType");
-		ok = validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, null, true);
-		assertTrue(ok);
+		validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, null, true); 
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 	}
 
