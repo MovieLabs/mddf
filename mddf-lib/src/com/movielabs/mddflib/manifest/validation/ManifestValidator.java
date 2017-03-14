@@ -118,7 +118,7 @@ public class ManifestValidator extends CMValidator {
 		super(loggingMgr);
 		this.validateC = validateC;
 
-		rootNS = manifestNSpace; 
+		rootNS = manifestNSpace;
 
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_MANIFEST;
@@ -171,7 +171,7 @@ public class ManifestValidator extends CMValidator {
 
 		SchemaWrapper targetSchema = SchemaWrapper.factory("manifest-v" + XmlIngester.MAN_VER);
 		validateNotEmpty(targetSchema);
-		
+
 		// TODO: Load from JSON file....
 		/*
 		 * Check ID for any Inventory components....
@@ -255,6 +255,8 @@ public class ManifestValidator extends CMValidator {
 
 		validateLocations();
 
+		validateMetadata();
+
 	}
 
 	/**
@@ -302,7 +304,7 @@ public class ManifestValidator extends CMValidator {
 	/**
 	 * @return
 	 */
-	protected void validateCMVocab() { 
+	protected void validateCMVocab() {
 		JSONObject cmVocab = (JSONObject) getMddfResource("cm", MD_VER);
 		if (cmVocab == null) {
 			String msg = "Unable to validate controlled vocab: missing resource file";
@@ -409,7 +411,7 @@ public class ManifestValidator extends CMValidator {
 
 		// ====================================
 		// TODO: DIGITAL ASSET METADATA
- 
+
 	}
 
 	// ########################################################################
@@ -434,6 +436,7 @@ public class ManifestValidator extends CMValidator {
 				String errMsg = "Invalid syntax for local file location";
 				String details = "Location of a local file must be specified as a relative path";
 				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId);
+				curFileIsValid = false;
 				continue outterLoop;
 			}
 			if (!PathUtilities.isRelative(containerPath)) {
@@ -452,6 +455,58 @@ public class ManifestValidator extends CMValidator {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	protected void validateMetadata() {
+		String pre = manifestNSpace.getPrefix();
+		/**
+		 * The ContentID alias mechanism is filter for a peer BasicMetadata that
+		 * results in a new BasicMetadata instance with a subset of the
+		 * LocalizedInfo instance in the original BasicMetadata instance. Thus:
+		 * <ul>
+		 * <li>If the a Metatadata element contains a child Alias, it must also
+		 * have as a child a BasicMetadata element for the Alias to filter.</li>
+		 * 
+		 * <li>If the Alias has a LocalizedPair/LanguageIncluded = 'foobar' then
+		 * the BasicMetadata element must have a child
+		 * LocalizedInfo[@language='foobar']</li>
+		 * </ul>
+		 */
+		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + pre + ":Alias", Filters.element(), null,
+				manifestNSpace);
+		List<Element> aliasElList = xpExp01.evaluate(curRootEl);
+		for (Element aliasEl : aliasElList) {
+			Element mdEl = aliasEl.getParentElement();
+			Element basicMDataEl = mdEl.getChild("BasicMetadata", manifestNSpace);
+			if (basicMDataEl == null) {
+				String errMsg = "Metadata/Alias requires peer BasicMetadata";
+				LogReference srcRef = LogReference.getRef("MMM", "metadataAlias");
+				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, aliasEl, errMsg, null, srcRef, logMsgSrcId);
+				curFileIsValid = false;
+				continue;
+			}
+			XPathExpression<Element> xpExp02 = xpfac.compile(".//" + pre + ":LanguageIncluded", Filters.element(), null,
+					manifestNSpace);
+			List<Element> langElList = xpExp02.evaluate(aliasEl);
+			for (Element langEl : langElList) {
+				String includedLang = langEl.getTextNormalize();
+				XPathExpression<Element> xpExp03 = xpfac.compile(
+						".//" + mdNSpace.getPrefix() + ":LocalizedInfo[@language='" + includedLang + "']",
+						Filters.element(), null, manifestNSpace, mdNSpace);
+				Element locInfoEL = xpExp03.evaluateFirst(basicMDataEl);
+				if(locInfoEL == null){
+					String errMsg = "IncludedLanguage not supported by BasicMetadata/LocalizedInfo";
+					LogReference srcRef = LogReference.getRef("MMM", "metadataAlias");
+					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, langEl, errMsg, null, srcRef, logMsgSrcId);
+					curFileIsValid = false;
+					
+					
+				}
 			}
 		}
 	}
