@@ -302,118 +302,114 @@ public class ManifestValidator extends CMValidator {
 	/**
 	 * @return
 	 */
-	protected boolean validateCMVocab() {
-		boolean allOK = true;
+	protected void validateCMVocab() { 
 		JSONObject cmVocab = (JSONObject) getMddfResource("cm", MD_VER);
 		if (cmVocab == null) {
 			String msg = "Unable to validate controlled vocab: missing resource file";
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
-			return false;
+			curFileIsValid = false;
+			return;
 		}
 
 		JSONArray allowed = cmVocab.optJSONArray("WorkType");
 		LogReference srcRef = LogReference.getRef("CM", MD_VER, "cm002");
-		allOK = validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, srcRef, true) && allOK;
+		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("ColorType");
 		srcRef = LogReference.getRef("CM", MD_VER, "cm003");
-		allOK = validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", allowed, srcRef, true)
-				&& allOK;
+		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("PictureFormat");
 		srcRef = LogReference.getRef("CM", MD_VER, "cm004");
-		allOK = validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", allowed, srcRef, true)
-				&& allOK;
+		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("ReleaseType");
 		srcRef = LogReference.getRef("CM", MD_VER, "cm005");
-		allOK = validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, srcRef, true) && allOK;
+		validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("TitleAlternate@type");
 		srcRef = LogReference.getRef("CM", MD_VER, "cm006");
-		allOK = validateVocab(mdNSpace, "TitleAlternate", null, "@type", allowed, srcRef, true) && allOK;
+		validateVocab(mdNSpace, "TitleAlternate", null, "@type", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("Parent@relationshipType");
 		srcRef = LogReference.getRef("CM", MD_VER, "cm007");
-		allOK = validateVocab(mdNSpace, "Parent", null, "@relationshipType", allowed, srcRef, true) && allOK;
+		validateVocab(mdNSpace, "Parent", null, "@relationshipType", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("EntryClass");
 		srcRef = LogReference.getRef("CM", MD_VER, "cm008");
-		allOK = validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef, true) && allOK;
+		validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("Parent@relationshipType");
 		srcRef = LogReference.getRef("CM", MD_VER, "cm007");
-		allOK = validateVocab(manifestNSpace, "ExperienceChild", manifestNSpace, "Relationship", allowed, srcRef, true)
-				&& allOK;
+		validateVocab(manifestNSpace, "ExperienceChild", manifestNSpace, "Relationship", allowed, srcRef, true);
 
 		// ----------------------------------------
 		/*
 		 * Validate use of Country identifiers....
 		 */
 		// Usage in Common Metadata XSD...
-		allOK = validateRegion(mdNSpace, "Region", mdNSpace, "country") && allOK;
-		allOK = validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country") && allOK;
-		allOK = validateRegion(mdNSpace, "CountryOfOrigin", mdNSpace, "country") && allOK;
+		validateRegion(mdNSpace, "Region", mdNSpace, "country");
+		validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country");
+		validateRegion(mdNSpace, "CountryOfOrigin", mdNSpace, "country");
 
 		// Usage in Manifest XSD....
-		allOK = validateRegion(manifestNSpace, "Region", mdNSpace, "country") && allOK;
-		allOK = validateRegion(manifestNSpace, "RegionIncluded", mdNSpace, "country") && allOK;
-		allOK = validateRegion(manifestNSpace, "ExcludedRegion", mdNSpace, "country") && allOK;
+		validateRegion(manifestNSpace, "Region", mdNSpace, "country");
+		validateRegion(manifestNSpace, "RegionIncluded", mdNSpace, "country");
+		validateRegion(manifestNSpace, "ExcludedRegion", mdNSpace, "country");
 
 		// --------------- Validate language codes
 		// ----------------------------------------
 		/*
 		 * Language codes in INVENTORY:
 		 */
-		allOK = validateLanguage(mdNSpace, "Language", null, null) && allOK;
-		allOK = validateLanguage(mdNSpace, "SubtitleLanguage", null, null) && allOK;
-		allOK = validateLanguage(mdNSpace, "SignedLanguage", null, null) && allOK;
-		allOK = validateLanguage(mdNSpace, "PrimarySpokenLanguage", null, null) && allOK;
-		allOK = validateLanguage(mdNSpace, "OriginalLanguage", null, null) && allOK;
-		allOK = validateLanguage(mdNSpace, "VersionLanguage", null, null) && allOK;
-		allOK = validateLanguage(mdNSpace, "LocalizedInfo", null, "@language") && allOK;
-		allOK = validateLanguage(mdNSpace, "JobDisplay", null, "@language") && allOK;
-		allOK = validateLanguage(mdNSpace, "DisplayName", null, "@language") && allOK;
-		allOK = validateLanguage(mdNSpace, "SortName", null, "@language") && allOK;
-		allOK = validateLanguage(mdNSpace, "TitleAlternate", null, "@language") && allOK;
-		allOK = validateLanguage(manifestNSpace, "TextObject", null, "@language") && allOK;
+		validateLanguage(mdNSpace, "Language", null, null);
+		validateLanguage(mdNSpace, "SubtitleLanguage", null, null);
+		validateLanguage(mdNSpace, "SignedLanguage", null, null);
+		validateLanguage(mdNSpace, "PrimarySpokenLanguage", null, null);
+		validateLanguage(mdNSpace, "OriginalLanguage", null, null);
+		validateLanguage(mdNSpace, "VersionLanguage", null, null);
+		validateLanguage(mdNSpace, "LocalizedInfo", null, "@language");
+		validateLanguage(mdNSpace, "JobDisplay", null, "@language");
+		validateLanguage(mdNSpace, "DisplayName", null, "@language");
+		validateLanguage(mdNSpace, "SortName", null, "@language");
+		validateLanguage(mdNSpace, "TitleAlternate", null, "@language");
+		validateLanguage(manifestNSpace, "TextObject", null, "@language");
 		/*
 		 * PRESENTATION:
 		 */
-		allOK = validateLanguage(manifestNSpace, "SystemLanguage", null, null) && allOK;
-		allOK = validateLanguage(manifestNSpace, "AudioLanguage", null, null) && allOK;
-		allOK = validateLanguage(manifestNSpace, "SubtitleLanguage", null, null) && allOK;
-		allOK = validateLanguage(manifestNSpace, "DisplayLabel", null, "@language") && allOK;
-		allOK = validateLanguage(manifestNSpace, "ImageID", null, "@language") && allOK;
+		validateLanguage(manifestNSpace, "SystemLanguage", null, null);
+		validateLanguage(manifestNSpace, "AudioLanguage", null, null);
+		validateLanguage(manifestNSpace, "SubtitleLanguage", null, null);
+		validateLanguage(manifestNSpace, "DisplayLabel", null, "@language");
+		validateLanguage(manifestNSpace, "ImageID", null, "@language");
 		/*
 		 * PLAYABLE SEQ:
 		 */
-		allOK = validateLanguage(manifestNSpace, "Clip", null, "@audioLanguage") && allOK;
-		allOK = validateLanguage(manifestNSpace, "ImageClip", null, "@audioLanguage") && allOK;
+		validateLanguage(manifestNSpace, "Clip", null, "@audioLanguage");
+		validateLanguage(manifestNSpace, "ImageClip", null, "@audioLanguage");
 		/*
 		 * PICTURE GROUPS:
 		 */
-		allOK = validateLanguage(manifestNSpace, "LanguageInImage", null, null) && allOK;
-		allOK = validateLanguage(manifestNSpace, "AlternateText", null, "@language") && allOK;
-		allOK = validateLanguage(manifestNSpace, "Caption", null, "@language") && allOK;
+		validateLanguage(manifestNSpace, "LanguageInImage", null, null);
+		validateLanguage(manifestNSpace, "AlternateText", null, "@language");
+		validateLanguage(manifestNSpace, "Caption", null, "@language");
 		/*
 		 * TEXT GROUP:
 		 */
-		allOK = validateLanguage(manifestNSpace, "TextGroup", null, "@language") && allOK;
+		validateLanguage(manifestNSpace, "TextGroup", null, "@language");
 		/*
 		 * EXPERIENCES:
 		 */
-		allOK = validateLanguage(manifestNSpace, "Language", null, null) && allOK;
-		allOK = validateLanguage(manifestNSpace, "ExcludedLanguage", null, null) && allOK;
-		allOK = validateLanguage(manifestNSpace, "AppName", null, "@language") && allOK;
-		allOK = validateLanguage(manifestNSpace, "GalleryName", null, "@language") && allOK;
+		validateLanguage(manifestNSpace, "Language", null, null);
+		validateLanguage(manifestNSpace, "ExcludedLanguage", null, null);
+		validateLanguage(manifestNSpace, "AppName", null, "@language");
+		validateLanguage(manifestNSpace, "GalleryName", null, "@language");
 
 		validateRatings();
 
 		// ====================================
 		// TODO: DIGITAL ASSET METADATA
-
-		return allOK;
+ 
 	}
 
 	// ########################################################################

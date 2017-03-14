@@ -48,7 +48,7 @@ public class MecValidator extends CMValidator {
 	 */
 	public MecValidator(boolean validateC, LogMgmt loggingMgr) {
 		super(loggingMgr);
-		this.validateC = validateC; 
+		this.validateC = validateC;
 
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_MEC;
@@ -118,28 +118,24 @@ public class MecValidator extends CMValidator {
 	/**
 	 * @return
 	 */
-	protected boolean validateCMVocab() {
-		boolean allOK = true;
-
+	protected void validateCMVocab() { 
 		/*
 		 * Validate use of Country identifiers....
 		 */
-		allOK = validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country") && allOK;
-		allOK = validateRegion(mdNSpace, "CountryOfOrigin", mdNSpace, "country") && allOK;
+		validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country");
+		validateRegion(mdNSpace, "CountryOfOrigin", mdNSpace, "country");
 		// in multiple places
-		allOK = validateRegion(mdNSpace, "Region", mdNSpace, "country") && allOK;
+		validateRegion(mdNSpace, "Region", mdNSpace, "country");
 
 		/* Validate language codes */
-		allOK = validateLanguage(mdNSpace, "LocalizedInfo", null, "@language") && allOK;
-		allOK = validateLanguage(mdNSpace, "TitleAlternate", null, "@language") && allOK;
-		allOK = validateLanguage(mdNSpace, "DisplayName", null, "@language") && allOK;
-		allOK = validateLanguage(mdNSpace, "SortName", null, "@language") && allOK;
-		allOK = validateLanguage(mdNSpace, "DisplayString", null, "@language") && allOK;
-		allOK = validateLanguage(mdmecNSpace, "Basic", mdNSpace, "PrimarySpokenLanguage") && allOK;
-		allOK = validateLanguage(mdmecNSpace, "Basic", mdNSpace, "OriginalLanguage") && allOK;
-		allOK = validateLanguage(mdmecNSpace, "Basic", mdNSpace, "VersionLanguage") && allOK;
-
-		return allOK;
+		validateLanguage(mdNSpace, "LocalizedInfo", null, "@language");
+		validateLanguage(mdNSpace, "TitleAlternate", null, "@language");
+		validateLanguage(mdNSpace, "DisplayName", null, "@language");
+		validateLanguage(mdNSpace, "SortName", null, "@language");
+		validateLanguage(mdNSpace, "DisplayString", null, "@language");
+		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "PrimarySpokenLanguage");
+		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "OriginalLanguage");
+		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "VersionLanguage"); 
 	}
 
 }

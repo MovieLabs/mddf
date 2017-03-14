@@ -308,122 +308,115 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	/**
 	 * @return
 	 */
-	private boolean validateAvailVocab() {
-		boolean allOK = true;
+	private void validateAvailVocab() { 
 		Namespace primaryNS = availsNSpace;
 		String doc = "AVAIL";
 
 		JSONObject availVocab = (JSONObject) getMddfResource("avail", AVAIL_VER);
 		if (availVocab == null) {
-			return false;
+			String msg = "Unable to validate controlled vocab: missing resource file";
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
+			curFileIsValid = false;
+			return;
 		}
 
 		JSONArray allowed = availVocab.optJSONArray("AvailType");
 		LogReference srcRef = LogReference.getRef(doc, "avail01");
-		allOK = validateVocab(primaryNS, "Avail", primaryNS, "AvailType", allowed, srcRef, true) && allOK;
+		validateVocab(primaryNS, "Avail", primaryNS, "AvailType", allowed, srcRef, true);
 
 		allowed = availVocab.optJSONArray("EntryType");
 		srcRef = LogReference.getRef(doc, "avail02");
-		allOK = validateVocab(primaryNS, "Disposition", primaryNS, "EntryType", allowed, srcRef, true) && allOK;
+		validateVocab(primaryNS, "Disposition", primaryNS, "EntryType", allowed, srcRef, true);
 
 		allowed = availVocab.optJSONArray("AltIdentifier@scope");
 		srcRef = LogReference.getRef(doc, "avail03");
-		allOK = validateVocab(primaryNS, "AltIdentifier", primaryNS, "@scope", allowed, srcRef, true) && allOK;
+		validateVocab(primaryNS, "AltIdentifier", primaryNS, "@scope", allowed, srcRef, true);
 
 		allowed = availVocab.optJSONArray("LocalizationOffering");
 		srcRef = LogReference.getRef(doc, "avail03");
-		allOK = validateVocab(primaryNS, "Metadata", primaryNS, "LocalizationOffering", allowed, srcRef, true) && allOK;
-		allOK = validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "LocalizationOffering", allowed, srcRef, true)
-				&& allOK;
+		validateVocab(primaryNS, "Metadata", primaryNS, "LocalizationOffering", allowed, srcRef, true);
+		validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "LocalizationOffering", allowed, srcRef, true);
 
 		allowed = availVocab.optJSONArray("SeasonStatus");
 		srcRef = LogReference.getRef(doc, "avail04");
-		allOK = validateVocab(primaryNS, "SeasonMetadata", primaryNS, "SeasonStatus", allowed, srcRef, true) && allOK;
+		validateVocab(primaryNS, "SeasonMetadata", primaryNS, "SeasonStatus", allowed, srcRef, true);
 
 		allowed = availVocab.optJSONArray("SeriesStatus");
 		srcRef = LogReference.getRef(doc, "avail05");
-		allOK = validateVocab(primaryNS, "SeriesMetadata", primaryNS, "SeriesStatus", allowed, srcRef, true) && allOK;
+		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "SeriesStatus", allowed, srcRef, true);
 
 		allowed = availVocab.optJSONArray("DateTimeCondition");
 		srcRef = LogReference.getRef(doc, "avail06");
-		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "StartCondition", allowed, srcRef, true) && allOK;
-		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "EndCondition", allowed, srcRef, true) && allOK;
+		validateVocab(primaryNS, "Transaction", primaryNS, "StartCondition", allowed, srcRef, true);
+		validateVocab(primaryNS, "Transaction", primaryNS, "EndCondition", allowed, srcRef, true);
 
 		allowed = availVocab.optJSONArray("LicenseType");
 		srcRef = LogReference.getRef(doc, "avail07");
-		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "LicenseType", allowed, srcRef, true) && allOK;
+		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseType", allowed, srcRef, true);
 
 		allowed = availVocab.optJSONArray("LicenseRightsDescription");
 		srcRef = LogReference.getRef(doc, "avail07");
-		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "LicenseRightsDescription", allowed, srcRef, true)
-				&& allOK;
+		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseRightsDescription", allowed, srcRef, true);
 
 		allowed = availVocab.optJSONArray("FormatProfile");
 		srcRef = LogReference.getRef(doc, "avail07");
-		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "FormatProfile", allowed, srcRef, true) && allOK;
+		validateVocab(primaryNS, "Transaction", primaryNS, "FormatProfile", allowed, srcRef, true);
 
 		allowed = availVocab.optJSONArray("ExperienceCondition");
 		srcRef = LogReference.getRef(doc, "avail07");
-		allOK = validateVocab(primaryNS, "Transaction", primaryNS, "ExperienceCondition", allowed, srcRef, true)
-				&& allOK;
+		validateVocab(primaryNS, "Transaction", primaryNS, "ExperienceCondition", allowed, srcRef, true);
 
 		allowed = availVocab.optJSONArray("Term@termName");
 		srcRef = LogReference.getRef(doc, "avail08");
-		allOK = validateVocab(primaryNS, "Term", primaryNS, "@termName", allowed, srcRef, false) && allOK;
+		validateVocab(primaryNS, "Term", primaryNS, "@termName", allowed, srcRef, false);
 
 		allowed = availVocab.optJSONArray("SharedEntitlement@ecosystem");
 		srcRef = LogReference.getRef(doc, "avail09");
-		allOK = validateVocab(primaryNS, "SharedEntitlement", primaryNS, "@ecosystem", allowed, srcRef, true) && allOK;
+		validateVocab(primaryNS, "SharedEntitlement", primaryNS, "@ecosystem", allowed, srcRef, true);
 
 		// ===========================================================
 		/* For Transactions in US, check USACaptionsExemptionReason */
 		allowed = availVocab.optJSONArray("USACaptionsExemptionReason");
 		srcRef = LogReference.getRef(doc, "avail03");
-		allOK = validateVocab(primaryNS, "Asset", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true)
-				&& allOK;
-		allOK = validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef,
-				true) && allOK;
-		allOK = validateVocab(primaryNS, "SeasonMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef,
-				true) && allOK;
-		allOK = validateVocab(primaryNS, "SeriesMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef,
-				true) && allOK;
-
-		return allOK;
+		validateVocab(primaryNS, "Asset", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true);
+		validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef,
+				true);
+		validateVocab(primaryNS, "SeasonMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef,
+				true);
+		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef,
+				true); 
 	}
 
 	/**
 	 * @return
 	 */
-	protected boolean validateCMVocab() {
-
+	protected void validateCMVocab() {
 		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.LEV_INFO, "Validating use of controlled vocabulary...", curFile,
-				LOGMSG_ID);
-		boolean allOK = true;
+				LOGMSG_ID); 
 		Namespace primaryNS = availsNSpace;
 		/*
 		 * Validate use of Country identifiers....
 		 */
 		// In 'Metadata/Release History/DistrTerritory'
-		allOK = validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country") && allOK;
+		validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country");
 
 		// in Transaction/Territory...
-		allOK = validateRegion(primaryNS, "Territory", mdNSpace, "country") && allOK;
-		allOK = validateRegion(primaryNS, "TerritoryExcluded", mdNSpace, "country") && allOK;
+		validateRegion(primaryNS, "Territory", mdNSpace, "country");
+		validateRegion(primaryNS, "TerritoryExcluded", mdNSpace, "country");
 
 		// in 'Term/Region
-		allOK = validateRegion(primaryNS, "Region", mdNSpace, "country") && allOK;
+		validateRegion(primaryNS, "Region", mdNSpace, "country");
 
 		// in multiple places
-		allOK = validateRegion(mdNSpace, "Region", mdNSpace, "country") && allOK;
+		validateRegion(mdNSpace, "Region", mdNSpace, "country");
 
 		/* Validate language codes */
 
-		allOK = validateLanguage(primaryNS, "LocalSeriesTitle", primaryNS, "@language") && allOK;
-		allOK = validateLanguage(primaryNS, "Transaction", primaryNS, "AllowedLanguage") && allOK;
-		allOK = validateLanguage(primaryNS, "Transaction", primaryNS, "AssetLanguage") && allOK;
-		allOK = validateLanguage(primaryNS, "Transaction", primaryNS, "HoldbackLanguage") && allOK;
-		allOK = validateLanguage(primaryNS, "Term", primaryNS, "Language") && allOK;
-		return allOK;
+		validateLanguage(primaryNS, "LocalSeriesTitle", primaryNS, "@language");
+		validateLanguage(primaryNS, "Transaction", primaryNS, "AllowedLanguage");
+		validateLanguage(primaryNS, "Transaction", primaryNS, "AssetLanguage");
+		validateLanguage(primaryNS, "Transaction", primaryNS, "HoldbackLanguage");
+		validateLanguage(primaryNS, "Term", primaryNS, "Language");
 	}
 
 	/**

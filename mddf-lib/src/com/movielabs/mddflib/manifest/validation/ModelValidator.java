@@ -74,7 +74,6 @@ public class ModelValidator extends XmlIngester {
 	 * @see
 	 * com.movielabs.mddf.preProcess.manifest.Validator#process(java.io.File)
 	 */
-	@SuppressWarnings("deprecation")
 	public boolean process(Element docRootEl, File xmlManifestFile, String profileId) throws JDOMException, IOException {
 		curFile = xmlManifestFile;
 		curFileName = xmlManifestFile.getName();
