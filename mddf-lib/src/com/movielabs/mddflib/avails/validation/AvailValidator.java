@@ -441,9 +441,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 * PreOrderFulfillDate term is allowed.
 		 */
 		// 1) Check all Transactions with LicenseType = 'POEST'
-		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() + "LicenseType[.='POEST']",
+		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() +":"+ "LicenseType[.='POEST']",
 				Filters.element(), null, availsNSpace);
-		XPathExpression<Element> xpExp02 = xpfac.compile(".//" + rootNS.getPrefix() + "Term[@termName='SuppressionLiftDate']",
+		XPathExpression<Element> xpExp02 = xpfac.compile(".//" + rootNS.getPrefix() +":"+  "Term[@termName='SuppressionLiftDate']",
 				Filters.element(), null, availsNSpace);
 
 		List<Element> ltElList = xpExp01.evaluate(curRootEl);
@@ -464,7 +464,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		}
 
 		// 2) Check all Transactions with a PreOrderFulfilDate term
-		xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() + "Term[@termName='PreOrderFulfillDate']", Filters.element(), null,
+		xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() +":"+   "Term[@termName='PreOrderFulfillDate']", Filters.element(), null,
 				availsNSpace);
 		List<Element> termElList = xpExp01.evaluate(curRootEl);
 		for (int i = 0; i < termElList.size(); i++) {
@@ -485,7 +485,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 * 
 		 */
 		LogReference srcRef = LogReference.getRef("AVAIL", "struc01");
-		xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() + "Asset[" + rootNS.getPrefix() + "BundledAsset]", Filters.element(), null,
+		xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() + "Asset[" + rootNS.getPrefix()  +":"+   "BundledAsset]", Filters.element(), null,
 				availsNSpace);
 		List<Element> assetElList = xpExp01.evaluate(curRootEl);
 		for (int i = 0; i < assetElList.size(); i++) {
@@ -546,7 +546,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		}
 		JSONArray allAllowedWTypes = getAllowedWTypes(availType);
 
-		String path = ".//" + rootNS.getPrefix() + "AvailType[text()='" + availType + "']";
+		String path = ".//" + rootNS.getPrefix()  +":"+   "AvailType[text()='" + availType + "']";
 		XPathExpression<Element> xpExp01 = xpfac.compile(path, Filters.element(), null, availsNSpace);
 		List<Element> availTypeElList = xpExp01.evaluate(curRootEl);
 		/* Loop thru all the Avail instances... */
@@ -555,7 +555,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			Element availEl = availTypeEl.getParentElement();
 			AvailRqmt[] allRqmts = getRequirements(availType);
 			// Now get the descendant WorkType element
-			XPathExpression<Element> xpExp02 = xpfac.compile("./" + rootNS.getPrefix() + "Asset/" + rootNS.getPrefix() + "WorkType",
+			XPathExpression<Element> xpExp02 = xpfac.compile("./" + rootNS.getPrefix()  +":"+   "Asset/" + rootNS.getPrefix() + "WorkType",
 					Filters.element(), null, availsNSpace);
 			List<Element> workTypeElList = xpExp02.evaluate(availEl);
 			for (int j = 0; j < workTypeElList.size(); j++) {
