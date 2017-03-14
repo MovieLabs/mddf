@@ -21,7 +21,6 @@
  */
 package com.movielabs.mddflib.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -148,10 +147,13 @@ public class CMValidator extends XmlIngester {
 	}
 
 	protected Namespace rootNS;
-	// protected String rootPrefix;
 
 	protected boolean validateC;
 	protected Element curRootEl;
+	/**
+	 * Set to <tt>true</tt> when starting validation of a file, then set to
+	 * false when any error is detected.
+	 */
 	protected boolean curFileIsValid;
 	protected Map<String, HashSet<String>> idSets;
 	protected Map<String, Map<String, XrefCounter>> idXRefCounts;
@@ -294,8 +296,8 @@ public class CMValidator extends XmlIngester {
 
 	/**
 	 * Check for the presence of an ID attribute and, if provided, verify it is
-	 * unique and has the correct structure and syntax as defined in Section 3 of 
-	 * <tt>Manifest/Avails Delivery Best Practices (BP-META-MMMD)</tt>
+	 * unique and has the correct structure and syntax as defined in Section 3
+	 * of <tt>Manifest/Avails Delivery Best Practices (BP-META-MMMD)</tt>
 	 * 
 	 * @param elementName
 	 * @param idAttribute
@@ -303,7 +305,7 @@ public class CMValidator extends XmlIngester {
 	 */
 	protected HashSet<String> validateId(String elementName, String idAttribute, boolean reqUniqueness,
 			boolean chkSyntax) {
-		XPathExpression<Element> xpExpression = xpfac.compile(".//" + rootNS.getPrefix()+":" + elementName,
+		XPathExpression<Element> xpExpression = xpfac.compile(".//" + rootNS.getPrefix() + ":" + elementName,
 				Filters.element(), null, rootNS);
 		HashSet<String> idSet = new HashSet<String>();
 
@@ -531,8 +533,7 @@ public class CMValidator extends XmlIngester {
 	 *      Common Metadata Ratings</a>
 	 * @return
 	 */
-	protected boolean validateRatings() {
-		boolean allOK = true;
+	protected void validateRatings() {
 		XPathExpression<Element> xpExp01 = xpfac.compile(".//md:Rating", Filters.element(), null, mdNSpace);
 		List<Element> ratingElList = xpExp01.evaluate(curRootEl);
 		rLoop: for (int i = 0; i < ratingElList.size(); i++) {
@@ -543,7 +544,7 @@ public class CMValidator extends XmlIngester {
 				String msg = "Rating System not specified";
 				String explanation = null;
 				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, rSysEl, msg, explanation, null, logMsgSrcId);
-				allOK = false;
+				curFileIsValid = false;
 				continue;
 			}
 			RatingSystem rSystem = RatingSystem.factory(system);
@@ -551,7 +552,7 @@ public class CMValidator extends XmlIngester {
 				String msg = "Unrecognized Rating System '" + system + "'";
 				String explanation = null;
 				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, rSysEl, msg, explanation, null, logMsgSrcId);
-				allOK = false;
+				curFileIsValid = false;
 				continue;
 			}
 			Element valueEl = ratingEl.getChild("Value", mdNSpace);
@@ -561,7 +562,7 @@ public class CMValidator extends XmlIngester {
 					String msg = "Invalid Rating for RatingSystem";
 					String explanation = "The " + system + " Rating System does not include the '" + rating + "'";
 					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, valueEl, msg, explanation, null, logMsgSrcId);
-					allOK = false;
+					curFileIsValid = false;
 				} else if (rSystem.isDeprecated(rating)) {
 					String msg = "Deprecated Rating";
 					String explanation = "The " + system + " Rating System has deprecated the '" + rating
@@ -590,7 +591,6 @@ public class CMValidator extends XmlIngester {
 					String explanation = "The " + system
 							+ " Rating System has not been officially adopted in SubRegion '" + region + "'";
 					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, target, msg, explanation, null, logMsgSrcId);
-					// allOK = false;
 				}
 			} else {
 				region = target.getText();
@@ -599,13 +599,13 @@ public class CMValidator extends XmlIngester {
 					String msg = "Invalid code for country";
 					String explanation = "A country should be specified as a ISO 3166-1 Alpha-2 code";
 					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
-					allOK = false;
+					curFileIsValid = false;
+					;
 				} else if (!rSystem.isUsedInRegion(region)) {
 					String msg = "RatingSystem not used in specified Region";
 					String explanation = "The " + system + " Rating System has not been officially adopted in Region '"
 							+ region + "'";
 					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_WARN, target, msg, explanation, null, logMsgSrcId);
-					// allOK = false;
 				}
 			}
 			/*
@@ -623,12 +623,11 @@ public class CMValidator extends XmlIngester {
 						String explanation = "Rating System uses pre-defined Reason-Codes which do not include '"
 								+ reason + "'";
 						logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, reasonEl, msg, explanation, null, logMsgSrcId);
-						allOK = false;
+						curFileIsValid = false;
 					}
 				}
 			}
 		}
-		return allOK;
 	}
 
 	/**
@@ -653,8 +652,7 @@ public class CMValidator extends XmlIngester {
 	 * @param child
 	 * @return
 	 */
-	protected boolean validateLanguage(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
-		boolean allOK = true;
+	protected void validateLanguage(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
 		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
 				Filters.element(), null, primaryNS);
 		List<Element> elementList = xpExpression.evaluate(curRootEl);
@@ -666,7 +664,6 @@ public class CMValidator extends XmlIngester {
 				text = targetEl.getTextNormalize();
 				if (!checkLangTag(text)) {
 					reportLangError(targetEl, tag4log, text);
-					allOK = false;
 				}
 			} else if (child.startsWith("@")) {
 				// dealing with an attribute
@@ -674,7 +671,6 @@ public class CMValidator extends XmlIngester {
 				text = targetEl.getAttributeValue(targetAttb);
 				if (!checkLangTag(text)) {
 					reportLangError(targetEl, tag4log, text);
-					allOK = false;
 				}
 			} else {
 				// dealing with one or more child elements
@@ -684,12 +680,10 @@ public class CMValidator extends XmlIngester {
 					text = langEl.getTextNormalize();
 					if (!checkLangTag(text)) {
 						reportLangError(langEl, tag4log, text);
-						allOK = false;
 					}
 				}
 			}
 		}
-		return allOK;
 	}
 
 	private boolean checkLangTag(String text) {
@@ -803,6 +797,7 @@ public class CMValidator extends XmlIngester {
 		String details = "Language encoding must conform to RFC5646 syntax and use registered subtag value";
 		LogReference srcRef = LogReference.getRef("CM", MD_VER, "cm_lang");
 		logIssue(tag4log, LogMgmt.LEV_ERR, targetEl, errMsg, details, srcRef, logMsgSrcId);
+		curFileIsValid = false;
 	}
 
 	protected boolean validateRegion(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
@@ -860,7 +855,7 @@ public class CMValidator extends XmlIngester {
 	 * @param caseSensitive
 	 * @return
 	 */
-	protected boolean validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
+	protected void validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
 			JSONArray expected, LogReference srcRef, boolean caseSensitive) {
 		if (expected == null || expected.isEmpty()) {
 			/*
@@ -868,12 +863,11 @@ public class CMValidator extends XmlIngester {
 			 * enumerated set of valid terms for the target element.
 			 * 
 			 */
-			return true;
+			return;
 		}
 		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
 				Filters.element(), null, primaryNS);
 		List<Element> elementList = xpExpression.evaluate(curRootEl);
-		boolean allOK = true;
 		int tag4log = getLogTag(primaryNS, childNS);
 		String optionsString = expected.toString().toLowerCase();
 		for (int i = 0; i < elementList.size(); i++) {
@@ -900,7 +894,6 @@ public class CMValidator extends XmlIngester {
 						String explanation = "Value specified does not match one of the allowed strings. Note that string-matching is case-sensitive";
 						// TODO: Is this ERROR or WARNING???
 						logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
-						allOK = false;
 						curFileIsValid = false;
 
 					}
@@ -908,13 +901,11 @@ public class CMValidator extends XmlIngester {
 					String checkString = "\"" + text.toLowerCase() + "\"";
 					if (!optionsString.contains(checkString)) {
 						logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, null, srcRef, logMsgSrcId);
-						allOK = false;
 						curFileIsValid = false;
 					}
 				}
 			}
 		}
-		return allOK;
 	}
 
 	/**
