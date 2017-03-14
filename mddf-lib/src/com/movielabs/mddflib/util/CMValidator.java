@@ -96,7 +96,7 @@ public class CMValidator extends XmlIngester {
 				Element targetEl = idMap.get(elId);
 				String explanation = "The element is never referenced by it's ID";
 				String msg = "Unreferenced <" + elType + "> Element";
-				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, targetEl, msg, explanation, null, logMsgSrcId);
+				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_WARN, targetEl, msg, explanation, null, logMsgSrcId);
 			}
 		}
 
@@ -262,23 +262,23 @@ public class CMValidator extends XmlIngester {
 	 * 
 	 * @param targetSchema
 	 */
-	protected void validateNotEmpty(SchemaWrapper targetSchema) { 
+	protected void validateNotEmpty(SchemaWrapper targetSchema) {
 		List<XPathExpression<?>> reqElXpList = targetSchema.getReqElList();
-		for (XPathExpression<?> xpExp :reqElXpList ) { 
+		for (XPathExpression<?> xpExp : reqElXpList) {
 			List<?> elementList = xpExp.evaluate(curRootEl);
-			for(Object next : elementList){
+			for (Object next : elementList) {
 				String value = null;
 				String label = null;
 				Element targetEl = null;
-				if(next instanceof Element){
-					targetEl = (Element)next;
+				if (next instanceof Element) {
+					targetEl = (Element) next;
 					value = targetEl.getTextNormalize();
 					label = targetEl.getName();
-				}else if (next instanceof Attribute){
-					Attribute targetAtt = (Attribute)next;		
+				} else if (next instanceof Attribute) {
+					Attribute targetAtt = (Attribute) next;
 					value = targetAtt.getValue();
-					targetEl  = targetAtt.getParent();
-					label = targetEl.getName()+"->"+targetAtt.getName();
+					targetEl = targetAtt.getParent();
+					label = targetEl.getName() + "->" + targetAtt.getName();
 				}
 
 				if ((value == null) || (value.isEmpty())) {
@@ -286,7 +286,7 @@ public class CMValidator extends XmlIngester {
 					logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, targetEl, msg, null, null, logMsgSrcId);
 					curFileIsValid = false;
 				}
-			} 
+			}
 		}
 	}
 
@@ -294,7 +294,8 @@ public class CMValidator extends XmlIngester {
 
 	/**
 	 * Check for the presence of an ID attribute and, if provided, verify it is
-	 * unique.
+	 * unique and has the correct structure and syntax as defined in Section 3 of 
+	 * <tt>Manifest/Avails Delivery Best Practices (BP-META-MMMD)</tt>
 	 * 
 	 * @param elementName
 	 * @param idAttribute
@@ -302,7 +303,7 @@ public class CMValidator extends XmlIngester {
 	 */
 	protected HashSet<String> validateId(String elementName, String idAttribute, boolean reqUniqueness,
 			boolean chkSyntax) {
-		XPathExpression<Element> xpExpression = xpfac.compile(".//" + rootNS.getPrefix() + elementName,
+		XPathExpression<Element> xpExpression = xpfac.compile(".//" + rootNS.getPrefix()+":" + elementName,
 				Filters.element(), null, rootNS);
 		HashSet<String> idSet = new HashSet<String>();
 
@@ -340,7 +341,7 @@ public class CMValidator extends XmlIngester {
 			if ((idValue == null) || (idValue.isEmpty())) {
 				String msg = idAttribute + " not specified. References to this " + elementName
 						+ " will not be supportable.";
-				logIssue(logMsgDefaultTag, LogMgmt.LEV_WARN, targetEl, msg, null, null, logMsgSrcId);
+				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_WARN, targetEl, msg, null, null, logMsgSrcId);
 			} else {
 				if (!idSet.add(idValue)) {
 					LogReference srcRef = LogReference.getRef("CM", "2.4", "cm001a");
@@ -352,7 +353,7 @@ public class CMValidator extends XmlIngester {
 					} else {
 						msgLevel = LogMgmt.LEV_WARN;
 					}
-					logIssue(logMsgDefaultTag, msgLevel, targetEl, msg, null, srcRef, logMsgSrcId);
+					logIssue(LogMgmt.TAG_MD, msgLevel, targetEl, msg, null, srcRef, logMsgSrcId);
 				}
 				if (chkSyntax) {
 					/*
@@ -392,7 +393,8 @@ public class CMValidator extends XmlIngester {
 	 */
 	protected void validateIdType(String idType, String idAttribute, Element targetEl) {
 		/*
-		 * Check syntax of the 'type' as defined in Best Practices Section 3.1.7
+		 * Check syntax of the 'type' as defined in Manifest/Avails Delivery
+		 * Best Practices (BP-META-MMMD) Section 3.1.7
 		 */
 		String type = id2typeMap.get(idAttribute);
 		if (type == null) {
@@ -440,13 +442,13 @@ public class CMValidator extends XmlIngester {
 			break;
 		default:
 			msg = "ID uses scheme '" + idScheme + "', SSID format will not be verified";
-			logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_INFO, targetEl, msg, "ssid='" + idSSID + "'", null, logMsgSrcId);
+			logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_INFO, targetEl, msg, "ssid='" + idSSID + "'", null, logMsgSrcId);
 			return;
 		}
 		boolean match = idSSID.matches(idPattern);
 		if (!match) {
 			String msg = "Invalid SSID syntax for " + idScheme + " scheme";
-			logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, targetEl, msg, "ssid='" + idSSID + "'", srcRef, logMsgSrcId);
+			logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, targetEl, msg, "ssid='" + idSSID + "'", srcRef, logMsgSrcId);
 			curFileIsValid = false;
 		}
 	}
@@ -463,14 +465,14 @@ public class CMValidator extends XmlIngester {
 				Filters.element(), null, manifestNSpace);
 		List<Element> elementList = xpExpression.evaluate(curRootEl);
 		String debugMsg = "Found " + elementList.size() + " cross-refs by a " + srcElement + " to a " + targetElType;
-		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, debugMsg, curFile, LOGMSG_ID);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, debugMsg, curFile, LOGMSG_ID);
 		for (int i = 0; i < elementList.size(); i++) {
 			Element refEl = (Element) elementList.get(i);
 			String targetId = refEl.getTextNormalize();
 			if (!idSet.contains(targetId)) {
 				String msg = "Invalid cross-reference: the referenced " + targetElType
 						+ " is not defined in this manifest";
-				logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, refEl, msg, null, null, logMsgSrcId);
+				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, refEl, msg, null, null, logMsgSrcId);
 				curFileIsValid = false;
 			} else {
 				XrefCounter count = idXRefCounter.get(targetId);
