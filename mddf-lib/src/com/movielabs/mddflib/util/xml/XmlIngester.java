@@ -490,6 +490,9 @@ public abstract class XmlIngester implements IssueLogger {
 		case "2.3":
 			MD_VER = "2.4";
 			break;
+		case "2.5":
+			MD_VER = "2.5";
+			break;
 		default:
 			throw new IllegalArgumentException("Unsupported MEC Schema version " + mecSchemaVer);
 		}
