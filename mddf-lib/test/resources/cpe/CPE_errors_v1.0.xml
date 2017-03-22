@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- TEST ARTIFACT: This file includes errors that can be used to perform 
-	specific JUnit tests relating to the Media Manifest specification. -->
+	specific JUnit tests relating to the CPE Manifest specification. -->
 <manifest:MediaManifest
 	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.6/manifest"
 	xmlns:md="http://www.movielabs.com/schema/md/v2.5/md" xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -142,8 +142,7 @@
 			PresentationID="md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<manifest:TrackMetadata>
 				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
-				<manifest:VideoTrackReference>
-					<!-- the vidtrackid must match the one used in the inventory. -->
+				<manifest:VideoTrackReference> 
 					<manifest:VideoTrackID>md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 					</manifest:VideoTrackID>
 				</manifest:VideoTrackReference>
@@ -157,11 +156,20 @@
 	<manifest:Experiences>
 		<manifest:Experience version="0.1"
 			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha">
-			<!-- Not an ERR as Manifest spec does not require CID to map to Metadata in Inventory -->
+			<!-- ERROR:  Experience CID must reference metadata in Inventory -->
 			<manifest:ContentID>md:cid:eidr-s:FFFF-FFFF-FFFF-FFFF-FFFF-V
 			</manifest:ContentID>
-			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
-				<!-- feature movie -->
+			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V"> 
+				<manifest:Type>Main</manifest:Type>
+				<manifest:SubType>Feature</manifest:SubType>
+				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				</manifest:PresentationID>
+			</manifest:Audiovisual>
+		</manifest:Experience> 
+		<manifest:Experience version="0.1"
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:beta">
+			<!-- ERROR: Missing required ContentID --> 
+			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V"> 
 				<manifest:Type>Main</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>
 				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V

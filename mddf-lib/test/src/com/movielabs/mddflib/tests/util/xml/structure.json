@@ -1,0 +1,78 @@
+{
+	"BasicMetadata": 
+	{
+		"requirement": 
+		[
+			{
+				"docRef": "MEC:bmu",
+				"min": "1",
+				"max": "1",
+				"xpath": "./@ContentID"
+			},
+
+			{
+				"docRef": "MEC:bmu",
+				"min": "1",
+				"xpath": "{md}LocalizedInfo"
+			},
+
+			{
+				"docRef": "MEC:bmu",
+				"min": "1",
+				"xpath": "{md}RunLength"
+			},
+
+			{
+				"docRef": "MEC:bmu",
+				"min": "1",
+				"max": "1",
+				"xpath": "{md}ReleaseDate"
+			},
+
+			{
+				"docRef": "MEC:bmu",
+				"min": "1",
+				"max": "1",
+				"xpath": "{md}ReleaseHistory/{md}ReleaseType[text()='original']"
+			},
+
+			{
+				"docRef": "MEC:bmu",
+				"min": "1",
+				"xpath": "{md}RatingSet"
+			},
+
+			{
+				"docRef": "MEC:bmu",
+				"min": "1",
+				"xpath": "{md}PrimarySpokenLanguage"
+			},
+
+			{
+				"min": "1",
+				"xpath": "{md}SequenceInfo[../{md}WorkType[.='Season' or .='Episode' or .='Promotion' or .='Excerpt' or .='Suplemental']]"
+			}
+		]
+	},
+
+	"warnings": 
+	[
+		{
+			"docRef": "MEC:bmu",
+			"min": "1",
+			"xpath": "{md}PictureColorType"
+		},
+
+		{
+			"docRef": "MEC:bmu",
+			"min": "1",
+			"xpath": "{md}PictureColorFormat"
+		},
+
+		{
+			"docRef": "MEC:bmu",
+			"min": "1",
+			"xpath": "{md}People"
+		}
+	]
+}
