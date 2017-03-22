@@ -31,9 +31,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.jdom2.Document;
@@ -165,34 +163,6 @@ public abstract class XmlIngester implements IssueLogger {
 		return props;
 	}
 
-	/**
-	 * Identify all ALID and determine which experience is used when the ALID is
-	 * accessed by a consumer.
-	 * 
-	 * @param root
-	 * @return
-	 */
-	protected List<String> extractAlidMap(Element root) {
-		List<String> primaryExpSet = new ArrayList<String>();
-		Element mapsEl = root.getChild("ALIDExperienceMaps", manifestNSpace);
-		if (mapsEl == null) {
-			return null;
-		}
-		List<Element> mapEList = mapsEl.getChildren("ALIDExperienceMap", manifestNSpace);
-		Object[] targets = mapEList.toArray();
-		for (int i = 0; i < targets.length; i++) {
-			Element target = (Element) targets[i];
-			/* get the values for ALID and ExperienceID */
-			// Element alidEl = target.getChild("ALID", manifestNSpace);
-			// String alid = alidEl.getTextNormalize();
-			Element expEl = target.getChild("ExperienceID", manifestNSpace);
-			String expId = expEl.getTextNormalize();
-			if (!primaryExpSet.contains(expId)) {
-				primaryExpSet.add(expId);
-			}
-		}
-		return primaryExpSet;
-	}
 
 	protected static String readFile(String file) throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -210,131 +180,7 @@ public abstract class XmlIngester implements IssueLogger {
 		reader.close();
 		return stringBuilder.toString();
 	}
-
-	/**
-	 * Return an ordered list of child Elements that have the specified
-	 * relationship with the parent or null if unable to sort the children. A
-	 * return value of <tt>null</tt> is, therefore, not the same as returning an
-	 * empty List as the later indicates no matching child Elements were found
-	 * rather than a problem while sorting.
-	 * <p>
-	 * Ordering is determined in one of two ways. If
-	 * <tt>&lt;SequenceInfo&gt;</tt> elements are present they will be used to
-	 * determine the order of the list entries returned. Otherwise ordering is
-	 * indeterminate.
-	 * </p>
-	 * <p>
-	 * Additional restrictions on the use of <tt>&lt;SequenceInfo&gt;</tt>:
-	 * <ul>
-	 * <li><tt>&lt;SequenceInfo&gt;</tt> elements shall be used for either all
-	 * of the children or none of the children. Mixed usage is not allowed.
-	 * <li>SequenceInfo/Number starts with one and increases monotonically for
-	 * each child</li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @param parentEl
-	 * @param childName
-	 * @param relationship
-	 * @param seqInfoRequired
-	 * @return <tt>List</tt> of child Elements or null if unable to sort the
-	 *         children.
-	 */
-	protected List<Element> getSortedChildren(Element parentEl, String childName, String relationship,
-			boolean seqInfoRequired) {
-		boolean hasErrors = false;
-		// ..........
-		List<Element> allChildList = parentEl.getChildren(childName, manifestNSpace);
-		Element[] firstPass = new Element[allChildList.size()];
-		int lastIndex = -1;
-		for (int i = 0; i < allChildList.size(); i++) {
-			Element nextEl = allChildList.get(i);
-			String relType = nextEl.getChildTextNormalize("Relationship", manifestNSpace);
-			if (relType == null) {
-				String summaryMsg = "Missing Relationship element in " + childName + " element";
-				loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_WARN, nextEl, summaryMsg, null, null, logMsgSrcId);
-			} else if (relType.equalsIgnoreCase(relationship)) {
-				Element seqEl = nextEl.getChild("SequenceInfo", manifestNSpace);
-				String seqNum = null;
-				if (seqEl != null) {
-					seqNum = seqEl.getChildTextNormalize("Number", mdNSpace);
-					// check for empty string..
-					if (seqNum.isEmpty()) {
-						seqNum = null;
-					}
-				}
-				if (seqInfoRequired && (seqNum == null)) {
-					// Flag as ERROR
-					loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, seqEl, "Missing required SequenceInfo", null,
-							null, logMsgSrcId);
-					hasErrors = true;
-				} else if (seqNum != null) {
-					// seqNum should be monotonically increasing starting with 1
-					int index = -1;
-					try {
-						index = Integer.parseInt(seqNum) - 1;
-					} catch (NumberFormatException e) {
-					}
-					if (index < 0) {
-						loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, seqEl,
-								"Invalid Number for SequenceInfo (must be a positive integer).", null, null,
-								logMsgSrcId);
-						hasErrors = true;
-					} else if (index >= firstPass.length) {
-						loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, seqEl,
-								"Invalid Number for SequenceInfo (must increase monotonically).", null, null,
-								logMsgSrcId);
-						hasErrors = true;
-
-					} else {
-						if (firstPass[index] != null) {
-							loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, seqEl,
-									"Duplicate Number in SequenceInfo", null, null, logMsgSrcId);
-							hasErrors = true;
-						} else {
-							firstPass[index] = nextEl;
-							lastIndex = Math.max(lastIndex, index);
-						}
-					}
-				} else {
-					/*
-					 * Explicit SeqInfo is neither provided nor required so use
-					 * as-is order
-					 */
-					firstPass[i] = nextEl;
-					lastIndex = i;
-				}
-			}
-		}
-		if (hasErrors) {
-			return null;
-		}
-
-		List<Element> childElList = new ArrayList<Element>();
-		/*
-		 * Transfer the Elements from the 'firstPass' array to the List. While
-		 * transferring, check to make sure the SequenceInfo/Number starts with
-		 * one and increases monotonically for each child.
-		 * 
-		 */
-		for (int i = 0; i <= lastIndex; i++)
-
-		{
-			if (firstPass[i] != null) {
-				childElList.add(firstPass[i]);
-			} else {
-				int gap = i + 1;
-				loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, parentEl,
-						"Incomplete SequenceInfo... missing Number=" + gap, null, null, logMsgSrcId);
-				hasErrors = true;
-			}
-		}
-		if (hasErrors) {
-			return null;
-		}
-		return childElList;
-
-	}
+ 
 
 	public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
 			String moduleId) {
