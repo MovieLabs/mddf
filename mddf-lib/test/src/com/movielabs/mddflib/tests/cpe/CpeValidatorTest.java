@@ -20,18 +20,23 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.manifest;
+package com.movielabs.mddflib.tests.cpe;
 
 import static org.junit.Assert.*;
 import java.io.File;
+import java.util.List;
+
+import javax.swing.tree.DefaultTreeModel;
 
 import org.jdom2.Document;
+import org.jdom2.Element;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator;
+import com.movielabs.mddflib.manifest.validation.profiles.CpeValidator;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -39,15 +44,14 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class ManifestValidatorTest extends ManifestValidator {
+public class CpeValidatorTest extends CpeValidator {
 
-
-	private static String rsrcPath = "./test/resources/manifest/";
+	private static String rsrcPath = "./test/resources/cpe/";
 	private InstrumentedLogger iLog;
 
-	public ManifestValidatorTest() {
-		super(true, new InstrumentedLogger());
-		iLog = (InstrumentedLogger)loggingMgr;
+	public CpeValidatorTest() {
+		super(new InstrumentedLogger());
+		iLog = (InstrumentedLogger) loggingMgr;
 	}
 
 	/**
@@ -61,7 +65,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 	 * @throws java.lang.Exception
 	 */
 	@Before
-	public void setUp() throws Exception { 
+	public void setUp() throws Exception {
 		curFile = null;
 		curFileName = null;
 		curFileIsValid = true;
@@ -69,19 +73,19 @@ public class ManifestValidatorTest extends ManifestValidator {
 		rootNS = null;
 		iLog.clearLog();
 	}
-	
+
 	/**
 	 * @param string
 	 */
 	protected void initialize(String testFileName) {
 		try {
 			setUp();
-		} catch (Exception e) { 
+		} catch (Exception e) {
 			assertNotNull(curRootEl);
 			return;
 		}
 		Document xmlDoc = loadTestArtifact(testFileName);
-		if (xmlDoc == null) { 
+		if (xmlDoc == null) {
 			assertNotNull(curRootEl);
 			return;
 		}
@@ -105,30 +109,51 @@ public class ManifestValidatorTest extends ManifestValidator {
 		}
 		return xmlDoc;
 	}
-	
+
 	/**
 	 * 
 	 */
 	@Test
-	public void testValidataMetadata(){
+	public void testValidataMetadata() {
 		/*
 		 * First run with error-free XML
 		 */
-		initialize("MMM_base_v1.6.xml");
+		initialize("CPE_base_v1.0.xml");
 		super.validateMetadata();
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		
+
 		/*
 		 * Repeat with error-generating XML:
 		 */
 		iLog.clearLog();
-		initialize("MMM_wErrors_v1.6.xml");
+		initialize("CPE_errors_v1.0.xml");
 		super.validateMetadata();
 		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
- 
+
+	@Test
+	public void testAlidExtraction() {
+		initialize("CPE_base_v1.0.xml");
+		List<Element> primaryExpSet = extractAlidMap(curRootEl);
+		assertNotNull(primaryExpSet);
+		assertEquals(1, primaryExpSet.size());
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+	}
+
+	@Test
+	public void testBuildInfoModel() {
+		initialize("CPE_base_v1.0.xml");
+		DefaultTreeModel infoModel = buildInfoModel();
+		assertNotNull(infoModel);
+		ExperienceNode root = (ExperienceNode) infoModel.getRoot();
+		assertNotNull(root);
+		assertEquals(5, root.getDescendents().size());
+	}
+
 }

@@ -126,6 +126,9 @@ public class InstrumentedLogger implements LogMgmt {
 				lineNum = ((Cell) target).getRowIndex();
 			}
 		}
+		if(explanation != null){
+			msg = msg+"; "+explanation;
+		}
 		record(level, tag, lineNum, msg);
 	}
 
