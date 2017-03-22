@@ -21,28 +21,25 @@
  */
 package com.movielabs.mddflib.manifest.validation.profiles;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
+import javax.swing.tree.DefaultTreeModel;
+
 import org.jdom2.Element;
-import org.jdom2.JDOMException;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 
 import com.movielabs.mddflib.logging.LogMgmt;
-import com.movielabs.mddflib.manifest.validation.ManifestValidator;
-import com.movielabs.mddflib.manifest.validation.ModelValidator;
+import com.movielabs.mddflib.manifest.validation.profiles.CpeValidator.ExperienceNode;
+import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
- * <b>WARNING: Obsolete and Broken Code</b>. This class need to be
- * re-implemented to extend ManifestValidator.
- * <p>
- * Validates conformance of a Manifest to the requirements of CPE Interactivity
- * Profile 1 (IP1) as specified in TR-CPE-IP1 v1.0 (April 15, 2016).
- * </p>
+ * Validates conformance of a CPE Manifest to the requirements of CPE
+ * Interactivity Profile 1 (IP1) as specified in TR-CPE-IP1 v1.0 (April 15,
+ * 2016).
+ * 
  * 
  * @see <a href=
  *      "http://www.movielabs.com/cpe/profiles/ip1/CPEProfile_IP1-v1.0.pdf">TR-
@@ -51,15 +48,19 @@ import com.movielabs.mddflib.manifest.validation.ModelValidator;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class CpeIP1Validator extends ModelValidator implements ProfileValidator {
+public class CpeIP1Validator {
 
 	private static final String LOGMSG_ID = "CPE_IP-1";
-	private String curBranch;
+	private String logMsgSrcId;
+	private LogMgmt loggingMgr;
+	private boolean curFileIsValid = true;
+	private CpeValidator cpeValidator;
+	private XPathFactory xpfac = XPathFactory.instance();
 
-	public CpeIP1Validator(LogMgmt loggingMgr) {
-		super(loggingMgr);
+	public CpeIP1Validator(CpeValidator cpeValidator, LogMgmt loggingMgr) {
+		this.cpeValidator = cpeValidator;
+		this.loggingMgr = loggingMgr;
 		logMsgSrcId = LOGMSG_ID;
-		logMsgDefaultTag = LogMgmt.TAG_PROFILE;
 	}
 
 	/**
@@ -68,174 +69,121 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 	public List<String> getSupportedProfiles() {
 		List<String> pidList = new ArrayList<String>();
 		pidList.add("IP-1");
+		pidList.add("IP-01");
 		return pidList;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.movielabs.mddf.preProcess.manifest.Validator#getSupporteUseCases(
-	 * java. lang.String)
-	 */
-	@Override
-	public List<String> getSupporteUseCases(String profile) {
-		List<String> pucList = new ArrayList<String>();
-		// No use-cases at this time
-		return pucList;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.movielabs.mddf.preProcess.manifest.Validator#process(java.io.File,
-	 * java.lang.String, java.util.List)
-	 */
-	public boolean process(Element docRootEl, File xmlManifestFile, String profileId, List<String> useCases)
-			throws JDOMException, IOException {
-		return super.process(docRootEl, xmlManifestFile, profileId);
-	}
-
-	protected void validateInfoModel01(Element mainExpEl) {
-		curBranch = "";
-		super.validateInfoModel01(mainExpEl);
+	public void validateInfoModel(DefaultTreeModel infoModel) {
+		validateStructure(infoModel);
 		/*
 		 * Now handle any additional constraints not directly related to
 		 * Experiences....
 		 */
-		validateInventory();
-		validatePresentation();
+		validateInventory(infoModel);
+		validatePresentation(infoModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.movielabs.mddf.preProcess.manifest.ModelValidator#addToHierarchy(org.
-	 * jdom2.Element, int, java.util.HashSet)
+	protected boolean validateStructure(DefaultTreeModel infoModel) {
+		ExperienceNode manifestRoot = (ExperienceNode) infoModel.getRoot();
+		List<ExperienceNode> kinder = manifestRoot.getChildren();
+		if (kinder.size() != 1) {
+			curFileIsValid = false;
+			String errMsg = "A single InfoModel hierarchy must be specified. Found " + kinder.size();
+			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, manifestRoot.getExpEl(), errMsg, null, null,
+					logMsgSrcId);
+			return false;
+		}
+		ExperienceNode mainExpNode = kinder.get(0);
+		validateRoot(mainExpNode);
+		/*
+		 * Level 2: the main grouping nodes (i.e., “in-movie” or“out-of-movie”).
+		 */
+		List<ExperienceNode> mainGroupNodes = mainExpNode.getChildren();
+		if (mainGroupNodes.size() != 2) {
+			curFileIsValid = false;
+			String errMsg = "root must have EXACTLY Two ExperienceChild instances";
+			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, mainExpNode.getExpEl(), errMsg, null, null,
+					logMsgSrcId);
+			return false;
+		}
+		for (ExperienceNode mainGroupNode : mainGroupNodes) {
+			String branch = validateMainGroup(mainGroupNode);
+			/*
+			 * Level 3: Intermediate nodes representing bonus group or tab group
+			 * depending on branch (i.e., in-movie or out-of-movie)
+			 */
+			List<ExperienceNode> groupNodes = mainGroupNode.getChildren();
+			if (groupNodes.size() < 1) {
+				curFileIsValid = false;
+				String errMsg = "Empty main Group: 1 or more ChildExperiences should be added.";
+				loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, mainGroupNode.getExpEl(), errMsg, null, null,
+						logMsgSrcId);
+			} else {
+				for (ExperienceNode groupNode : groupNodes) {
+					/*
+					 * Level 4: Leaf node representing a bonus or tab depending
+					 * on branch
+					 */
+					List<ExperienceNode> leafNodes = groupNode.getChildren();
+					if (leafNodes.size() < 1) {
+						curFileIsValid = false;
+						String errMsg = "Empty Group: 1 or more ChildExperiences should be added.";
+						loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, groupNode.getExpEl(), errMsg, null,
+								null, logMsgSrcId);
+					} else {
+						for (ExperienceNode leafNode : leafNodes) {
+							if (leafNode.getChildCount() > 0) {
+								curFileIsValid = false;
+								String errMsg = "Child Experiences not allowed: Max # of Experience levels exceeded";
+								loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, leafNode.getExpEl(), errMsg,
+										null, null, logMsgSrcId);
+							}
+							switch (branch) {
+							case "in-movie":
+								validateTab(leafNode);
+								break;
+							case "out-of-movie":
+								validateBonus(leafNode);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		return curFileIsValid;
+	}
+
+	/**
+	 * @param mainGroupNode
 	 */
-	protected void addToHierarchy(Element nextExpEl, int curTreeLevel, HashSet<String> visited) {
-		List<Element> allChildList = nextExpEl.getChildren("ExperienceChild", manifestNSpace);
-		int childCnt = allChildList.size();
-		switch (curTreeLevel) {
-		case 0:
-			if (childCnt != 2) {
-				curFileIsValid = false;
-				String errMsg = "root must have EXACTLY Two ExperienceChild instances";
-				loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, nextExpEl, errMsg, null, null, logMsgSrcId);
-			} else {
-				super.addToHierarchy(nextExpEl, curTreeLevel, visited);
-			}
+	private String validateMainGroup(ExperienceNode mainGroupNode) {
+		/*
+		 * top-level grouping (i.e., either in-movie or out-of-movie). Which
+		 * branch will be specified via TitleSort. Following code is
+		 * bullet-proof given the super class has already validated the metadata
+		 * against the CPE Info Model rqmnts.
+		 */
+		Element basicMDEl = mainGroupNode.getMetadata();
+		Element locMDEl = basicMDEl.getChild("LocalizedInfo", XmlIngester.mdNSpace);
+		String curBranch = locMDEl.getChildTextNormalize("TitleSort", XmlIngester.mdNSpace);
+		switch (curBranch) {
+		case "in-movie":
+			curBranch = "in-movie";
+			validateGroupIn(mainGroupNode);
 			break;
-		case 1:
-			// top-level grouping (i.e., either in-movie or out-of-movie)
-			super.addToHierarchy(nextExpEl, curTreeLevel, visited);
-			break;
-		case 2:
-			/*
-			 * Intermediate node representing bonus group or tab group depending
-			 * on branch (i.e., in-movie or out-of-movie)
-			 */
-			if (childCnt == 0) {
-				curFileIsValid = false;
-				String errMsg = "Empty Group or Tab: 1 or more ChildExperiences should be added.";
-				loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, nextExpEl, errMsg, null, null, logMsgSrcId);
-			} else {
-				super.addToHierarchy(nextExpEl, curTreeLevel, visited);
-			}
-			break;
-		case 3:
-			/*
-			 * Must be a Leaf node representing a bonus or tab depending on
-			 * branch (i.e., in-movie or out-of-movie)
-			 */
-			if (childCnt != 0) {
-				curFileIsValid = false;
-				String errMsg = "Child Experiences not allowed: Max # of Experience levels exceeded";
-				loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, nextExpEl, errMsg, null, null, logMsgSrcId);
-			} else {
-				super.addToHierarchy(nextExpEl, curTreeLevel, visited);
-			}
+		case "out-of-movie":
+			curBranch = "out-of-movie";
+			validateGroupOut(mainGroupNode);
 			break;
 		default:
-			// curFileIsValid = false; ????
-			String errMsg = "Maximum level of nesting exceeded (curLevel=" + curTreeLevel + ")";
-			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, nextExpEl, errMsg, null, null, logMsgSrcId);
+			curFileIsValid = false;
+			curBranch = "";
+			String errMsg = "Invalid TitleSort; Must be 'in-movie' or 'out-of-movie'";
+			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, locMDEl, errMsg, null, null, logMsgSrcId);
 		}
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddf.preProcess.manifest.ModelValidator#
-	 * validateModelMember( int,
-	 * com.movielabs.mddf.preProcess.manifest.ModelValidator.NODE_TYPE,
-	 * org.jdom2.Element, org.jdom2.Element)
-	 */
-	protected boolean validateModelMember(int curTreeLevel, NODE_TYPE type, Element expEl, Element metaDataEl) {
-		boolean isValid = super.validateModelMember(curTreeLevel, type, expEl, metaDataEl);
-		if (isValid) {
-			// additional checks specific to this Profile...
-			switch (curTreeLevel) {
-			case 0:
-				isValid = validateRoot(expEl, metaDataEl);
-				break;
-			case 1:
-				/*
-				 * top-level grouping (i.e., either in-movie or out-of-movie).
-				 * Which branch will be specified via TitleSort. Following code
-				 * is bullet-proof given the super class has already validated
-				 * the metadata against the CPE Info Model rqmnts.
-				 */
-				Element basicMDEl = metaDataEl.getChild("BasicMetadata", manifestNSpace);
-				Element locMDEl = basicMDEl.getChild("LocalizedInfo", mdNSpace);
-				String title1 = locMDEl.getChildTextNormalize("TitleSort", mdNSpace);
-				String title2 = locMDEl.getChildTextNormalize("TitleDisplayUnlimited", mdNSpace);
-				switch (title1) {
-				case "in-movie":
-					curBranch = "in-movie";
-					isValid = validateGroupIn(expEl, metaDataEl);
-					break;
-				case "out-of-movie":
-					curBranch = "out-of-movie";
-					isValid = validateGroupOut(expEl, metaDataEl);
-					break;
-				default:
-					isValid = false;
-					curBranch = "";
-					String errMsg = "Invalid TitleSort; Must be 'in-movie' or 'out-of-movie'";
-					loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, locMDEl, errMsg, null, null, logMsgSrcId);
-				}
-				if (!title1.equals(title2)) {
-					isValid = false;
-					curBranch = "";
-					String errMsg = "Invalid LocalizedInfo; TitleSort must be same as TitleDisplayUnlimited";
-					loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, locMDEl, errMsg, null, null, logMsgSrcId);
-				}
-				break;
-			case 2:
-				/*
-				 * bonus or tab depending on branch (i.e., in-movie or
-				 * out-of-movie)
-				 */
-				switch (curBranch) {
-				case "in-movie":
-					isValid = validateTab(expEl, metaDataEl);
-					break;
-				case "out-of-movie":
-					isValid = validateBonus(expEl, metaDataEl);
-					break;
-				default:
-				}
-				break;
-			case 3:
-				break;
-			default:
-			}
-		}
-		curFileIsValid = curFileIsValid && isValid;
-		return isValid;
+		return curBranch;
 	}
 
 	/**
@@ -243,19 +191,20 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 	 * @param metaDataEl
 	 * @return
 	 */
-	protected boolean validateRoot(Element expEl, Element metaDataEl) {
+	private boolean validateRoot(ExperienceNode mainExpNode) {
 		boolean isValid = true;
 		/*
 		 * An Audiovisual instance must be included, referencing the main title.
 		 * Type=‘Main’
 		 */
-		Element avEl = expEl.getChild("Audiovisual", manifestNSpace);
+		Element expEl = mainExpNode.getExpEl();
+		Element avEl = expEl.getChild("Audiovisual", XmlIngester.manifestNSpace);
 		if (avEl == null) {
 			isValid = false;
 			String errMsg = "An Audiovisual referencing the main title must be included.";
 			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, expEl, errMsg, null, null, logMsgSrcId);
 		} else {
-			String avType = avEl.getChildTextNormalize("Type", manifestNSpace);
+			String avType = avEl.getChildTextNormalize("Type", XmlIngester.manifestNSpace);
 			if (!avType.equals("Main")) {
 				isValid = false;
 				String errMsg = "Root Audiovisual instance must reference the main title";
@@ -272,10 +221,11 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 	 * @param metaDataEl
 	 * @return
 	 */
-	protected boolean validateGroupOut(Element expEl, Element metaDataEl) {
-		String msg = "Validating out-of-movie Experience branch";
+	private boolean validateGroupOut(ExperienceNode expNode) {
+		Element expEl = expNode.getExpEl();
+		String msg = "Validating out-of-movie Experience branch "+expNode.getCid();
 		loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
-		List<Element> groupElList = getSortedChildren(expEl, "ExperienceChild", "ispartof", true);
+		List<Element> groupElList = cpeValidator.getSortedChildren(expEl, "ExperienceChild", "ispartof", true);
 		if (groupElList == null) {
 			/*
 			 * There was a problem with SequenceInfo. Specific errors will have
@@ -291,19 +241,19 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
 			/* is one titled 'Featured' ? */
 			boolean found = false;
+			Element curRootEl = expEl.getDocument().getRootElement();
 			for (int i = 0; i < groupElList.size(); i++) {
 				if (!found) {
 					Element nextChildEl = groupElList.get(i);
-					String expXRef = nextChildEl.getChildTextNormalize("ExperienceID", manifestNSpace);
+					String expXRef = nextChildEl.getChildTextNormalize("ExperienceID", XmlIngester.manifestNSpace);
 					XPathExpression<Element> xpExpression = xpfac.compile(
 							".//manifest:Experience[@ExperienceID='" + expXRef + "']", Filters.element(), null,
-							manifestNSpace);
+							XmlIngester.manifestNSpace);
 					List<Element> elementList = xpExpression.evaluate(curRootEl);
 					Element childExpEl = elementList.get(0);
-					Element childMdEl = getMetadataEl(childExpEl);
-					Element basicMDEl = childMdEl.getChild("BasicMetadata", manifestNSpace);
-					Element locMDEl = basicMDEl.getChild("LocalizedInfo", mdNSpace);
-					String title1 = locMDEl.getChildTextNormalize("TitleSort", mdNSpace);
+					Element basicMDEl = cpeValidator.getMetadataEl(childExpEl);
+					Element locMDEl = basicMDEl.getChild("LocalizedInfo", XmlIngester.mdNSpace);
+					String title1 = locMDEl.getChildTextNormalize("TitleSort", XmlIngester.mdNSpace);
 					found = title1.equals("Featured");
 				}
 			}
@@ -320,8 +270,9 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 	 * @param metaDataEl
 	 * @return
 	 */
-	protected boolean validateBonus(Element expEl, Element metaDataEl) {
-		String msg = "Validating BONUS Experience";
+	private boolean validateBonus(ExperienceNode bonusNode) {
+		Element expEl = bonusNode.getExpEl();
+		String msg = "Validating BONUS Experience "+bonusNode.getCid();
 		loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
 		// TODO Auto-generated method stub
 		return false;
@@ -332,10 +283,11 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 	 * @param metaDataEl
 	 * @return
 	 */
-	protected boolean validateGroupIn(Element expEl, Element metaDataEl) {
-		String msg = "Validating in-movie Experience branch";
+	private boolean validateGroupIn(ExperienceNode expNode) {
+		Element expEl = expNode.getExpEl();
+		String msg = "Validating in-movie Experience branch "+expNode.getCid();
 		loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
-		List<Element> groupElList = getSortedChildren(expEl, "ExperienceChild", "ispartof", true);
+		List<Element> groupElList = cpeValidator.getSortedChildren(expEl, "ExperienceChild", "ispartof", true);
 		if (groupElList == null) {
 			/*
 			 * There was a problem with SequenceInfo. Specific errors will have
@@ -358,7 +310,11 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 	}
 
 	/**
-	 * Requirements:
+	 * Validates time-oriented (tied to the video timeline) collections of bonus
+	 * material that is displayed in conjunction with playback. This is referred
+	 * to as ‘in movie’.
+	 * <p>
+	 * Requirements (Sec 2.2):
 	 * <ul>
 	 * <li>Contains a ContentID referencing Basic Metadata in the Inventory that
 	 * contains TitleDisplayUnlimited and TitleSort with the name of the tab
@@ -371,15 +327,17 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 	 * exactly with the Presentations, Media Applications and Galleries
 	 * referenced in the TimedEventSequence
 	 * </ul>
+	 * </p>
 	 * 
 	 * @param expEl
 	 * @param metaDataEl
 	 * @return
 	 */
-	protected boolean validateTab(Element expEl, Element metaDataEl) {
-		String msg = "Validating tab Experience";
+	private boolean validateTab(ExperienceNode leafNode) {
+		Element expEl = leafNode.getExpEl();
+		String msg = "Validating tab Experience "+leafNode.getCid();
 		loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
-		List<Element> tSeqList = expEl.getChildren("TimedSequenceID", manifestNSpace);
+		List<Element> tSeqList = expEl.getChildren("TimedSequenceID", XmlIngester.manifestNSpace);
 		if (tSeqList.size() < 1) {
 			String errMsg = "No TimedSequenceID found for Tab Experience";
 			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, expEl, errMsg, null, null, logMsgSrcId);
@@ -400,7 +358,8 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 		String tSeqId = tSeqList.get(0).getTextNormalize();
 		XPathExpression<Element> xpExpression = xpfac.compile(
 				".//manifest:TimedEventSequence[@TimedSequenceID='" + tSeqId + "']", Filters.element(), null,
-				manifestNSpace);
+				XmlIngester.manifestNSpace);
+		Element curRootEl = expEl.getDocument().getRootElement();
 		List<Element> tsList = xpExpression.evaluate(curRootEl);
 		if (tsList.size() < 1) {
 			String errMsg = "Experience references unknown TimedEvenetSequence";
@@ -409,22 +368,22 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 		}
 		Element tSeqEl = tsList.get(0);
 		// Presentations...
-		xpExpression = xpfac.compile(".//manifest:PresentationID", Filters.element(), null, manifestNSpace);
+		xpExpression = xpfac.compile(".//manifest:PresentationID", Filters.element(), null, XmlIngester.manifestNSpace);
 		List<Element> expList = xpExpression.evaluate(expEl);
 		List<Element> tesList = xpExpression.evaluate(tSeqEl);
 		boolean matches = compareIdSets(expList, tesList);
 
 		// AppGroup...
-		xpExpression = xpfac.compile(".//manifest:AppGroupID", Filters.element(), null, manifestNSpace);
+		xpExpression = xpfac.compile(".//manifest:AppGroupID", Filters.element(), null, XmlIngester.manifestNSpace);
 		expList = xpExpression.evaluate(expEl);
 		tesList = xpExpression.evaluate(tSeqEl);
-		matches = (matches && compareIdSets(expList, tesList));
+		matches = (compareIdSets(expList, tesList) && matches);
 
 		// TextGroup...
-		xpExpression = xpfac.compile(".//manifest:TextGroupID", Filters.element(), null, manifestNSpace);
+		xpExpression = xpfac.compile(".//manifest:TextGroupID", Filters.element(), null, XmlIngester.manifestNSpace);
 		expList = xpExpression.evaluate(expEl);
 		tesList = xpExpression.evaluate(tSeqEl);
-		matches = (matches && compareIdSets(expList, tesList));
+		matches = (compareIdSets(expList, tesList) && matches);
 
 		return matches;
 	}
@@ -483,14 +442,16 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 	/**
 	 * 
 	 */
-	protected boolean validateInventory() {
+	private boolean validateInventory(DefaultTreeModel infoModel) {
+		ExperienceNode manifestRoot = (ExperienceNode) infoModel.getRoot();
+		Element curRootEl = manifestRoot.getExpEl().getDocument().getRootElement();
 		boolean isValid = true;
 		XPathExpression<Element> xpExpression = xpfac.compile(".//manifest:Inventory/manifest:Video/manifest:Encoding",
-				Filters.element(), null, manifestNSpace);
+				Filters.element(), null, XmlIngester.manifestNSpace);
 		List<Element> elList = xpExpression.evaluate(curRootEl);
 		for (int i = 0; i < elList.size(); i++) {
 			Element nextEl = elList.get(i);
-			Element alEl = nextEl.getChild("ActualLength", mdNSpace);
+			Element alEl = nextEl.getChild("ActualLength", XmlIngester.mdNSpace);
 			if ((alEl == null) || (alEl.getTextNormalize().isEmpty())) {
 				String errMsg = "ActualLength of Video/Encoding is not specified";
 				loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, nextEl, errMsg, null, null, logMsgSrcId);
@@ -513,14 +474,17 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 	 * <tt>Chapter</tt>
 	 * </p>
 	 */
-	protected boolean validatePresentation() {
+	private boolean validatePresentation(DefaultTreeModel infoModel) {
+		ExperienceNode manifestRoot = (ExperienceNode) infoModel.getRoot();
+		Element curRootEl = manifestRoot.getExpEl().getDocument().getRootElement();
 		boolean isValid = true;
 		XPathExpression<Element> xpExpression = xpfac.compile(
-				".//manifest:Presentation/manifest:Chapters/manifest:Chapter", Filters.element(), null, manifestNSpace);
+				".//manifest:Presentation/manifest:Chapters/manifest:Chapter", Filters.element(), null,
+				XmlIngester.manifestNSpace);
 		List<Element> elList = xpExpression.evaluate(curRootEl);
 		for (int i = 0; i < elList.size(); i++) {
 			Element nextEl = elList.get(i);
-			Element dlEl = nextEl.getChild("DisplayLabel", manifestNSpace);
+			Element dlEl = nextEl.getChild("DisplayLabel", XmlIngester.manifestNSpace);
 			if ((dlEl == null) || (dlEl.getTextNormalize().isEmpty())) {
 				String errMsg = "Chapter DisplayLabel is not specified";
 				loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, nextEl, errMsg, null, null, logMsgSrcId);
@@ -530,15 +494,9 @@ public class CpeIP1Validator extends ModelValidator implements ProfileValidator 
 		return isValid;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator#
-	 * setLogger(com.movielabs.mddflib.logging.LogMgmt)
-	 */
-	@Override
 	public void setLogger(LogMgmt logMgr) {
 		this.loggingMgr = logMgr;
 
 	}
+
 }
