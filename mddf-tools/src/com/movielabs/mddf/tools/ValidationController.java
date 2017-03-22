@@ -23,7 +23,9 @@ package com.movielabs.mddf.tools;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +61,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator;
 import com.movielabs.mddflib.manifest.validation.MecValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.CpeIP1Validator;
+import com.movielabs.mddflib.manifest.validation.profiles.CpeValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.MMCoreValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -84,8 +87,8 @@ public class ValidationController {
 
 	public static final String MODULE_ID = "Validator";
 	private static File tempDir = new File("./tmp");
-	private static String[] supportedProfiles = null;
-	private static HashMap<String, ProfileValidator> profileMap = null;
+	private static String[] supportedProfiles = { "IP-0", "IP-1", "IP-01", "MMC-1", "none" };
+	private static HashSet<String> supportedProfileKeys;
 	private static Options options = null;
 
 	private boolean validateS = true;
@@ -95,8 +98,9 @@ public class ValidationController {
 	private LogMgmt logMgr;
 	private LogNavPanel logNav = null;
 
-	{
-
+	static {
+		supportedProfileKeys = new HashSet<String>();
+		supportedProfileKeys.addAll(Arrays.asList(supportedProfiles));
 		if (!tempDir.exists()) {
 			tempDir.mkdirs();
 		}
@@ -131,10 +135,9 @@ public class ValidationController {
 			System.exit(0);
 		}
 		if (cmdLine.hasOption("p")) {
-			String[] profiles = getSupportedProfiles();
 			System.out.println("Supported profiles:\n");
-			for (int i = 0; i < profiles.length; i++) {
-				System.out.println("     " + profiles[i]);
+			for (int i = 0; i < supportedProfiles.length; i++) {
+				System.out.println("     " + supportedProfiles[i]);
 			}
 		}
 		if (cmdLine.hasOption("logLevel")) {
@@ -223,52 +226,18 @@ public class ValidationController {
 		return header;
 	}
 
-	/**
-	 * get names of all supported Profiles.
-	 * 
-	 * @return
-	 */
-	public static String[] getSupportedProfiles() {
-		/*
-		 * NOTE: This code is a QUICK-AND_DIRTY implementation and needs to be
-		 * re-written.
-		 */
-		if (supportedProfiles == null) {
-			int pCnt = 0;
-			/* use lazy constructor design pattern */
-			List<String> profileList = new ArrayList<String>();
-			profileMap = new HashMap<String, ProfileValidator>();
-			profileList.add("none");
-			profileMap.put("none", null);
-			List<String> mpList;
-			ProfileValidator referenceInstance = new CpeIP1Validator(new DefaultLogging());
-			mpList = referenceInstance.getSupportedProfiles();
-			for (int i = 0; i < mpList.size(); i++) {
-				String nextP = mpList.get(i);
-				profileMap.put(nextP, referenceInstance);
-				profileList.add(nextP);
-			}
-			referenceInstance = new MMCoreValidator(new DefaultLogging());
-			mpList = referenceInstance.getSupportedProfiles();
-			for (int i = 0; i < mpList.size(); i++) {
-				String nextP = mpList.get(i);
-				profileMap.put(nextP, referenceInstance);
-				profileList.add(nextP);
-			}
-			supportedProfiles = new String[profileList.size()];
-			supportedProfiles = profileList.toArray(supportedProfiles);
-		}
+	public static String[] getSupportedProfiles() { 
 		return supportedProfiles;
 	}
 
 	public static String[] getSupportedUseCases(String profile) {
-		ProfileValidator referenceInstance = profileMap.get(profile);
-		if (referenceInstance != null) {
-			List<String> pucList = referenceInstance.getSupporteUseCases(profile);
-			return pucList.toArray(new String[pucList.size()]);
-		} else {
+//		ProfileValidator referenceInstance = profileMap.get(profile);
+//		if (referenceInstance != null) {
+//			List<String> pucList = referenceInstance.getSupporteUseCases(profile);
+//			return pucList.toArray(new String[pucList.size()]);
+//		} else {
 			return null;
-		}
+//		}
 	}
 
 	/**
@@ -763,27 +732,30 @@ public class ValidationController {
 		ManifestValidator.setManifestVersion(schemaVer);
 
 		List<String> profileNameList = identifyProfiles(docRootEl, srcFile, uxProfile);
-		if (profileNameList.isEmpty()) {
+		if (profileNameList.isEmpty() || profileNameList.contains("none")) {
 			ManifestValidator tool1 = new ManifestValidator(validateC, logMgr);
 			isValid = tool1.process(docRootEl, srcFile);
 			return;
 		}
 		for (int i = 0; i < profileNameList.size(); i++) {
 			String profile = profileNameList.get(i);
-			ProfileValidator referenceInstance = profileMap.get(profile);
-			if (referenceInstance == null) {
+			// ProfileValidator referenceInstance = profileMap.get(profile);
+			if (!supportedProfileKeys.contains(profile)) {
 				String msg = "Unrecognized Profile: " + profile;
 				logMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
 			} else {
 				String msg = "Validating compatibility with Profile '" + profile + "'";
 				logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
-				String pvClass = referenceInstance.getClass().getSimpleName();
+				// String pvClass =
+				// referenceInstance.getClass().getSimpleName();
 				ProfileValidator pValidator = null;
-				switch (pvClass) {
-				case "CpeIP1Validator":
-					pValidator = new CpeIP1Validator(logMgr);
+				switch (profile) {
+				case "IP-0":
+				case "IP-01":
+				case "IP-1":
+					pValidator = new CpeValidator(logMgr);
 					break;
-				case "MMCoreValidator":
+				case "MMC-1":
 					pValidator = new MMCoreValidator(logMgr);
 					break;
 				}
@@ -810,7 +782,6 @@ public class ValidationController {
 	 */
 	private List<String> identifyProfiles(Element docRootEl, File srcFile, String uxProfile) {
 		// make sure data structures got initialized..
-		getSupportedProfiles();
 		List<String> profileNameList = new ArrayList<String>();
 		if (XmlIngester.MAN_VER.endsWith("1.4")) {
 			if (!uxProfile.equals("none")) {
@@ -824,7 +795,7 @@ public class ValidationController {
 			for (int i = 0; i < profileElList.size(); i++) {
 				Element nextProfile = profileElList.get(i);
 				String nextName = nextProfile.getTextNormalize();
-				if (!profileMap.containsKey(nextName)) {
+				if (!supportedProfileKeys.contains(nextName)) {
 					String msg = "Compatibility/Profile specifies unrecognized Profile: " + nextName;
 					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
 				} else if (!profileNameList.contains(nextName)) {
