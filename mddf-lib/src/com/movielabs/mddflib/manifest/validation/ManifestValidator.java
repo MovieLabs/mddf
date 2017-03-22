@@ -470,7 +470,9 @@ public class ManifestValidator extends CMValidator {
 		 * LocalizedInfo instance in the original BasicMetadata instance. Thus:
 		 * <ul>
 		 * <li>If the a Metatadata element contains a child Alias, it must also
-		 * have as a child a BasicMetadata element for the Alias to filter.</li>
+		 * have as a child a BasicMetadata element for the Alias to filter. This
+		 * may be identified either directly via a child BasicMetadata element
+		 * or indirectly via a ContainerReference.</li>
 		 * 
 		 * <li>If the Alias has a LocalizedPair/LanguageIncluded = 'foobar' then
 		 * the BasicMetadata element must have a child
@@ -499,13 +501,12 @@ public class ManifestValidator extends CMValidator {
 						".//" + mdNSpace.getPrefix() + ":LocalizedInfo[@language='" + includedLang + "']",
 						Filters.element(), null, manifestNSpace, mdNSpace);
 				Element locInfoEL = xpExp03.evaluateFirst(basicMDataEl);
-				if(locInfoEL == null){
+				if (locInfoEL == null) {
 					String errMsg = "IncludedLanguage not supported by BasicMetadata/LocalizedInfo";
 					LogReference srcRef = LogReference.getRef("MMM", "metadataAlias");
 					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, langEl, errMsg, null, srcRef, logMsgSrcId);
 					curFileIsValid = false;
-					
-					
+
 				}
 			}
 		}
