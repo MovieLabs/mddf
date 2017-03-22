@@ -107,57 +107,19 @@ public class CpeIP1Validator {
 			return false;
 		}
 		for (ExperienceNode mainGroupNode : mainGroupNodes) {
-			String branch = validateMainGroup(mainGroupNode);
-			/*
-			 * Level 3: Intermediate nodes representing bonus group or tab group
-			 * depending on branch (i.e., in-movie or out-of-movie)
-			 */
-			List<ExperienceNode> groupNodes = mainGroupNode.getChildren();
-			if (groupNodes.size() < 1) {
-				curFileIsValid = false;
-				String errMsg = "Empty main Group: 1 or more ChildExperiences should be added.";
-				loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, mainGroupNode.getExpEl(), errMsg, null, null,
-						logMsgSrcId);
-			} else {
-				for (ExperienceNode groupNode : groupNodes) {
-					/*
-					 * Level 4: Leaf node representing a bonus or tab depending
-					 * on branch
-					 */
-					List<ExperienceNode> leafNodes = groupNode.getChildren();
-					if (leafNodes.size() < 1) {
-						curFileIsValid = false;
-						String errMsg = "Empty Group: 1 or more ChildExperiences should be added.";
-						loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, groupNode.getExpEl(), errMsg, null,
-								null, logMsgSrcId);
-					} else {
-						for (ExperienceNode leafNode : leafNodes) {
-							if (leafNode.getChildCount() > 0) {
-								curFileIsValid = false;
-								String errMsg = "Child Experiences not allowed: Max # of Experience levels exceeded";
-								loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, leafNode.getExpEl(), errMsg,
-										null, null, logMsgSrcId);
-							}
-							switch (branch) {
-							case "in-movie":
-								validateTab(leafNode);
-								break;
-							case "out-of-movie":
-								validateBonus(leafNode);
-								break;
-							}
-						}
-					}
-				}
-			}
+			validateMainGroup(mainGroupNode); 
 		}
 		return curFileIsValid;
 	}
 
 	/**
+	 * 
+	 * Validates 2nd level of the IP-1 Info Model: the main grouping nodes
+	 * (i.e., “in-movie” or“out-of-movie”).
+	 * 
 	 * @param mainGroupNode
 	 */
-	private String validateMainGroup(ExperienceNode mainGroupNode) {
+	private void validateMainGroup(ExperienceNode mainGroupNode) {
 		/*
 		 * top-level grouping (i.e., either in-movie or out-of-movie). Which
 		 * branch will be specified via TitleSort. Following code is
@@ -182,8 +144,6 @@ public class CpeIP1Validator {
 			String errMsg = "Invalid TitleSort; Must be 'in-movie' or 'out-of-movie'";
 			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, locMDEl, errMsg, null, null, logMsgSrcId);
 		}
-
-		return curBranch;
 	}
 
 	/**
@@ -221,9 +181,9 @@ public class CpeIP1Validator {
 	 * @param metaDataEl
 	 * @return
 	 */
-	private boolean validateGroupOut(ExperienceNode expNode) {
-		Element expEl = expNode.getExpEl();
-		String msg = "Validating out-of-movie Experience branch "+expNode.getCid();
+	private boolean validateGroupOut(ExperienceNode groupNode) {
+		Element expEl = groupNode.getExpEl();
+		String msg = "Validating out-of-movie Experience branch " + groupNode.getCid();
 		loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
 		List<Element> groupElList = cpeValidator.getSortedChildren(expEl, "ExperienceChild", "ispartof", true);
 		if (groupElList == null) {
@@ -236,33 +196,34 @@ public class CpeIP1Validator {
 			String errMsg = "No groups defined for out-of-movie Experience";
 			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_WARN, expEl, errMsg, null, null, logMsgSrcId);
 			return true;
-		} else {
-			msg = "out-of-movie Experience has " + groupElList.size() + " groups";
-			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
-			/* is one titled 'Featured' ? */
-			boolean found = false;
-			Element curRootEl = expEl.getDocument().getRootElement();
-			for (int i = 0; i < groupElList.size(); i++) {
-				if (!found) {
-					Element nextChildEl = groupElList.get(i);
-					String expXRef = nextChildEl.getChildTextNormalize("ExperienceID", XmlIngester.manifestNSpace);
-					XPathExpression<Element> xpExpression = xpfac.compile(
-							".//manifest:Experience[@ExperienceID='" + expXRef + "']", Filters.element(), null,
-							XmlIngester.manifestNSpace);
-					List<Element> elementList = xpExpression.evaluate(curRootEl);
-					Element childExpEl = elementList.get(0);
-					Element basicMDEl = cpeValidator.getMetadataEl(childExpEl);
-					Element locMDEl = basicMDEl.getChild("LocalizedInfo", XmlIngester.mdNSpace);
-					String title1 = locMDEl.getChildTextNormalize("TitleSort", XmlIngester.mdNSpace);
-					found = title1.equals("Featured");
-				}
-			}
-			if (!found) {
-				String errMsg = "Out-of-movie Experience does not specify a FEATURED group";
-				loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_WARN, expEl, errMsg, null, null, logMsgSrcId);
-			}
-			return true;
 		}
+		msg = "out-of-movie Experience has " + groupElList.size() + " groups";
+		loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
+		/* is one titled 'Featured' ? */
+		boolean found = false;
+		Element curRootEl = expEl.getDocument().getRootElement();
+		for (int i = 0; i < groupElList.size(); i++) {
+			if (!found) {
+				Element nextChildEl = groupElList.get(i);
+				String expXRef = nextChildEl.getChildTextNormalize("ExperienceID", XmlIngester.manifestNSpace);
+				XPathExpression<Element> xpExpression = xpfac.compile(
+						".//manifest:Experience[@ExperienceID='" + expXRef + "']", Filters.element(), null,
+						XmlIngester.manifestNSpace);
+				List<Element> elementList = xpExpression.evaluate(curRootEl);
+				Element childExpEl = elementList.get(0);
+				Element basicMDEl = cpeValidator.getMetadataEl(childExpEl);
+				Element locMDEl = basicMDEl.getChild("LocalizedInfo", XmlIngester.mdNSpace);
+				String title1 = locMDEl.getChildTextNormalize("TitleSort", XmlIngester.mdNSpace);
+				found = title1.equals("Featured");
+			}
+		}
+
+		if (!found) {
+			String errMsg = "Out-of-movie Experience does not specify a FEATURED group";
+			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_WARN, expEl, errMsg, null, null, logMsgSrcId);
+		}
+		return found;
+
 	}
 
 	/**
@@ -270,22 +231,21 @@ public class CpeIP1Validator {
 	 * @param metaDataEl
 	 * @return
 	 */
-	private boolean validateBonus(ExperienceNode bonusNode) {
+	private boolean validateBonusGroup(ExperienceNode bonusNode) {
 		Element expEl = bonusNode.getExpEl();
-		String msg = "Validating BONUS Experience "+bonusNode.getCid();
+		String msg = "Validating Bonus Group Experience " + bonusNode.getCid();
 		loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	/**
-	 * @param expEl
-	 * @param metaDataEl
+	 * @param groupNode
 	 * @return
 	 */
-	private boolean validateGroupIn(ExperienceNode expNode) {
-		Element expEl = expNode.getExpEl();
-		String msg = "Validating in-movie Experience branch "+expNode.getCid();
+	private boolean validateGroupIn(ExperienceNode groupNode) {
+		Element expEl = groupNode.getExpEl();
+		String msg = "Validating in-movie Experience branch " + groupNode.getCid();
 		loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
 		List<Element> groupElList = cpeValidator.getSortedChildren(expEl, "ExperienceChild", "ispartof", true);
 		if (groupElList == null) {
@@ -305,12 +265,16 @@ public class CpeIP1Validator {
 		} else {
 			msg = "in-movie Experience has " + groupElList.size() + " tabs";
 			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
-			return true;
 		}
+		boolean allOk = true;
+		for (ExperienceNode subGroupNode : groupNode.getChildren()) {
+			allOk = validateTabGroup(subGroupNode) && allOk;
+		}
+		return allOk;
 	}
 
 	/**
-	 * Validates time-oriented (tied to the video timeline) collections of bonus
+	 * Validates time-oriented (tied to the video timeline) collections of
 	 * material that is displayed in conjunction with playback. This is referred
 	 * to as ‘in movie’.
 	 * <p>
@@ -333,9 +297,9 @@ public class CpeIP1Validator {
 	 * @param metaDataEl
 	 * @return
 	 */
-	private boolean validateTab(ExperienceNode leafNode) {
-		Element expEl = leafNode.getExpEl();
-		String msg = "Validating tab Experience "+leafNode.getCid();
+	private boolean validateTabGroup(ExperienceNode tabGroupNode) {
+		Element expEl = tabGroupNode.getExpEl();
+		String msg = "Validating Tab Group " + tabGroupNode.getCid();
 		loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
 		List<Element> tSeqList = expEl.getChildren("TimedSequenceID", XmlIngester.manifestNSpace);
 		if (tSeqList.size() < 1) {
@@ -368,24 +332,51 @@ public class CpeIP1Validator {
 		}
 		Element tSeqEl = tsList.get(0);
 		// Presentations...
-		xpExpression = xpfac.compile(".//manifest:PresentationID", Filters.element(), null, XmlIngester.manifestNSpace);
-		List<Element> expList = xpExpression.evaluate(expEl);
-		List<Element> tesList = xpExpression.evaluate(tSeqEl);
+		/*
+		 * Slightly different than AppGroup, TextGroup, etc. The problem is
+		 * there is (usually) a Presentation as a child of the
+		 * TimedEvenetSequence and we want to exclude it and only collect the
+		 * Presentation elements that are the child of a TimedEvent.
+		 */
+		XPathExpression<Element> xpEx1 = xpfac.compile(".//manifest:PresentationID", Filters.element(), null,
+				XmlIngester.manifestNSpace);
+		List<Element> expList = collectTabContent(tabGroupNode, xpEx1);
+		XPathExpression<Element> xpEx2 = xpfac.compile(".//manifest:TimedEvent/manifest:PresentationID",
+				Filters.element(), null, XmlIngester.manifestNSpace);
+		List<Element> tesList = xpEx2.evaluate(tSeqEl);
 		boolean matches = compareIdSets(expList, tesList);
 
 		// AppGroup...
 		xpExpression = xpfac.compile(".//manifest:AppGroupID", Filters.element(), null, XmlIngester.manifestNSpace);
-		expList = xpExpression.evaluate(expEl);
+		expList = collectTabContent(tabGroupNode, xpExpression);
 		tesList = xpExpression.evaluate(tSeqEl);
 		matches = (compareIdSets(expList, tesList) && matches);
 
 		// TextGroup...
 		xpExpression = xpfac.compile(".//manifest:TextGroupID", Filters.element(), null, XmlIngester.manifestNSpace);
-		expList = xpExpression.evaluate(expEl);
+		expList = collectTabContent(tabGroupNode, xpExpression);
 		tesList = xpExpression.evaluate(tSeqEl);
 		matches = (compareIdSets(expList, tesList) && matches);
 
 		return matches;
+	}
+
+	/**
+	 * @param tabGroupNode
+	 * @param xpExpression
+	 * @return
+	 */
+	private List<Element> collectTabContent(ExperienceNode tabGroupNode, XPathExpression<Element> xpExpression) {
+		List<Element> expList = new ArrayList<Element>();
+		Element tabGroupEl = tabGroupNode.getExpEl();
+		expList.addAll(xpExpression.evaluate(tabGroupEl));
+		// Now include content from the children:
+		List<ExperienceNode> tabMemberNodes = tabGroupNode.getChildren();
+		for (ExperienceNode memberNode : tabMemberNodes) {
+			Element memberEl = memberNode.getExpEl();
+			expList.addAll(xpExpression.evaluate(memberEl));
+		}
+		return expList;
 	}
 
 	/**
