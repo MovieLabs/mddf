@@ -23,9 +23,12 @@
 package com.movielabs.mddflib.util.xml;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
@@ -75,14 +78,15 @@ public class StructureValidation {
 
 	private IssueLogger logger;
 	protected String logMsgSrcId;
-	private String availPrefix;
-	private String mdPrefix;
+	// private String availPrefix;
+	// private String mdPrefix;
+	// private String mdMecPrefix;
+	// private String manifestPrefix;
+
 	private XPathFactory xpfac = XPathFactory.instance();
 
 	public StructureValidation(IssueLogger logger, String logMsgSrcId) {
 		this.logger = logger;
-		availPrefix = XmlIngester.availsNSpace.getPrefix() + ":";
-		mdPrefix = XmlIngester.mdNSpace.getPrefix() + ":";
 	}
 
 	public boolean validateStructure(Element target, JSONObject rqmt) {
@@ -95,18 +99,18 @@ public class StructureValidation {
 		Object xpaths = rqmt.opt("xpath");
 		List<XPathExpression<Element>> xpeList = new ArrayList<XPathExpression<Element>>();
 		String targetList = ""; // for use if error msg is required
+		String[] xpParts = null;
 		if (xpaths instanceof String) {
 			String xpathDef = (String) xpaths;
 			xpeList.add(resolveXPath(xpathDef));
-
-			String[] xpParts = xpathDef.split("\\[");
+			xpParts = xpathDef.split("\\[");
 			targetList = xpParts[0];
 		} else if (xpaths instanceof JSONArray) {
 			JSONArray xpArray = (JSONArray) xpaths;
 			for (int i = 0; i < xpArray.size(); i++) {
 				String xpathDef = xpArray.getString(i);
 				xpeList.add(resolveXPath(xpathDef));
-				String[] xpParts = xpathDef.split("\\[");
+				xpParts = xpathDef.split("\\[");
 				if (i < 1) {
 					targetList = xpParts[0];
 				} else if (i == (xpArray.size() - 1)) {
@@ -131,6 +135,9 @@ public class StructureValidation {
 			String elName = target.getName();
 			String msg = "Invalid " + elName + " structure: missing child elements";
 			String explanation = elName + " requires minimum of " + min + " of child " + targetList + " elements";
+			if(xpParts.length >1){
+				explanation = explanation +" matching the criteria ["+xpParts[1];
+			}
 			LogReference srcRef = resolveDocRef(docRef);
 			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
 			curFileIsValid = false;
@@ -148,16 +155,52 @@ public class StructureValidation {
 	}
 
 	private XPathExpression<Element> resolveXPath(String xpathDef) {
+		Set<Namespace> nspaceSet = new HashSet<Namespace>();
+
 		/*
 		 * replace namespace placeholders with actual prefix being used
 		 */
-		String t1 = xpathDef.replaceAll("\\{avail\\}", availPrefix);
-		String t2 = t1.replaceAll("\\{md\\}", mdPrefix);
-		// Now format an XPath
-		String xpath = "./" + t2;
-		XPathExpression<Element> xpExp = xpfac.compile(xpath, Filters.element(), null, XmlIngester.availsNSpace,
-				XmlIngester.mdNSpace);
-		return xpExp;
+		if (xpathDef.contains("{md}")) {
+			xpathDef = xpathDef.replaceAll("\\{md\\}", XmlIngester.mdNSpace.getPrefix() + ":");
+			nspaceSet.add(XmlIngester.mdNSpace);
+		}
+
+		if (xpathDef.contains("{avail}")) {
+			xpathDef = xpathDef.replaceAll("\\{avail\\}", XmlIngester.availsNSpace.getPrefix() + ":");
+			nspaceSet.add(XmlIngester.availsNSpace);
+		}
+
+		if (xpathDef.contains("{manifest}")) {
+			xpathDef = xpathDef.replaceAll("\\{manifest\\}", XmlIngester.manifestNSpace.getPrefix() + ":");
+			nspaceSet.add(XmlIngester.manifestNSpace);
+		}
+
+		if (xpathDef.contains("{mdmec}")) {
+			xpathDef = xpathDef.replaceAll("\\{mdmec\\}", XmlIngester.mdmecNSpace.getPrefix() + ":");
+			nspaceSet.add(XmlIngester.mdmecNSpace);
+		}
+		// Now compile the XPath
+		XPathExpression xpExpression;
+		/**
+		 * The following are examples of xpaths that return an attribute value
+		 * and that we therefore need to identity:
+		 * <ul>
+		 * <li>avail:Term/@termName</li>
+		 * <li>avail:Term[@termName[.='Tier' or .='WSP' or .='DMRP']</li>
+		 * <li>@contentID</li>
+		 * </ul>
+		 * whereas the following should NOT match:
+		 * <ul>
+		 * <li>avail:Term/avail:Event[../@termName='AnnounceDate']</li>
+		 * </ul>
+		 */
+		if (xpathDef.matches(".*/@[\\w]++(\\[.+\\])?")) {
+			// must be an attribute value we're after..
+			xpExpression = xpfac.compile(xpathDef, Filters.attribute(), null, nspaceSet);
+		} else {
+			xpExpression = xpfac.compile(xpathDef, Filters.element(), null, nspaceSet);
+		}
+		return xpExpression;
 	}
 
 	private LogReference resolveDocRef(String docRef) {
