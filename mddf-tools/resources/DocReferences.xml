@@ -75,6 +75,12 @@
 	</Specification>
 	<Specification id="MMM" label="TR-META-MMM" versions="1.5, 1.6">
 		<!-- Used by ManifestValidator -->
+		<Ref id="metadataAlias">
+			<Version id="1.5">
+				<Label>Section 4.2.7.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
 		<Ref id="mmm001">
 			<Version id="1.5">
 				<Label>Section 6.2</Label>
@@ -240,5 +246,14 @@
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
+	</Specification>
+	<Specification id="CPE" label="TR-CPE-M1" versions="1.0">
+		<!-- Used by CpeValidator -->
+		<Ref id="MData01">
+			<Version id="1.0">
+				<Label>Section 5.1.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
 	</Specification>
 </DocRef>
