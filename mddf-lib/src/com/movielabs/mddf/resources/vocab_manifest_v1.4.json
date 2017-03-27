@@ -1,0 +1,35 @@
+{
+	"manifest": 
+	{
+		"Timecode@dropframe": 
+		[
+			"Drop",
+			"Non-Drop",
+			"EBU",
+			"other"
+		],
+
+		"TimedEventType": 
+		[
+			"Synchronous",
+			"Pause",
+			"Stop",
+			"Substitution"
+		],
+
+		"AudiovisualType": 
+		[
+			"Main",
+			"Promotion",
+			"Bonus",
+			"Other"
+		],
+		
+		"ExperienceAppType": 
+		[
+			"nav",
+			"game",
+			"other"
+		]
+	}
+}
