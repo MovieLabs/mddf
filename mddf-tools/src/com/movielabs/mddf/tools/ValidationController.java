@@ -87,7 +87,7 @@ public class ValidationController {
 
 	public static final String MODULE_ID = "Validator";
 	private static File tempDir = new File("./tmp");
-	private static String[] supportedProfiles = { "IP-0", "IP-1", "IP-01", "MMC-1", "none" };
+	private static String[] supportedProfiles = { "none", "IP-0", "IP-1", "MMC-1"};
 	private static HashSet<String> supportedProfileKeys;
 	private static Options options = null;
 
