@@ -564,7 +564,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 					dialog.addEntry("Build", "<b>mddflib S/W Version:</b> <tt>" + libVersion + "</tt>");
 					dialog.addEntry("Build", "<b>mddflib Build Date:</b> <tt>" + libBuildDate + "</tt><hr/>");
 					dialog.addTab("License");
-					dialog.addEntry("License", "Copyright Motion Picture Laboratories, Inc. 2016<br/>");
+					dialog.addEntry("License", "Copyright Motion Picture Laboratories, Inc. 2017<br/>");
 					dialog.addEntry("License", license);
 					dialog.setLocationRelativeTo(frame);
 					dialog.setVisible(true);
