@@ -35,8 +35,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.manifest.validation.CpeValidator;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator;
-import com.movielabs.mddflib.manifest.validation.profiles.CpeValidator;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
