@@ -58,10 +58,9 @@ import com.movielabs.mddflib.avails.xml.XmlBuilder;
 import com.movielabs.mddflib.logging.DefaultLogging;
 import com.movielabs.mddflib.logging.Log4jAdapter;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.manifest.validation.CpeValidator;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator;
 import com.movielabs.mddflib.manifest.validation.MecValidator;
-import com.movielabs.mddflib.manifest.validation.profiles.CpeIP1Validator;
-import com.movielabs.mddflib.manifest.validation.profiles.CpeValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.MMCoreValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -537,12 +536,7 @@ public class ValidationController {
 		}
 		return extension.toLowerCase();
 	}
-
-	// private String changeFileType(String inFileName, String fType) {
-	// int ptr = inFileName.lastIndexOf(".xlsx");
-	// String changed = inFileName.substring(0, ptr) + "." + fType;
-	// return changed;
-	// }
+ 
 
 	/**
 	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file.
