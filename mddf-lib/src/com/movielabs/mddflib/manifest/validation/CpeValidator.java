@@ -163,6 +163,15 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 			return curFileIsValid;
 		}
 		switch (profileId) {
+		case "IP-0":
+			/*
+			 * Profile IP-0 assumes no specific interactivity guidance within
+			 * the Manifest and supports any content structure. This is used
+			 * when the Retailer determines where and how bonus material is
+			 * displayed. Validation is, therefore, not required (i.e., it is
+			 * equivalent to profile='none'.
+			 */
+			break;
 		case "IP-01":
 			String msg = "Profile ID 'IP-01' has been deprecated. 'IP-1' should be used instead.";
 			loggingMgr.log(LogMgmt.LEV_WARN, logMsgDefaultTag, msg, curFile, logMsgSrcId);
@@ -346,7 +355,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 				curFileIsValid = false;
 				String errMsg = "TitleSort is empty";
 				loggingMgr.logIssue(LogMgmt.TAG_MODEL, LogMgmt.LEV_ERR, locMDEl, errMsg, null, null, logMsgSrcId);
-			} 
+			}
 			String titleDU = locMDEl.getChildTextNormalize("TitleDisplayUnlimited", mdNSpace);
 			if ((titleDU == null) || (titleDU.isEmpty())) {
 				curFileIsValid = false;
