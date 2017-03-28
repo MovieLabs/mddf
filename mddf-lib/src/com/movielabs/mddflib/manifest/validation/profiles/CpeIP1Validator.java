@@ -32,7 +32,8 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
 import com.movielabs.mddflib.logging.LogMgmt;
-import com.movielabs.mddflib.manifest.validation.profiles.CpeValidator.ExperienceNode;
+import com.movielabs.mddflib.manifest.validation.CpeValidator;
+import com.movielabs.mddflib.manifest.validation.CpeValidator.ExperienceNode;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
