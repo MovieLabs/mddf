@@ -121,7 +121,7 @@
 			</fileset>
 		</copy>
 
-		<javac includeantruntime="false" source="1.8" target="1.8"
+		<javac includeantruntime="false" source="1.8" target="1.8" debug="true"
 			srcdir="${appPack.dir}/build/src" destdir="${appPack.dir}/build/classes"
 			encoding="UTF-8">
 			<classpath>
@@ -244,7 +244,7 @@
 	<target name="create_run_jar" depends="do-compile">
 		<echo
 			message="Using mddf-lib JAR ${mddf-lib.home}/mddf-lib-${mddf-lib.version}.jar" />
-		<jar destfile="${binaries.home}/mddf-tool-v${mddf-lib.version}_rc2.jar">
+		<jar destfile="${binaries.home}/mddf-tool-v${mddf-lib.version}_rc2-DBG.jar">
 			<manifest>
 				<attribute name="Main-Class"
 					value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader" />
