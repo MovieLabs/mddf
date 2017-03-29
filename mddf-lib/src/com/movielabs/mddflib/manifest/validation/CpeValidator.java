@@ -591,7 +591,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 	 * @param expEl
 	 * @return
 	 */
-	protected Element getMetadataEl(Element expEl) {
+	public Element getMetadataEl(Element expEl) {
 		String cid = expEl.getChildTextNormalize("ContentID", manifestNSpace);
 		Element metaDataEl = cid2MDataMap.get(cid);
 		if (metaDataEl == null) {
