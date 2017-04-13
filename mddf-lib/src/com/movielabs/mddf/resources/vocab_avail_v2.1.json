@@ -118,6 +118,7 @@
 			"SharedEntitlementEcosystem",
 			"SharedEntitlementEndDate",
 			"SharedEntitlementDisposition",
+			"SuppressionLiftDate",
 			"SRP-postTax",
 			"WSP-postTax",
 			"EpisodeWSP-PostTax",
