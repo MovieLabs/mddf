@@ -845,6 +845,11 @@ public class CMValidator extends XmlIngester {
 		return allOK;
 	}
 
+	protected void validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
+			JSONArray expected, LogReference srcRef, boolean caseSensitive) {
+		validateVocab(primaryNS, primaryEl, childNS, child, expected, srcRef, caseSensitive, true);
+	}
+
 	/**
 	 * @param primaryNS
 	 * @param primaryEl
@@ -856,7 +861,7 @@ public class CMValidator extends XmlIngester {
 	 * @return
 	 */
 	protected void validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
-			JSONArray expected, LogReference srcRef, boolean caseSensitive) {
+			JSONArray expected, LogReference srcRef, boolean caseSensitive, boolean strict) {
 		if (expected == null || expected.isEmpty()) {
 			/*
 			 * The version of the schema being used does not define an
@@ -889,20 +894,34 @@ public class CMValidator extends XmlIngester {
 				errMsg = "Unrecognized value '" + text + "' for attribute " + child;
 			}
 			if (text != null) {
+				int logLevel;
+				String explanation;
+				if (strict) {
+					logLevel = LogMgmt.LEV_ERR;
+					explanation = "Value specified does not match one of the allowed strings.";
+					if(caseSensitive){
+						explanation = explanation + " Note that string-matching is case-sensitive";
+					}
+				} else {
+					logLevel = LogMgmt.LEV_WARN;
+					explanation = "Value specified doesn't match one of the recommended strings. Others may be used if all parties agree";
+				}
+				boolean matched = true;
 				if (caseSensitive) {
-					if (!expected.contains(text)) {
-						String explanation = "Value specified does not match one of the allowed strings. Note that string-matching is case-sensitive";
-						// TODO: Is this ERROR or WARNING???
-						logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
-						curFileIsValid = false;
+					if (!expected.contains(text)) { 
+						logIssue(tag4log, logLevel, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
+						matched = false;
 
 					}
 				} else {
 					String checkString = "\"" + text.toLowerCase() + "\"";
 					if (!optionsString.contains(checkString)) {
-						logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, null, srcRef, logMsgSrcId);
-						curFileIsValid = false;
+						logIssue(tag4log, logLevel, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
+						matched = false;
 					}
+				}
+				if(!matched && strict){
+					curFileIsValid = false;
 				}
 			}
 		}
