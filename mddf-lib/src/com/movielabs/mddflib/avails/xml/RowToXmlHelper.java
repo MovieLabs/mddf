@@ -33,8 +33,9 @@ import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
- * Create XML document from a v1.7 Excel spreadsheet. The XML generated reflects
- * a "best effort" in that there is no guarantee that it is valid.
+ * Create XML document from a v1.7 Excel spreadsheet. The XML generated will be
+ * based on v2.2 of the Avails XSD and reflects a "best effort" in that there is
+ * no guarantee that it is valid.
  * <p>
  * This class is intended to have a low footprint in terms of memory usage so as
  * to facilitate processing of sheets with large row counts. Note that Excel
@@ -66,12 +67,12 @@ public class RowToXmlHelper {
 		 */
 		workTypePedigree = getPedigreedData("AvailAsset/WorkType");
 		this.workType = workTypePedigree.getRawValue();
-		System.out.println("WorkType='"+workType+"'");
+		System.out.println("WorkType='" + workType + "'");
 	}
 
 	protected void makeAvail(XmlBuilder xb) {
 		this.xb = xb;
-		Element avail = xb.getAvailElement(this); 
+		Element avail = xb.getAvailElement(this);
 
 		/*
 		 * Assets can be defined redundantly on multiple lines so the XmlBuilder
@@ -134,7 +135,7 @@ public class RowToXmlHelper {
 	 * @param workTypePedigree
 	 * @return
 	 */
-	protected Element buildAsset() { 
+	protected Element buildAsset() {
 		Namespace availNS = xb.getAvailsNSpace();
 		Element assetEl = new Element("Asset", availNS);
 		Element wtEl = new Element("WorkType", availNS);
@@ -246,7 +247,7 @@ public class RowToXmlHelper {
 	 * 
 	 * @param transactionEl
 	 */
-	private void addAllTerms(Element transactionEl) {
+	protected void addAllTerms(Element transactionEl) {
 		String prefix = "AvailTrans/";
 		/*
 		 * May be multiple 'terms'. Start with one specified via the PriceType
@@ -454,7 +455,7 @@ public class RowToXmlHelper {
 	 * @param row
 	 * @return
 	 */
-	private boolean processCondition(Element parentEl, String childName, Namespace ns, String cellKey) {
+	protected boolean processCondition(Element parentEl, String childName, Namespace ns, String cellKey) {
 		Pedigree pg = getPedigreedData(cellKey);
 		String value = pg.getRawValue();
 		if (isSpecified(value)) {

@@ -23,10 +23,15 @@
 package com.movielabs.mddflib.avails.xml;
 
 import org.apache.poi.ss.usermodel.Row;
+import org.jdom2.Element;
 
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 
 /**
+ * * Create XML document from a v1.6 Excel spreadsheet. The XML generated will
+ * be based on v2.1 of the Avails XSD and reflects a "best effort" in that there
+ * is no guarantee that it is valid.
+ * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
@@ -49,6 +54,45 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelper {
 
 		System.out.println("getData(V1.6):: Unmapped key [" + colKey + "]");
 		return null;
+	}
+
+	/**
+	 * populate a Transaction element
+	 * 
+	 * @param transactionEl
+	 */
+	protected void processTransactionBody(Element transactionEl) {
+		String prefix = "AvailTrans/";
+		process(transactionEl, "LicenseType", xb.getAvailsNSpace(), prefix + "LicenseType");
+		/*
+		 * 'Description' is a SPECIAL CASE. The 2.1 XSD has it as REQUIRED but
+		 * the 1.6 Excel has it as OPTIONAL.
+		 * 
+		 */ 
+		Pedigree pg = getPedigreedData(prefix + "Description");
+		String value = pg.getRawValue();
+		if(value.isEmpty()){
+			value = "not provided";
+		}
+		Element childEl = mGenericElement("Description", value,  xb.getAvailsNSpace());
+		transactionEl.addContent(childEl);
+		xb.addToPedigree(childEl, pg);
+		
+		addRegion(transactionEl, "Territory", xb.getAvailsNSpace(), prefix + "Territory");
+		// Start or StartCondition
+		processCondition(transactionEl, "Start", xb.getAvailsNSpace(), prefix + "Start");
+		// End or EndCondition
+		processCondition(transactionEl, "End", xb.getAvailsNSpace(), prefix + "End");
+
+		process(transactionEl, "StoreLanguage", xb.getAvailsNSpace(), prefix + "StoreLanguage", ",");
+		process(transactionEl, "LicenseRightsDescription", xb.getAvailsNSpace(), prefix + "LicenseRightsDescription");
+		process(transactionEl, "FormatProfile", xb.getAvailsNSpace(), prefix + "FormatProfile");
+		process(transactionEl, "ContractID", xb.getAvailsNSpace(), prefix + "ContractID");
+
+		addAllTerms(transactionEl);
+
+		process(transactionEl, "OtherInstructions", xb.getAvailsNSpace(), prefix + "OtherInstructions");
+
 	}
 
 	/**
