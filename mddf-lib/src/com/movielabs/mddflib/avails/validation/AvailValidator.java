@@ -311,8 +311,13 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	private void validateAvailVocab() { 
 		Namespace primaryNS = availsNSpace;
 		String doc = "AVAIL";
+		String vocabVer = AVAIL_VER; 
+		switch(AVAIL_VER){
+		case "2.2.1":
+			vocabVer = "2.2";
+		}
 
-		JSONObject availVocab = (JSONObject) getMddfResource("avail", AVAIL_VER);
+		JSONObject availVocab = (JSONObject) getMddfResource("avail", vocabVer);
 		if (availVocab == null) {
 			String msg = "Unable to validate controlled vocab: missing resource file";
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
@@ -347,16 +352,16 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 		allowed = availVocab.optJSONArray("DateTimeCondition");
 		srcRef = LogReference.getRef(doc, "avail06");
-		validateVocab(primaryNS, "Transaction", primaryNS, "StartCondition", allowed, srcRef, true);
-		validateVocab(primaryNS, "Transaction", primaryNS, "EndCondition", allowed, srcRef, true);
+		validateVocab(primaryNS, "Transaction", primaryNS, "StartCondition", allowed, srcRef, true, false);
+		validateVocab(primaryNS, "Transaction", primaryNS, "EndCondition", allowed, srcRef, true, false);
 
 		allowed = availVocab.optJSONArray("LicenseType");
 		srcRef = LogReference.getRef(doc, "avail07");
-		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseType", allowed, srcRef, true);
+		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseType", allowed, srcRef, true, false);
 
 		allowed = availVocab.optJSONArray("LicenseRightsDescription");
 		srcRef = LogReference.getRef(doc, "avail07");
-		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseRightsDescription", allowed, srcRef, true);
+		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseRightsDescription", allowed, srcRef, true, false);
 
 		allowed = availVocab.optJSONArray("FormatProfile");
 		srcRef = LogReference.getRef(doc, "avail07");
@@ -548,8 +553,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			Element availEl = availTypeEl.getParentElement();
 			AvailRqmt[] allRqmts = getRequirements(availType);
 			// Now get the descendant WorkType element
-			XPathExpression<Element> xpExp02 = xpfac.compile("./" + rootNS.getPrefix()  +":"+   "Asset/" + rootNS.getPrefix() + "WorkType",
-					Filters.element(), null, availsNSpace);
+			XPathExpression<Element> xpExp02 = xpfac.compile("./" + rootNS.getPrefix()  +":Asset/" + rootNS.getPrefix() + ":WorkType",
+					Filters.element(), null, availsNSpace); 
 			List<Element> workTypeElList = xpExp02.evaluate(availEl);
 			for (int j = 0; j < workTypeElList.size(); j++) {
 				/*
