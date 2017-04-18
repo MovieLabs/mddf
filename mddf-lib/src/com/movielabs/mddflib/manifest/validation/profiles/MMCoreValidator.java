@@ -30,7 +30,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
- 
+
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator;
@@ -112,10 +112,10 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		return pucList;
 	}
 
-	public boolean process(Element docRootEl,File xmlManifestFile, String profileId, List<String> useCases)
+	public boolean process(Element docRootEl, File xmlManifestFile, String profileId, List<String> useCases)
 			throws JDOMException, IOException {
-		super.process(docRootEl,xmlManifestFile);
-		if(curFileIsValid){
+		super.process(docRootEl, xmlManifestFile);
+		if (curFileIsValid) {
 			validateProfileConstraints();
 		}
 		return curFileIsValid;
@@ -124,7 +124,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 	/**
 	 * Validate everything that is not fully specified via the XSD.
 	 */
-	protected void validateProfileConstraints() { 
+	protected void validateProfileConstraints() {
 		/*
 		 * now check the additional constraints identified in MMC Section
 		 * 2.1.2....
@@ -224,12 +224,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 					}
 				}
 			}
-
 		}
-		/*
-		 * Validate ALIDExperienceMap. This is Required but only one Experience
-		 * (top-level Experience) can be referenced.
-		 */
 
 		Element aeMapsEl = curRootEl.getChild("ALIDExperienceMaps", manifestNSpace);
 		if (aeMapsEl == null) {
@@ -237,13 +232,20 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 			loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, curRootEl, msg, null, srcRef, logMsgSrcId);
 			curFileIsValid = false;
 		} else {
-			xpExpression = xpfac.compile("./manifest:ALIDExperienceMap/manifest:ExperienceID", Filters.element(), null,
+			/*
+			 * Validate each ALIDExperienceMap. One Experience (top-level
+			 * Experience) can be referenced per ALIDExperienceMap.
+			 */
+			xpExpression = xpfac.compile("./manifest:ALIDExperienceMap", Filters.element(), null,
 					manifestNSpace);
-			expElList = xpExpression.evaluate(aeMapsEl);
-			if (expElList.size() != 1) {
-				String msg = "only one Experience can be referenced by 'ALIDExperienceMaps'";
-				loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, aeMapsEl, msg, null, srcRef, logMsgSrcId);
-				curFileIsValid = false;
+			List<Element> mapElList = xpExpression.evaluate(aeMapsEl);
+			for(Element aeMapEl : mapElList){
+				expElList = aeMapEl.getChildren("ExperienceID", manifestNSpace);
+				if (expElList.size() != 1) {
+					String msg = "only one Experience can be referenced by 'ALIDExperienceMaps'";
+					loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, aeMapEl, msg, null, srcRef, logMsgSrcId);
+					curFileIsValid = false;
+				}
 			}
 		}
 
@@ -469,12 +471,15 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		return isValid;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator#setLogger(com.movielabs.mddflib.logging.LogMgmt)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator#
+	 * setLogger(com.movielabs.mddflib.logging.LogMgmt)
 	 */
 	@Override
 	public void setLogger(LogMgmt logMgr) {
 		this.loggingMgr = logMgr;
-		
+
 	}
 }
