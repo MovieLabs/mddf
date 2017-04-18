@@ -1,3 +1,23 @@
+/** 
+ * Copyright Motion Picture Laboratories, Inc. 2017
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of 
+ * this software and associated documentation files (the "Software"), to deal in 
+ * the Software without restriction, including without limitation the rights to use, 
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell copies of 
+ * the Software, and to permit persons to whom the Software is furnished to do so, 
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all 
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS 
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 package com.movielabs.mddf.tools;
 
 import java.awt.EventQueue;
@@ -8,27 +28,236 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JLabel;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
+import com.movielabs.mddflib.logging.DefaultLogging;
+import com.movielabs.mddflib.logging.LogMgmt;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Properties;
 
+/**
+ * Implements a framework for accessing the various MDDF <i>tools</i>. Depending on
+ * the <tt>args</tt> passed to either <tt>ToolLauncher.main()</tt> or
+ * <tt>ToolLauncher.execute()</tt>, usage may be either via a GUI or via the command
+ * line arguments. 
+ * 
+ * @author L. Levin, Critical Architectures LLC
+ *
+ */
 public class ToolLauncher {
 
 	private JFrame frame;
+	private static Options options = null;
+	public static final String TOOL_RSRC_PATH = "/com/movielabs/mddf/tools/resources/";
 
 	/**
-	 * Launch the application.
+	 * Main entry point for executable jar.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
+		DefaultLogging logger = new DefaultLogging();
+		execute(args, logger);
+
+	}
+
+	public static void execute(String[] args, LogMgmt logger) {
+		CommandLine cmdLine = null;
+		try {
+			cmdLine = loadOptions(args);
+		} catch (ParseException e) {
+			System.out.println("\n" + e.getLocalizedMessage() + "\n\n");
+			printHelp();
+			System.exit(0);
+		}
+		if ((cmdLine.getOptions().length < 1) || (cmdLine.hasOption("h"))) {
+			printHelp();
+			System.exit(0);
+		}
+		if (cmdLine.hasOption("i")) {
+			// Launch in interactive mode
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						ToolLauncher window = new ToolLauncher();
+						window.frame.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		} else {
+			runNonInteractive(cmdLine, logger);
+		}
+	}
+
+	private static void runNonInteractive(CommandLine cmdLine, LogMgmt logger) {
+		configureLogOptions(cmdLine, logger);
+		boolean showVersion = cmdLine.hasOption("V");
+		if (showVersion) {
+			printVersion();
+			return;
+		}
+		if (cmdLine.hasOption("s")) {
+
+		} else {
+			if (cmdLine.hasOption("c")) {
+				String[] fmts = cmdLine.getOptionValues("c");
+				for (String format : fmts) {
+					System.out.println("Target format '" + format + "'");
+				}
+			}
+			ValidationController vCtrl = new ValidationController(logger);
+			String dir = cmdLine.getOptionValue("d");
+			if (dir != null) {
 				try {
-					ToolLauncher window = new ToolLauncher();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
+					String recursive = cmdLine.getOptionValue("r", "T");
+					if (recursive.equalsIgnoreCase("F")) {
+						vCtrl.setRecursive(false);
+					}
+					vCtrl.validate(dir, null, null);
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-		});
+			String file = cmdLine.getOptionValue("f");
+			if (file != null) {
+				try {
+					vCtrl.validate(file, null, null);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			String logFile = cmdLine.getOptionValue("l");
+			if (logFile != null) {
+				File logOutput = new File(logFile);
+				try {
+					logger.saveAs(logOutput, "csv");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Parse and return command-line arguments.
+	 * 
+	 * @param args
+	 * @return
+	 * @throws ParseException
+	 */
+	private static CommandLine loadOptions(String[] args) throws ParseException {
+		// create the command line parser
+		CommandLineParser parser = new DefaultParser();
+
+		/*
+		 * create the Options. Options represents a collection of Option
+		 * instances, which describe the **POSSIBLE** options for a command-line
+		 */
+		options = new Options();
+		options.addOption("h", "help", false, "Display this HELP file, then exit");
+		options.addOption("i", "interactive", false,
+				"Launch in interactive mode with full UI. When used, this argument will result in all other arguments being ignored.");
+		options.addOption("f", "file", true, "Process a single MDDF file");
+		options.addOption("d", "dir", true, "Process all MDDF files in a directory");
+		options.addOption("s", "script", true, "Run a script file ");
+		options.addOption("l", "logFile", true, "Output file for logging.");
+		options.addOption("logLevel", true,
+				"Filter for logging; valid values are: " + "\n'verbose'\n 'warn' (DEFAULT)\n 'error'\n 'info'");
+		options.addOption("r", "recursive", true, "[T/F] processing of a directory will be recursive (Default is 'T')");
+		// options.addOption("p", "profiles", false, "List supported profiles");
+		options.addOption("v", "verbose", false, "Display log-file entries in terminal window during execution");
+		options.addOption("V", "version", false, "Display software version and build date, then exit");
+
+		// options.addOption("C", "convertAll", false, "convert valid files to
+		// all applicable formats");
+		// Option option = new Option("c", "convert valid files to specified
+		// format(s)");
+		// // Set option c to take 1 to n arguments
+		// option.setArgs(Option.UNLIMITED_VALUES);
+		// options.addOption(option);
+
+		if (args.length == 0) {
+			printHelp();
+			System.exit(0);
+		}
+		// parse the command line arguments
+		CommandLine line = parser.parse(options, args);
+		return line;
+	}
+
+	/**
+	 * 
+	 */
+	private static void printHelp() {
+		HelpFormatter formatter = new HelpFormatter();
+		String header = "\nLaunch one of the MDDF tools used to validate and/or translate MovieLabs Digital Distribution Framework (MDDF) files.\n\n\n";
+		String footer = getHelpBody();
+		formatter.printHelp("ToolLauncher", header, options, footer, true);
+
+	}
+
+	private static String getHelpBody() {
+		String header = "";
+		String rsrcPath = TOOL_RSRC_PATH + "LauncherHelp.txt";
+		InputStream in = ToolLauncher.class.getResourceAsStream(rsrcPath);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+		String line = null;
+		String ls = System.getProperty("line.separator");
+		try {
+			while ((line = reader.readLine()) != null) {
+				header = header + ls + line;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return header;
+	}
+
+	private static void configureLogOptions(CommandLine cmdLine, LogMgmt logger) {
+		if (cmdLine.hasOption("logLevel")) {
+			String llValue = cmdLine.getOptionValue("logLevel", "warn");
+			switch (llValue) {
+			case "debug":
+				logger.setMinLevel(LogMgmt.LEV_DEBUG);
+				break;
+			case "verbose":
+				logger.setMinLevel(LogMgmt.LEV_NOTICE);
+				break;
+			case "warn":
+				logger.setMinLevel(LogMgmt.LEV_WARN);
+				break;
+			case "error":
+				logger.setMinLevel(LogMgmt.LEV_ERR);
+				break;
+			case "info":
+				logger.setMinLevel(LogMgmt.LEV_INFO);
+				break;
+			}
+		}
+		((DefaultLogging) logger).setPrintToConsole(cmdLine.hasOption("v"));
+	}
+
+	private static void printVersion() {
+		Properties mddfToolProps = ValidatorTool.loadProperties("/com/movielabs/mddflib/build.properties");
+		String libVersion = mddfToolProps.getProperty("version", "Not Specified");
+		String buildDate = mddfToolProps.getProperty("buildDate") + "; " + mddfToolProps.getProperty("buildTime");
+		System.out.println("mddf-lib version " + libVersion);
+		System.out.println("mddf-lib build date " + buildDate);
 	}
 
 	/**
