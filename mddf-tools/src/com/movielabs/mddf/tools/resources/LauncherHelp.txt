@@ -1,0 +1,67 @@
+-------------------------------------------------------------------
+MDDF tools have three modes of operation:
+
+  > interactively using a Graphic User Interface (GUI)
+  > using the Command Line Interface (CLI) with arguments
+  > running scripts
+  
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+ Using the GUI:
+
+The '-i' (or '--interactive') option is used to start the tools in 
+interactive mode. A 'launcher' dialog will be started that allows a
+user to then choose the specific MDDF tools to be launched.
+
+When used in interactive mode, all other arguments will be ignored. 
+The '-i' argument therefore has precedence over all other arguments.
+
+Example Usage: 
+  
+  java -jar mddf-tool.jar -i
+          
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+ Using the CLI with arguments :
+                      
+The CLI mode may be used to validate one or more MDDF file. Command line 
+options are, therefore, focused mainly on specifying which MDDF file(s)
+to process and controlling logging output.
+
+Example Usage:
+
+  (a) java -jar mddf-tool.jar -f ../sample/MyManifest.xml -v  
+  
+      Validates a single file, prints the log entries to the console, and 
+      does not save the log output in a CVS file. Log filtering is not 
+      specified so the default level of WARNING or higher is used.
+      
+  (b) java -jar mddf-tool.jar -f ../sample  logLevel error -l myLogFile
+  
+     Validates all MDDF files in a directory and filters the log entries
+     to only include those with severity ERROR or higher. processing will
+     include all subdirectories since the '-r' argument is not specified 
+     and defaults to 'T'. When completed, the log output will be saved to 
+     "./myLogFile.csv".      
+                      
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            
+ Running scripts (INCOMPLETE):
+
+In this mode the MDDF Validation/Translation toolset is used to run 
+validation scripts that specify sets of files to process and the specific
+options to use with each file set. Most options that are available
+when using the other two modes are supported. Using a script, however, allows
+different options to be specified with each file set.
+
+Scripting language and syntax is documented in the User's Guide. See 
+http://movielabs.com/md/manifest/validator/v1.2.1/UsersGuide.html#SCRIPT
+
+Example Usage:
+
+  Runs a script with log output saved to to a file:
+  
+       java -jar mddf-tool.jar  -s ./myScript.xyz  
+  
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Please report issues at http://www.movielabs.com/ or info@movielabs.com"
