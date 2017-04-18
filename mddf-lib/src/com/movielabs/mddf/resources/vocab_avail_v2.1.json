@@ -58,7 +58,8 @@
 		[
 			"EST",
 			"VOD",
-			"SVOD"
+			"SVOD",
+			"POEST"
 		],
 
 		"LicenseRightsDescription": 
