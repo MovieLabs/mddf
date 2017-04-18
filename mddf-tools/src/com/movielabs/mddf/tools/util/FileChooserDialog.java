@@ -103,7 +103,9 @@ public class FileChooserDialog {
 			}
 		}
 		Action details = myChooser.getActionMap().get("viewTypeDetails");
-		details.actionPerformed(null);
+		if (details != null) {
+			details.actionPerformed(null);
+		}
 		myChooser.setDialogTitle(promptText);
 		int retval = myChooser.showDialog(parent, "OK");
 		File myFile = null;
