@@ -5,12 +5,22 @@
 
 ## Versioning
 
-The latest release of the core mddf-lib is v1.1.2. The tool releases based on the latest version of the core software are: 
+The latest release of the core mddf-lib is v1.1.3. The tool releases based on the latest version of the core software are: 
 
-* Manifest Validator: v1.2.4
-* Avails Validator: v1.1.2
+* Manifest Validator: v1.2.5.rc2
+* Avails Validator: v1.1.3.rc1
 
 ### mddf-lib Changes:
+
+#### mddf-lib v1.1.3
+
+* Refactoring: Class AbstractValidator has been renamed CMValidator and is no longer abstract.
+* Bug Fix: Excel-formatted TV Avails threw exception when processing ReleaseHistory for a Season.
+* Bug Fix: CPE Profile IP-1 had incorrect identifier IP-01
+* Bug Fix: Corrected bug introduced in v1.1.2 that prevented validation of Manifests based on v1.4 of the CMM schema.
+* Bug Fix: MMC validation incorrectly determined number of Experiences in each ALIDExperienceMap
+* Enhancement: processing of TV Avails specified in Excel v1.6 format now handles 'Exception(s)Flag' typo in the template
+* Enhancement: support for MEC v2.5 added.
 
 #### mddf-lib v1.1.2
 
