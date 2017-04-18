@@ -1021,7 +1021,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	 */
 	public ValidationController getController() {
 		if (controller == null) {
-			controller = new ValidationController(context, consoleLogger);
+			controller = new ValidationController( consoleLogger);
 		}
 		return controller;
 	}
