@@ -86,7 +86,6 @@ public class XsdValidation {
 	public boolean validateXml(File srcFile, Element docRootEl, String xsdLocation, String moduleId) {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		System.out.println("xsdLocation=" + xsdLocation);
 		URL xsdUrl = getClass().getClassLoader().getResource(xsdLocation);
 		String genericTooltip = "XML does not conform to schema as defined in " + xsdLocation;
 		Schema schema;
