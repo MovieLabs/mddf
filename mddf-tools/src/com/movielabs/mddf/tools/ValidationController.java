@@ -29,12 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -43,8 +37,6 @@ import org.xml.sax.SAXParseException;
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddf.MddfContext.MDDF_TYPE;
-import com.movielabs.mddf.tools.ValidatorTool.Context;
-import com.movielabs.mddf.tools.resources.Foo;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
 import com.movielabs.mddf.tools.util.logging.LogNavPanel;
 import com.movielabs.mddflib.Obfuscator;
@@ -55,7 +47,6 @@ import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.avails.xml.XmlBuilder;
-import com.movielabs.mddflib.logging.DefaultLogging;
 import com.movielabs.mddflib.logging.Log4jAdapter;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.CpeValidator;
@@ -65,7 +56,6 @@ import com.movielabs.mddflib.manifest.validation.profiles.MMCoreValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -86,14 +76,13 @@ public class ValidationController {
 
 	public static final String MODULE_ID = "Validator";
 	private static File tempDir = new File("./tmp");
-	private static String[] supportedProfiles = { "none", "IP-0", "IP-1", "MMC-1"};
+	private static String[] supportedProfiles = { "none", "IP-0", "IP-1", "MMC-1" };
 	private static HashSet<String> supportedProfileKeys;
-	private static Options options = null;
 
 	private boolean validateS = true;
 	private boolean validateC = true;
 	private boolean validateBP = false;
-	private Context context;
+	private boolean isRecursive = true;
 	private LogMgmt logMgr;
 	private LogNavPanel logNav = null;
 
@@ -105,138 +94,19 @@ public class ValidationController {
 		}
 	}
 
-	/**
-	 * [Implementation DEFERED a/o 2016-04-11] Run preprocesssing functions via
-	 * CLI and/or script.
-	 *
-	 * @param args
-	 * @throws ParseException
-	 */
-	public static void main(String[] args) {
-		CommandLine cmdLine = null;
-		try {
-			cmdLine = loadOptions(args);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			printHelp();
-			System.exit(0);
-		}
-		DefaultLogging logger = new DefaultLogging();
-		configureOptions(cmdLine, logger);
-	}
-
-	/**
-	 * @param cmdLine
-	 */
-	private static void configureOptions(CommandLine cmdLine, LogMgmt logger) {
-		if (cmdLine.hasOption("h")) {
-			printHelp();
-			System.exit(0);
-		}
-		if (cmdLine.hasOption("p")) {
-			System.out.println("Supported profiles:\n");
-			for (int i = 0; i < supportedProfiles.length; i++) {
-				System.out.println("     " + supportedProfiles[i]);
-			}
-		}
-		if (cmdLine.hasOption("logLevel")) {
-			String llValue = cmdLine.getOptionValue("logLevel", "warn");
-			switch (llValue) {
-			case "verbose":
-				logger.setMinLevel(LogMgmt.LEV_DEBUG);
-				break;
-			case "warn":
-				logger.setMinLevel(LogMgmt.LEV_WARN);
-				break;
-			case "error":
-				logger.setMinLevel(LogMgmt.LEV_ERR);
-				break;
-			case "info":
-				logger.setMinLevel(LogMgmt.LEV_INFO);
-				break;
-			}
-		}
-	}
-
-	/**
-	 * Parse and return command-line arguments.
-	 * 
-	 * @param args
-	 * @return
-	 * @throws ParseException
-	 */
-	private static CommandLine loadOptions(String[] args) throws ParseException {
-		// create the command line parser
-		CommandLineParser parser = new DefaultParser();
-
-		/*
-		 * create the Options. Options represents a collection of Option
-		 * instances, which describe the **POSSIBLE** options for a command-line
-		 */
-		options = new Options();
-		options.addOption("h", "help", false, "Display this HELP file, then exit");
-		options.addOption("v", "version", false, "Display software version and build date");
-		options.addOption("s", "script", true, "Run a script file");
-		options.addOption("l", "logFile", true,
-				"Output file for logging. Default is './validatorLog.xxx' where 'xxx' denotes format");
-		options.addOption("logFormat", true, "Format for log file; valid values are: " + "\n'csv' (DEFAULT)\n 'xml'");
-		options.addOption("logLevel", true,
-				"Filter for logging; valid values are: " + "\n'verbose'\n 'warn' (DEFAULT)\n 'error'\n 'info'");
-		options.addOption("p", "profiles", false, "List supported profiles");
-		options.addOption("useCases", false, "List supported use-case grouped by profile");
-
-		if (args.length == 0) {
-			printHelp();
-			System.exit(0);
-		}
-		// parse the command line arguments
-		CommandLine line = parser.parse(options, args);
-		return line;
-	}
-
-	/**
-	 * 
-	 */
-	private static void printHelp() {
-		HelpFormatter formatter = new HelpFormatter();
-		String header = "\nValidates one or more MovieLabs Digital Distribution Framework (MDDF) files.\n"
-				+ getHelpHeader() + "\n\n";
-		String footer = "\nPlease report issues at http://www.movielabs.com/ or info@movielabs.com";
-		formatter.printHelp("Validator", header, options, footer, true);
-
-	}
-
-	private static String getHelpHeader() {
-		String header = "";
-		Object foo = new Foo();
-		String rsrcPath = "./ValidatorHelp.txt";
-		InputStream in = foo.getClass().getResourceAsStream(rsrcPath);
-		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-		String line = null;
-		String ls = System.getProperty("line.separator");
-		try {
-			while ((line = reader.readLine()) != null) {
-				header = header + ls + line;
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return header;
-	}
-
-	public static String[] getSupportedProfiles() { 
+	public static String[] getSupportedProfiles() {
 		return supportedProfiles;
 	}
 
 	public static String[] getSupportedUseCases(String profile) {
-//		ProfileValidator referenceInstance = profileMap.get(profile);
-//		if (referenceInstance != null) {
-//			List<String> pucList = referenceInstance.getSupporteUseCases(profile);
-//			return pucList.toArray(new String[pucList.size()]);
-//		} else {
-			return null;
-//		}
+		// ProfileValidator referenceInstance = profileMap.get(profile);
+		// if (referenceInstance != null) {
+		// List<String> pucList =
+		// referenceInstance.getSupporteUseCases(profile);
+		// return pucList.toArray(new String[pucList.size()]);
+		// } else {
+		return null;
+		// }
 	}
 
 	/**
@@ -245,8 +115,7 @@ public class ValidationController {
 	 * 
 	 * @param context
 	 */
-	public ValidationController(Context context, LogMgmt logMgr) {
-		this.context = context;
+	public ValidationController(LogMgmt logMgr) {
 		this.logMgr = logMgr;
 		/*
 		 * Determine if we are running in an interactive mode via a GUI. If so,
@@ -319,47 +188,48 @@ public class ValidationController {
 		}
 
 		// .................
-		JSONArray taskList = null;
-		switch (context) {
-		case AVAILS:
-			setValidation(true, true, false);
-			taskList = validationTasks.optJSONArray("avails");
-			break;
-		case MANIFEST:
-			JSONObject checks = validationTasks.optJSONObject("checks");
-			boolean chk_s = true;
-			boolean check_c = (checks.optString("constraints", "Y").equalsIgnoreCase("Y"));
-			boolean check_bp;
-			if (check_c) {
-				check_bp = (checks.optString("bestPrac", "Y").equalsIgnoreCase("Y"));
-			} else {
-				check_bp = false;
-			}
-			setValidation(chk_s, check_c, check_bp);
-			taskList = validationTasks.optJSONArray("manifests");
-		}
-		// .................
-		if (taskList == null || (taskList.isEmpty())) {
-			return;
-		} else {
-			for (int i = 0; i < taskList.size(); i++) {
-				JSONObject next = taskList.getJSONObject(i);
-				String path = pathPrefix + next.getString("file");
-				// String schema = next.optString("schema", "1.4");
-				String profile = next.optString("profile", "none");
-				// try {
-				validate(path, profile, useCaseList);
-				// } catch (JDOMException e) {
-				// // TODO Auto-generated catch block
-				// e.printStackTrace();
-				// String errMsg = "EXCEPTION processing file " + path + "; " +
-				// e.getLocalizedMessage();
-				// System.out.println(errMsg);
-				// logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_ACTION, errMsg, new
-				// File(path), MODULE_ID);
-				// }
-			}
-		}
+		// JSONArray taskList = null;
+		// switch (context) {
+		// case AVAILS:
+		// setValidation(true, true, false);
+		// taskList = validationTasks.optJSONArray("avails");
+		// break;
+		// case MANIFEST:
+		// JSONObject checks = validationTasks.optJSONObject("checks");
+		// boolean chk_s = true;
+		// boolean check_c = (checks.optString("constraints",
+		// "Y").equalsIgnoreCase("Y"));
+		// boolean check_bp;
+		// if (check_c) {
+		// check_bp = (checks.optString("bestPrac", "Y").equalsIgnoreCase("Y"));
+		// } else {
+		// check_bp = false;
+		// }
+		// setValidation(chk_s, check_c, check_bp);
+		// taskList = validationTasks.optJSONArray("manifests");
+		// }
+		// // .................
+		// if (taskList == null || (taskList.isEmpty())) {
+		// return;
+		// } else {
+		// for (int i = 0; i < taskList.size(); i++) {
+		// JSONObject next = taskList.getJSONObject(i);
+		// String path = pathPrefix + next.getString("file");
+		// // String schema = next.optString("schema", "1.4");
+		// String profile = next.optString("profile", "none");
+		// // try {
+		// validate(path, profile, useCaseList);
+		// // } catch (JDOMException e) {
+		// // // TODO Auto-generated catch block
+		// // e.printStackTrace();
+		// // String errMsg = "EXCEPTION processing file " + path + "; " +
+		// // e.getLocalizedMessage();
+		// // System.out.println(errMsg);
+		// // logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_ACTION, errMsg, new
+		// // File(path), MODULE_ID);
+		// // }
+		// }
+		// }
 		if ((logMgr != null) && (logFile != null)) {
 			File logOutput = new File(logFile);
 			logMgr.saveAs(logOutput, "csv");
@@ -387,7 +257,6 @@ public class ValidationController {
 	public void validate(String srcPath, String uxProfile, List<String> useCases) throws IOException {
 		File srcFile = new File(srcPath);
 		if (srcFile.isDirectory()) {
-			boolean isRecursive = true;
 			File[] inputFiles = srcFile.listFiles();
 			int fileCount = inputFiles.length;
 			for (int i = 0; i < fileCount; i++) {
@@ -438,6 +307,8 @@ public class ValidationController {
 			return;
 		}
 		logMgr.setCurrentFile(srcFile);
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "Validating " + srcFile.getPath(), srcFile, MODULE_ID);
+
 		Map<Object, Pedigree> pedigreeMap = null;
 		Document xmlDoc = null;
 		if (fileType.equals("xlsx")) {
@@ -536,7 +407,6 @@ public class ValidationController {
 		}
 		return extension.toLowerCase();
 	}
- 
 
 	/**
 	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file.
@@ -575,16 +445,19 @@ public class ValidationController {
 			return null;
 		}
 		Version templateVersion = as.getVersion();
+		XmlBuilder xBuilder = new XmlBuilder(logMgr, templateVersion);
 		switch (templateVersion) {
 		case V1_7:
 			if (logNav != null) {
 				logNav.setMddfFormat(xslxFile, FILE_FMT.AVAILS_1_7);
 			}
+			xBuilder.setVersion("2.2");
 			break;
 		case V1_6:
 			if (logNav != null) {
 				logNav.setMddfFormat(xslxFile, FILE_FMT.AVAILS_1_6);
 			}
+			xBuilder.setVersion("2.1");
 			break;
 		case UNK:
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", xslxFile, MODULE_ID);
@@ -599,8 +472,6 @@ public class ValidationController {
 		String inFileName = xslxFile.getName();
 		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
 		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp);
-		XmlBuilder xBuilder = new XmlBuilder(logMgr, templateVersion);
-		xBuilder.setVersion("2.2");
 		try {
 			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(as, shortDesc);
 			Map<Object, Pedigree> pedigreeMap = xBuilder.getPedigreeMap();
@@ -798,5 +669,22 @@ public class ValidationController {
 			}
 		}
 		return profileNameList;
+	}
+
+	/**
+	 * @return the isRecursive
+	 */
+	public boolean isRecursive() {
+		return isRecursive;
+	}
+
+	/**
+	 * If <tt>true</tt> processing of a directory will be recursive.
+	 * 
+	 * @param isRecursive
+	 *            the isRecursive to set
+	 */
+	public void setRecursive(boolean isRecursive) {
+		this.isRecursive = isRecursive;
 	}
 }
