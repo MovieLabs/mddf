@@ -50,9 +50,9 @@ public class DefaultLogging implements LogMgmt {
 	private int masterSeqNum;
 	private List<LogEntryNode> entryList;
 	private File curInputFile;
-	private int minLevel = LogMgmt.LEV_WARN;
-	private boolean printToConsole = true;
-	private boolean infoIncluded;
+	protected int minLevel = LogMgmt.LEV_WARN;
+	protected boolean printToConsole = false;
+	protected boolean infoIncluded;
 	private Map<File, LogEntryFolder> fileFolderMap = new HashMap<File, LogEntryFolder>();
 
 	/**
@@ -61,8 +61,6 @@ public class DefaultLogging implements LogMgmt {
 	public DefaultLogging() {
 		clearLog();
 	}
-
- 
 
 	/*
 	 * (non-Javadoc)
@@ -116,18 +114,22 @@ public class DefaultLogging implements LogMgmt {
 			return;
 		}
 		if (xmlFile == null) {
-			xmlFile = curInputFile;
+			// xmlFile = curInputFile;
+			if (printToConsole) {
+				System.out.println("DEBUG: "+msg);
+			} 
+			return;
 		}
 		// First get correct 'folder'
 		String tagAsText = LogMgmt.logTags[tag];
-		LogEntryFolder byManifestFile = getFileFolder(xmlFile );
+		LogEntryFolder byManifestFile = getFileFolder(xmlFile);
 		LogEntryFolder byLevel = (LogEntryFolder) byManifestFile.getChild(LogMgmt.logLevels[level]);
 		LogEntryFolder tagNode = (LogEntryFolder) byLevel.getChild(tagAsText);
 		if (tagNode == null) {
 			tagNode = createTagNode(tag, level, byLevel);
 		}
-		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, byManifestFile, line, moduleID, masterSeqNum++, details,
-				srcRef); 
+		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, byManifestFile, line, moduleID, masterSeqNum++,
+				details, srcRef);
 		tagNode.addMsg(entryNode);
 		/*
 		 * add to the flat (i.e., sequential but non-hierarchical) list too...
@@ -135,6 +137,8 @@ public class DefaultLogging implements LogMgmt {
 		entryList.add(entryNode);
 		if (printToConsole) {
 			entryNode.print();
+		} else if (level == LogMgmt.LEV_INFO) {
+			System.out.println(msg);
 		}
 	}
 
@@ -146,7 +150,7 @@ public class DefaultLogging implements LogMgmt {
 	 * @param byLevel
 	 * @return
 	 */
-	private LogEntryFolder createTagNode(int tag , int level, LogEntryFolder byLevel) {
+	private LogEntryFolder createTagNode(int tag, int level, LogEntryFolder byLevel) {
 
 		String tagAsText = LogMgmt.logTags[tag];
 		LogEntryFolder tagNode = new LogEntryFolder(tagAsText, level);
@@ -154,7 +158,7 @@ public class DefaultLogging implements LogMgmt {
 		 * need to keep order consistent so figure where to insert. Allow for
 		 * situation where it is the first node or the child set is empty
 		 */
-		int tagIdx = getTagIndex(tagAsText); 
+		int tagIdx = getTagIndex(tagAsText);
 		byLevel.add(tagNode);
 		return tagNode;
 	}
@@ -170,8 +174,8 @@ public class DefaultLogging implements LogMgmt {
 			}
 		}
 		throw new IllegalArgumentException("Unsupported tag '" + tagAsText + "'");
-	} 
-	
+	}
+
 	public LogEntryFolder getFileFolder(File targetFile) {
 		LogEntryFolder fileFolder = fileFolderMap.get(targetFile);
 		if (fileFolder == null) {
@@ -309,7 +313,8 @@ public class DefaultLogging implements LogMgmt {
 	}
 
 	/**
-	 * @param infoIncluded the infoIncluded to set
+	 * @param infoIncluded
+	 *            the infoIncluded to set
 	 */
 	public void setInfoIncluded(boolean infoIncluded) {
 		this.infoIncluded = infoIncluded;
