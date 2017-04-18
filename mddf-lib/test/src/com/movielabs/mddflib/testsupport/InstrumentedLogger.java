@@ -30,6 +30,7 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Cell;
 import org.jdom2.located.Located;
 
+import com.movielabs.mddflib.logging.DefaultLogging;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
@@ -38,7 +39,7 @@ import com.movielabs.mddflib.logging.LogReference;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class InstrumentedLogger implements LogMgmt {
+public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 
 	private int[] countByLevel;
 	private int[] countByTag;
@@ -59,9 +60,11 @@ public class InstrumentedLogger implements LogMgmt {
 		countByTag[tag]++;
 		String key = line + ":" + tag + ":" + level;
 		msgMap.put(key, msg);
-		System.out.println(LogMgmt.logLevels[level]+"(line "+line+")"+"--"+msg);
-		if(level == LogMgmt.LEV_FATAL){
-			System.out.println("DEAD AGAIN");
+		if (printToConsole) {
+			System.out.println("ILOG--->" + LogMgmt.logLevels[level] + "(line " + line + ")" + "--" + msg);
+			if (level == LogMgmt.LEV_FATAL) {
+				System.out.println("DEAD AGAIN");
+			}
 		}
 	}
 
@@ -72,7 +75,7 @@ public class InstrumentedLogger implements LogMgmt {
 	 * @return
 	 */
 	public String getMsg(int level, int tag, int line) {
-		String key = line + ":" + tag + ":" + level; 
+		String key = line + ":" + tag + ":" + level;
 		return (msgMap.get(key));
 	}
 
@@ -126,8 +129,8 @@ public class InstrumentedLogger implements LogMgmt {
 				lineNum = ((Cell) target).getRowIndex();
 			}
 		}
-		if(explanation != null){
-			msg = msg+"; "+explanation;
+		if (explanation != null) {
+			msg = msg + "; " + explanation;
 		}
 		record(level, tag, lineNum, msg);
 	}
