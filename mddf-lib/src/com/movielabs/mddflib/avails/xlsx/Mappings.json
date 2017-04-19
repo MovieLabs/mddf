@@ -78,7 +78,8 @@
 			],
 
 			"AvailTrans:WatchDuration": "{avail}Term/{avail}Duration[../@termName='WatchDuration']",
-			"AvailTrans:WCG": "{avail}FormatProfile/@WCG"
+			"AvailTrans:WCG": "{avail}FormatProfile/@WCG",
+			"AvailTrans:Avail/AvailID": "@TransactionID"
 		},
 
 		"TV": 
@@ -277,7 +278,8 @@
 			],
 
 			"AvailTrans:WatchDuration": "{avail}Term/{avail}Duration[../@termName='WatchDuration']",
-			"AvailTrans:WCG": "{avail}FormatProfile/@WCG"
+			"AvailTrans:WCG": "{avail}FormatProfile/@WCG",
+			"AvailTrans:Avail/AvailID": "@TransactionID"
 		}
 	}
 }

@@ -294,6 +294,7 @@ public class XlsxBuilder {
 			 */
 			Map<String, List<XPathExpression>> availMappings = xpathSets.get("Avail");
 			Map<String, String> commonData = extractData(availEl, availMappings, "");
+			Set<String> foo = commonData.keySet();
 			/*
 			 * now identify each Asset that is a child of this Avail and prepare
 			 * its data.
@@ -336,6 +337,14 @@ public class XlsxBuilder {
 				for (int tIdx = 0; tIdx < perTransData.size(); tIdx++) {
 					Map<String, String> rowData = perTransData.get(tIdx);
 					rowData.putAll(assetData);
+					/*
+					 * Special Case: AvailID is unique per row and comes from
+					 * the TransactionID. The problem is the way the syntax of
+					 * the Mappings.json and the way this code groups xpaths by
+					 * the Excel row-1 column header. So...
+					 */
+					String trueAvailID = rowData.get("AvailTrans:Avail/AvailID");
+					rowData.put("Avail:AvailID", trueAvailID);
 					addRow(colIdList, rowData, sheet);
 				}
 			}
@@ -796,7 +805,7 @@ public class XlsxBuilder {
 	public void export(String destPath) throws FileNotFoundException, IOException {
 		/* First adjust column widths */
 		int sheetCnt = workbook.getNumberOfSheets();
-		for (int i = 0; i < sheetCnt; i++) { 
+		for (int i = 0; i < sheetCnt; i++) {
 			Sheet sheet = workbook.getSheetAt(i);
 			if (sheet != null) {
 				String name = sheet.getSheetName();
