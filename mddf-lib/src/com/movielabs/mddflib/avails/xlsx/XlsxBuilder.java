@@ -251,7 +251,7 @@ public class XlsxBuilder {
 		if (movieAvailsList.isEmpty()) {
 			return;
 		}
-		addAvails("Movie", movieAvailsList);
+		addAvails("Movies", movieAvailsList);
 	}
 
 	/**
