@@ -14,6 +14,8 @@
 ---
 ## <a name="h_News">What's New</a>
 
+* **2017-Apr-18**: mddf-lib v1.1.3.rc4 is now available as an executable jar for testing and evaluation.
+
 * **2017-Mar-02**: mddf-lib v1.1.2 is now available. See Change Log for list of fixed bugs.
 
 * **2017-Feb-13**: mddf-lib v1.1.1 is now available. This provides several fixes relating to the translation of Avails
