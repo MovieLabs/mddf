@@ -206,18 +206,15 @@ public class DefaultMetadata {
 		String mdPrefix = mdNS.getPrefix();
 		String avPrefix = xb.getAvailsNSpace().getPrefix();
 
-		String xpath = "./" + avPrefix + ":ReleaseHistory[./" + mdPrefix + ":ReleaseType='" + type + "' and .//"
-				+ mdPrefix + ":country='" + rTerr + "' and ./" + mdPrefix + ":Date='" + rDate + "']";
+		String xpath = ".//" + avPrefix + ":ReleaseHistory[./" + mdPrefix + ":ReleaseType/text()='" + type + "' and .//"
+				+ mdPrefix + ":country/text()='" + rTerr + "' and ./" + mdPrefix + ":Date/text()='" + rDate + "']";
 		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, xb.getAvailsNSpace(),
 				xb.getMdNSpace());
 		Element matching = xpExpression.evaluateFirst(parentEl);
 		if (matching != null) {
-			// ignore pre-existing match
-			// System.out.println("ignore pre-existing match:: " + type + "-" +
-			// rTerr + "-" + rDate);
+			// ignore pre-existing match 
 			return;
-		}
-
+		} 
 		Element rh = new Element("ReleaseHistory", xb.getAvailsNSpace());
 		Element rt = new Element("ReleaseType", xb.getMdNSpace());
 		rt.setText(type);
@@ -365,13 +362,18 @@ public class DefaultMetadata {
 		IteratorIterable<Element> targets = metadataEl.getDescendants(rhTempFilter);
 		List<Element> elList = new ArrayList<Element>();
 		targets.forEach(elList::add);
-		for(int i=0; i < elList.size();i++) {
+		for (int i = 0; i < elList.size(); i++) {
 			Element relHistTEMP = elList.get(i);
 			List<Element> rhElList = relHistTEMP.getChildren("ReleaseHistory", xb.getAvailsNSpace());
 			Element curMDataEl = relHistTEMP.getParentElement();
 			int ptr = curMDataEl.indexOf(relHistTEMP) + 1;
-			for (int j = 0; j < rhElList.size(); j++) {
-				Element nextEl = rhElList.get(j);
+			/*
+			 * clone List, otherwise the detach() screws things up since
+			 * rhElList is backed by the actual content.
+			 */
+			List<Element> rhElListClone = new ArrayList<Element>();
+			rhElListClone.addAll(rhElList);
+			for (Element nextEl : rhElListClone) {
 				nextEl.detach();
 				curMDataEl.addContent(ptr, nextEl);
 			}
@@ -385,12 +387,12 @@ public class DefaultMetadata {
 		targets = metadataEl.getDescendants(ratingsFilter);
 		elList = new ArrayList<Element>();
 		targets.forEach(elList::add);
-		for(int i=0; i < elList.size();i++) {
-			Element ratings = elList.get(i); 
+		for (int i = 0; i < elList.size(); i++) {
+			Element ratings = elList.get(i);
 			if (ratings.getChildren().isEmpty()) {
 				ratings.detach();
 			}
-		} 
+		}
 	}
 
 }
