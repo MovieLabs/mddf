@@ -66,8 +66,7 @@ public class RowToXmlHelper {
 		 * Need to save the current workType for use in Transaction/Terms
 		 */
 		workTypePedigree = getPedigreedData("AvailAsset/WorkType");
-		this.workType = workTypePedigree.getRawValue();
-		System.out.println("WorkType='" + workType + "'");
+		this.workType = workTypePedigree.getRawValue(); 
 	}
 
 	protected void makeAvail(XmlBuilder xb) {
