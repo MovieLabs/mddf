@@ -14,6 +14,12 @@ The latest release of the core mddf-lib is v1.1.3. The tool releases based on th
 
 #### mddf-lib v1.1.3
 
+* Bug fix: When translating XLSX Avails to XML any SharedEntitlements were dropped.
+* Bug fix: When translating XLSX Avails to XML redundant ReleaseHistory elements were not removed
+* Bug fix: When translating XML Avails to XLSX the spreadsheet for Movies was incorrectly identified as 'Movie'
+* Bug fix: When translating XML Avails to XLSX the AvailID was always set to the TransactionID of the 1st Transaction.
+* Modification: LicenseRightsDescription is now treated as freeform when validating Avails.
+
 * Refactoring: Class AbstractValidator has been renamed CMValidator and is no longer abstract.
 * Bug Fix: Excel-formatted TV Avails threw exception when processing ReleaseHistory for a Season.
 * Bug Fix: CPE Profile IP-1 had incorrect identifier IP-01
