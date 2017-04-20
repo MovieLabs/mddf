@@ -12,7 +12,7 @@ The latest release of the core mddf-lib is v1.1.3. The tool releases based on th
 
 ### mddf-lib Changes:
 
-#### mddf-lib v1.1.3
+#### mddf-lib v1.1.3_rc6
 
 * Bug fix: When translating XLSX Avails to XML any SharedEntitlements were dropped.
 * Bug fix: When translating XLSX Avails to XML redundant ReleaseHistory elements were not removed
