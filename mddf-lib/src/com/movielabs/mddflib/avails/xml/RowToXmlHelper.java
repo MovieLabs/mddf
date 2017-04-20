@@ -66,7 +66,7 @@ public class RowToXmlHelper {
 		 * Need to save the current workType for use in Transaction/Terms
 		 */
 		workTypePedigree = getPedigreedData("AvailAsset/WorkType");
-		this.workType = workTypePedigree.getRawValue(); 
+		this.workType = workTypePedigree.getRawValue();
 	}
 
 	protected void makeAvail(XmlBuilder xb) {
@@ -85,6 +85,7 @@ public class RowToXmlHelper {
 			xb.addTransaction(avail, e);
 		}
 
+		createSharedEntitlements();
 	}
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -340,6 +341,31 @@ public class RowToXmlHelper {
 			return termEl;
 		} else {
 			return null;
+		}
+	}
+
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	/**
+	 * @return
+	 */
+	protected void createSharedEntitlements() {
+		/*
+		 * SharedEntitlement is OPTIONAL. There are two 'ecosystems' supported
+		 * by the Excel format UV and DMA.
+		 */
+		addEcosystem("UVVU", "Avail/UV_ID");
+		addEcosystem("DMA", "Avail/DMA_ID");
+	}
+
+	protected void addEcosystem(String ecosysId, String colKey) { 
+		Pedigree pg = getPedigreedData(colKey);
+		if (this.isSpecified(pg)) {
+			Element eidEl = new Element("EcosystemID", xb.getAvailsNSpace());
+			eidEl.setText( pg.getRawValue());
+			Element avail = xb.getAvailElement(this);
+			xb.addEntitlement(avail, ecosysId, eidEl);
 		}
 	}
 

@@ -23,6 +23,7 @@
 package com.movielabs.mddflib.avails.xml;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -69,6 +70,8 @@ public class XmlBuilder {
 	private String shortDesc;
 	private Map<Element, List<Element>> avail2AssetMap;
 	private Map<Element, List<Element>> avail2TransMap;
+	private Map<Element, Map<String, Element>> avail2EntilementMap;
+	private Map<Element, List<String>> entitlement2IdMap;
 	private Map<String, Element> assetElRegistry;
 	private Map<Element, RowToXmlHelper> element2SrcRowMap;
 	private LogMgmt logger;
@@ -157,6 +160,8 @@ public class XmlBuilder {
 		assetElRegistry = new HashMap<String, Element>();
 		avail2AssetMap = new HashMap<Element, List<Element>>();
 		avail2TransMap = new HashMap<Element, List<Element>>();
+		avail2EntilementMap = new HashMap<Element, Map<String, Element>>();
+		entitlement2IdMap = new HashMap<Element, List<String>>();
 		element2SrcRowMap = new HashMap<Element, RowToXmlHelper>();
 
 		// Create and initialize Document...
@@ -169,7 +174,7 @@ public class XmlBuilder {
 		root.addNamespaceDeclaration(mdMecNSpace);
 		root.addNamespaceDeclaration(SchemaWrapper.xsiNSpace);
 		doc.setRootElement(root);
-		String msg = "Processing spreadsheet '"+aSheet.getName()+"'; RowCount=" + aSheet.getRowCount();
+		String msg = "Processing spreadsheet '" + aSheet.getName() + "'; RowCount=" + aSheet.getRowCount();
 		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 
 		// build document components row by row.
@@ -206,6 +211,11 @@ public class XmlBuilder {
 			Element nextAvailEl = alidIt.next();
 			Element sDescEl = nextAvailEl.getChild("ShortDescription", availsNSpace);
 			int index = nextAvailEl.indexOf(sDescEl) + 1;
+			Map<String, Element> seMap = avail2EntilementMap.get(nextAvailEl);
+			if (seMap != null && !seMap.isEmpty()) {
+				Collection<Element> seSet = seMap.values();
+				nextAvailEl.addContent(index, seSet);
+			}
 			nextAvailEl.addContent(index, avail2TransMap.get(nextAvailEl));
 			nextAvailEl.addContent(index, avail2AssetMap.get(nextAvailEl));
 			finalizeAssetMetadata(nextAvailEl);
@@ -287,9 +297,13 @@ public class XmlBuilder {
 			// Exception Flag
 			curRow.process(availEL, "ExceptionFlag", getAvailsNSpace(), "Avail/ExceptionFlag");
 
-			// Initialize data structures for collecting Assets and Transactions
+			/*
+			 * Initialize data structures for collecting Assets, Transactions,
+			 * and Entitlements.
+			 */
 			avail2AssetMap.put(availEL, new ArrayList<Element>());
 			avail2TransMap.put(availEL, new ArrayList<Element>());
+			avail2EntilementMap.put(availEL, new HashMap<String, Element>());
 		} else {
 			/*
 			 * make sure key values are aligned...
@@ -511,6 +525,30 @@ public class XmlBuilder {
 	void addTransaction(Element avail, Element transEl) {
 		List<Element> transactionList = avail2TransMap.get(avail);
 		transactionList.add(transEl);
+	}
+
+	void addEntitlement(Element avail, String ecosysId, Element eidEl) {
+		Map<String, Element> entitlmentMap = avail2EntilementMap.get(avail);
+		Element seEl = entitlmentMap.get(ecosysId);
+		if (seEl == null) {
+			// new ecosystem for this Avail
+			seEl = new Element("SharedEntitlement", getAvailsNSpace());
+			seEl.setAttribute("ecosystem", ecosysId);
+			entitlmentMap.put(ecosysId, seEl);
+			entitlement2IdMap.put(seEl, new ArrayList<String>());
+		}
+		/*
+		 * Multiple IDs are allowed for any given ecosystem BUT we want to avoid
+		 * redundant entries.
+		 */
+		List<String> idList = entitlement2IdMap.get(seEl);
+		String eid = eidEl.getText();
+		if (idList.contains(eid)) {
+			return;
+		} else {
+			seEl.addContent(eidEl);
+			idList.add(eid);
+		}
 	}
 
 	/**
