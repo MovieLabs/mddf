@@ -359,9 +359,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		srcRef = LogReference.getRef(doc, "avail07");
 		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseType", allowed, srcRef, true, false);
 
-		allowed = availVocab.optJSONArray("LicenseRightsDescription");
-		srcRef = LogReference.getRef(doc, "avail07");
-		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseRightsDescription", allowed, srcRef, true, false);
+//		allowed = availVocab.optJSONArray("LicenseRightsDescription");
+//		srcRef = LogReference.getRef(doc, "avail07");
+//		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseRightsDescription", allowed, srcRef, true, false);
 
 		allowed = availVocab.optJSONArray("FormatProfile");
 		srcRef = LogReference.getRef(doc, "avail07");
