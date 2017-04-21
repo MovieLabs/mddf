@@ -214,7 +214,8 @@
 				<xs:element name="EndCondition" type="xs:string"/>
 			</xs:choice>
 			<xs:element name="StoreLanguage" type="xs:language" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="LicenseRightsDescription" type="xs:string"/>
+			<!-- ERROR Correction: as published LRD was required instead of optional -->
+			<xs:element name="LicenseRightsDescription" type="xs:string"  minOccurs="0"/>
 			<xs:element name="FormatProfile" type="xs:string"/>
 			<xs:element name="ContractID" type="xs:string" minOccurs="0"/>
 			<xs:element name="Term" maxOccurs="unbounded">
