@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.logging.log4j.*;
+import org.apache.poi.POIXMLException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -65,7 +66,7 @@ public class AvailsWrkBook {
 	 * @throws FileNotFoundException
 	 */
 	public AvailsWrkBook(File file, Logger logger, boolean exitOnError, boolean cleanupData)
-			throws FileNotFoundException, IOException {
+			throws FileNotFoundException, IOException, POIXMLException {
 		this.file = file;
 		this.logger = logger;
 		this.exitOnError = exitOnError;
