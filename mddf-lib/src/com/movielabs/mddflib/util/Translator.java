@@ -23,16 +23,10 @@
 package com.movielabs.mddflib.util;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.EnumSet;
 import java.util.Iterator;
 
 import org.jdom2.Document;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xlsx.XlsxBuilder;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -40,13 +34,34 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 import com.movielabs.mddflib.avails.xlsx.AvailsSheet.Version;
 
 /**
- * Coordinates translation of Avails from one format or version to another.
+ * Performs translation of Avails from one format or version to another and then
+ * exports (i.e., saves) the translated file(s).
  * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
 public class Translator {
 
+	/**
+	 * @param xmlDoc
+	 * @param xportFmts
+	 * @param exportDir
+	 * @param logMgr
+	 */
+	public static int translateAvails(Document xmlDoc, EnumSet<FILE_FMT> xportFmts, File exportDir, String filePrefix,
+			LogMgmt logMgr) {
+		String dirPath = exportDir.getAbsolutePath();
+		return translateAvails(xmlDoc, xportFmts, dirPath, filePrefix, logMgr);
+	}
+
+	/**
+	 * @param xmlDoc
+	 * @param selections
+	 * @param dirPath
+	 * @param filePrefix
+	 * @param logMgr
+	 * @return
+	 */
 	public static int translateAvails(Document xmlDoc, EnumSet<FILE_FMT> selections, String dirPath, String filePrefix,
 			LogMgmt logMgr) {
 		Iterator<FILE_FMT> selIt = selections.iterator();
@@ -72,7 +87,7 @@ public class Translator {
 				fileName = filePrefix + "_v2.2.xml";
 				exported = new File(dirPath, fileName);
 				// Save as XML
-				if(XmlIngester.writeXml(exported, xmlDoc)){
+				if (XmlIngester.writeXml(exported, xmlDoc)) {
 					outputCnt++;
 				}
 				break;
@@ -81,5 +96,21 @@ public class Translator {
 		}
 		return outputCnt;
 
+	}
+
+	/**
+	 * Returns text suitable for describing capabilities and usage of
+	 * translation functions. Text is formated for incorporation in <tt>man</tt>
+	 * and Help pages.
+	 * 
+	 * @return
+	 */
+	public static String getHelp() {
+		String helpTxt = "The formats available are dependant on the type of MDDF file.\n"
+				+ "For AVAILS the following formats may be specified:\n"
+				+ "-- AVAILS_1_7: Excel using v1.7 template.\n"
+				+ "-- AVAILS_2_2: XML using v2.2 schema.";
+
+		return helpTxt;
 	}
 }
