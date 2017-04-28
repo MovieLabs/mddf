@@ -42,7 +42,14 @@ Example Usage:
      to only include those with severity ERROR or higher. processing will
      include all subdirectories since the '-r' argument is not specified 
      and defaults to 'T'. When completed, the log output will be saved to 
-     "./myLogFile.csv".      
+     "./myLogFile.csv".   
+     
+  (c) java -jar mddf-tool-f ./Avail_v1.7.xlsx -xDir ./out -x AVAILS_2_2 
+  
+      Validates a single Avails specified as an Excel spreadsheet using
+      the v1.7 template. If the file is valid it will be converted to an
+      XML file using the v2.2 schema and then saved in the './out' 
+      subdirectory.   
                       
             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             
