@@ -33,11 +33,14 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.logging.DefaultLogging;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.Translator;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -46,13 +49,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.EnumSet;
 import java.util.Properties;
 
 /**
- * Implements a framework for accessing the various MDDF <i>tools</i>. Depending on
- * the <tt>args</tt> passed to either <tt>ToolLauncher.main()</tt> or
- * <tt>ToolLauncher.execute()</tt>, usage may be either via a GUI or via the command
- * line arguments. 
+ * Implements a framework for accessing the various MDDF <i>tools</i>. Depending
+ * on the <tt>args</tt> passed to either <tt>ToolLauncher.main()</tt> or
+ * <tt>ToolLauncher.execute()</tt>, usage may be either via a GUI or via the
+ * command line arguments.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -63,6 +68,8 @@ public class ToolLauncher {
 	private static Options options = null;
 	public static final String TOOL_RSRC_PATH = "/com/movielabs/mddf/tools/resources/";
 
+	private static HelpFormatter formatter = new HelpFormatter();
+
 	/**
 	 * Main entry point for executable jar.
 	 */
@@ -72,16 +79,56 @@ public class ToolLauncher {
 
 	}
 
+	private static void loadOptions() {
+		/*
+		 * create the Options. Options represents a collection of Option
+		 * instances, which describe the **POSSIBLE** options for a command-line
+		 */
+		options = new Options();
+		options.addOption("h", "help", false, "Display this HELP file, then exit");
+		options.addOption("i", "interactive", false,
+				"Launch in interactive mode with full UI. When used, this argument will result in all other arguments being ignored.");
+		options.addOption("f", "file", true, "Process a single MDDF file.");
+		options.addOption("d", "dir", true, "Process all MDDF files in a directory.");
+		options.addOption("s", "script", true, "Run a script file.");
+		options.addOption("l", "logFile", true, "Output file for logging.");
+		options.addOption("logLevel", true,
+				"Filter for logging; valid values are: " + "\n'verbose'\n 'warn' (DEFAULT)\n 'error'\n 'info'");
+		options.addOption("r", "recursive", true,
+				"[T/F] processing of a directory will be recursive (Default is 'T').");
+		options.addOption("v", "verbose", false, "Display log-file entries in terminal window during execution.");
+		options.addOption("V", "version", false, "Display software version and build date.");
+
+		options.addOption("X", "exportAll", false, "export valid files in all applicable formats.");
+		Option xOption = new Option("x",
+				"export valid files in specified format(s). Multiple formats may be specified separated by commas"
+						+ " and requests to export in a format matching the source format are ignored. "
+						+ Translator.getHelp());
+		// Set option 'x' to take 1 to n arguments
+		xOption.setArgs(Option.UNLIMITED_VALUES);
+		options.addOption(xOption);
+		options.addOption("xDir", "exportDir", true, "Directory for exported files (Default is '.')");
+	}
+
 	public static void execute(String[] args, LogMgmt logger) {
+		loadOptions();
 		CommandLine cmdLine = null;
-		try {
-			cmdLine = loadOptions(args);
-		} catch (ParseException e) {
-			System.out.println("\n" + e.getLocalizedMessage() + "\n\n");
-			printHelp();
+		if (args.length == 0) {
+			printUsage("");
 			System.exit(0);
 		}
-		if ((cmdLine.getOptions().length < 1) || (cmdLine.hasOption("h"))) {
+		try {
+			cmdLine = parseOptions(args);
+		} catch (ParseException e) {
+			String hdrMsg = e.getLocalizedMessage();
+			printUsage(hdrMsg);
+			System.exit(0);
+		}
+		boolean showVersion = cmdLine.hasOption("V");
+		if (showVersion) {
+			printVersion();
+		}
+		if ((cmdLine.hasOption("h"))) {
 			printHelp();
 			System.exit(0);
 		}
@@ -104,21 +151,42 @@ public class ToolLauncher {
 
 	private static void runNonInteractive(CommandLine cmdLine, LogMgmt logger) {
 		configureLogOptions(cmdLine, logger);
-		boolean showVersion = cmdLine.hasOption("V");
-		if (showVersion) {
-			printVersion();
-			return;
-		}
 		if (cmdLine.hasOption("s")) {
 
 		} else {
-			if (cmdLine.hasOption("c")) {
-				String[] fmts = cmdLine.getOptionValues("c");
-				for (String format : fmts) {
-					System.out.println("Target format '" + format + "'");
-				}
-			}
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*
+			 * Pre-Validation set-up and prep.........
+			 */
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			ValidationController vCtrl = new ValidationController(logger);
+			EnumSet<FILE_FMT> selections = EnumSet.noneOf(FILE_FMT.class);
+			String[] xlatFmts = cmdLine.getOptionValues("x");
+			if (xlatFmts == null || (xlatFmts.length == 0)) {
+				System.out.println("No translation");
+				vCtrl.setTranslations(null, null);
+			} else {
+				for (String fmt : xlatFmts) {
+					fmt = fmt.replaceAll(",", "");
+					switch (fmt) {
+					case "AVAILS_1_7":
+						selections.add(FILE_FMT.AVAILS_1_7);
+						break;
+					case "AVAILS_2_2":
+						selections.add(FILE_FMT.AVAILS_2_2);
+						break;
+					default:
+						String hdrMsg = "Unrecognized Translation format '" + fmt;
+						printUsage(hdrMsg);
+						System.exit(0);
+					}
+				}
+				String exportDir = cmdLine.getOptionValue("xDir", ".");
+				vCtrl.setTranslations(selections, new File(exportDir));
+			}
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~ Validation ~~~~~~~~~~~~~~~~~~~
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			String dir = cmdLine.getOptionValue("d");
 			if (dir != null) {
 				try {
@@ -139,6 +207,11 @@ public class ToolLauncher {
 					e.printStackTrace();
 				}
 			}
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			/*
+			 * POST-Validation actions.........
+			 */
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			String logFile = cmdLine.getOptionValue("l");
 			if (logFile != null) {
 				File logOutput = new File(logFile);
@@ -159,51 +232,23 @@ public class ToolLauncher {
 	 * @return
 	 * @throws ParseException
 	 */
-	private static CommandLine loadOptions(String[] args) throws ParseException {
+	private static CommandLine parseOptions(String[] args) throws ParseException {
 		// create the command line parser
 		CommandLineParser parser = new DefaultParser();
-
-		/*
-		 * create the Options. Options represents a collection of Option
-		 * instances, which describe the **POSSIBLE** options for a command-line
-		 */
-		options = new Options();
-		options.addOption("h", "help", false, "Display this HELP file, then exit");
-		options.addOption("i", "interactive", false,
-				"Launch in interactive mode with full UI. When used, this argument will result in all other arguments being ignored.");
-		options.addOption("f", "file", true, "Process a single MDDF file");
-		options.addOption("d", "dir", true, "Process all MDDF files in a directory");
-		options.addOption("s", "script", true, "Run a script file ");
-		options.addOption("l", "logFile", true, "Output file for logging.");
-		options.addOption("logLevel", true,
-				"Filter for logging; valid values are: " + "\n'verbose'\n 'warn' (DEFAULT)\n 'error'\n 'info'");
-		options.addOption("r", "recursive", true, "[T/F] processing of a directory will be recursive (Default is 'T')");
-		// options.addOption("p", "profiles", false, "List supported profiles");
-		options.addOption("v", "verbose", false, "Display log-file entries in terminal window during execution");
-		options.addOption("V", "version", false, "Display software version and build date, then exit");
-
-		// options.addOption("C", "convertAll", false, "convert valid files to
-		// all applicable formats");
-		// Option option = new Option("c", "convert valid files to specified
-		// format(s)");
-		// // Set option c to take 1 to n arguments
-		// option.setArgs(Option.UNLIMITED_VALUES);
-		// options.addOption(option);
-
-		if (args.length == 0) {
-			printHelp();
-			System.exit(0);
-		}
 		// parse the command line arguments
 		CommandLine line = parser.parse(options, args);
 		return line;
+	}
+
+	private static void printUsage(String headerMsg) {
+		System.out.println("\n" + headerMsg + "\n");
+		formatter.printHelp("ToolLauncher", null, options, null, true);
 	}
 
 	/**
 	 * 
 	 */
 	private static void printHelp() {
-		HelpFormatter formatter = new HelpFormatter();
 		String header = "\nLaunch one of the MDDF tools used to validate and/or translate MovieLabs Digital Distribution Framework (MDDF) files.\n\n\n";
 		String footer = getHelpBody();
 		formatter.printHelp("ToolLauncher", header, options, footer, true);
