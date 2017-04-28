@@ -197,7 +197,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 */
 	public AvailValidator(boolean validateC, LogMgmt loggingMgr) {
 		super(loggingMgr);
-		this.validateC = validateC; 
+		this.validateC = validateC;
 
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_AVAIL;
@@ -308,11 +308,11 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	/**
 	 * @return
 	 */
-	private void validateAvailVocab() { 
+	private void validateAvailVocab() {
 		Namespace primaryNS = availsNSpace;
 		String doc = "AVAIL";
-		String vocabVer = AVAIL_VER; 
-		switch(AVAIL_VER){
+		String vocabVer = AVAIL_VER;
+		switch (AVAIL_VER) {
 		case "2.2.1":
 			vocabVer = "2.2";
 		}
@@ -359,9 +359,10 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		srcRef = LogReference.getRef(doc, "avail07");
 		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseType", allowed, srcRef, true, false);
 
-//		allowed = availVocab.optJSONArray("LicenseRightsDescription");
-//		srcRef = LogReference.getRef(doc, "avail07");
-//		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseRightsDescription", allowed, srcRef, true, false);
+		// allowed = availVocab.optJSONArray("LicenseRightsDescription");
+		// srcRef = LogReference.getRef(doc, "avail07");
+		// validateVocab(primaryNS, "Transaction", primaryNS,
+		// "LicenseRightsDescription", allowed, srcRef, true, false);
 
 		allowed = availVocab.optJSONArray("FormatProfile");
 		srcRef = LogReference.getRef(doc, "avail07");
@@ -384,12 +385,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		allowed = availVocab.optJSONArray("USACaptionsExemptionReason");
 		srcRef = LogReference.getRef(doc, "avail03");
 		validateVocab(primaryNS, "Asset", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true);
-		validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef,
-				true);
-		validateVocab(primaryNS, "SeasonMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef,
-				true);
-		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef,
-				true); 
+		validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true);
+		validateVocab(primaryNS, "SeasonMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true);
+		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true);
 	}
 
 	/**
@@ -397,7 +395,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 */
 	protected void validateCMVocab() {
 		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.LEV_INFO, "Validating use of controlled vocabulary...", curFile,
-				LOGMSG_ID); 
+				LOGMSG_ID);
 		Namespace primaryNS = availsNSpace;
 		/*
 		 * Validate use of Country identifiers....
@@ -439,10 +437,11 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 * PreOrderFulfillDate term is allowed.
 		 */
 		// 1) Check all Transactions with LicenseType = 'POEST'
-		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() +":"+ "LicenseType[.='POEST']",
+		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() + ":" + "LicenseType[.='POEST']",
 				Filters.element(), null, availsNSpace);
-		XPathExpression<Element> xpExp02 = xpfac.compile(".//" + rootNS.getPrefix() +":"+  "Term[@termName='SuppressionLiftDate']",
-				Filters.element(), null, availsNSpace);
+		XPathExpression<Element> xpExp02 = xpfac.compile(
+				".//" + rootNS.getPrefix() + ":" + "Term[@termName='SuppressionLiftDate']", Filters.element(), null,
+				availsNSpace);
 
 		List<Element> ltElList = xpExp01.evaluate(curRootEl);
 		for (int i = 0; i < ltElList.size(); i++) {
@@ -462,8 +461,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		}
 
 		// 2) Check all Transactions with a PreOrderFulfilDate term
-		xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() +":"+   "Term[@termName='PreOrderFulfillDate']", Filters.element(), null,
-				availsNSpace);
+		xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() + ":" + "Term[@termName='PreOrderFulfillDate']",
+				Filters.element(), null, availsNSpace);
 		List<Element> termElList = xpExp01.evaluate(curRootEl);
 		for (int i = 0; i < termElList.size(); i++) {
 			Element termEl = termElList.get(i);
@@ -483,8 +482,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 * 
 		 */
 		LogReference srcRef = LogReference.getRef("AVAIL", "struc01");
-		xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() + "Asset[" + rootNS.getPrefix()  +":"+   "BundledAsset]", Filters.element(), null,
-				availsNSpace);
+		xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() + "Asset[" + rootNS.getPrefix() + ":" + "BundledAsset]",
+				Filters.element(), null, availsNSpace);
 		List<Element> assetElList = xpExp01.evaluate(curRootEl);
 		for (int i = 0; i < assetElList.size(); i++) {
 			Element assetEl = assetElList.get(i);
@@ -539,12 +538,13 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 		JSONObject structureDef = availTypeStruct.getJSONObject(availType);
 		if (structureDef == null || structureDef.isNullObject()) {
-			System.out.println("No structureDef for AvailType='" + availType + "'");
+			// System.out.println("No structureDef for AvailType='" + availType
+			// + "'");
 			return;
 		}
 		JSONArray allAllowedWTypes = getAllowedWTypes(availType);
 
-		String path = ".//" + rootNS.getPrefix()  +":"+   "AvailType[text()='" + availType + "']";
+		String path = ".//" + rootNS.getPrefix() + ":" + "AvailType[text()='" + availType + "']";
 		XPathExpression<Element> xpExp01 = xpfac.compile(path, Filters.element(), null, availsNSpace);
 		List<Element> availTypeElList = xpExp01.evaluate(curRootEl);
 		/* Loop thru all the Avail instances... */
@@ -553,8 +553,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			Element availEl = availTypeEl.getParentElement();
 			AvailRqmt[] allRqmts = getRequirements(availType);
 			// Now get the descendant WorkType element
-			XPathExpression<Element> xpExp02 = xpfac.compile("./" + rootNS.getPrefix()  +":Asset/" + rootNS.getPrefix() + ":WorkType",
-					Filters.element(), null, availsNSpace); 
+			XPathExpression<Element> xpExp02 = xpfac.compile(
+					"./" + rootNS.getPrefix() + ":Asset/" + rootNS.getPrefix() + ":WorkType", Filters.element(), null,
+					availsNSpace);
 			List<Element> workTypeElList = xpExp02.evaluate(availEl);
 			for (int j = 0; j < workTypeElList.size(); j++) {
 				/*
@@ -609,7 +610,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		String wtValue = wrkTypeEl.getText();
 		JSONObject wtStrucDef = workTypeStruct.optJSONObject(wtValue);
 		if (wtStrucDef == null) {
-			System.out.println("No structureDef for WorkType='" + wtValue + "'");
+			// System.out.println("No structureDef for WorkType='" + wtValue +
+			// "'");
 			return;
 		}
 		Element assetEl = wrkTypeEl.getParentElement();
