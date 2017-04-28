@@ -23,10 +23,16 @@
 package com.movielabs.mddflib.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.EnumSet;
 import java.util.Iterator;
 
 import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.located.LocatedJDOMFactory;
+import org.jdom2.output.XMLOutputter;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xlsx.XlsxBuilder;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -70,32 +76,98 @@ public class Translator {
 			FILE_FMT targetFmt = selIt.next();
 			switch (targetFmt) {
 			case AVAILS_1_6:
-				// not yet implemented
+				// not yet implemented. May never be.
 				break;
 			case AVAILS_1_7:
-				XlsxBuilder converter = new XlsxBuilder(xmlDoc.getRootElement(), Version.V1_7, logMgr);
-				String fileName = filePrefix + "_v1.7.xlsx";
-				File exported = new File(dirPath, fileName);
-				try {
-					converter.export(exported.getPath());
-					outputCnt++;
-				} catch (Exception e) {
-					e.printStackTrace();
+				/*
+				 * A v1.7 spreadsheet should be generated from v2.2 XML. We need
+				 * to 'up-convert' any XML that is using the v2.1 syntax. This
+				 * will be the case if either (a) the source Avails was a v2.1
+				 * XML file OR (b) the source Avails was a v1.6 Excel file.
+				 */
+				String nSpace = XmlIngester.identifyXsdVersion(xmlDoc.getRootElement());
+				Document srcXmlDoc = null;
+				switch (nSpace) {
+				case "2.1":
+					srcXmlDoc = avail2_1_to_2_2(xmlDoc);
+					break;
+				case "2.2":
+					srcXmlDoc = xmlDoc;
+					break;
+				default:
+					// Unsupported request
+					break;
+				}
+				if (srcXmlDoc != null) {
+					XlsxBuilder converter = new XlsxBuilder(srcXmlDoc.getRootElement(), Version.V1_7, logMgr);
+					String fileName = filePrefix + "_v1.7.xlsx";
+					File exported = new File(dirPath, fileName);
+					try {
+						converter.export(exported.getPath());
+						outputCnt++;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 				break;
 			case AVAILS_2_2:
-				fileName = filePrefix + "_v2.2.xml";
-				exported = new File(dirPath, fileName);
-				// Save as XML
-				if (XmlIngester.writeXml(exported, xmlDoc)) {
-					outputCnt++;
+				/*
+				 * what's the schema used for the existing XML representation?
+				 * It may already be a match for the desired format.
+				 */
+				nSpace = XmlIngester.identifyXsdVersion(xmlDoc.getRootElement());
+				srcXmlDoc = null;
+				switch (nSpace) {
+				case "2.1":
+					srcXmlDoc = avail2_1_to_2_2(xmlDoc);
+					break;
+				case "2.2":
+					srcXmlDoc = xmlDoc;
+					break;
+				default:
+					// Unsupported request
+					break;
 				}
-				break;
+				if (srcXmlDoc != null) {
+					String fileName = filePrefix + "_v2.2.xml";
+					File exported = new File(dirPath, fileName);
+					// Save as XML
+					if (XmlIngester.writeXml(exported, srcXmlDoc)) {
+						outputCnt++;
+					}
+				}
 			}
 
 		}
 		return outputCnt;
 
+	}
+
+	/**
+	 * @param xmlDoc
+	 * @return
+	 */
+	private static Document avail2_1_to_2_2(Document xmlDocIn) {
+		XMLOutputter outputter = new XMLOutputter();
+		String inDoc = outputter.outputString(xmlDocIn);
+		// Change Namespace declaration
+		String t1 = inDoc.replaceFirst("/avails/v2.1/avails", "/avails/v2.2/avails");
+		String outDoc = t1.replaceAll(":StoreLanguage>", ":AllowedLanguage>");
+		// Now gen a new doc
+		StringReader sReader = new StringReader(outDoc);
+		SAXBuilder builder = new SAXBuilder();
+		builder.setJDOMFactory(new LocatedJDOMFactory());
+		Document xmlDocOut = null;
+		try {
+			xmlDocOut = builder.build(sReader);
+		} catch (JDOMException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return xmlDocOut;
 	}
 
 	/**
@@ -107,8 +179,7 @@ public class Translator {
 	 */
 	public static String getHelp() {
 		String helpTxt = "The formats available are dependant on the type of MDDF file.\n"
-				+ "For AVAILS the following formats may be specified:\n"
-				+ "-- AVAILS_1_7: Excel using v1.7 template.\n"
+				+ "For AVAILS the following formats may be specified:\n" + "-- AVAILS_1_7: Excel using v1.7 template.\n"
 				+ "-- AVAILS_2_2: XML using v2.2 schema.";
 
 		return helpTxt;
