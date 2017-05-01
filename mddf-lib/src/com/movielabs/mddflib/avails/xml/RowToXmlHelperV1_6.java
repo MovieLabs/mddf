@@ -57,7 +57,7 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelper {
 	}
 
 	/**
-	 * populate a Transaction element
+	 * populate a Transaction element that conforms to v2.1 of the Avails XSD
 	 * 
 	 * @param transactionEl
 	 */
@@ -68,16 +68,16 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelper {
 		 * 'Description' is a SPECIAL CASE. The 2.1 XSD has it as REQUIRED but
 		 * the 1.6 Excel has it as OPTIONAL.
 		 * 
-		 */ 
+		 */
 		Pedigree pg = getPedigreedData(prefix + "Description");
 		String value = pg.getRawValue();
-		if(value.isEmpty()){
+		if (value.isEmpty()) {
 			value = "not provided";
 		}
-		Element childEl = mGenericElement("Description", value,  xb.getAvailsNSpace());
+		Element childEl = mGenericElement("Description", value, xb.getAvailsNSpace());
 		transactionEl.addContent(childEl);
 		xb.addToPedigree(childEl, pg);
-		
+
 		addRegion(transactionEl, "Territory", xb.getAvailsNSpace(), prefix + "Territory");
 		// Start or StartCondition
 		processCondition(transactionEl, "Start", xb.getAvailsNSpace(), prefix + "Start");
@@ -93,6 +93,13 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelper {
 
 		process(transactionEl, "OtherInstructions", xb.getAvailsNSpace(), prefix + "OtherInstructions");
 
+	}
+
+	protected void addAllTerms(Element transactionEl) {
+		super.addAllTerms(transactionEl);
+		String prefix = "AvailTrans/";
+		addTerm(transactionEl, prefix + "HoldbackLanguage", "HoldbackLanguage", "Language");
+		addTerm(transactionEl, prefix + "HoldbackExclusionLanguage", "HoldbackExclusionLanguage", "Language");
 	}
 
 	/**

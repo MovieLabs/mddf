@@ -328,7 +328,7 @@ public class RowToXmlHelper {
 		return pg;
 	}
 
-	private Element addTerm(Element parent, String src, String termName, String subElName) {
+	protected Element addTerm(Element parent, String src, String termName, String subElName) {
 		Pedigree pg = getPedigreedData(src);
 		if ((pg != null) && (isSpecified(pg.getRawValue()))) {
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
