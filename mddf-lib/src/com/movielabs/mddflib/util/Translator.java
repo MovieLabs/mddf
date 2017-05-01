@@ -27,12 +27,20 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.List;
 
 import org.jdom2.Document;
+import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.output.XMLOutputter;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
+
+import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xlsx.XlsxBuilder;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -148,11 +156,17 @@ public class Translator {
 	 * @return
 	 */
 	private static Document avail2_1_to_2_2(Document xmlDocIn) {
+		XmlIngester.writeXml(new File("./tmp/Conversion-TEST.xml"), xmlDocIn);
+		/*
+		 * STAGE ONE: some changes are easiest to do by converting the Doc to a
+		 * string and then doing string replacements prior to converting back to
+		 * Doc form.
+		 */
 		XMLOutputter outputter = new XMLOutputter();
 		String inDoc = outputter.outputString(xmlDocIn);
 		// Change Namespace declaration
 		String t1 = inDoc.replaceFirst("/avails/v2.1/avails", "/avails/v2.2/avails");
-		String outDoc = t1.replaceAll(":StoreLanguage>", ":AllowedLanguage>");
+		String outDoc = t1.replaceAll(":StoreLanguage>", ":AssetLanguage>");
 		// Now gen a new doc
 		StringReader sReader = new StringReader(outDoc);
 		SAXBuilder builder = new SAXBuilder();
@@ -166,6 +180,40 @@ public class Translator {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+
+		/*
+		 * Stage TWO is to do anything that is easier to handle via manipulation
+		 * of the XML.
+		 */
+		// ...........
+		XPathFactory xpfac = XPathFactory.instance();
+		Namespace availsNSpace = Namespace.getNamespace("avails",
+				MddfContext.NSPACE_AVAILS_PREFIX + "2.2" + MddfContext.NSPACE_AVAILS_SUFFIX);
+		/*
+		 * Find all Transaction/Term[[@termName='HoldbackExclusionLanguage'].
+		 * These need to be removed from the XML and then replaced with a
+		 * Transaction/AllowedLanguage element. Luckily, the location of the new
+		 * AllowedLanguage element is easy to pinpoint.... it follows
+		 * immediately after a REQUIRED element (i.e., either an <End> or
+		 * <EndCondition>).
+		 */
+		String helTermPath = "//avails:Transaction/avails:Term[./@termName='HoldbackExclusionLanguage']";
+		XPathExpression<Element> helTermPathExp = xpfac.compile(helTermPath, Filters.element(), null, availsNSpace);
+		List<Element> helElList = helTermPathExp.evaluate(xmlDocOut.getRootElement());
+		for (Element termEl : helElList) {
+			// find insert point
+			Element transEl = termEl.getParentElement();
+			Element target = transEl.getChild("End", availsNSpace);
+			if (target == null) {
+				target = transEl.getChild("EndCondition", availsNSpace);
+			}
+			int insertPoint = transEl.indexOf(target) + 1;
+			termEl.detach();
+			String lang = termEl.getChildText("Language", availsNSpace);
+			Element allowedEl = new Element("AllowedLanguage", availsNSpace);
+			allowedEl.setText(lang);
+			transEl.addContent(insertPoint, allowedEl);
 		}
 		return xmlDocOut;
 	}
