@@ -24,11 +24,13 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.POIXMLException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -54,6 +56,7 @@ import com.movielabs.mddflib.manifest.validation.ManifestValidator;
 import com.movielabs.mddflib.manifest.validation.MecValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.MMCoreValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator;
+import com.movielabs.mddflib.util.Translator;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 import net.sf.json.JSONObject;
@@ -85,6 +88,8 @@ public class ValidationController {
 	private boolean isRecursive = true;
 	private LogMgmt logMgr;
 	private LogNavPanel logNav = null;
+	private EnumSet<FILE_FMT> xportFmts = null;
+	private File exportDir = null;
 
 	static {
 		supportedProfileKeys = new HashSet<String>();
@@ -236,6 +241,12 @@ public class ValidationController {
 		}
 	}
 
+	public void setTranslations(EnumSet<FILE_FMT> xportFmts, File exportDir) {
+		this.xportFmts = xportFmts;
+		this.exportDir = exportDir;
+
+	}
+
 	/**
 	 * Validate one or more files. The <tt>srcPath</tt> argument indicates a
 	 * either a single Common Media Manifest (CMM) or Avails file or a directory
@@ -310,6 +321,7 @@ public class ValidationController {
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "Validating " + srcFile.getPath(), srcFile, MODULE_ID);
 
 		Map<Object, Pedigree> pedigreeMap = null;
+		FILE_FMT srcMddfFmt = null;
 		Document xmlDoc = null;
 		if (fileType.equals("xlsx")) {
 			/* The XLSX format is only supported with AVAILS files */
@@ -322,6 +334,7 @@ public class ValidationController {
 				srcFile = (File) results.get("xlsx");
 				pedigreeMap = (Map<Object, Pedigree>) results.get("pedigree");
 				xmlDoc = (Document) results.get("xml");
+				srcMddfFmt = (FILE_FMT) results.get("srcFmt");
 			}
 		} else if (fileType.equals("xml")) {
 			try {
@@ -333,9 +346,9 @@ public class ValidationController {
 				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, srcFile, ln, MODULE_ID, supplemental, null);
 				return;
 			}
+			srcMddfFmt = MddfContext.identifyMddfFormat(xmlDoc.getRootElement());
 			if (logNav != null) {
-				FILE_FMT fileFmt = MddfContext.identifyMddfFormat(xmlDoc.getRootElement());
-				logNav.setMddfFormat(srcFile, fileFmt);
+				logNav.setMddfFormat(srcFile, srcMddfFmt);
 			}
 		} else {
 			/*
@@ -382,19 +395,42 @@ public class ValidationController {
 		logMgr.log(LogMgmt.LEV_INFO, logTag, "Validating file as a " + schemaType, srcFile, MODULE_ID);
 		switch (mddfType) {
 		case MANIFEST:
-			validateManifest(docRootEl, srcFile, uxProfile, useCases);
+			boolean isValid = validateManifest(docRootEl, srcFile, uxProfile, useCases);
 			break;
 		case AVAILS:
-			boolean isValid = validateAvail(docRootEl, pedigreeMap, srcFile);
+			isValid = validateAvail(docRootEl, pedigreeMap, srcFile);
 			if (!isValid && (fileType.equals("xlsx"))) {
 				File outputLoc = new File(tempDir, "TRACE_" + srcFile.getName().replace("xlsx", "xml"));
 				XmlIngester.writeXml(outputLoc, xmlDoc);
+			}
+			if (isValid) {
+				// Export translated versions??
+				if ((exportDir != null) && (xportFmts != null)) {
+					String baseFileName = trimFileName(srcFile.getName());
+					xportFmts.remove(srcMddfFmt);
+					int cnt = Translator.translateAvails(xmlDoc, xportFmts, exportDir, baseFileName, logMgr);
+					logMgr.log(LogMgmt.LEV_INFO, logTag, "Exported in " + cnt + " format(s)", srcFile, MODULE_ID);
+				}
 			}
 			break;
 		case MEC:
 			validateMEC(docRootEl, srcFile);
 			break;
 		}
+	}
+
+	/**
+	 * removes the file-type extension from a file name.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	private String trimFileName(String name) {
+		int trimAt = name.lastIndexOf(".");
+		if (trimAt > 0) {
+			name = name.substring(0, trimAt);
+		}
+		return name;
 	}
 
 	private String extractFileType(String name) {
@@ -430,30 +466,38 @@ public class ValidationController {
 		AvailsWrkBook ss;
 		try {
 			ss = new AvailsWrkBook(xslxFile, log4j, exitOnError, autoCorrect);
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
+		} catch (FileNotFoundException e1) {
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found", xslxFile, MODULE_ID);
+			return null;
+		} catch (POIXMLException e1) {
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to parse XLSX. Check for comments or embedded objects.", xslxFile, MODULE_ID);
+			return null;
+		} catch (IOException e1) {
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", xslxFile, MODULE_ID);
 			return null;
 		}
 		int sheetNum = 0; // KLUDGE for now
 		AvailsSheet as;
 		try {
 			as = ss.addSheet(sheetNum);
-		} catch (Exception e1) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e.printStackTrace();
 			return null;
 		}
 		Version templateVersion = as.getVersion();
+		FILE_FMT srcMddfFmt = null;
 		XmlBuilder xBuilder = new XmlBuilder(logMgr, templateVersion);
 		switch (templateVersion) {
 		case V1_7:
+			srcMddfFmt = FILE_FMT.AVAILS_1_7;
 			if (logNav != null) {
-				logNav.setMddfFormat(xslxFile, FILE_FMT.AVAILS_1_7);
+				logNav.setMddfFormat(xslxFile, srcMddfFmt);
 			}
 			xBuilder.setVersion("2.2");
 			break;
 		case V1_6:
+			srcMddfFmt = FILE_FMT.AVAILS_1_6;
 			if (logNav != null) {
 				logNav.setMddfFormat(xslxFile, FILE_FMT.AVAILS_1_6);
 			}
@@ -479,6 +523,7 @@ public class ValidationController {
 			results.put("xlsx", xslxFile);
 			results.put("xml", xmlJDomDoc);
 			results.put("pedigree", pedigreeMap);
+			results.put("srcFmt", srcMddfFmt);
 
 			return results;
 		} catch (Exception e) {
@@ -563,19 +608,19 @@ public class ValidationController {
 
 	}
 
-	protected void validateMEC(Element docRootEl, File srcFile) throws IOException, JDOMException {
+	protected boolean validateMEC(Element docRootEl, File srcFile) throws IOException, JDOMException {
 		boolean isValid = true;
 		MecValidator tool1 = new MecValidator(validateC, logMgr);
 		isValid = tool1.process(srcFile, docRootEl);
 		if (!isValid) {
 			String msg = "Validation FAILED; Terminating processing of file";
 			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MEC, msg, srcFile, -1, MODULE_ID, null, null);
-
-			return;
+			return false;
 		}
 		// ----------------------------------------------------------------
 		String msg = "MEC Validation completed";
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MEC, msg, srcFile, -1, MODULE_ID, null, null);
+		return isValid;
 	}
 
 	/**
@@ -589,7 +634,7 @@ public class ValidationController {
 	 * @throws IOException
 	 * @throws JDOMException
 	 */
-	protected void validateManifest(Element docRootEl, File srcFile, String uxProfile, List<String> useCases)
+	protected boolean validateManifest(Element docRootEl, File srcFile, String uxProfile, List<String> useCases)
 			throws IOException, JDOMException {
 		boolean isValid = true;
 
@@ -600,36 +645,37 @@ public class ValidationController {
 		if (profileNameList.isEmpty() || profileNameList.contains("none")) {
 			ManifestValidator tool1 = new ManifestValidator(validateC, logMgr);
 			isValid = tool1.process(docRootEl, srcFile);
-			return;
-		}
-		for (int i = 0; i < profileNameList.size(); i++) {
-			String profile = profileNameList.get(i);
-			// ProfileValidator referenceInstance = profileMap.get(profile);
-			if (!supportedProfileKeys.contains(profile)) {
-				String msg = "Unrecognized Profile: " + profile;
-				logMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
-			} else {
-				String msg = "Validating compatibility with Profile '" + profile + "'";
-				logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
-				// String pvClass =
-				// referenceInstance.getClass().getSimpleName();
-				ProfileValidator pValidator = null;
-				switch (profile) {
-				case "IP-0":
-				case "IP-01":
-				case "IP-1":
-					pValidator = new CpeValidator(logMgr);
-					break;
-				case "MMC-1":
-					pValidator = new MMCoreValidator(logMgr);
-					break;
+		} else {
+			for (int i = 0; i < profileNameList.size(); i++) {
+				String profile = profileNameList.get(i);
+				// ProfileValidator referenceInstance = profileMap.get(profile);
+				if (!supportedProfileKeys.contains(profile)) {
+					String msg = "Unrecognized Profile: " + profile;
+					logMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
+				} else {
+					String msg = "Validating compatibility with Profile '" + profile + "'";
+					logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_PROFILE, msg, srcFile, -1, MODULE_ID, null, null);
+					// String pvClass =
+					// referenceInstance.getClass().getSimpleName();
+					ProfileValidator pValidator = null;
+					switch (profile) {
+					case "IP-0":
+					case "IP-01":
+					case "IP-1":
+						pValidator = new CpeValidator(logMgr);
+						break;
+					case "MMC-1":
+						pValidator = new MMCoreValidator(logMgr);
+						break;
+					}
+					isValid = pValidator.process(docRootEl, srcFile, profile, useCases) && isValid;
 				}
-				pValidator.process(docRootEl, srcFile, profile, useCases);
 			}
 		}
 		// ----------------------------------------------------------------
 		String msg = "MANIFEST Validation completed";
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, null, null);
+		return isValid;
 	}
 
 	/**
