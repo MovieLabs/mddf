@@ -64,8 +64,8 @@ Binary releases are available in two forms:
 
 * as an executable Java jar which supports the processing of either Avails or Manifest files. Jar files may be downloaded from the ./binaries directory of this repository.
 
-Note that the executable jar provides all of the capabilities available via the two native eexcutable packages. In addition, the jar provides a command
-line interface CLI that may be used either from a terminal window or in conjunction with scheduled jobs (e.g., via crontab).
+Note that the executable jar provides all of the capabilities available via the two native excutable packages. In addition, the jar provides a command
+line interface (CLI) that may be used either from a terminal window or in conjunction with scheduled jobs (e.g., via crontab).
 
 Refer to ChangeLog.md for a list of specific enhancements and bug fixes for any given release.
 
