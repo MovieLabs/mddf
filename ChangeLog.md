@@ -12,6 +12,12 @@ The latest release of the core mddf-lib is v1.1.3. The tool releases based on th
 
 ### mddf-lib Changes:
 
+#### mddf-lib v1.1.3_rc8
+* Bug fix: When translating v1.6 XLSX Avails to v1.7 XLSX or v2.2 XML, StoreLanguage was not properly converted to AssetLanguage.
+* Bug fix: When translating v1.6 XLSX Avails to v1.7 XLSX or v2.2 XML, HoldbackExclusionLanguage was not properly converted to AllowedLanguage.
+* Enhancement: Inability to parse Avails in XLSX due to embedded objects or comments now results in log msgs clearly identifying problem.
+* Enhancement: CLI support for translation of Avails
+
 #### mddf-lib v1.1.3_rc6
 
 * Bug fix: When translating XLSX Avails to XML any SharedEntitlements were dropped.
