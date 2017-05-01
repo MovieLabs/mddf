@@ -14,7 +14,13 @@
 ---
 ## <a name="h_News">What's New</a>
 
+* **2017-May-01**: mddf-lib v1.1.3.rc8 is now available as an executable jar for testing and evaluation.
+
+* **2017-Apr-21**: mddf-lib v1.1.3.rc6 is now available as an executable jar for testing and evaluation.
+
 * **2017-Apr-18**: mddf-lib v1.1.3.rc4 is now available as an executable jar for testing and evaluation.
+
+* **2017-Mar-29**: mddf-lib is now available as an executable jar. Processing of either Avails or Manifest files is supported.
 
 * **2017-Mar-02**: mddf-lib v1.1.2 is now available. See Change Log for list of fixed bugs.
 
@@ -47,15 +53,21 @@ The software in this repository is intended to replace that contained in the fol
 * availstool
 * cpe-preprocessing
 
-## <a name="h_Versions">Versions</a>
+## <a name="h_Versions">Executables</a>
 
-The latest releases are:
+Binary releases are available in two forms:
 
-* mddf-lib: v1.1.2
-* Manifest Validator: v1.2.4
-* Avails Validator: v1.1.2
+* as Native Executables for Windows, OS-X, and Linux systems. Each executable is specific to the processing of either Avails or Manifest files. These may be downloaded from the MovieLabs web site. The latest stable releases are:
 
-Refer to ChangeLog.md for a list of specific enhancements and bug fixes.
+   * Manifest Validator: v1.2.4
+   * Avails Validator: v1.1.2
+
+* as an executable Java jar which supports the processing of either Avails or Manifest files. Jar files may be downloaded from the ./binaries directory of this repository.
+
+Note that the executable jar provides all of the capabilities available via the two native eexcutable packages. In addition, the jar provides a command
+line interface CLI that may be used either from a terminal window or in conjunction with scheduled jobs (e.g., via crontab).
+
+Refer to ChangeLog.md for a list of specific enhancements and bug fixes for any given release.
 
 ## <a name="h_Roadmap">Software Organization & Roadmap:</a>
 
