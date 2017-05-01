@@ -1,4 +1,4 @@
-<project name="MLabs MDDF" default="proj_jar" basedir="."
+<project name="mddf-lib" default="proj_jar" basedir="."
 	xmlns:fx="javafx:com.sun.javafx.tools.ant">
 	<!-- .......................................................................... 
 		Created Sept 29, 2015 Copyright Motion Picture Laboratories, Inc. (2015) 
@@ -22,7 +22,7 @@
 	<property name="proj.name" value="mddf-lib" />
 	<property name="proj.home" value="." />
 	<!-- ================================================================ -->
-	<property name="proj.version" value="1.1.3.rc6" />
+	<property name="proj.version" value="1.1.3.rc8" />
 	<property name="proj.package" value="com/movielabs/mddflib" />
 	<property name="proj.build" value="${proj.home}/build" />
 	<property name="proj.lib" value="${proj.home}/lib" />
