@@ -156,8 +156,12 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelper {
 			return "AvailAsset/ProductID";
 		case "AvailAsset/TitleID":
 			return "AvailAsset/ContentID";
-		// ?????????????????????????????????
 		case "AvailAsset/ContentID":
+			// TODO: fix code
+			/*
+			 * Instructions are actually to use AltID only if EncodeID is not
+			 * defined.
+			 */
 			return "AvailMetadata/AltID";
 		// ..................................
 		case "AvailTrans/AllowedLanguages":

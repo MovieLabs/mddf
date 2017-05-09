@@ -86,6 +86,7 @@ public class CpeValidatorTest extends CpeValidator {
 		}
 		Document xmlDoc = loadTestArtifact(testFileName);
 		if (xmlDoc == null) {
+			// forces a FAILED result
 			assertNotNull(curRootEl);
 			return;
 		}
