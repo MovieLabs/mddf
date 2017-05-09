@@ -5,12 +5,15 @@
 
 ## Versioning
 
-The latest release of the core mddf-lib is v1.1.3. The tool releases based on the latest version of the core software are: 
+The latest release of the core mddf-lib is v1.2. The tool releases based on the latest version of the core software are: 
 
-* Manifest Validator: v1.2.5.rc2
-* Avails Validator: v1.1.3.rc1
+* Manifest Validator: v1.2.6
+* Avails Validator: v1.2.1
 
 ### mddf-lib Changes:
+
+#### mddf-lib v1.2
+* No changes. Functionally equivalent to v1.1.3_rc8
 
 #### mddf-lib v1.1.3_rc8
 * Bug fix: When translating v1.6 XLSX Avails to v1.7 XLSX or v2.2 XML, StoreLanguage was not properly converted to AssetLanguage.

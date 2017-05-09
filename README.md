@@ -7,32 +7,16 @@
 
 3 [Status](#h_Status)
 
-4 [Versions](#h_Versions)
+4 [Software Organization & Roadmap](#h_Roadmap)
 
-5 [Software Organization & Roadmap](#h_Roadmap)
+5 [Executable Packages](#h_Versions)
+
+6 [Past Releases](#h_History)
 
 ---
 ## <a name="h_News">What's New</a>
 
-* **2017-May-01**: mddf-lib v1.1.3.rc8 is now available as an executable jar for testing and evaluation.
-
-* **2017-Apr-21**: mddf-lib v1.1.3.rc6 is now available as an executable jar for testing and evaluation.
-
-* **2017-Apr-18**: mddf-lib v1.1.3.rc4 is now available as an executable jar for testing and evaluation.
-
-* **2017-Mar-29**: mddf-lib is now available as an executable jar. Processing of either Avails or Manifest files is supported.
-
-* **2017-Mar-02**: mddf-lib v1.1.2 is now available. See Change Log for list of fixed bugs.
-
-* **2017-Feb-13**: mddf-lib v1.1.1 is now available. This provides several fixes relating to the translation of Avails
-from XLSX to XML. 
-
-* **2017-Jan-30**: mddf-lib v1.1 is now stable. The validators based on this release are Manifest Validator v1.2.2 and 
-Avails Validator v1.1. The Avails Validator now supports conversion of an XML Avails file to XLSX. The currently
-supported conversions are:
-  * from XML (v2.1 or v2.2) to XLSX v1.7
-  * from XLSX (v1.6 or v1.7) to XML v2.2
-  * from XLSX v1.6 to XLSX v1.7mddf-lib v1.
+* **2017-May-09**: v1.2 is now available as either an executable jar or as native executables.
 
 ## <a name="h_Overview">Overview:</a>
 
@@ -52,22 +36,6 @@ The software in this repository is intended to replace that contained in the fol
 * availslib
 * availstool
 * cpe-preprocessing
-
-## <a name="h_Versions">Executables</a>
-
-Binary releases are available in two forms:
-
-* as Native Executables for Windows, OS-X, and Linux systems. Each executable is specific to the processing of either Avails or Manifest files. These may be downloaded from the MovieLabs web site. The latest stable releases are:
-
-   * Manifest Validator: v1.2.4
-   * Avails Validator: v1.1.2
-
-* as an executable Java jar which supports the processing of either Avails or Manifest files. Jar files may be downloaded from the ./binaries directory of this repository.
-
-Note that the executable jar provides all of the capabilities available via the two native excutable packages. In addition, the jar provides a command
-line interface (CLI) that may be used either from a terminal window or in conjunction with scheduled jobs (e.g., via crontab).
-
-Refer to ChangeLog.md for a list of specific enhancements and bug fixes for any given release.
 
 ## <a name="h_Roadmap">Software Organization & Roadmap:</a>
 
@@ -90,4 +58,47 @@ The mddf-tools software currently implements two applications:
      - the CMM schema
      - recommended 'Best Practices'
      - a specific *profile*
-      
+
+## <a name="h_Versions">Executables</a>
+
+### Formats:
+
+Binary releases are available in two forms:
+
+* as Native Executables for Windows, OS-X, and Linux systems. Each executable is specific to the processing of either Avails or Manifest files. These may be downloaded from the MovieLabs web site:
+
+   * Manifest Validator: <http://movielabs.com/md/manifest/validator/>
+   * Avails Validator: <http://movielabs.com/md/avails/validator/>
+
+* as an executable Java jar which supports the processing of either Avails or Manifest files. Jar files may be downloaded from the ./binaries directory of this repository.
+
+Note that the executable jar provides all of the capabilities available via the two native excutable packages. In addition, the jar provides a command
+line interface (CLI) that may be used either from a terminal window or in conjunction with scheduled jobs (e.g., via crontab).
+
+Refer to ChangeLog.md for a list of specific enhancements and bug fixes for any given release.
+
+### Versioning:
+
+The MDDF tools are assigned a three-part version number based on which version of the mddf-lib they are built on.
+
+Example: an Avails Validator with a version of v1.3.2 is based on v1.2 of the mddf-lib.
+
+Stable releases of the mddf-lib will have a two-part version while evaluation (i.e., beta) releases will have a three-part version ID. Native executables 
+for the Avails Validator and Manifest Validator are only created using the stable mddf-lib releases.
+
+## <a name="h_History">Past Releases:</a>
+
+* **2017-May-01**: mddf-lib v1.1.3.rc8 released as an executable jar for testing and evaluation.
+
+* **2017-Apr-21**: mddf-lib v1.1.3.rc6 released as an executable jar for testing and evaluation.
+
+* **2017-Apr-18**: mddf-lib v1.1.3.rc4 released as an executable jar for testing and evaluation.
+
+* **2017-Mar-29**: mddf-lib released as an executable jar. Processing of either Avails or Manifest files is supported.
+
+* **2017-Mar-02**: mddf-lib v1.1.2 released.
+
+* **2017-Feb-13**: mddf-lib v1.1.1 released. This provides several fixes relating to the translation of Avails
+from XLSX to XML. 
+
+* **2017-Jan-30**: mddf-lib v1.1 released. 
