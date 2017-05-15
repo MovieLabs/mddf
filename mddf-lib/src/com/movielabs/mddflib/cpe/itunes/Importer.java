@@ -62,10 +62,14 @@ public class Importer {
 	private Namespace iteNSpace;
 	private File iteFile;
 	private Document iteDoc;
+	private Element mmInventoryEl;
 	private Element mmPresentationsEl;
 	private Element mmPlayableSequencesEl;
 	private Element mmPictureGroupsEl;
 	private Element mmExperiencesEl;
+	private Map<String, Element> audioInv;
+	private Map<String, Element> videoInv;
+	private Map<String, Element> subtitleInv;
 
 	public static enum CpeFileType {
 		MANIFEST, STYLE, APP_DATA
@@ -144,8 +148,11 @@ public class Importer {
 		profileEl.setText(profileVer);
 		compEl.addContent(profileEl);
 		// Add required stuff that gets filed in later (?)
-		Element inventoryEl = new Element("Inventory", manifestNS);
-		rootManifestEl.addContent(inventoryEl);
+		mmInventoryEl = new Element("Inventory", manifestNS);
+		rootManifestEl.addContent(mmInventoryEl);
+		audioInv = new HashMap<String, Element>();
+		videoInv = new HashMap<String, Element>();
+		subtitleInv = new HashMap<String, Element>();
 
 		mmPresentationsEl = new Element("Presentations", manifestNS);
 		rootManifestEl.addContent(mmPresentationsEl);
@@ -185,11 +192,12 @@ public class Importer {
 		 */
 		Element mmRootEl = results.get(CpeFileType.MANIFEST).getRootElement();
 		// Manifest ID:
-		List<Element> vidElList = getItXEl(iteRootPackageEl, "/#package/#itunes_extra/#vendor_id", false);
+		List<Element> vidElList = getItxElList(iteRootPackageEl, "/#package/#itunes_extra/#vendor_id", false);
 		String manifestId = xlateId(vidElList.get(0), "manifestid");
 		mmRootEl.setAttribute("ManifestID", manifestId);
 
-		List<Element> rootnodeList = getItXEl(iteRootPackageEl, "/#package/#itunes_extra/#rootnodes/#rootnode", false);
+		List<Element> rootnodeList = getItxElList(iteRootPackageEl, "/#package/#itunes_extra/#rootnodes/#rootnode",
+				false);
 		if (rootnodeList.isEmpty()) {
 			String msg = "No <rootnode> elements found";
 			logger.log(LogMgmt.LEV_ERR, LOG_TAG, msg, null, -1, moduleId, null, null);
@@ -198,6 +206,10 @@ public class Importer {
 		for (Element rootnodeEl : rootnodeList) {
 			convertRootnode(rootnodeEl);
 		}
+		// Final Assembly:
+		mmInventoryEl.addContent(audioInv.values());
+		mmInventoryEl.addContent(videoInv.values());
+		mmInventoryEl.addContent(subtitleInv.values());
 
 		// .............................................
 		return results;
@@ -213,7 +225,7 @@ public class Importer {
 		Map<String, Element> otherStuff = new HashMap<String, Element>();
 		Element experienceEl = addExperience(rootnodeEl, otherStuff, "root");
 
-		List<Element> territoryList = getItXEl(rootnodeEl, "./#territories/#territory", false);
+		List<Element> territoryList = getItxElList(rootnodeEl, "./#territories/#territory", false);
 		for (Element iteTerrEl : territoryList) {
 			Element regionEl = new Element("Region", manifestNS);
 			experienceEl.addContent(regionEl);
@@ -221,7 +233,8 @@ public class Importer {
 			countryEl.setText(iteTerrEl.getTextNormalize());
 			regionEl.addContent(countryEl);
 		}
-		String cid = xlateId(rootnodeEl.getChild("vendor_id", iteNSpace), "cid");
+		Element rootNodeVID = rootnodeEl.getChild("vendor_id", iteNSpace);
+		String cid = xlateId(rootNodeVID, "cid");
 		Element cidEl = new Element("ContentID", manifestNS);
 		cidEl.setText(cid);
 		experienceEl.addContent(cidEl);
@@ -230,7 +243,7 @@ public class Importer {
 		 * The Audiovisual/PresentationID will come from the iTunes <navnode>
 		 * with @type='play'
 		 */
-		List<Element> navnodeList = getItXEl(rootnodeEl, "./#navnodes/#navnode[./@type='play']", false);
+		List<Element> navnodeList = getItxElList(rootnodeEl, "./#navnodes/#navnode[./@type='play']", false);
 		if (navnodeList.size() > 1) {
 			String msg = "Multiple 'play' navnodes found";
 			int line = resolveLine(rootnodeEl);
@@ -247,10 +260,20 @@ public class Importer {
 
 		Element pidEl = new Element("PresentationID", manifestNS);
 		avEl.addContent(pidEl);
-		String pid = xlateId(playNode.getChild("vendor_id", iteNSpace), "presentationid");
+		Element presVIdEl = playNode.getChild("vendor_id", iteNSpace);
+		String pid = xlateId(presVIdEl, "presentationid");
 		pidEl.setText(pid);
+		/* add all Elements required to implement the referenced Presentation */
+		addPresentation(pid, presVIdEl);
 
-		navnodeList = getItXEl(rootnodeEl, "./#navnodes/#navnode", false);
+		/*
+		 * Adding AV elements to the Inventory is a different process when
+		 * dealing with a root_node.
+		 */
+
+		addMainAudioVideo(rootnodeEl);
+
+		navnodeList = getItxElList(rootnodeEl, "./#navnodes/#navnode", false);
 		for (Element navnode : navnodeList) {
 			// Handling is dependent on 'type'
 			String navNodeType = navnode.getAttributeValue("type");
@@ -271,6 +294,98 @@ public class Importer {
 				break;
 			}
 		}
+	}
+
+	/**
+	 * Adds &lt;Audio&gt; and &lt;Video&gt; to the &lt;Inventory&gt; for the
+	 * main feature. These are defined by a &lt;itx:root_node&gt; instance and
+	 * are a special case in that there will not be any &lt;itx:Asset&gt;
+	 * elements to provide a definition. Instead, the &lt;ContainerLocation&gt;
+	 * is inferred using the root node's vendor-ID. This works because of the
+	 * package structure mandated by Apple for iTunes delivery.
+	 * 
+	 * @param itxRootNodeEl
+	 */
+	private void addMainAudioVideo(Element itxRootNodeEl) {
+		Element itxRootVendorIdEl = itxRootNodeEl.getChild("vendor_id", iteNSpace);
+		String fileName = "./" + itxRootVendorIdEl.getText() + "-source.mov";
+		/*
+		 * Step 1: add Audio to Inventory
+		 */
+		Element audioEl = new Element("Audio", manifestNS);
+		String aTrackId = xlateId(itxRootVendorIdEl, "audtrackid");
+		audioEl.setAttribute("AudioTrackID", aTrackId);
+		List<Element> itxLocales = getItxElList(itxRootNodeEl, "./#locales/#locale", true);
+
+		for (Element itxLocale : itxLocales) {
+			String lang = itxLocale.getAttributeValue("name");
+			if (lang != null && !lang.isEmpty()) {
+				Element langEl = new Element("Language", mdNS);
+				langEl.setText(lang);
+				audioEl.addContent(langEl);
+			} else {
+				int line = resolveLine(itxLocale);
+				String msg = "<locale> element does not specify 'name' attribute";
+				logger.log(LogMgmt.LEV_ERR, LOG_TAG, msg, null, line, moduleId, null, null);
+			}
+		}
+		Element containerRefEl = new Element("ContainerReference", manifestNS);
+		audioEl.addContent(containerRefEl);
+		Element containerLocEl = new Element("ContainerLocation", manifestNS);
+		containerRefEl.addContent(containerLocEl);
+		containerLocEl.setText(fileName);
+		audioInv.put(aTrackId, audioEl);
+
+		/*
+		 * Step 2: add Video
+		 */
+		Element videoEL = new Element("Audio", manifestNS);
+		String vTrackId = xlateId(itxRootVendorIdEl, "vidtrackid");
+		videoEL.setAttribute("VideoTrackID", vTrackId);
+		containerRefEl = new Element("ContainerReference", manifestNS);
+		videoEL.addContent(containerRefEl);
+		containerLocEl = new Element("ContainerLocation", manifestNS);
+		containerRefEl.addContent(containerLocEl);
+		containerLocEl.setText(fileName);
+		videoInv.put(vTrackId, videoEL);
+	}
+
+	/**
+	 * Add a &lt;Presentation&gt; element along with the supporting
+	 * &lt;Audio&gt; and &lt;Video&gt; elements. The later two go in the
+	 * &lt;Inventory&gt; and are assigned ID values generated from the
+	 * <tt>idSrcEl</tt>. This will be a &lt;itx:vendor_id&gt; from an
+	 * &lt;itx:gallery_item&gt or &lt;itx:navnode&gt
+	 * 
+	 * @param pid
+	 * @param idSrcEl
+	 */
+	private void addPresentation(String pid, Element idSrcEl) {
+		/*
+		 * Step 1: build the Presentation
+		 */
+		Element presEl = new Element("Presentation", manifestNS);
+		presEl.setAttribute("PresentationID", pid);
+		mmPresentationsEl.addContent(presEl);
+
+		Element tmEl = new Element("TrackMetadata", manifestNS);
+		presEl.addContent(tmEl);
+		Element tsNumEl = new Element("TrackSelectionNumber", manifestNS);
+		tsNumEl.setText("0");
+		tmEl.addContent(tsNumEl);
+
+		Element vidioTRefEl = new Element("VideoTrackReference", manifestNS);
+		String vTrackId = xlateId(idSrcEl, "vidtrackid");
+		vidioTRefEl.setText(vTrackId);
+		tmEl.addContent(vidioTRefEl);
+
+		Element audioTRefEl = new Element("AudioTrackReference", manifestNS);
+		String aTrackId = xlateId(idSrcEl, "audtrackid");
+		audioTRefEl.setText(aTrackId);
+		tmEl.addContent(audioTRefEl);
+
+		// TODO: SubtitleTrackReference
+
 	}
 
 	/**
@@ -299,7 +414,7 @@ public class Importer {
 		Element gLinkEl = itNavnode.getChild("gallery_link", iteNSpace);
 		String gallery_vid = gLinkEl.getAttributeValue("vendor_id");
 		Element iteRootPackageEl = iteDoc.getRootElement();
-		List<Element> galleryList = getItXEl(iteRootPackageEl,
+		List<Element> galleryList = getItxElList(iteRootPackageEl,
 				"/#package/#itunes_extra/#galleries/#gallery[./#vendor_id/text()='" + gallery_vid + "']", false);
 		if (galleryList.size() > 1) {
 			String msg = "Invalid ITE: Multiple <gallery> elements found with same ID";
@@ -314,7 +429,7 @@ public class Importer {
 		 */
 		Element iteGalleryEl = galleryList.get(0);
 
-		List<Element> itemList = getItXEl(iteGalleryEl, "./#gallery_items/#gallery_item", false);
+		List<Element> itemList = getItxElList(iteGalleryEl, "./#gallery_items/#gallery_item", false);
 		Map<String, Element> otherStuff = new HashMap<String, Element>();
 		/* idTemplate will be used to create pictureIDs, imageIDs, etc. */
 		String idTemplate = xlateId(iteGalleryEl.getChild("vendor_id", iteNSpace), "TBD");
@@ -350,7 +465,124 @@ public class Importer {
 			logger.log(LogMgmt.LEV_ERR, LOG_TAG, msg, null, line, moduleId, null, null);
 			return;
 		}
+		for (Element itxItem : itemList) {
+			Element itxVendorIdEl = getItxEl(itxItem, "./#vendor_id", false);
+			List<Element> assetList = getItxElList(itxItem, "./#assets/#asset", false);
+			for (Element itxAssetEl : assetList) {
+				addAVInventory(itxAssetEl, itxVendorIdEl);
+			}
+		}
+	}
 
+	/**
+	 * Adds &lt;Audio&gt; and &lt;Video&gt; to the &lt;Inventory&gt; for
+	 * anything that has a &lt;itx:Asset&gt; element to provide a definition.
+	 * 
+	 * @param itxAssetEl
+	 * @param vIdEl
+	 */
+	private void addAVInventory(Element itxAssetEl, Element vIdEl) {
+		String assetType = itxAssetEl.getAttributeValue("type");
+		if (assetType == null) {
+			String msg = "Invalid ITE: <asset> does not specify 'type' ";
+			int line = resolveLine(itxAssetEl);
+			logger.log(LogMgmt.LEV_ERR, LOG_TAG, msg, null, line, moduleId, null, null);
+			return;
+		} else if (!assetType.equals("full")) {
+			// ignore
+			return;
+		}
+		/*
+		 * First we do AUDIO
+		 * 
+		 */
+		String aTrackId = xlateId(vIdEl, "audtrackid");
+		Element audioEl = new Element("Audio", manifestNS);
+		audioEl.setAttribute("AudioTrackID", aTrackId);
+
+		// should be only 1
+		Element itxAudioDataFileEl = getItxEl(itxAssetEl, "./#data_file[@role='audio']", false);
+		if (itxAudioDataFileEl != null) {
+			List<Element> itxLocales = getItxElList(itxAudioDataFileEl, "./#locale", false);
+			for (Element itxLocale : itxLocales) {
+				String lang = itxLocale.getAttributeValue("name");
+				if (lang != null && !lang.isEmpty()) {
+					Element langEl = new Element("Language", mdNS);
+					langEl.setText(lang);
+					audioEl.addContent(langEl);
+				} else {
+					int line = resolveLine(itxLocale);
+					String msg = "<locale> element does not specify 'name' attribute";
+					logger.log(LogMgmt.LEV_ERR, LOG_TAG, msg, null, line, moduleId, null, null);
+				}
+			}
+			Element containerRefEl = new Element("ContainerReference", manifestNS);
+			audioEl.addContent(containerRefEl);
+
+			Element containerLocEl = new Element("ContainerLocation", manifestNS);
+			containerRefEl.addContent(containerLocEl);
+			Element itxFName = getItxEl(itxAudioDataFileEl, "./#file_name", false);
+			if (itxFName != null) {
+				containerLocEl.setText("./" + itxFName.getText());
+			}
+
+			Element lengthEl = new Element("Length", manifestNS);
+			containerRefEl.addContent(lengthEl);
+			Element itxSizeEl = getItxEl(itxAudioDataFileEl, "./#size", false);
+			if (itxSizeEl != null) {
+				lengthEl.setText(itxSizeEl.getText());
+			}
+
+			Element hashEl = new Element("Hash", manifestNS);
+			containerRefEl.addContent(hashEl);
+			Element itxchecksumEl = getItxEl(itxAudioDataFileEl, "./#checksum", false);
+			if (itxchecksumEl != null) {
+				hashEl.setText(itxchecksumEl.getText());
+				hashEl.setAttribute("method", itxchecksumEl.getAttributeValue("type"));
+			}
+		}
+		audioInv.put(aTrackId, audioEl);
+
+		/*
+		 * Next we do VIDEO
+		 * 
+		 */
+		String vidTrackId = xlateId(vIdEl, "vidtrackid");
+		Element videoEl = new Element("Video", manifestNS);
+		videoEl.setAttribute("VideoTrackID", vidTrackId);
+
+		// should be only 1
+		Element itxVidioDataFileEl = getItxEl(itxAssetEl, "./#data_file[@role='source']", false);
+		if (itxVidioDataFileEl != null) {
+			/*
+			 * No Locales for Video
+			 */
+			Element containerRefEl = new Element("ContainerReference", manifestNS);
+			videoEl.addContent(containerRefEl);
+
+			Element containerLocEl = new Element("ContainerLocation", manifestNS);
+			containerRefEl.addContent(containerLocEl);
+			Element itxFName = getItxEl(itxVidioDataFileEl, "./#file_name", false);
+			if (itxFName != null) {
+				containerLocEl.setText(itxFName.getText());
+			}
+
+			Element lengthEl = new Element("Length", manifestNS);
+			containerRefEl.addContent(lengthEl);
+			Element itxSizeEl = getItxEl(itxVidioDataFileEl, "./#size", false);
+			if (itxSizeEl != null) {
+				lengthEl.setText(itxSizeEl.getText());
+			}
+
+			Element hashEl = new Element("Hash", manifestNS);
+			containerRefEl.addContent(hashEl);
+			Element itxchecksumEl = getItxEl(itxVidioDataFileEl, "./#checksum", false);
+			if (itxchecksumEl != null) {
+				hashEl.setText(itxchecksumEl.getText());
+				hashEl.setAttribute("method", itxchecksumEl.getAttributeValue("type"));
+			}
+		}
+		videoInv.put(vidTrackId, videoEl);
 	}
 
 	/**
@@ -424,21 +656,20 @@ public class Importer {
 		Element expSubTypeEl = new Element("SubType", manifestNS);
 		expSubTypeEl.setText("ITE");
 		experienceEl.addContent(expSubTypeEl);
-
-		String cid = xlateId(iteEl.getChild("vendor_id", iteNSpace), "cid");
-		Element cidEl = new Element("ContentID", manifestNS);
-		cidEl.setText(cid);
-		experienceEl.addContent(cidEl);
-
 		/*
 		 * What happens next depends on the properties of the iteEl
 		 */
 		String iteElName = iteEl.getName();
-		System.out.println("iteElName=" + iteElName+", cid="+cid);
 		switch (iteElName) {
 		case "rootnode":
 			break;
 		case "gallery":
+			String cid = xlateId(iteEl.getChild("vendor_id", iteNSpace), "cid");
+			System.out.println("iteElName=" + iteElName + ", cid=" + cid);
+			Element cidEl = new Element("ContentID", manifestNS);
+			cidEl.setText(cid);
+			experienceEl.addContent(cidEl);
+
 			// need type of gallery
 			Element iteGTypeEl = iteEl.getChild("gallery_type", iteNSpace);
 			String gType = iteGTypeEl.getTextNormalize();
@@ -527,12 +758,26 @@ public class Importer {
 		return mmElList;
 	}
 
+	private Element getItxEl(Element iteContextel, String xpath, boolean optional) {
+		List<Element> elList = getItxElList(iteContextel, xpath, optional);
+		if (elList.isEmpty()) {
+			return null;
+		}
+		if (elList.size() > 1) {
+			int line = resolveLine(iteContextel);
+			String msg = "Multiple Elements found where one expected";
+			String details = "XPath '" + xpath + "' returned more than one matching elements. Extras will be ignored.";
+			logger.log(LogMgmt.LEV_ERR, LOG_TAG, msg, iteFile, line, moduleId, null, null);
+		}
+		return elList.get(0);
+	}
+
 	/**
 	 * @param iteContextel
 	 * @param xpath
 	 * @return
 	 */
-	private List<Element> getItXEl(Element iteContextel, String xpath, boolean optional) {
+	private List<Element> getItxElList(Element iteContextel, String xpath, boolean optional) {
 		String completeXPath = xpath.replaceAll("#", iteNSpace.getPrefix() + ":");
 		XPathExpression<Element> xpExpression = xpfac.compile(completeXPath, Filters.element(), null, iteNSpace);
 		List<Element> itExElList = xpExpression.evaluate(iteContextel);
