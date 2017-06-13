@@ -68,7 +68,7 @@ public class DefaultMetadata {
 	 * @param assetEl
 	 * @return
 	 */
-	public void createAssetMetadata(Element assetEl, RowToXmlHelper row) {
+	public void createAssetMetadata(Element assetEl, AbstractRowHelper row) {
 		Element metadata = new Element("Metadata", xb.getAvailsNSpace());
 		addTitles(metadata, row);
 
@@ -82,7 +82,7 @@ public class DefaultMetadata {
 		assetEl.addContent(metadata);
 	}
 
-	protected Element addEIDR(Element metadata, String childName, String colKey, RowToXmlHelper row) {
+	protected Element addEIDR(Element metadata, String childName, String colKey, AbstractRowHelper row) {
 		Pedigree pg = row.getPedigreedData(colKey);
 		if (!row.isSpecified(pg)) {
 			return null;
@@ -125,7 +125,7 @@ public class DefaultMetadata {
 		}
 	}
 
-	protected void addTitles(Element metadata, RowToXmlHelper row) {
+	protected void addTitles(Element metadata, AbstractRowHelper row) {
 		/*
 		 * TitleDisplayUnlimited is OPTIONAL in SS but REQUIRED in XML;
 		 * workaround by assigning it internal alias value which is REQUIRED in
@@ -147,10 +147,9 @@ public class DefaultMetadata {
 		}
 	}
 
-	protected void addStandardMetadata(Element metadata, RowToXmlHelper row) {
-		Element nextEl = null;
-		nextEl = row.process(metadata, "ReleaseDate", xb.getAvailsNSpace(), "AvailMetadata/ReleaseYear");
-		nextEl = row.process(metadata, "RunLength", xb.getAvailsNSpace(), "AvailMetadata/TotalRunTime");
+	protected void addStandardMetadata(Element metadata, AbstractRowHelper row) { 
+		row.process(metadata, "ReleaseDate", xb.getAvailsNSpace(), "AvailMetadata/ReleaseYear");
+		row.process(metadata, "RunLength", xb.getAvailsNSpace(), "AvailMetadata/TotalRunTime");
 		/*
 		 * add a TEMPORARY holder for all ReleaseHistory elements. This will be
 		 * removed later when the Metadata is FINALIZED.
@@ -175,7 +174,7 @@ public class DefaultMetadata {
 	 * @param childName
 	 * @param colKey
 	 */
-	protected void addSequenceInfo(RowToXmlHelper row, Element metadataEl, String childName, String colKey) {
+	protected void addSequenceInfo(AbstractRowHelper row, Element metadataEl, String childName, String colKey) {
 		Element childEl = new Element(childName, xb.getAvailsNSpace());
 		Element numberEl = row.process(childEl, "Number", xb.getMdNSpace(), colKey);
 		if (numberEl != null) {
@@ -189,7 +188,7 @@ public class DefaultMetadata {
 	 * @param cellKey
 	 * @param row
 	 */
-	protected void addReleaseHistory(Element parentEl, String type, String cellKey, RowToXmlHelper row) {
+	protected void addReleaseHistory(Element parentEl, String type, String cellKey, AbstractRowHelper row) {
 		Pedigree pg = row.getPedigreedData(cellKey);
 		if (!row.isSpecified(pg)) {
 			return;
@@ -212,9 +211,9 @@ public class DefaultMetadata {
 				xb.getMdNSpace());
 		Element matching = xpExpression.evaluateFirst(parentEl);
 		if (matching != null) {
-			// ignore pre-existing match 
+			// ignore pre-existing match
 			return;
-		} 
+		}
 		Element rh = new Element("ReleaseHistory", xb.getAvailsNSpace());
 		Element rt = new Element("ReleaseType", xb.getMdNSpace());
 		rt.setText(type);
@@ -230,7 +229,7 @@ public class DefaultMetadata {
 		ReleaseHistoryTEMP.addContent(rh);
 	}
 
-	protected void addContentRating(Element parentEl, RowToXmlHelper row) {
+	protected void addContentRating(Element parentEl, AbstractRowHelper row) {
 		Element ratings = parentEl.getChild("Ratings", xb.getAvailsNSpace());
 		if (ratings == null) {
 			ratings = new Element("Ratings", xb.getAvailsNSpace());
@@ -295,7 +294,7 @@ public class DefaultMetadata {
 	 * @param metadata
 	 * @param row
 	 */
-	protected void addCredits(Element metadata, RowToXmlHelper row) {
+	protected void addCredits(Element metadata, AbstractRowHelper row) {
 		if (row.isSpecified(row.getData("AvailMetadata/CompanyDisplayCredit"))) {
 			Element cdcEl = new Element("CompanyDisplayCredit", xb.getAvailsNSpace());
 			row.process(cdcEl, "DisplayString", xb.getMdNSpace(), "AvailMetadata/CompanyDisplayCredit");
@@ -309,7 +308,7 @@ public class DefaultMetadata {
 	 * @param key
 	 * @param row
 	 */
-	protected void addAltIdentifier(Element parentEl, String childName, String key, RowToXmlHelper row) {
+	protected void addAltIdentifier(Element parentEl, String childName, String key, AbstractRowHelper row) {
 		Pedigree pg = row.getPedigreedData(key);
 		if (!row.isSpecified(pg)) {
 			return;
@@ -346,7 +345,7 @@ public class DefaultMetadata {
 	 * @param metadataEl
 	 * @param row
 	 */
-	public void extend(Element metadataEl, RowToXmlHelper row) {
+	public void extend(Element metadataEl, AbstractRowHelper row) {
 		addContentRating(metadataEl, row);
 
 		addReleaseHistory(metadataEl, "original", "AvailMetadata/ReleaseHistoryOriginal", row);

@@ -41,7 +41,7 @@ public class SeasonMetadata extends DefaultMetadata {
 		seriesMdBuilder = new SeriesMetadata(xb);
 	}
 
-	public void createAssetMetadata(Element parentEl, RowToXmlHelper row) {
+	public void createAssetMetadata(Element parentEl, RowToXmlHelperV1_7 row) {
 		Element seasonMetadataEl = new Element(colPrefix + "Metadata", xb.getAvailsNSpace());
 		String key = colPrefix + "ContentID";
 		row.process(seasonMetadataEl, key, xb.getAvailsNSpace(), "AvailAsset/" + key);

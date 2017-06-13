@@ -35,7 +35,7 @@ import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class RowToXmlHelperV1_6 extends RowToXmlHelper {
+public class RowToXmlHelperV1_6 extends RowToXmlHelperV1_7 {
 
 	/**
 	 * @param sheet

@@ -41,7 +41,7 @@ public class EpisodeMetadata extends DefaultMetadata {
 		seasonMdBuilder = new SeasonMetadata(xb);
 	}
 
-	public  void createAssetMetadata(Element parentEl, RowToXmlHelper row) {
+	public  void createAssetMetadata(Element parentEl, AbstractRowHelper row) {
 		Element episodeMetadataEl = new Element(colPrefix + "Metadata", xb.getAvailsNSpace());
 		addTitles(episodeMetadataEl, row);
 
@@ -65,7 +65,7 @@ public class EpisodeMetadata extends DefaultMetadata {
 	 * @param string2
 	 * @param row
 	 */
-	private void addIdentifier(Element episodeMetadataEl, RowToXmlHelper row) {
+	private void addIdentifier(Element episodeMetadataEl, AbstractRowHelper row) {
 		Pedigree pg = row.getPedigreedData("AvailMetadata/EpisodeID");
 		if (!row.isSpecified(pg)) {
 			return;

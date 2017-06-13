@@ -35,38 +35,20 @@ import com.movielabs.mddflib.logging.LogMgmt;
 /**
  * Create XML document from a v1.7 Excel spreadsheet. The XML generated will be
  * based on v2.2 of the Avails XSD and reflects a "best effort" in that there is
- * no guarantee that it is valid.
- * <p>
- * This class is intended to have a low footprint in terms of memory usage so as
- * to facilitate processing of sheets with large row counts. Note that Excel
- * 2010 supports up to 1,048,576 rows.
- * </p>
+ * no guarantee that it is valid. 
  * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class RowToXmlHelper {
+public class RowToXmlHelperV1_7 extends AbstractRowHelper{
 
-	static final String MISSING = "--FUBAR (missing)";
-	protected Row row;
-	protected XmlBuilder xb;
-	protected AvailsSheet sheet;
-	protected String workType = "";
-	protected DataFormatter dataF = new DataFormatter();
-	private Pedigree workTypePedigree;
+	static final String MISSING = "--FUBAR (missing)";   
 
 	/**
 	 * @param fields
 	 */
-	RowToXmlHelper(AvailsSheet sheet, Row row) {
-		super();
-		this.sheet = sheet;
-		this.row = row;
-		/*
-		 * Need to save the current workType for use in Transaction/Terms
-		 */
-		workTypePedigree = getPedigreedData("AvailAsset/WorkType");
-		this.workType = workTypePedigree.getRawValue();
+	RowToXmlHelperV1_7(AvailsSheet sheet, Row row) {
+		super(sheet, row); 
 	}
 
 	protected void makeAvail(XmlBuilder xb) {
@@ -91,24 +73,20 @@ public class RowToXmlHelper {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	Element mDisposition() {
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.avails.xml.AbstractRowHelper#mDisposition()
+	 */
+	protected Element mDisposition() {
 		Element disp = new Element("Disposition", xb.getAvailsNSpace());
 		process(disp, "EntryType", xb.getAvailsNSpace(), "Disposition/EntryType");
 		return disp;
 	}
 
-	/**
-	 * Create an <tt>mdmec:Publisher-type</tt> XML element with a md:DisplayName
-	 * element child, and populate the latter with the DisplayName
-	 * 
-	 * @param elName
-	 *            the parent element to be created (i.e., Licensor or
-	 *            ServiceProvider)
-	 * @param displayName
-	 *            the name to be held in the DisplayName child node
-	 * @return the created element
+ 
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.avails.xml.AbstractRowHelper#mPublisher(java.lang.String, java.lang.String)
 	 */
-	Element mPublisher(String elName, String colKey) {
+	protected Element mPublisher(String elName, String colKey) {
 		Element pubEl = new Element(elName, xb.getAvailsNSpace());
 
 		process(pubEl, "DisplayName", xb.getMdNSpace(), colKey);
@@ -368,43 +346,8 @@ public class RowToXmlHelper {
 			xb.addEntitlement(avail, ecosysId, eidEl);
 		}
 	}
-
-	/**
-	 * Create an XML element
-	 * 
-	 * @param name
-	 *            the name of the element
-	 * @param val
-	 *            the value of the element
-	 * @return the created element, or null
-	 */
-	Element mGenericElement(String name, String val, Namespace ns) {
-		Element el = new Element(name, ns);
-		String formatted = xb.formatForType(name, ns, val);
-		el.setText(formatted);
-		return el;
-	}
-
-	/**
-	 * Same as invoking
-	 * <tt>process(Element parentEl, String childName, Namespace ns, String cellKey, String separator) </tt>
-	 * with a <tt>null</tt> separator. A single child element will therefore be
-	 * created.
-	 * 
-	 * @param parentEl
-	 * @param childName
-	 * @param ns
-	 * @param cellKey
-	 * @return
-	 */
-	protected Element process(Element parentEl, String childName, Namespace ns, String cellKey) {
-		Element[] elementList = process(parentEl, childName, ns, cellKey, null);
-		if (elementList != null) {
-			return elementList[0];
-		} else {
-			return null;
-		}
-	}
+ 
+ 
 
 	/**
 	 * Add zero or more child elements with the specified name and namespace.
@@ -447,7 +390,7 @@ public class RowToXmlHelper {
 		}
 	}
 
-	void addRegion(Element parentEl, String regionType, Namespace ns, String cellKey) {
+	protected void addRegion(Element parentEl, String regionType, Namespace ns, String cellKey) {
 		Element regionEl = new Element(regionType, ns);
 		Pedigree pg = getPedigreedData(cellKey);
 		String value = pg.getRawValue();
@@ -516,58 +459,5 @@ public class RowToXmlHelper {
 			return value;
 		}
 	}
-
-	/**
-	 * @param colKey
-	 * @return
-	 */
-	protected Pedigree getPedigreedData(String colKey) {
-		int cellIdx = sheet.getColumnIdx(colKey);
-		if (cellIdx < 0) {
-			return null;
-		}
-		Cell sourceCell = row.getCell(cellIdx);
-		String value = dataF.formatCellValue(sourceCell);
-		if (value == null) {
-			value = "";
-		}
-		if (sourceCell != null && (sourceCell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
-			xb.appendToLog("Use of Excel Formulas not supported", LogMgmt.LEV_ERR, sourceCell);
-		}
-		Pedigree ped = new Pedigree(sourceCell, value);
-
-		return ped;
-	}
-
-	/**
-	 * Returns <tt>true</tt> if the valueSrc is both non-null and not empty. The
-	 * value source must be an instance of either the <tt>String</tt> or
-	 * <tt>Pedigree</tt> class or an <tt>IllegalArgumentException</tt> is
-	 * thrown.
-	 * 
-	 * @param valueSrc
-	 * @throws IllegalArgumentException
-	 */
-	protected boolean isSpecified(Object valueSrc) throws IllegalArgumentException {
-		if (valueSrc == null) {
-			return false;
-		}
-		if (valueSrc instanceof String) {
-			return (!((String) valueSrc).isEmpty());
-		}
-
-		if (valueSrc instanceof Pedigree) {
-			return (!((Pedigree) valueSrc).isEmpty());
-		}
-		String msg = valueSrc.getClass().getCanonicalName() + " is not supported value source";
-		throw new IllegalArgumentException(msg);
-	}
-
-	/**
-	 * @return
-	 */
-	public int getRowNumber() {
-		return row.getRowNum();
-	}
-
+ 
 }
