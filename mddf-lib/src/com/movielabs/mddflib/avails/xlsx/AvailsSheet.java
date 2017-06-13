@@ -36,7 +36,7 @@ import org.apache.poi.ss.usermodel.Sheet;
  */
 public class AvailsSheet {
 	public static enum Version {
-		V1_7, V1_6, UNK
+		V1_7_2, V1_7, V1_6, UNK
 	};
 
 	private ArrayList<Row> rows;
@@ -140,9 +140,13 @@ public class AvailsSheet {
 		 * headers are.
 		 * 
 		 */
-		if (this.getColumnIdx("Avail/ALID") >= 0) {
+		boolean hasAltID = (this.getColumnIdx("Avail/AltID") >= 0) || (this.getColumnIdx("Avail/EpisodeAltID") >= 0);
+		boolean hasALID = (this.getColumnIdx("Avail/ALID") >= 0);
+		if (hasALID && hasAltID)  {
+			version = Version.V1_7_2;
+		} else if (hasALID && !hasAltID)  {
 			version = Version.V1_7;
-		} else if ((this.getColumnIdx("Avail/AltID") >= 0) || (this.getColumnIdx("Avail/EpisodeAltID") >= 0)) {
+		} else if (!hasALID && hasAltID) {
 			version = Version.V1_6;
 		}
 		// ...............................................

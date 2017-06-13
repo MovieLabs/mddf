@@ -23,7 +23,6 @@
 package com.movielabs.mddflib.avails.xml;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -33,7 +32,7 @@ import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
- * Create XML document from a v1.7 Excel spreadsheet. The XML generated will be
+ * Create XML document from a v1.7 or v1.7.2 Excel spreadsheet. The XML generated will be
  * based on v2.2 of the Avails XSD and reflects a "best effort" in that there is
  * no guarantee that it is valid. 
  * 

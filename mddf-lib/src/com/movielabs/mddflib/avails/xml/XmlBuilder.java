@@ -73,7 +73,7 @@ public class XmlBuilder {
 	private Map<Element, Map<String, Element>> avail2EntilementMap;
 	private Map<Element, List<String>> entitlement2IdMap;
 	private Map<String, Element> assetElRegistry;
-	private Map<Element, RowToXmlHelper> element2SrcRowMap;
+	private Map<Element, AbstractRowHelper> element2SrcRowMap;
 	private LogMgmt logger;
 	private DefaultMetadata mdHelper_basic;
 	private EpisodeMetadata mdHelper_episode;
@@ -162,7 +162,7 @@ public class XmlBuilder {
 		avail2TransMap = new HashMap<Element, List<Element>>();
 		avail2EntilementMap = new HashMap<Element, Map<String, Element>>();
 		entitlement2IdMap = new HashMap<Element, List<String>>();
-		element2SrcRowMap = new HashMap<Element, RowToXmlHelper>();
+		element2SrcRowMap = new HashMap<Element, AbstractRowHelper>();
 
 		// Create and initialize Document...
 		String xsdUri = "http://www.movielabs.com/schema/avails/v" + xsdVersion + "/avails";
@@ -180,11 +180,12 @@ public class XmlBuilder {
 		// build document components row by row.
 		try {
 			switch (templateVersion) {
+			case V1_7_2:
 			case V1_7:
 				for (Row row : aSheet.getRows()) {
 					msg = "Converting row " + row.getRowNum();
 					logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
-					RowToXmlHelper xmlConverter = new RowToXmlHelper(aSheet, row);
+					RowToXmlHelperV1_7 xmlConverter = new RowToXmlHelperV1_7(aSheet, row);
 					xmlConverter.makeAvail(this);
 				}
 				break;
@@ -192,7 +193,7 @@ public class XmlBuilder {
 				for (Row row : aSheet.getRows()) {
 					msg = "Converting row " + row.getRowNum();
 					logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
-					RowToXmlHelper xmlConverter = new RowToXmlHelperV1_6(aSheet, row);
+					RowToXmlHelperV1_7 xmlConverter = new RowToXmlHelperV1_6(aSheet, row);
 					xmlConverter.makeAvail(this);
 				}
 				break;
@@ -205,6 +206,7 @@ public class XmlBuilder {
 			e.printStackTrace();
 			return null;
 		}
+
 		// Final assembly in correct order..
 		Iterator<Element> alidIt = availElRegistry.values().iterator();
 		while (alidIt.hasNext()) {
@@ -248,7 +250,7 @@ public class XmlBuilder {
 	 * @param curRow
 	 * @return
 	 */
-	Element getAvailElement(RowToXmlHelper curRow) {
+	Element getAvailElement(AbstractRowHelper curRow) {
 		Pedigree alidPedigree = curRow.getPedigreedData("Avail/ALID");
 		/*
 		 * TODO: next line throws a NullPtrException if column is missing. How
@@ -308,7 +310,7 @@ public class XmlBuilder {
 			/*
 			 * make sure key values are aligned...
 			 */
-			RowToXmlHelper srcRow = element2SrcRowMap.get(availEL);
+			AbstractRowHelper srcRow = element2SrcRowMap.get(availEL);
 			checkForMatch("Avail/ALID", srcRow, curRow, "Avail");
 			checkForMatch("Avail/DisplayName", srcRow, curRow, "Avail");
 			checkForMatch("Avail/ServiceProvider", srcRow, curRow, "Avail");
@@ -338,7 +340,8 @@ public class XmlBuilder {
 	 * @param srcRow
 	 * @param rowHelper
 	 */
-	private boolean checkForMatch(String colKey, RowToXmlHelper srcRow, RowToXmlHelper curRow, String entityName) {
+	private boolean checkForMatch(String colKey, AbstractRowHelper srcRow, AbstractRowHelper curRow,
+			String entityName) {
 		String definedValue = srcRow.getData(colKey);
 		if (definedValue == null) {
 			// col not defined so we consider it a match
@@ -364,7 +367,7 @@ public class XmlBuilder {
 	 * @param rowHelper
 	 * @return
 	 */
-	private String mapWorkType(RowToXmlHelper rowHelper) {
+	private String mapWorkType(AbstractRowHelper rowHelper) {
 		String workTypeSS = rowHelper.getData("AvailAsset/WorkType");
 		String availType;
 		switch (workTypeSS) {
@@ -554,7 +557,7 @@ public class XmlBuilder {
 	/**
 	 * @param row
 	 */
-	void createAsset(RowToXmlHelper curRow) {
+	void createAsset(AbstractRowHelper curRow) {
 		/*
 		 * Gen unique key and see if there is a matching Element. Unfortunately
 		 * the key's structure is based on contentID which is sensitive to the
@@ -589,7 +592,7 @@ public class XmlBuilder {
 		 * Check the consistency of the Asset info as originally specified with
 		 * the same fields in the current row.
 		 */
-		RowToXmlHelper srcRow = element2SrcRowMap.get(assetEl);
+		AbstractRowHelper srcRow = element2SrcRowMap.get(assetEl);
 		boolean match = true;
 		match = checkForMatch("AvailAsset/WorkType", srcRow, curRow, "Asset") && match;
 		match = checkForMatch("AvailAsset/ContentID", srcRow, curRow, "Asset") && match;
@@ -640,7 +643,7 @@ public class XmlBuilder {
 	 * @param assetWorkType
 	 * @param row
 	 */
-	void createAssetMetadata(Element assetEl, String assetWorkType, RowToXmlHelper row) {
+	void createAssetMetadata(Element assetEl, String assetWorkType, AbstractRowHelper row) {
 		/*
 		 * Need to determine what metadata structure to use based on the
 		 * Asset/WorkType

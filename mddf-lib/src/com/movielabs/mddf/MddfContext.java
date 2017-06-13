@@ -67,7 +67,7 @@ public class MddfContext {
 		String[] MANIFEST_VER = { "1.6", "1.5" };
 		String[] MEC_VER = { "2.5", "2.4" };
 		String[] AVAILS_X_VER = { "2.2.1", "2.2", "2.1" };
-		String[] AVAILS_E_VER = { "1.7", "1.6" };
+		String[] AVAILS_E_VER = { "1.7.2","1.7", "1.6" };
 
 		stdsVersions = new HashMap<String, String[]>();
 		stdsVersions.put("CM", CM_VER);
@@ -84,6 +84,7 @@ public class MddfContext {
 	public enum FILE_FMT {
 		AVAILS_1_6("Avail", "1.6", "xlsx"), 
 		AVAILS_1_7("Avail", "1.7", "xlsx"), 
+		AVAILS_1_7_2("Avail", "1.7.2", "xlsx"), 
 		AVAILS_2_1("Avail", "2.1", "xlsx"),
 		AVAILS_2_2("Avail", "2.2", "xml"), 
 		AVAILS_2_2_1("Avail", "2.2.1", "xml"), 
