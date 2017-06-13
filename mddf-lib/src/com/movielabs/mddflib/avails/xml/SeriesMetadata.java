@@ -38,7 +38,7 @@ public class SeriesMetadata extends DefaultMetadata {
 		colPrefix = "Series";
 	}
 
-	public void createAssetMetadata(Element parentEl, RowToXmlHelper row) {
+	public void createAssetMetadata(Element parentEl, RowToXmlHelperV1_7 row) {
 		Element seriesMetadataEl = new Element(colPrefix + "Metadata", xb.getAvailsNSpace());
 		String key = colPrefix + "ContentID";
 		row.process(seriesMetadataEl, key, xb.getAvailsNSpace(), "AvailAsset/" + key);
@@ -53,6 +53,7 @@ public class SeriesMetadata extends DefaultMetadata {
 
 		key = colPrefix + "ID"; 
 		addAltIdentifier(seriesMetadataEl, "SeriesAltIdentifier", "AvailMetadata/"+ key, row);
+		addAltIdentifier(seriesMetadataEl, "SeriesAltIdentifier", "AvailMetadata/SeriesAltID", row);
 
 		row.process(seriesMetadataEl, "NumberOfSeasons", xb.getAvailsNSpace(), "AvailMetadata/SeasonCount");
 	

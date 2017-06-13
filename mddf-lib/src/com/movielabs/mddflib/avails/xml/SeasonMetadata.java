@@ -69,6 +69,7 @@ public class SeasonMetadata extends DefaultMetadata {
 		addContentRating(seasonMetadataEl, row);
 
 		addAltIdentifier(seasonMetadataEl, "SeasonAltIdentifier", "AvailMetadata/SeasonID", row);
+		addAltIdentifier(seasonMetadataEl, "SeasonAltIdentifier", "AvailMetadata/SeasonAltID", row);
 
 		row.process(seasonMetadataEl, "NumberOfEpisodes", xb.getAvailsNSpace(), "AvailMetadata/EpisodeCount");
 

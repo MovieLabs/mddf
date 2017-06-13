@@ -47,6 +47,7 @@ public class EpisodeMetadata extends DefaultMetadata {
 
 		addIdentifier(episodeMetadataEl, row);
 
+		addAltIdentifier(episodeMetadataEl, "AltIdentifier", "AvailMetadata/EpisodeAltID", row);
 		addStandardMetadata(episodeMetadataEl, row);
 
 		addSequenceInfo(row, episodeMetadataEl, colPrefix + "Number", "AvailMetadata/" + colPrefix + "Number");

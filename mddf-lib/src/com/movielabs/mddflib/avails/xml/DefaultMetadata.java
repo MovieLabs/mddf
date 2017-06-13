@@ -75,6 +75,8 @@ public class DefaultMetadata {
 		Element idEl = addEIDR(metadata, "EditEIDR-URN", "AvailAsset/EditID", row);
 		idEl = addEIDR(metadata, "TitleEIDR-URN", "AvailAsset/TitleID", row);
 
+		addAltIdentifier(metadata, "AltIdentifier", "AvailMetadata/AltID", row);
+		
 		addStandardMetadata(metadata, row);
 
 		addCredits(metadata, row);
