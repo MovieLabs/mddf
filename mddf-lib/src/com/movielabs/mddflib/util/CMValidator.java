@@ -341,9 +341,13 @@ public class CMValidator extends XmlIngester {
 			idXRefCounter.put(idValue, count);
 
 			if ((idValue == null) || (idValue.isEmpty())) {
-				String msg = idAttribute + " not specified. References to this " + elementName
-						+ " will not be supportable.";
-				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_WARN, targetEl, msg, null, null, logMsgSrcId);
+				if (targetEl.getParentElement().getName().equals("Audiovisual")) {
+					// special case... do nothing
+				} else {
+					String msg = idAttribute + " not specified. References to this " + elementName
+							+ " will not be supportable.";
+					logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_WARN, targetEl, msg, null, null, logMsgSrcId);
+				}
 			} else {
 				if (!idSet.add(idValue)) {
 					LogReference srcRef = LogReference.getRef("CM", "2.4", "cm001a");
@@ -899,7 +903,7 @@ public class CMValidator extends XmlIngester {
 				if (strict) {
 					logLevel = LogMgmt.LEV_ERR;
 					explanation = "Value specified does not match one of the allowed strings.";
-					if(caseSensitive){
+					if (caseSensitive) {
 						explanation = explanation + " Note that string-matching is case-sensitive";
 					}
 				} else {
@@ -908,7 +912,7 @@ public class CMValidator extends XmlIngester {
 				}
 				boolean matched = true;
 				if (caseSensitive) {
-					if (!expected.contains(text)) { 
+					if (!expected.contains(text)) {
 						logIssue(tag4log, logLevel, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
 						matched = false;
 
@@ -920,7 +924,7 @@ public class CMValidator extends XmlIngester {
 						matched = false;
 					}
 				}
-				if(!matched && strict){
+				if (!matched && strict) {
 					curFileIsValid = false;
 				}
 			}
