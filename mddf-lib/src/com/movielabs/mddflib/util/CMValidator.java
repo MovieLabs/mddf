@@ -327,6 +327,10 @@ public class CMValidator extends XmlIngester {
 			 * cross-references and uniqueness.
 			 */
 			Element targetEl = (Element) elementList.get(i);
+			if (targetEl.getParentElement().getName().equals("Audiovisual")) {
+				// special case... do nothing
+				continue;
+			}
 			String idValue = null;
 			String idKey = null;
 			if (idAttribute == null) {
@@ -341,13 +345,10 @@ public class CMValidator extends XmlIngester {
 			idXRefCounter.put(idValue, count);
 
 			if ((idValue == null) || (idValue.isEmpty())) {
-				if (targetEl.getParentElement().getName().equals("Audiovisual")) {
-					// special case... do nothing
-				} else {
-					String msg = idAttribute + " not specified. References to this " + elementName
-							+ " will not be supportable.";
-					logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_WARN, targetEl, msg, null, null, logMsgSrcId);
-				}
+				String msg = idAttribute + " not specified. References to this " + elementName
+						+ " will not be supportable.";
+				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_WARN, targetEl, msg, null, null, logMsgSrcId);
+
 			} else {
 				if (!idSet.add(idValue)) {
 					LogReference srcRef = LogReference.getRef("CM", "2.4", "cm001a");
