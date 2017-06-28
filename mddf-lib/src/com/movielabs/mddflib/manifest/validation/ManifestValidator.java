@@ -280,17 +280,13 @@ public class ManifestValidator extends CMValidator {
 		srcRef = LogReference.getRef("MMM", MAN_VER, "mmm002");
 		validateVocab(manifestNSpace, "TimedEvent", manifestNSpace, "Type", allowed, srcRef, true);
 
-		allowed = manifestVocab.optJSONArray("ExperienceType");
-		srcRef = LogReference.getRef("CM", MAN_VER, "mmm_expType");
-		validateVocab(manifestNSpace, "Experience", manifestNSpace, "Type", allowed, srcRef, true);
-
 		allowed = manifestVocab.optJSONArray("AudiovisualType");
 		srcRef = LogReference.getRef("MMM", MAN_VER, "mmm003");
 		validateVocab(manifestNSpace, "Audiovisual", manifestNSpace, "Type", allowed, srcRef, true);
 
 		allowed = manifestVocab.optJSONArray("ExperienceAppType");
 		srcRef = LogReference.getRef("CM", MAN_VER, "mmm_expAppType");
-		validateVocab(manifestNSpace, "Experience", manifestNSpace, "Type", allowed, srcRef, true);
+		validateVocab(manifestNSpace, "App", manifestNSpace, "Type", allowed, srcRef, true);
 
 		JSONObject availVocab = (JSONObject) getMddfResource("avail", AVAIL_VER);
 		if (availVocab != null) {
