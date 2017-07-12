@@ -95,7 +95,7 @@ Examples:
 * an Avails Validator with a version of v1.3.a is based on v1.3 of the mddf-lib.
 * a Manifest Validator with a version of v1.3.2.c is based on v1.3.2 of the mddf-lib.
 
-Prior to July 2017 and the release of v1.3 of the mddf-lib, the native executables were assigned versions a version ID
+Prior to July 2017 and the release of v1.3 of the mddf-lib, the native executables were assigned a version ID
 independant of the mddf-lib version. 
 
 ## <a name="h_History">Past Releases:</a>
