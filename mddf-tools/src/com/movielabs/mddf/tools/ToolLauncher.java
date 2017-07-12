@@ -162,8 +162,7 @@ public class ToolLauncher {
 			ValidationController vCtrl = new ValidationController(logger);
 			EnumSet<FILE_FMT> selections = EnumSet.noneOf(FILE_FMT.class);
 			String[] xlatFmts = cmdLine.getOptionValues("x");
-			if (xlatFmts == null || (xlatFmts.length == 0)) {
-				System.out.println("No translation");
+			if (xlatFmts == null || (xlatFmts.length == 0)) { 
 				vCtrl.setTranslations(null, null);
 			} else {
 				for (String fmt : xlatFmts) {
