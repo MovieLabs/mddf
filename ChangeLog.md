@@ -5,12 +5,15 @@
 
 ## Versioning
 
-The latest release of the core mddf-lib is v1.2. The tool releases based on the latest version of the core software are: 
-
-* Manifest Validator: v1.2.6
-* Avails Validator: v1.2.1
+The latest release of the core mddf-lib is v1.2.1. 
 
 ### mddf-lib Changes:
+
+#### mddf-lib v1.2.1
+* Bug fix: When using CLI, log file output did not specify name of file.
+* Bug Fix: Manifest validation incorrectly required an Audiovisual/Presentation to have an ID
+* Bug Fix: Manifest validation did not check value of Experience/App/Type
+* Enhancement: Avails support for XLSX v1.7.2 added
 
 #### mddf-lib v1.2
 * No changes. Functionally equivalent to v1.1.3_rc8
@@ -63,30 +66,3 @@ The latest release of the core mddf-lib is v1.2. The tool releases based on the 
   * from XLSX v1.6 to XLSX v1.7
 * Update: Ratings are now validated using v2.3 of the Common Metadata Ratings (CMR) data-set.
 
-### Avails Validator Changes:
-
-#### v1.1.2
-
-* Bug fixes associated with upgrade to mddf-lib v1.1.2
-
-#### v1.1.1
-
-* Enhancement: Added status message display at bottom of frame to indicate progress
-
-#### v1.1
-
-* Enhancement: Conversion of Avails from XML to XLSX is now supported.
-
-### Manifest Validator Changes:
-
-#### v1.1.4
-
-* Bug fixes associated with upgrade to mddf-lib v1.1.2
-
-#### v1.2.3
-
-* Enhancement: Added status message display at bottom of frame to indicate progress
-
-#### v1.2.2
-
-* Uses mddf-lib v1.1.1 but no changes to end functionality

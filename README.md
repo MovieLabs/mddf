@@ -27,7 +27,7 @@ This repository contains Java software supporting the creation and usage of MDDF
 * Media Manifest Core (MMC)
 * Media Entertainment Core (MEC)
 
-Information on the various MDDF standards is available at <http://www.movielabs.com/md/>
+Information on the MovieLabs Digital Distribution Framework and the various MDDF standards is available at <http://www.movielabs.com/md/>
 
 ## <a name="h_Status">Status and Relationship to Other MovieLabs Github Repositories:</a>
 
@@ -42,7 +42,7 @@ The software in this repository is intended to replace that contained in the fol
 There are two projects within this repository:
 
 * __mddf-lib__: this implements all core (i.e., *non-UI*) functionality that can be used to generate, validate, or transform MDDF files.
-* __mddf-tools__: implements standalone applications for validation.
+* __mddf-tools__: implements standalone applications for performing MDDF-related tasks.
 
 The applications in mddf-tools are implemented on top of mddf-lib and any developers intending to develop their 
 own mddf support applications are encouraged to do the same.
@@ -70,7 +70,7 @@ Binary releases are available in two forms:
    * Manifest Validator: <http://movielabs.com/md/manifest/validator/>
    * Avails Validator: <http://movielabs.com/md/avails/validator/>
 
-* as an executable Java jar which supports the processing of either Avails or Manifest files. Jar files may be downloaded from the ./binaries directory of this repository.
+* as an executable Java jar which supports the processing of either Avails or Manifest files. Jar files may be downloaded from the ./binaries directory of this repository. [NOTE: Version prior to v1.1.3 were not released as executable jars.]
 
 Note that the executable jar provides all of the capabilities available via the two native excutable packages. In addition, the jar provides a command
 line interface (CLI) that may be used either from a terminal window or in conjunction with scheduled jobs (e.g., via crontab).
@@ -78,23 +78,37 @@ line interface (CLI) that may be used either from a terminal window or in conjun
 Refer to ChangeLog.md for a list of specific enhancements and bug fixes for any given release.
 
 ### Versioning:
+#### mddf-lib and Java jars:
+Stable releases of the mddf-lib will have a two-part version while evaluation (i.e., BETA) releases will have a three-part version ID. 
+Interim development and alpha releases will include an "rcN" suffix. 
 
-The MDDF tools are assigned a three-part version number based on which version of the mddf-lib they are built on.
+Executable jars are created for both stable and BETA releases and track the version number of the underlying mddf-lib.
 
-Example: an Avails Validator with a version of v1.3.2 is based on v1.2 of the mddf-lib.
+Example: mddf-tool-v1.2.jar is based on, and compatible with, v1.2 of mddf-lib.
 
-Stable releases of the mddf-lib will have a two-part version while evaluation (i.e., beta) releases will have a three-part version ID. Native executables 
-for the Avails Validator and Manifest Validator are only created using the stable mddf-lib releases.
+#### Native executables:
+Native executables for the MDDF tools (i.e., Avails Validator and Manifest Validator) are only created using the stable mddf-lib 
+releases. Begining with the release of v1.3 of mddf-lib, native executables are assigned versions that append a letter to the 
+mddf-lib version.
+
+Examples: 
+* an Avails Validator with a version of v1.3.a is based on v1.3 of the mddf-lib.
+* a Manifest Validator with a version of v1.3.2.c is based on v1.3.2 of the mddf-lib.
+
+Prior to July 2017 and the release of v1.3 of the mddf-lib, the native executables were assigned versions a version ID
+independant of the mddf-lib version. 
 
 ## <a name="h_History">Past Releases:</a>
 
-* **2017-May-01**: mddf-lib v1.1.3.rc8 released as an executable jar for testing and evaluation.
+* **2017-May-09**: mddf-tool v1.2 released.
 
-* **2017-Apr-21**: mddf-lib v1.1.3.rc6 released as an executable jar for testing and evaluation.
+* **2017-May-01**: mddf-tool v1.1.3.rc8 released as an executable jar for testing and evaluation.
 
-* **2017-Apr-18**: mddf-lib v1.1.3.rc4 released as an executable jar for testing and evaluation.
+* **2017-Apr-21**: mddf-tool v1.1.3.rc6 released as an executable jar for testing and evaluation.
 
-* **2017-Mar-29**: mddf-lib released as an executable jar. Processing of either Avails or Manifest files is supported.
+* **2017-Apr-18**: mddf-tool v1.1.3.rc4 released as an executable jar for testing and evaluation.
+
+* **2017-Mar-29**: mddf-tool released as an executable jar. Processing of either Avails or Manifest files is supported.
 
 * **2017-Mar-02**: mddf-lib v1.1.2 released.
 
