@@ -313,8 +313,27 @@ public class ValidationController {
 	protected void validateFile(File srcFile, String uxProfile, List<String> useCases)
 			throws IOException, JDOMException {
 		String fileType = extractFileType(srcFile.getAbsolutePath());
+		fileType = fileType.toLowerCase();
 		if (!(fileType.equals("xml") || fileType.equals("xlsx"))) {
 			// Skipping file: Unsupported file type
+			String errMsg = "Skipping file " + srcFile.getName() + ": Unsupported file type";
+			String supplemental = "File must be of type '.xml' or, if Avails, '.xlsx'";
+			switch (fileType) {
+			case "xls":
+			case "xlt":
+			case "xlm":
+			case "xlsm":
+			case "xltx":
+			case "xltm":
+			case "xlsb":
+			case "xla":
+			case "xlam":
+			case "xll":
+			case "xlw":
+				supplemental = "Avails Excel support restricted to 'xlsx'. All other formats are potential security risk";
+				break;
+			}
+			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, errMsg, srcFile, -1, MODULE_ID, supplemental, null);
 			return;
 		}
 		logMgr.setCurrentFile(srcFile);
@@ -358,7 +377,7 @@ public class ValidationController {
 			 */
 			String errMsg = "Skipping file: Unsupported file type";
 			String supplemental = null;
-			logMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_N_A, errMsg, srcFile, -1, MODULE_ID, supplemental, null);
+			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, errMsg, srcFile, -1, MODULE_ID, supplemental, null);
 			return;
 		}
 		XmlIngester.setSourceDirPath(srcFile.getAbsolutePath());
@@ -470,7 +489,8 @@ public class ValidationController {
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found", xslxFile, MODULE_ID);
 			return null;
 		} catch (POIXMLException e1) {
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to parse XLSX. Check for comments or embedded objects.", xslxFile, MODULE_ID);
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
+					"Unable to parse XLSX. Check for comments or embedded objects.", xslxFile, MODULE_ID);
 			return null;
 		} catch (IOException e1) {
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", xslxFile, MODULE_ID);
@@ -489,6 +509,13 @@ public class ValidationController {
 		FILE_FMT srcMddfFmt = null;
 		XmlBuilder xBuilder = new XmlBuilder(logMgr, templateVersion);
 		switch (templateVersion) {
+		case V1_7_2:
+			srcMddfFmt = FILE_FMT.AVAILS_1_7;
+			if (logNav != null) {
+				logNav.setMddfFormat(xslxFile, srcMddfFmt);
+			}
+			xBuilder.setVersion("2.2");
+			break;
 		case V1_7:
 			srcMddfFmt = FILE_FMT.AVAILS_1_7;
 			if (logNav != null) {
