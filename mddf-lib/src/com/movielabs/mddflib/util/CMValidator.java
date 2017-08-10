@@ -345,10 +345,18 @@ public class CMValidator extends XmlIngester {
 			idXRefCounter.put(idValue, count);
 
 			if ((idValue == null) || (idValue.isEmpty())) {
-				String msg = idAttribute + " not specified. References to this " + elementName
+				String srcLabel = null;
+				String targetLabel = null;
+				if (idAttribute != null) {
+					srcLabel = elementName+"@"+ idAttribute;
+					targetLabel = elementName;
+				}else{
+					targetLabel =targetEl.getParentElement().getName();
+					srcLabel = targetLabel+"/"+elementName;
+				}
+				String msg = srcLabel + " not specified. References to this " + targetLabel
 						+ " will not be supportable.";
 				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_WARN, targetEl, msg, null, null, logMsgSrcId);
-
 			} else {
 				if (!idSet.add(idValue)) {
 					LogReference srcRef = LogReference.getRef("CM", "2.4", "cm001a");
