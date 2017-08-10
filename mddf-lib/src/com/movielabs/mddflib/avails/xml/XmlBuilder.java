@@ -112,6 +112,10 @@ public class XmlBuilder {
 			mdMecVer = "2.4";
 			mdVer = "2.4";
 			break;
+		case "2.2.2":
+			mdMecVer = "2.5";
+			mdVer = "2.5";
+			break;
 		default:
 			xsdVersion = null;
 			return false;

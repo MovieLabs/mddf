@@ -359,6 +359,7 @@ public abstract class XmlIngester implements IssueLogger {
 	 */
 	public static void setAvailVersion(String availSchemaVer) throws IllegalArgumentException {
 		switch (availSchemaVer) {
+		case "2.2.2":
 		case "2.2.1":
 			MD_VER = "2.5";
 			MDMEC_VER = "2.5";
