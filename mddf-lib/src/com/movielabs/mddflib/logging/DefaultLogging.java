@@ -115,7 +115,7 @@ public class DefaultLogging implements LogMgmt {
 		if (xmlFile == null) {
 			// xmlFile = curInputFile;
 			if (printToConsole) {
-				System.out.println("DEBUG: "+msg);
+				System.out.println(LogMgmt.logLevels[level]+": "+msg);
 			} 
 			return;
 		}
