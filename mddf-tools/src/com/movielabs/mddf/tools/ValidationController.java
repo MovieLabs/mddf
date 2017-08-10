@@ -514,7 +514,7 @@ public class ValidationController {
 			if (logNav != null) {
 				logNav.setMddfFormat(xslxFile, srcMddfFmt);
 			}
-			xBuilder.setVersion("2.2");
+			xBuilder.setVersion("2.2.2");
 			break;
 		case V1_7:
 			srcMddfFmt = FILE_FMT.AVAILS_1_7;
