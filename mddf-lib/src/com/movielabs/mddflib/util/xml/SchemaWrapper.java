@@ -39,6 +39,8 @@ import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
+import com.movielabs.mddf.MddfContext;
+
 /**
  * Wrapper for an XSD specification. This class provides functions supporting
  * queries and comparisons that facilitate checking an XML file for
@@ -64,13 +66,23 @@ public class SchemaWrapper {
 	private XPathFactory xpfac = XPathFactory.instance();
 	private Namespace nSpace;
 	private ArrayList<XPathExpression<?>> reqElXpList;
+	private HashMap<String, SchemaWrapper> otherSchemas = new HashMap<String, SchemaWrapper>();
 
 	public static SchemaWrapper factory(String xsdRsrc) {
 		synchronized (cache) {
 			SchemaWrapper target = cache.get(xsdRsrc);
 			if (target == null) {
-				target = new SchemaWrapper(xsdRsrc);
-				cache.put(xsdRsrc, target);
+				try {
+					target = new SchemaWrapper(xsdRsrc);
+					cache.put(xsdRsrc, target);
+				} catch (Exception e) {
+					/*
+					 * This happens if request is for a schema we don't provide
+					 * XSD for
+					 */
+					// System.out.println("SchemaWrapper.factory(): Exception
+					// for " + xsdRsrc);
+				}
 			}
 			return target;
 		}
@@ -103,12 +115,37 @@ public class SchemaWrapper {
 	}
 
 	private SchemaWrapper(String xsdRsrc) {
+		// System.out.println("Constructing wrapper for " + xsdRsrc);
 		schemaXSD = getSchemaXSD(xsdRsrc);
+		if (schemaXSD == null) {
+			throw new IllegalArgumentException("XSD for " + xsdRsrc + " is not an available resource");
+		}
 		rootEl = schemaXSD.getRootElement();
 		String targetNamespace = rootEl.getAttributeValue("targetNamespace");
-		String[] parts = targetNamespace.split("/");
-		String prefix = parts[parts.length - 1];
+		String[] parts = xsdRsrc.split("-v");
+		String prefix = parts[0];
 		nSpace = Namespace.getNamespace(prefix, targetNamespace);
+
+		/* get the associated wrapper for the md namespace */
+		List<Namespace> nSpaceList = rootEl.getAdditionalNamespaces();
+		for (Namespace subSpace : nSpaceList) {
+			String subPrefix = subSpace.getPrefix();
+			if (!subPrefix.equals(prefix)) {
+				String subURI = subSpace.getURI();
+				String schemaPrefix = MddfContext.SCHEMA_PREFIX + subPrefix + "/v";
+				String schemaVer = subURI.replace(schemaPrefix, "");
+				schemaVer = schemaVer.replace("/" + subPrefix, "");
+				String xsdForSub = subPrefix + "-v" + schemaVer;
+				SchemaWrapper subWrapper = SchemaWrapper.factory(xsdForSub);
+				if (subWrapper != null) {
+					otherSchemas.put(subPrefix, subWrapper);
+					// System.out.println(" Added wrapper for " + xsdForSub + "
+					// to " + xsdRsrc + " wrapper");
+				}
+			}
+		}
+
+		// can now process
 		buildReqElList();
 	}
 
@@ -124,6 +161,17 @@ public class SchemaWrapper {
 		 * memberTypes="xs:dateTime xs:date"/> </xs:simpleType> </xs:element>
 		 */
 		return type;
+	}
+
+	/**
+	 * @param type
+	 * @return
+	 */
+	private boolean isSimpleType(String type) {
+		XPathExpression<Element> xpExpression = xpfac.compile("./xs:simpleType[@name= '" + type + "']",
+				Filters.element(), null, xsNSpace);
+		Element target = xpExpression.evaluateFirst(rootEl);
+		return (target != null);
 	}
 
 	/**
@@ -158,7 +206,11 @@ public class SchemaWrapper {
 		for (int i = 0; i < elementList.size(); i++) {
 			String targetXPath = null;
 			Element target = (Element) elementList.get(i);
-			String name = target.getAttributeValue("name");
+			String name = target.getAttributeValue("name", "FOOBAR");
+			if (name.equalsIgnoreCase("ALID")) {
+				// DEBUG trap
+				int xyz = 0;
+			}
 			String minVal = target.getAttributeValue("minOccurs", "1");
 			if (minVal.equals("0")) {
 				// ignore optional elements
@@ -179,6 +231,14 @@ public class SchemaWrapper {
 				}
 			} else if (type.startsWith("xs:")) {
 				process = true;
+			} else {
+				// is it simpleType in a referenced schema?
+				String typePrefix = type.split(":")[0];
+				SchemaWrapper other = otherSchemas.get(typePrefix);
+				if (other != null) {
+					String typeName = type.replaceFirst(typePrefix + ":", "");
+					process = other.isSimpleType(typeName);
+				}
 			}
 			if (process) {
 				/*
