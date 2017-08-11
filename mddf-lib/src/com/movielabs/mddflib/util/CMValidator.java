@@ -128,7 +128,8 @@ public class CMValidator extends XmlIngester {
 			/*
 			 * Language codes are in their own file
 			 */
-			JSONObject rfc5646 = getMddfResource("rfc5646");
+			JSONObject jsonRsrc =getMddfResource("rfc5646"); 
+			JSONObject rfc5646 = jsonRsrc.getJSONObject("rfc5646");
 			iso639_2 = rfc5646.getJSONArray("iso639-2");
 			iso639_3 = rfc5646.getJSONArray("iso639-3");
 			unM49 = rfc5646.getJSONArray("UN-M49");

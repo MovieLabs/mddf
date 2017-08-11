@@ -264,7 +264,7 @@ public class ManifestValidator extends CMValidator {
 	 */
 	private void validateManifestVocab() {
 
-		JSONObject manifestVocab = (JSONObject) getMddfResource("manifest", MAN_VER);
+		JSONObject manifestVocab = (JSONObject) getVocabResource("manifest", MAN_VER);
 		if (manifestVocab == null) {
 			return;
 		}
@@ -288,7 +288,7 @@ public class ManifestValidator extends CMValidator {
 		srcRef = LogReference.getRef("CM", MAN_VER, "mmm_expAppType");
 		validateVocab(manifestNSpace, "App", manifestNSpace, "Type", allowed, srcRef, true);
 
-		JSONObject availVocab = (JSONObject) getMddfResource("avail", AVAIL_VER);
+		JSONObject availVocab = (JSONObject) getVocabResource("avail", AVAIL_VER);
 		if (availVocab != null) {
 			allowed = availVocab.optJSONArray("ExperienceCondition");
 			srcRef = LogReference.getRef("CM", MD_VER, "cm007");
@@ -301,7 +301,7 @@ public class ManifestValidator extends CMValidator {
 	 * @return
 	 */
 	protected void validateCMVocab() {
-		JSONObject cmVocab = (JSONObject) getMddfResource("cm", MD_VER);
+		JSONObject cmVocab = (JSONObject) getVocabResource("cm", MD_VER);
 		if (cmVocab == null) {
 			String msg = "Unable to validate controlled vocab: missing resource file";
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);

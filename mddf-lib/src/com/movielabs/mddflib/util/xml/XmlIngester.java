@@ -96,7 +96,14 @@ public abstract class XmlIngester implements IssueLogger {
 		this.loggingMgr = loggingMgr;
 	}
 
-	protected static JSONObject getMddfResource(String rsrcId) {
+	public static JSONObject getMddfResource(String rsrcId, String version) {
+		String rsrcKey = rsrcId + "_v"+version;
+		JSONObject jsonRsrc = getMddfResource(rsrcKey);  
+		return jsonRsrc;
+	}
+
+
+	public static JSONObject getMddfResource(String rsrcId) {
 		String rsrcPath = MddfContext.RSRC_PATH + rsrcId + ".json";
 		JSONObject rsrc = rsrcCache.get(rsrcPath);
 		if (rsrc == null) {
@@ -108,9 +115,8 @@ public abstract class XmlIngester implements IssueLogger {
 				return null;
 			}
 			rsrcCache.put(rsrcPath, rsrc);
-		}
-		JSONObject jsonRsrc = rsrc.getJSONObject(rsrcId);
-		return jsonRsrc;
+		}  
+		return rsrc;
 	}
 
 	/**
@@ -121,7 +127,7 @@ public abstract class XmlIngester implements IssueLogger {
 	 * @return a JSONObject or <tt>null</tt. if the resource is not accessible
 	 *         or is not valid JSON
 	 */
-	protected static Object getMddfResource(String rsrcId, String rsrcVersion) {
+	protected static Object getVocabResource(String rsrcId, String rsrcVersion) {
 		String rsrcPath = MddfContext.RSRC_PATH + "vocab_" + rsrcId + "_v" + rsrcVersion + ".json";
 		JSONObject rsrc = (JSONObject) rsrcCache.get(rsrcPath);
 		if (rsrc == null) {
