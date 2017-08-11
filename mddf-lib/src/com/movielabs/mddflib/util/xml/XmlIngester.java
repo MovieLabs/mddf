@@ -97,11 +97,10 @@ public abstract class XmlIngester implements IssueLogger {
 	}
 
 	public static JSONObject getMddfResource(String rsrcId, String version) {
-		String rsrcKey = rsrcId + "_v"+version;
-		JSONObject jsonRsrc = getMddfResource(rsrcKey);  
+		String rsrcKey = rsrcId + "_v" + version;
+		JSONObject jsonRsrc = getMddfResource(rsrcKey);
 		return jsonRsrc;
 	}
-
 
 	public static JSONObject getMddfResource(String rsrcId) {
 		String rsrcPath = MddfContext.RSRC_PATH + rsrcId + ".json";
@@ -115,7 +114,7 @@ public abstract class XmlIngester implements IssueLogger {
 				return null;
 			}
 			rsrcCache.put(rsrcPath, rsrc);
-		}  
+		}
 		return rsrc;
 	}
 
@@ -169,7 +168,6 @@ public abstract class XmlIngester implements IssueLogger {
 		return props;
 	}
 
-
 	protected static String readFile(String file) throws IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		String line = null;
@@ -186,7 +184,6 @@ public abstract class XmlIngester implements IssueLogger {
 		reader.close();
 		return stringBuilder.toString();
 	}
- 
 
 	public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
 			String moduleId) {
@@ -275,7 +272,9 @@ public abstract class XmlIngester implements IssueLogger {
 
 	/**
 	 * Identify the XSD version for the document's <i>primary</i> MDDF namespace
-	 * (i.e., Manifest, Avails, MDMec, etc.)
+	 * (i.e., Manifest, Avails, MDMec, etc.). Version is returned as a string
+	 * that <i>may</i> contain major and minor version identification (e.g.
+	 * '2.1', '1.7.3_rc1')
 	 * 
 	 * @param docRootEl
 	 * @return
