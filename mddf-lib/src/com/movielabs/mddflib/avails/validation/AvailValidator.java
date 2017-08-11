@@ -160,34 +160,16 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL", "avail01");
 
-	private static JSONObject availTypeStruct;
-
-	private static JSONArray genericAvailTypes;
-
-	private static JSONObject workTypeStruct;
+	private JSONObject availTypeStruct;
+	private JSONArray genericAvailTypes;
+	private JSONObject workTypeStruct;
 
 	private Map<Object, Pedigree> pedigreeMap;
 
+	private String availSchemaVer;
+
 	static {
 		id2typeMap = new HashMap<String, String>();
-
-		try {
-
-			/*
-			 * Load JSON that defines various constraints on structure of an
-			 * Avails
-			 */
-			String availRsrcPath = MddfContext.RSRC_PATH + "avail_structure.json";
-			JSONObject availStruct = loadJSON(availRsrcPath);
-			availTypeStruct = availStruct.getJSONObject("AvailType");
-			genericAvailTypes = availTypeStruct.getJSONArray("common");
-
-			workTypeStruct = availStruct.getJSONObject("WorkTypeStruct");
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 
@@ -234,10 +216,10 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		this.pedigreeMap = pedigreeMap;
 		curFileIsValid = true;
 
-		String schemaVer = identifyXsdVersion(docRootEl);
-		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Avails Schema Version " + schemaVer,
+		availSchemaVer = identifyXsdVersion(docRootEl);
+		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Avails Schema Version " + availSchemaVer,
 				srcFile, logMsgSrcId);
-		setAvailVersion(schemaVer);
+		setAvailVersion(availSchemaVer);
 		rootNS = availsNSpace;
 
 		validateXml(xmlFile, docRootEl);
@@ -263,7 +245,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * @param xmlFile
 	 */
 	protected boolean validateXml(File srcFile, Element docRootEl) {
-		String xsdFile = XsdValidation.defaultRsrcLoc + "avails-v" + XmlIngester.AVAIL_VER + ".xsd";
+		String xsdFile = XsdValidation.defaultRsrcLoc + "avails-v" + availSchemaVer + ".xsd";
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		curFileIsValid = xsdHelper.validateXml(srcFile, docRootEl, xsdFile, logMsgSrcId);
 		return curFileIsValid;
@@ -276,7 +258,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.LEV_INFO, "Validating constraints", curFile, LOGMSG_ID);
 		super.validateConstraints();
 
-		SchemaWrapper availSchema = SchemaWrapper.factory("avails-v" + XmlIngester.AVAIL_VER);
+		SchemaWrapper availSchema = SchemaWrapper.factory("avails-v" + availSchemaVer);
 
 		validateNotEmpty(availSchema);
 
@@ -311,13 +293,13 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	private void validateAvailVocab() {
 		Namespace primaryNS = availsNSpace;
 		String doc = "AVAIL";
-		String vocabVer = AVAIL_VER;
-		switch (AVAIL_VER) {
+		String vocabVer = availSchemaVer;
+		switch (availSchemaVer) {
 		case "2.2.1":
 			vocabVer = "2.2";
 		}
 
-		JSONObject availVocab = (JSONObject) getMddfResource("avail", vocabVer);
+		JSONObject availVocab = (JSONObject) getVocabResource("avail", vocabVer);
 		if (availVocab == null) {
 			String msg = "Unable to validate controlled vocab: missing resource file";
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
@@ -359,6 +341,13 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		srcRef = LogReference.getRef(doc, "avail07");
 		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseType", allowed, srcRef, true, false);
 
+		allowed = availVocab.optJSONArray("Language@asset");
+		srcRef = LogReference.getRef(doc, "avail07");
+		validateVocab(primaryNS, "AllowedLanguage", null, "@asset", allowed, srcRef, true);
+		validateVocab(primaryNS, "AssetLanguage", null, "@asset", allowed, srcRef, true);
+		validateVocab(primaryNS, "AssetLanguage", null, "@assetProvided", allowed, srcRef, true);
+		validateVocab(primaryNS, "HoldbackLanguage", null, "@asset", allowed, srcRef, true);
+		
 		// allowed = availVocab.optJSONArray("LicenseRightsDescription");
 		// srcRef = LogReference.getRef(doc, "avail07");
 		// validateVocab(primaryNS, "Transaction", primaryNS,
@@ -420,6 +409,17 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateLanguage(primaryNS, "Transaction", primaryNS, "AssetLanguage");
 		validateLanguage(primaryNS, "Transaction", primaryNS, "HoldbackLanguage");
 		validateLanguage(primaryNS, "Term", primaryNS, "Language");
+
+		/*
+		 * Additions for v2.2.2
+		 */
+		validateRegion(primaryNS, "TitleInternalAlias", null, "@region");
+		validateRegion(primaryNS, "SeasonTitleInternalAlias", null, "@region");
+		validateRegion(primaryNS, "SeriesTitleInternalAlias", null, "@region");
+
+		validateLanguage(primaryNS, "TitleDisplayUnlimited", primaryNS, "@language");
+		validateLanguage(primaryNS, "SeasonTitleDisplayUnlimited", primaryNS, "@language");
+		validateLanguage(primaryNS, "SeriesTitleDisplayUnlimited", primaryNS, "@language");
 	}
 
 	/**
@@ -431,11 +431,40 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 */
 	private void validateUsage() {
 		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.LEV_INFO, "Validating structure...", curFile, LOGMSG_ID);
+
+		/*
+		 * Load JSON that defines various constraints on structure of an Avails.
+		 * This is version-specific but not all schema versions have their own
+		 * unique struct file (e.g., a minor release may be compatible with a
+		 * previous release).
+		 */
+		String structVer = null;
+		switch (availSchemaVer) {
+		case "2.2.2":
+			structVer = "2.2.2";
+			break;
+		default:
+			structVer = "2.2";
+		}
+
+		JSONObject availStruct = XmlIngester.getMddfResource("structure_avail", structVer);
+		if (availStruct == null) {
+			// LOG a FATAL problem.
+			String msg = "Unable to process; missing structure definitions for Avails v" + availSchemaVer;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
+			return;
+		}
+
+		availTypeStruct = availStruct.getJSONObject("AvailType");
+		genericAvailTypes = availTypeStruct.getJSONArray("common");
+		workTypeStruct = availStruct.getJSONObject("WorkTypeStruct");
+
 		/*
 		 * Check terms associated with Pre-Orders: If LicenseType is 'POEST'
 		 * than (1) a SuppressionLiftDate term is required and (2) a
 		 * PreOrderFulfillDate term is allowed.
 		 */
+
 		// 1) Check all Transactions with LicenseType = 'POEST'
 		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() + ":" + "LicenseType[.='POEST']",
 				Filters.element(), null, availsNSpace);
@@ -652,7 +681,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * @param availType
 	 * @return
 	 */
-	private static JSONArray getAllowedWTypes(String availType) {
+	private JSONArray getAllowedWTypes(String availType) {
 		JSONObject structureDef = availTypeStruct.getJSONObject(availType);
 		JSONArray allowedWTypes = structureDef.getJSONArray("allowed");
 		allowedWTypes.addAll(genericAvailTypes);
