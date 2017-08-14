@@ -33,7 +33,8 @@ import org.jdom2.Element;
  * is providing a mechanism for identifying the type, version, and format of an
  * MDDF file (e.g. an Avails file that conforms to v2.2 of the standard and is
  * encoded as XML). <tt>MddfContext</tt> also provides constants that are used
- * to identify and locate the XSD files required for processing MDDF files.
+ * to identify and locate resources required for processing MDDF files (e.g.,
+ * the XSD specs) .
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -66,8 +67,8 @@ public class MddfContext {
 		String[] CM_VER = { "2.5", "2.4" };
 		String[] MANIFEST_VER = { "1.6", "1.5" };
 		String[] MEC_VER = { "2.5", "2.4" };
-		String[] AVAILS_X_VER = { "2.2.1", "2.2", "2.1" };
-		String[] AVAILS_E_VER = { "1.7.2","1.7", "1.6" };
+		String[] AVAILS_X_VER = { "2.2.2", "2.2.1", "2.2", "2.1" };
+		String[] AVAILS_E_VER = { "1.7.2", "1.7", "1.6" };
 
 		stdsVersions = new HashMap<String, String[]>();
 		stdsVersions.put("CM", CM_VER);
@@ -82,17 +83,11 @@ public class MddfContext {
 	};
 
 	public enum FILE_FMT {
-		AVAILS_1_6("Avail", "1.6", "xlsx"), 
-		AVAILS_1_7("Avail", "1.7", "xlsx"), 
-		AVAILS_1_7_2("Avail", "1.7.2", "xlsx"), 
-		AVAILS_2_1("Avail", "2.1", "xlsx"),
-		AVAILS_2_2("Avail", "2.2", "xml"), 
-		AVAILS_2_2_1("Avail", "2.2.1", "xml"), 
-		MANIFEST_1_4("Manifest", "1.4", "xml"), 
-		MANIFEST_1_5("Manifest", "1.5", "xml"), 
-		MANIFEST_1_6("Manifest", "1.6", "xml"),
-		MDMEC_2_4("MEC", "2.4", "xml"), 
-		MDMEC_2_5("MEC", "2.5", "xml");
+		AVAILS_1_6("Avail", "1.6", "xlsx"), AVAILS_1_7("Avail", "1.7", "xlsx"), AVAILS_1_7_2("Avail", "1.7.2",
+				"xlsx"), AVAILS_2_1("Avail", "2.1", "xlsx"), AVAILS_2_2("Avail", "2.2", "xml"), AVAILS_2_2_1("Avail",
+						"2.2.1", "xml"), AVAILS_2_2_2("Avail", "2.2.2", "xml"), MANIFEST_1_4("Manifest", "1.4",
+								"xml"), MANIFEST_1_5("Manifest", "1.5", "xml"), MANIFEST_1_6("Manifest", "1.6",
+										"xml"), MDMEC_2_4("MEC", "2.4", "xml"), MDMEC_2_5("MEC", "2.5", "xml");
 
 		private String standard;
 		private String ver;
@@ -146,6 +141,8 @@ public class MddfContext {
 			break;
 		case "avails":
 			switch (schemaVer) {
+			case "2.2.2":
+				return FILE_FMT.AVAILS_2_2_2;
 			case "2.2.1":
 				return FILE_FMT.AVAILS_2_2_1;
 			case "2.2":
@@ -167,7 +164,7 @@ public class MddfContext {
 		return null;
 	}
 
-	public static String[] getSupportedVersions(String standard){
+	public static String[] getSupportedVersions(String standard) {
 		return stdsVersions.get(standard);
 	}
 }
