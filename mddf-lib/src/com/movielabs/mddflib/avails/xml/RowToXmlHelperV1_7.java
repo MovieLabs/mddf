@@ -146,6 +146,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper{
 			String[] alidList = pg.getRawValue().split(";");
 			for (int i = 0; i < alidList.length; i++) {
 				Element bAssetEl = new Element("BundledAsset", availNS);
+				xb.addToPedigree(bAssetEl, pg);
 				Element bAlidEl = new Element("BundledALID", availNS);
 				bAlidEl.setText(alidList[i]);
 				xb.addToPedigree(bAlidEl, pg);
