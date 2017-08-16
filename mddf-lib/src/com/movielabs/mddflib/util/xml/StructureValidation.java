@@ -52,7 +52,7 @@ import net.sf.json.JSONObject;
  * <tt>StructureValidation</tt> class provides the functions that can interpret
  * the requirements and test an XML file for compliance.
  * </p>
- * <h3>Semantics and File Structure:</h3>
+ * <h3>Semantics and Syntax:</h3>
  * <p>
  * The semantics of JSON a structure definition is as follows:
  * 
@@ -98,6 +98,19 @@ import net.sf.json.JSONObject;
  * </ul>
  * </p>
  * 
+ * <p>
+ * An <tt>XPATH</tt> is defined using the standard XPath syntax with one
+ * modification. Namespaces are indicated using a variable indicating the name
+ * of an MDDF schema. The appropriate namespace prefixes will be inserted by the
+ * software. Supported namespaces are:
+ * <ul>
+ * <li>{avail}</li>
+ * <li>{mdmec}</li>
+ * <li>{manifest}</li>
+ * <li>{md}</li>
+ * </ul>
+ * </p>
+ * 
  * For example:
  * 
  * <pre>
@@ -136,11 +149,12 @@ import net.sf.json.JSONObject;
  *</tt>
  * </pre>
  * 
- * <h3>Usage:
- * <h3>
+ * <h3>Usage:</h3>
  * <p>
- * Validation modules should retrieve a set of requirements using a <i>USAGE</i>
- * value.
+ * Validation modules should determine the appropriate JSON resource file based
+ * on the type and version of the MDDF file. Requirements may then be retrieved
+ * and individually checked using the USAGE key or the entire collection may be
+ * iterated thru.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
