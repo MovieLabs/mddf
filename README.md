@@ -79,24 +79,27 @@ Refer to ChangeLog.md for a list of specific enhancements and bug fixes for any 
 
 ### Versioning:
 #### mddf-lib and Java jars:
-Stable releases of the mddf-lib will have a two-part version while evaluation (i.e., BETA) releases will have a three-part version ID. 
-Interim development and alpha releases will include an "rcN" suffix. 
+Stable releases of the mddf-lib will have a two-part version or a three-part version ID. 
+Interim development and evaluation (i.e., BETA) releases will include an "rcN" suffix. 
+
+Examples:
+* v1.3 or v2.0 identify stable releases
+* v2.0.1.rc2 is a Beta release of v2.0.1
 
 Executable jars are created for both stable and BETA releases and track the version number of the underlying mddf-lib.
 
-Example: mddf-tool-v1.2.jar is based on, and compatible with, v1.2 of mddf-lib.
+Example: mddf-tool-v3.1.jar would based on, and compatible with, v3.1 of mddf-lib.
 
 #### Native executables:
-Native executables for the MDDF tools (i.e., Avails Validator and Manifest Validator) are only created using the stable mddf-lib 
-releases. Begining with the release of v1.3 of mddf-lib, native executables are assigned versions that append a letter to the 
-mddf-lib version.
+Begining with the release of v1.3 of mddf-lib, native executables are assigned versions that append a letter to the 
+the underlying mddf-lib version.
 
 Examples: 
 * an Avails Validator with a version of v1.3.a is based on v1.3 of the mddf-lib.
 * a Manifest Validator with a version of v1.3.2.c is based on v1.3.2 of the mddf-lib.
 
 Prior to July 2017 and the release of v1.3 of the mddf-lib, the native executables were assigned a version ID
-independant of the mddf-lib version. 
+independent of the mddf-lib version. 
 
 ## <a name="h_History">Past Releases:</a>
 

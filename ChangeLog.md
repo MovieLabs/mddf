@@ -9,12 +9,15 @@ The latest release of the core mddf-lib is v1.3.
 
 ### mddf-lib Changes:
 
-#### mddf-lib v1.3
+#### mddf-lib v1.3 (PENDING)
 * Bug fix: When using CLI, log file output did not specify name of file.
 * Bug Fix: Manifest validation incorrectly required an Audiovisual/Presentation to have an ID
 * Bug Fix: Manifest validation did not check value of Experience/App/Type
+* Bug fix: Avails XLSX processing of episodic content used wrong form of Metadata
 * Enhancement: Avails support for XLSX v1.7.2 added
+* Enhancement: Avails support for XML v2.2.2 added
 * Enhancement: Identified use of Excel formats other than .xlsx as a security risk.
+* Internal: increased flexibility of Structure Validation module
 
 #### mddf-lib v1.2
 * No changes. Functionally equivalent to v1.1.3_rc8
