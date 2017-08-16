@@ -38,7 +38,7 @@ public class SeriesMetadata extends DefaultMetadata {
 		colPrefix = "Series";
 	}
 
-	public void createAssetMetadata(Element parentEl, RowToXmlHelperV1_7 row) {
+	public void createAssetMetadata(Element parentEl, AbstractRowHelper row) {
 		Element seriesMetadataEl = new Element(colPrefix + "Metadata", xb.getAvailsNSpace());
 		String key = colPrefix + "ContentID";
 		row.process(seriesMetadataEl, key, xb.getAvailsNSpace(), "AvailAsset/" + key);
