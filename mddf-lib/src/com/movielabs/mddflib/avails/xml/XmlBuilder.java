@@ -188,7 +188,7 @@ public class XmlBuilder {
 			case V1_7:
 				for (Row row : aSheet.getRows()) {
 					msg = "Converting row " + row.getRowNum();
-					logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
+					logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 					RowToXmlHelperV1_7 xmlConverter = new RowToXmlHelperV1_7(aSheet, row);
 					xmlConverter.makeAvail(this);
 				}
@@ -196,7 +196,7 @@ public class XmlBuilder {
 			case V1_6:
 				for (Row row : aSheet.getRows()) {
 					msg = "Converting row " + row.getRowNum();
-					logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
+					logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 					RowToXmlHelperV1_7 xmlConverter = new RowToXmlHelperV1_6(aSheet, row);
 					xmlConverter.makeAvail(this);
 				}
