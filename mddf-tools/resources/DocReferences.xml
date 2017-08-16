@@ -234,6 +234,12 @@
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
+		<Ref id="struc03" desc="Transaction RefALID">
+			<Version id="2.2">
+				<Label>Section 2.2.3</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
 		<Ref id="avail08" desc="termName vocab">
 			<Version id="2.1">
 				<Label>Section 2.2.3.1</Label>
