@@ -302,9 +302,11 @@ public class StructureValidation {
 		LogReference srcRef = null;
 		if (docRef != null && !docRef.isEmpty()) {
 			String[] parts = docRef.split(":");
-			docStandard = parts[0];
-			docSection = parts[1];
-			srcRef = LogReference.getRef(docStandard, docSection);
+			if (parts.length >= 2) {
+				docStandard = parts[0];
+				docSection = parts[1];
+				srcRef = LogReference.getRef(docStandard, docSection);
+			}
 		}
 		return srcRef;
 	}
