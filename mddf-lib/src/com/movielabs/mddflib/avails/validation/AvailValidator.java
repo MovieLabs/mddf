@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -33,9 +32,6 @@ import net.sf.json.JSONObject;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
-import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathExpression;
-
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -160,8 +156,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL", "avail01");
 
-//	private JSONObject availTypeStruct;
-	private JSONArray genericAvailTypes; 
+	// private JSONObject availTypeStruct;
+	private JSONArray genericAvailTypes;
 	private Map<Object, Pedigree> pedigreeMap;
 
 	private String availSchemaVer;
@@ -436,13 +432,11 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 * previous release).
 		 */
 		String structVer = null;
-		switch (availSchemaVer) { 
-		case "2.2.2":
-			structVer = "2.2.2";
-			break;
+		switch (availSchemaVer) {
 		case "2.1":
 		case "2.2":
 		case "2.2.1":
+		case "2.2.2": 
 		default:
 			structVer = "2.2";
 		}
@@ -453,36 +447,20 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			String msg = "Unable to process; missing structure definitions for Avails v" + availSchemaVer;
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
 			return;
-		}  
-		
+		}
+
 		JSONObject rqmtSet = availStructDefs.getJSONObject("StrucRqmts");
-		Iterator<String>keys = rqmtSet.keys();
-		while(keys.hasNext()){
+		Iterator<String> keys = rqmtSet.keys();
+		while (keys.hasNext()) {
 			String key = keys.next();
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
 			// NOTE: This block of code requires a 'targetPath' be defined
-			if(rqmtSpec.has("targetPath")){
-				boolean status = structHelper.validateDocStructure(curRootEl, rqmtSpec);
+			if (rqmtSpec.has("targetPath")) {
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Structure check; key= " + key, curFile,
+						logMsgSrcId);
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
 			}
-		} 
-
-		// ===========================================================
-		/*
-		 * Match the Avail/AvailType with all child Asset/WorkTypes as
-		 * restrictions apply.
-		 * 
-		 */
-		JSONObject availTypeRqmts = availStructDefs.getJSONObject("AvailType");
-		genericAvailTypes = availTypeRqmts.getJSONArray("common");
-		validateTypeCompatibility(availTypeRqmts, "single");
-		validateTypeCompatibility(availTypeRqmts, "episode");
-		validateTypeCompatibility(availTypeRqmts, "season");
-		validateTypeCompatibility(availTypeRqmts, "series");
-		validateTypeCompatibility(availTypeRqmts, "miniseries");
-		validateTypeCompatibility(availTypeRqmts, "bundle");
-		validateTypeCompatibility(availTypeRqmts, "supplement");
-		validateTypeCompatibility(availTypeRqmts, "promotion");
-
+		}
 		// ==============================================
 
 		/* Validate any Ratings information */
@@ -491,126 +469,6 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		return;
 	}
 	// ########################################################################
-
-	/**
-	 * Validate the Avail's structure is compatible with the specified
-	 * AvailType. The structural constraints are defined via JSON in a
-	 * <tt>structureDef</tt> JSONObject. The 'structureDef' has two components:
-	 * <ol>
-	 * <li>"requirement": an ARRAY of 1 or more JSONObjects, each of which
-	 * defines a REQUIREMENT</li>
-	 * <li>"allowed": an optional ARRAY of 1 or more Strings listing allowed
-	 * Asset WorkTypes. Any WorkType listed in the 'allowed' set should NOT be
-	 * included in any of the requirements.
-	 * </ol>
-	 * 
-	 * @param availType
-	 */
-	private void validateTypeCompatibility(JSONObject availTypeRqmts, String availType) {
-		LogReference srcRef = LogReference.getRef("AVAIL", "struc01");
-
-		JSONObject structureDef = availTypeRqmts.getJSONObject(availType);
-		if (structureDef == null || structureDef.isNullObject()) {
-			// System.out.println("No structureDef for AvailType='" + availType
-			// + "'");
-			return;
-		}
-		JSONArray allAllowedWTypes = getAllowedWTypes(availTypeRqmts, availType);
-
-		String path = ".//" + rootNS.getPrefix() + ":" + "AvailType[text()='" + availType + "']";
-		XPathExpression<Element> xpExp01 = xpfac.compile(path, Filters.element(), null, availsNSpace);
-		List<Element> availTypeElList = xpExp01.evaluate(curRootEl);
-		/* Loop thru all the Avail instances... */
-		for (int i = 0; i < availTypeElList.size(); i++) {
-			Element availTypeEl = availTypeElList.get(i);
-			Element availEl = availTypeEl.getParentElement();
-			AvailRqmt[] allRqmts = getRequirements(availTypeRqmts, availType);
-			// Now get the descendant WorkType element
-			XPathExpression<Element> xpExp02 = xpfac.compile(
-					"./" + rootNS.getPrefix() + ":Asset/" + rootNS.getPrefix() + ":WorkType", Filters.element(), null,
-					availsNSpace);
-			List<Element> workTypeElList = xpExp02.evaluate(availEl);
-			for (int j = 0; j < workTypeElList.size(); j++) {
-				/*
-				 * Check each Asset's WorkType to see if it allowed for the
-				 * current AvailType
-				 */
-				Element wrkTypeEl = workTypeElList.get(j);
-				String wtValue = wrkTypeEl.getText();
-				if (!(allAllowedWTypes.contains(wtValue))) {
-					String msg = "AvailType is incompatible with WorkType";
-					String explanation = null;
-					logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, wrkTypeEl, msg, explanation, srcRef, logMsgSrcId);
-					curFileIsValid = false;
-				} else {
-					/*
-					 * Yes its allowed, but is there any cardinality constraint?
-					 */
-					if (allRqmts != null) {
-						for (int k = 0; k < allRqmts.length; k++) {
-							allRqmts[k].notePresenceOf(wtValue);
-						}
-					}
-				} 
-
-			}
-			/*
-			 * Next step for each Avail is to check accumulated counts for any
-			 * violation of a cardinality constraint.
-			 */
-
-			if (allRqmts != null) {
-				for (int k = 0; k < allRqmts.length; k++) {
-					if (allRqmts[k].violated(availTypeEl)) {
-						curFileIsValid = false;
-					}
-				}
-			}
-		}
-
-	} 
-	// ######################################################################
-
-	/**
-	 * @param availType
-	 * @return
-	 */
-	private AvailRqmt[] getRequirements(JSONObject availTypeRqmts, String availType) {
-		JSONObject structureDef = availTypeRqmts.getJSONObject(availType);
-		JSONArray requirementJA = structureDef.getJSONArray("requirement");
-		if (requirementJA == null) {
-			// no cardinality requirements for this type
-			return null;
-		}
-		AvailRqmt[] arSet = new AvailRqmt[requirementJA.size()];
-		for (int i = 0; i < requirementJA.size(); i++) {
-			JSONObject reqJO = requirementJA.getJSONObject(i);
-			arSet[i] = new AvailRqmt(reqJO);
-		}
-		return arSet;
-	}
-
-	/**
-	 * Adds all required and GENERIC WorkTypes to the list of allowed WorkTypes
-	 * and returns a single unified collection.
-	 * 
-	 * @param availType
-	 * @return
-	 */
-	private JSONArray getAllowedWTypes(JSONObject availTypeRqmts, String availType) {
-		JSONObject structureDef = availTypeRqmts.getJSONObject(availType);
-		JSONArray allowedWTypes = structureDef.getJSONArray("allowed");
-		allowedWTypes.addAll(genericAvailTypes);
-		JSONArray reqmts = structureDef.getJSONArray("requirement");
-		for (int i = 0; i < reqmts.size(); i++) {
-			JSONObject nextRqmt = reqmts.getJSONObject(i);
-			JSONArray wtArray = nextRqmt.optJSONArray("WorkType");
-			if (wtArray != null) {
-				allowedWTypes.addAll(wtArray);
-			}
-		}
-		return allowedWTypes;
-	}
 
 	/**
 	 * Log an issue after first determining the appropriate <i>target</i> to
