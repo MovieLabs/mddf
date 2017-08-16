@@ -53,63 +53,124 @@
 		}
 	},
 
-	"WorkTypeStruct": 
+	"StrucRqmts": 
 	{
-		"Movie": 
+		"POEST": 
 		{
-			"requirement": 
+			"targetPath": ".//{avail}LicenseType[.='POEST']",
+			"constraint": 
 			[
 				{
-					"docRef": "AVAIL:avail01",
 					"min": "1",
 					"max": "1",
-					"xpath": "../{avail}AvailType[text()='single']"
+					"severity": "Error",
+					"xpath": "../{avail}Term[@termName='SuppressionLiftDate']",
+					"msg": "One SuppressionLiftDate is required for LicenseType 'POEST'"
+				}
+			]
+		},
+
+		"PreOrderFulfillDate": 
+		{
+			"targetPath": ".//{avail}Term[@termName='PreOrderFulfillDate']",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "../{avail}LicenseType[.='POEST']",
+					"msg": "PreOrderFulfillDate term is only allowed if LicenseType='POEST'"
+				}
+			]
+		},
+
+		"BundledAsset": 
+		{
+			"targetPath": ".//{avail}Asset/{avail}BundledAsset",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "../{avail}WorkType[.='Collection']",
+					"msg": "Invalid Asset: BundledAsset only allowed when WorkType is 'Collection'",
+					"docRef": "AVAIL:struc01"
+				}
+			]
+		},
+
+		"single-AvailType": 
+		{
+			"targetPath":  ".//{avail}AvailType[text()='single']",
+			"constraint": 
+			[
+				{
+					"docRef": "struc01",
+					"min": "1",
+					"max": "1",
+					"xpath": "./{avail}Asset/WorkType[. = 'Movie' or . = 'Short'",
+					"severity": "Error",
+					"msg": "Avail's type requires exactly one non-episodic Asset"					
+				}			
+			]
+		},
+		
+		"Non-Episodic-WT":		
+		{
+			"targetPath":  ".//{avail}Asset[./{avail}WorkType[. = 'Movie' or . = 'Short']]",
+			"constraint": 
+			[
+				{ 
+					"min": "1", 
+					"xpath": "./{avail}Metadata",
+					"severity": "Error",
+					"msg": "WorkType requires use of Metadata"					
+				}			
+			]
+		},
+		
+		"Series-WT":		
+		{
+			"targetPath":  ".//{avail}Asset[./{avail}WorkType[. = 'Series']]",
+			"constraint": 
+			[
+				{ 
+					"min": "1", 
+					"xpath": "./{avail}SeriesMetadata",
+					"severity": "Error",
+					"msg": "WorkType requires use of SeriesMetadata"					
+				}			
+			]
+		},
+		
+		"Season-WT":		
+		{
+			"targetPath":  ".//{avail}Asset[./{avail}WorkType[. = 'Season']]",
+			"constraint": 
+			[
+				{ 
+					"min": "1", 
+					"xpath": "./{avail}SeasonMetadata",
+					"severity": "Error",
+					"msg": "WorkType requires use of SeasonMetadata"					
+				}			
+			]
+		},
+		
+		"Episode-WT":		
+		{
+			"targetPath":  ".//{avail}Asset[./{avail}WorkType[. = 'Episode']]",
+			"constraint": 
+			[
+				{ 
+					"min": "1", 
+					"xpath": "./{avail}EpisodeMetadata",
+					"severity": "Error",
+					"msg": "WorkType requires use of EpisodeMetadata"					
 				},
-
-				{
-					"docRef": "AVAIL:struc02",
-					"min": "1",
-					"max": "1",
-					"xpath": "{avail}Metadata[../{avail}WorkType/text()='Movie']"
-				}
-			]
-		},
-
-		"Short": 
-		{
-			"requirement": 
-			[
-				{
-					"docRef": "AVAIL:struc02",
-					"min": "1",
-					"max": "1",
-					"xpath": "{avail}Metadata[../{avail}WorkType/text()='Short']"
-				}
-			]
-		},
-
-		"Series": 
-		{
-			
-		},
-
-		"Season": 
-		{
-			"requirement": 
-			[
-				{
-					"docRef": "AVAIL:struc02",
-					"min": "1",
-					"max": "1",
-					"xpath": "{avail}SeasonMetadata[../{avail}WorkType/text()='Season']"
-				}
-			]
-		},
-
-		"Episode": 
-		{
-			"requirement": 
-			[
+					
 				{
 					"docRef": "AVAIL:avail01",
 					"min": "1",
@@ -118,34 +179,19 @@
 				},
 
 				{
-					"docRef": "AVAIL:struc02",
-					"min": "1",
-					"max": "1",
-					"xpath": "{avail}EpisodeMetadata[../{avail}WorkType/text()='Episode']"
-				},
-
-				{
 					"docRef": "AVAIL:avail00n",
 					"min": "1",
 					"max": "1",
-					"xpath": "{avail}EpisodeMetadata/{avail}EpisodeNumber/{md}Number"
+					"xpath": "./{avail}EpisodeMetadata/{avail}EpisodeNumber/{md}Number"
 				},
-
-				{
-					"docRef": "AVAIL:avail00n",
-					"min": "1",
-					"max": "1",
-					"xpath": "{avail}EpisodeMetadata/{avail}TitleInternalAlias"
-				},
-
 				{
 					"docRef": "AVAIL:avail00n",
 					"min": "1",
 					"max": "2",
 					"xpath": 
 					[
-						"{avail}EpisodeMetadata/{avail}AltIdentifier",
-						"{avail}EpisodeMetadata/{avail}EditEIDR-URN"
+						"./{avail}EpisodeMetadata/{avail}AltIdentifier",
+						"./{avail}EpisodeMetadata/{avail}EditEIDR-URN"
 					]
 				}
 			]

@@ -42,34 +42,105 @@ import net.sf.json.JSONObject;
 
 /**
  * A 'helper' class that supports the validation of an XML file against a set of
- * structural requirements not specified via an XSD. The MDDF specifications
- * define many requirements for specific use cases as well as recommended 'best
- * practices'. These requirements and recommendations specify relationships
- * between XML elements that are not defined via the XSD. In order to support
- * validation they are instead formally specified via a JSON-formatted
- * <i>structure definition</i> file. For example:
+ * structural requirements not specified via an XSD.
+ * <p>
+ * The MDDF specifications define many requirements for specific use cases as
+ * well as recommended 'best practices'. These requirements and recommendations
+ * specify relationships between XML elements that are not defined via the XSD.
+ * In order to support validation they are instead formally specified via a
+ * JSON-formatted <i>structure definition</i> file. The
+ * <tt>StructureValidation</tt> class provides the functions that can interpret
+ * the requirements and test an XML file for compliance.
+ * </p>
+ * <h3>Semantics and File Structure:</h3>
+ * <p>
+ * The semantics of JSON a structure definition is as follows:
+ * 
+ * <pre>
+ * {
+ * 	  <i>USAGE</i>:
+ * 		 {
+ * 			"targetPath" : <i>XPATH</i> (optional)
+ * 			"constraint" :
+ * 			[
+ * 				{
+				  "min": <i>INTEGER</i>,
+				  "max": <i>INTEGER</i>,
+				  "xpath": <i>(XPATH | ARRAY[XPATH])</i>,
+				  "severity": <i>("Fatal" | "Error" | "Warning" | "Notice")</i>,
+				  "msg" : <i>STRING</i>,  (optional)
+				  "docRef": <i>STRING</i> (optional)
+ * 				}
+ * 			]
+ * 		 }
+ * }
+ * </pre>
+ * 
+ * where:
+ * <ul>
+ * <li><i>USAGE</i> is a string defining the key used by a validator to retrieve
+ * the requirements appropriate to a use case.</li>
+ * <li>"targetPath" indicates the element(s) that provide the evaluation context
+ * for the constraint xpath when invoking the <tt>validateDocStructure()</tt>
+ * method. If not specified, a target element must be provided when invoking the
+ * <tt>validateConstraint()</tt> method on a target element that has been
+ * identified by other means.</li>
+ * <li>"xpath" defines one or more xpaths relative to the target element that,
+ * when evaluated, the number of matching elements satisfy the min/max
+ * cardinality constraints. If multiple xpaths are listed, the total number of
+ * elements returned when each is separately evaluated must satisfy the
+ * constraint.</li>
+ * <li>"severity" must match one of the <tt>LogMgmt.level</tt> values</li>
+ * <li>"msg" is the text to use for a log entry if the constraint is not met. If
+ * not provided, a generic message is used.</li>
+ * <li>"docRef" is a value usable by <tt>LogReference</tt> that will indicate
+ * any reference material documenting the requirement.</li>
+ * </ul>
+ * </p>
+ * 
+ * For example:
  * 
  * <pre>
  * <tt>
- * 
-		"Season": 
+		"POEST": 
 		{
-			"requirement": 
+			"targetPath": ".//{avail}LicenseType[.='POEST']",
+			"constraint": 
+			[
+				{ 
+					"min": "1",
+					"max": "1",
+					"xpath": "../{avail}Term[@termName='SuppressionLiftDate']",
+					"severity": "Error",
+					"msg": "One SuppressionLiftDate is required for LicenseType 'POEST'"
+				}
+			]
+		},
+		
+		"WorkType-Episode": 
+		{
+			"constraint": 
 			[
 				{
-					"docRef": "AVAIL:struc01",
+					"docRef": "AVAIL:avail00n",
 					"min": "1",
-					"max": "1", 
-					"xpath": "{avail}SeasonMetadata[../{avail}WorkType/text()='Season']"
+					"max": "2",
+					"xpath": 
+					[
+						"{avail}EpisodeMetadata/{avail}AltIdentifier",
+						"{avail}EpisodeMetadata/{avail}EditEIDR-URN"
+					]
 				}
 			]
 		},
  *</tt>
  * </pre>
+ * 
+ * <h3>Usage:
+ * <h3>
  * <p>
- * The <tt>StructureValidation</tt> class provides the functions that can
- * interpret the requirements and test an XML file for compliance.
- * </p>
+ * Validation modules should retrieve a set of requirements using a <i>USAGE</i>
+ * value.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -78,10 +149,6 @@ public class StructureValidation {
 
 	private IssueLogger logger;
 	protected String logMsgSrcId;
-	// private String availPrefix;
-	// private String mdPrefix;
-	// private String mdMecPrefix;
-	// private String manifestPrefix;
 
 	private XPathFactory xpfac = XPathFactory.instance();
 
@@ -89,14 +156,29 @@ public class StructureValidation {
 		this.logger = logger;
 	}
 
-	public boolean validateStructure(Element target, JSONObject rqmt) {
+	public boolean validateDocStructure(Element rootEl, JSONObject rqmt) {
+		String rootPath = rqmt.getString("targetPath");
+		XPathExpression<Element> xpExp = resolveXPath(rootPath);
+		List<Element> targetElList = xpExp.evaluate(rootEl);
+		JSONArray constraintSet = rqmt.getJSONArray("constraint");
+		boolean isOk = true;
+		for (Element nextTargetEl : targetElList) {
+			for (int i = 0; i < constraintSet.size(); i++) {
+				JSONObject constraint = constraintSet.getJSONObject(i);
+				isOk = validateConstraint(nextTargetEl, constraint) && isOk;
+			}
+		}
+		return isOk;
+	}
+
+	public boolean validateConstraint(Element target, JSONObject constraint) {
 		boolean curFileIsValid = true;
 
-		int min = rqmt.optInt("min", 0);
-		int max = rqmt.optInt("max", -1);
-		String docRef = rqmt.optString("docRef");
+		int min = constraint.optInt("min", 0);
+		int max = constraint.optInt("max", -1);
+		String docRef = constraint.optString("docRef");
 
-		Object xpaths = rqmt.opt("xpath");
+		Object xpaths = constraint.opt("xpath");
 		List<XPathExpression<Element>> xpeList = new ArrayList<XPathExpression<Element>>();
 		String targetList = ""; // for use if error msg is required
 		String[] xpParts = null;
@@ -128,15 +210,21 @@ public class StructureValidation {
 			List<Element> nextElList = xpExp.evaluate(target);
 			matchedElList.addAll(nextElList);
 		}
+		String logMsg = constraint.optString("msg", "");
 
 		// check cardinality
 		int count = matchedElList.size();
 		if (min > 0 && (count < min)) {
 			String elName = target.getName();
-			String msg = "Invalid " + elName + " structure: missing child elements";
-			String explanation = elName + " requires minimum of " + min + " of child " + targetList + " elements";
-			if(xpParts.length >1){
-				explanation = explanation +" matching the criteria ["+xpParts[1];
+			String msg;
+			if (logMsg.isEmpty()) {
+				msg = "Invalid " + elName + " structure: missing elements";
+			} else {
+				msg = logMsg;
+			}
+			String explanation = elName + " requires minimum of " + min + " " + targetList + " elements";
+			if (xpParts.length > 1) {
+				explanation = explanation + " matching the criteria [" + xpParts[1];
 			}
 			LogReference srcRef = resolveDocRef(docRef);
 			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
@@ -144,8 +232,13 @@ public class StructureValidation {
 		}
 		if (max > -1 && (count > max)) {
 			String elName = target.getName();
-			String msg = "Invalid " + elName + " structure: too many child elements";
-			String explanation = elName + " permits maximum of " + max + " of child " + targetList + " elements";
+			String msg;
+			if (logMsg.isEmpty()) {
+				msg = "Invalid " + elName + " structure: too many child elements";
+			} else {
+				msg = logMsg;
+			}
+			String explanation = elName + " permits maximum of " + max + "  " + targetList + " elements";
 			LogReference srcRef = resolveDocRef(docRef);
 			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
 			curFileIsValid = false;
@@ -207,7 +300,7 @@ public class StructureValidation {
 		String docStandard = null;
 		String docSection = null;
 		LogReference srcRef = null;
-		if (docRef != null) {
+		if (docRef != null && !docRef.isEmpty()) {
 			String[] parts = docRef.split(":");
 			docStandard = parts[0];
 			docSection = parts[1];
