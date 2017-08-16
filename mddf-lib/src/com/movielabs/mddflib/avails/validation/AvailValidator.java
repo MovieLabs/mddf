@@ -24,6 +24,7 @@ package com.movielabs.mddflib.avails.validation;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import net.sf.json.JSONArray;
@@ -35,7 +36,6 @@ import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 
-import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -160,10 +160,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL", "avail01");
 
-	private JSONObject availTypeStruct;
-	private JSONArray genericAvailTypes;
-	private JSONObject workTypeStruct;
-
+//	private JSONObject availTypeStruct;
+	private JSONArray genericAvailTypes; 
 	private Map<Object, Pedigree> pedigreeMap;
 
 	private String availSchemaVer;
@@ -266,13 +264,6 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 		validateId("ALID", null, true, false);
 
-		/* Now validate cross-references */
-		// validateXRef("Experience", "ContentID", "Metadata");
-		// checkForOrphans();
-
-		/* Validate indexed sequences that must be monotonically increasing */
-		// validateIndexing("Chapter", "index", "Chapters");
-
 		/*
 		 * Validate the usage of controlled vocab (i.e., places where XSD
 		 * specifies a xs:string but the documentation specifies an enumerated
@@ -347,7 +338,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateVocab(primaryNS, "AssetLanguage", null, "@asset", allowed, srcRef, true);
 		validateVocab(primaryNS, "AssetLanguage", null, "@assetProvided", allowed, srcRef, true);
 		validateVocab(primaryNS, "HoldbackLanguage", null, "@asset", allowed, srcRef, true);
-		
+
 		// allowed = availVocab.optJSONArray("LicenseRightsDescription");
 		// srcRef = LogReference.getRef(doc, "avail07");
 		// validateVocab(primaryNS, "Transaction", primaryNS,
@@ -426,6 +417,12 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * Check for consistent usage. This typically means that an OPTIONAL element
 	 * will be either REQUIRED or INVALID for certain use-cases (e.g.
 	 * BundledAsset is only allowed when WorkType is 'Collection').
+	 * <p>
+	 * Validation is based primarily on the <i>structure definitions</i> defined
+	 * in a version-specific JSON file. This will define various criteria that
+	 * must be satisfied for a given usage. The criteria are specified in the
+	 * form of XPATHs.
+	 * </p>
 	 * 
 	 * @return
 	 */
@@ -439,105 +436,52 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 * previous release).
 		 */
 		String structVer = null;
-		switch (availSchemaVer) {
+		switch (availSchemaVer) { 
 		case "2.2.2":
 			structVer = "2.2.2";
 			break;
+		case "2.1":
+		case "2.2":
+		case "2.2.1":
 		default:
 			structVer = "2.2";
 		}
 
-		JSONObject availStruct = XmlIngester.getMddfResource("structure_avail", structVer);
-		if (availStruct == null) {
+		JSONObject availStructDefs = XmlIngester.getMddfResource("structure_avail", structVer);
+		if (availStructDefs == null) {
 			// LOG a FATAL problem.
 			String msg = "Unable to process; missing structure definitions for Avails v" + availSchemaVer;
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
 			return;
-		}
-
-		availTypeStruct = availStruct.getJSONObject("AvailType");
-		genericAvailTypes = availTypeStruct.getJSONArray("common");
-		workTypeStruct = availStruct.getJSONObject("WorkTypeStruct");
-
-		/*
-		 * Check terms associated with Pre-Orders: If LicenseType is 'POEST'
-		 * than (1) a SuppressionLiftDate term is required and (2) a
-		 * PreOrderFulfillDate term is allowed.
-		 */
-
-		// 1) Check all Transactions with LicenseType = 'POEST'
-		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() + ":" + "LicenseType[.='POEST']",
-				Filters.element(), null, availsNSpace);
-		XPathExpression<Element> xpExp02 = xpfac.compile(
-				".//" + rootNS.getPrefix() + ":" + "Term[@termName='SuppressionLiftDate']", Filters.element(), null,
-				availsNSpace);
-
-		List<Element> ltElList = xpExp01.evaluate(curRootEl);
-		for (int i = 0; i < ltElList.size(); i++) {
-			Element lTypeEl = ltElList.get(i);
-			Element transEl = lTypeEl.getParentElement();
-			List<Element> termElList = xpExp02.evaluate(transEl);
-			if (termElList.size() < 1) {
-				String msg = "SuppressionLiftDate term is missing";
-				String explanation = "If LicenseType is 'POEST' than a SuppressionLiftDate term is required";
-				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, lTypeEl, msg, explanation, null, logMsgSrcId);
-				curFileIsValid = false;
-			} else if (termElList.size() > 1) {
-				String msg = "Too many SuppressionLiftDate terms";
-				String explanation = "More than one SuppressionLiftDate terms is contradictory. Interpretation can not be guaranteed.";
-				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_WARN, termElList.get(0), msg, explanation, null, logMsgSrcId);
+		}  
+		
+		JSONObject rqmtSet = availStructDefs.getJSONObject("StrucRqmts");
+		Iterator<String>keys = rqmtSet.keys();
+		while(keys.hasNext()){
+			String key = keys.next();
+			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
+			// NOTE: This block of code requires a 'targetPath' be defined
+			if(rqmtSpec.has("targetPath")){
+				boolean status = structHelper.validateDocStructure(curRootEl, rqmtSpec);
 			}
-		}
+		} 
 
-		// 2) Check all Transactions with a PreOrderFulfilDate term
-		xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() + ":" + "Term[@termName='PreOrderFulfillDate']",
-				Filters.element(), null, availsNSpace);
-		List<Element> termElList = xpExp01.evaluate(curRootEl);
-		for (int i = 0; i < termElList.size(); i++) {
-			Element termEl = termElList.get(i);
-			Element transEl = termEl.getParentElement();
-			Element lTypeEl = transEl.getChild("LicenseType", availsNSpace);
-			if (!(lTypeEl.getText().equals("POEST"))) {
-				String msg = "Invalid term for LicenseType";
-				String explanation = "PreOrderFulfillDate term is only allowed if LicenseType='POEST'";
-				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, termEl, msg, explanation, null, logMsgSrcId);
-				curFileIsValid = false;
-			}
-		}
-		// ===========================================================
-		/*
-		 * Asset/BundledAsset is only allowed when Asset/WorkType is
-		 * 'Collection'
-		 * 
-		 */
-		LogReference srcRef = LogReference.getRef("AVAIL", "struc01");
-		xpExp01 = xpfac.compile(".//" + rootNS.getPrefix() + "Asset[" + rootNS.getPrefix() + ":" + "BundledAsset]",
-				Filters.element(), null, availsNSpace);
-		List<Element> assetElList = xpExp01.evaluate(curRootEl);
-		for (int i = 0; i < assetElList.size(); i++) {
-			Element assetEl = assetElList.get(i);
-			Element wrkTypeEl = assetEl.getChild("WorkType", availsNSpace);
-			if (!(wrkTypeEl.getText().equals("Collection"))) {
-				String msg = "Invalid Asset structure for specified WorkType";
-				String explanation = "Asset/BundledAsset is only allowed when Asset/WorkType is 'Collection'";
-				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, wrkTypeEl, msg, explanation, srcRef, logMsgSrcId);
-				curFileIsValid = false;
-			}
-		}
 		// ===========================================================
 		/*
 		 * Match the Avail/AvailType with all child Asset/WorkTypes as
 		 * restrictions apply.
 		 * 
 		 */
-		validateTypeCompatibility("single");
-		validateTypeCompatibility("episode");
-		validateTypeCompatibility("season");
-		validateTypeCompatibility("series");
-		validateTypeCompatibility("miniseries");
-		validateTypeCompatibility("bundle");
-		validateTypeCompatibility("supplement");
-		validateTypeCompatibility("promotion");
+		JSONObject availTypeRqmts = availStructDefs.getJSONObject("AvailType");
+		genericAvailTypes = availTypeRqmts.getJSONArray("common");
+		validateTypeCompatibility(availTypeRqmts, "single");
+		validateTypeCompatibility(availTypeRqmts, "episode");
+		validateTypeCompatibility(availTypeRqmts, "season");
+		validateTypeCompatibility(availTypeRqmts, "series");
+		validateTypeCompatibility(availTypeRqmts, "miniseries");
+		validateTypeCompatibility(availTypeRqmts, "bundle");
+		validateTypeCompatibility(availTypeRqmts, "supplement");
+		validateTypeCompatibility(availTypeRqmts, "promotion");
 
 		// ==============================================
 
@@ -562,16 +506,16 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * 
 	 * @param availType
 	 */
-	private void validateTypeCompatibility(String availType) {
+	private void validateTypeCompatibility(JSONObject availTypeRqmts, String availType) {
 		LogReference srcRef = LogReference.getRef("AVAIL", "struc01");
 
-		JSONObject structureDef = availTypeStruct.getJSONObject(availType);
+		JSONObject structureDef = availTypeRqmts.getJSONObject(availType);
 		if (structureDef == null || structureDef.isNullObject()) {
 			// System.out.println("No structureDef for AvailType='" + availType
 			// + "'");
 			return;
 		}
-		JSONArray allAllowedWTypes = getAllowedWTypes(availType);
+		JSONArray allAllowedWTypes = getAllowedWTypes(availTypeRqmts, availType);
 
 		String path = ".//" + rootNS.getPrefix() + ":" + "AvailType[text()='" + availType + "']";
 		XPathExpression<Element> xpExp01 = xpfac.compile(path, Filters.element(), null, availsNSpace);
@@ -580,7 +524,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		for (int i = 0; i < availTypeElList.size(); i++) {
 			Element availTypeEl = availTypeElList.get(i);
 			Element availEl = availTypeEl.getParentElement();
-			AvailRqmt[] allRqmts = getRequirements(availType);
+			AvailRqmt[] allRqmts = getRequirements(availTypeRqmts, availType);
 			// Now get the descendant WorkType element
 			XPathExpression<Element> xpExp02 = xpfac.compile(
 					"./" + rootNS.getPrefix() + ":Asset/" + rootNS.getPrefix() + ":WorkType", Filters.element(), null,
@@ -607,9 +551,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 							allRqmts[k].notePresenceOf(wtValue);
 						}
 					}
-				}
-				// Check if Asset's structure is compatible with the WorkType
-				validateAssetStructure(wrkTypeEl);
+				} 
 
 			}
 			/*
@@ -626,41 +568,15 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			}
 		}
 
-	}
-
-	/**
-	 * Make sure that each Asset has a structure compatible with it's WorkType.
-	 * 
-	 * @param wrkTypeEl
-	 * 
-	 */
-	private void validateAssetStructure(Element wrkTypeEl) {
-		// Retrieve structure defs specific to the WorkType
-		String wtValue = wrkTypeEl.getText();
-		JSONObject wtStrucDef = workTypeStruct.optJSONObject(wtValue);
-		if (wtStrucDef == null) {
-			// System.out.println("No structureDef for WorkType='" + wtValue +
-			// "'");
-			return;
-		}
-		Element assetEl = wrkTypeEl.getParentElement();
-		JSONArray rqmts = wtStrucDef.getJSONArray("requirement");
-		for (int i = 0; i < rqmts.size(); i++) {
-			JSONObject nextRqmt = rqmts.getJSONObject(i);
-			if (!structHelper.validateStructure(assetEl, nextRqmt)) {
-				curFileIsValid = false;
-			}
-		}
-
-	}
+	} 
 	// ######################################################################
 
 	/**
 	 * @param availType
 	 * @return
 	 */
-	private AvailRqmt[] getRequirements(String availType) {
-		JSONObject structureDef = availTypeStruct.getJSONObject(availType);
+	private AvailRqmt[] getRequirements(JSONObject availTypeRqmts, String availType) {
+		JSONObject structureDef = availTypeRqmts.getJSONObject(availType);
 		JSONArray requirementJA = structureDef.getJSONArray("requirement");
 		if (requirementJA == null) {
 			// no cardinality requirements for this type
@@ -681,8 +597,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * @param availType
 	 * @return
 	 */
-	private JSONArray getAllowedWTypes(String availType) {
-		JSONObject structureDef = availTypeStruct.getJSONObject(availType);
+	private JSONArray getAllowedWTypes(JSONObject availTypeRqmts, String availType) {
+		JSONObject structureDef = availTypeRqmts.getJSONObject(availType);
 		JSONArray allowedWTypes = structureDef.getJSONArray("allowed");
 		allowedWTypes.addAll(genericAvailTypes);
 		JSONArray reqmts = structureDef.getJSONArray("requirement");
