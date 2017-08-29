@@ -441,7 +441,7 @@ public class CMValidator extends XmlIngester {
 		LogReference srcRef = null;
 		switch (idScheme) {
 		case "eidr":
-			srcRef = LogReference.getRef("MMM-BP", "1.0", "mmbp01.2");
+			srcRef = LogReference.getRef("MMM-BP", "mmbp01.2");
 			String msg = "Use of EIDR-x or EIDR-s identifiers is recommended";
 			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_NOTICE, targetEl, msg, null, srcRef, logMsgSrcId);
 
@@ -449,12 +449,16 @@ public class CMValidator extends XmlIngester {
 			idPattern = "10\\.[\\d]{4}/[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-Z]";
 			break;
 		case "eidr-s":
-			srcRef = LogReference.getRef("EIDR-IDF", "1.3", "eidr01-s");
+			srcRef = LogReference.getRef("EIDR-IDF", "eidr01-s");
 			idPattern = "[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-Z]";
 			break;
 		case "eidr-x":
-			srcRef = LogReference.getRef("EIDR-IDF", "1.3", "eidr01-x");
+			srcRef = LogReference.getRef("EIDR-IDF",  "eidr01-x");
 			idPattern = "[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-Z]:[\\S]+";
+			break;
+		case "eidr-urn":
+			srcRef = LogReference.getRef("EIDR-IDF", "eidr01-urn");
+			idPattern = "10\\.5240:[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-Z]";
 			break;
 		default:
 			msg = "ID uses scheme '" + idScheme + "', SSID format will not be verified";
