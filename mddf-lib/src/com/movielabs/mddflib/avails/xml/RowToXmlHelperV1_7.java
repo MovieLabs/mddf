@@ -32,22 +32,22 @@ import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
- * Create XML document from a v1.7 or v1.7.2 Excel spreadsheet. The XML generated will be
- * based on v2.2 of the Avails XSD and reflects a "best effort" in that there is
- * no guarantee that it is valid. 
+ * Create XML document from a v1.7 or v1.7.2 Excel spreadsheet. The XML
+ * generated will be based on v2.2 of the Avails XSD and reflects a
+ * "best effort" in that there is no guarantee that it is valid.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class RowToXmlHelperV1_7 extends AbstractRowHelper{
+public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 
-	static final String MISSING = "--FUBAR (missing)";   
+	static final String MISSING = "--FUBAR (missing)";
 
 	/**
 	 * @param fields
 	 */
 	RowToXmlHelperV1_7(AvailsSheet sheet, Row row) {
-		super(sheet, row); 
+		super(sheet, row);
 	}
 
 	protected void makeAvail(XmlBuilder xb) {
@@ -72,7 +72,9 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper{
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.movielabs.mddflib.avails.xml.AbstractRowHelper#mDisposition()
 	 */
 	protected Element mDisposition() {
@@ -81,9 +83,12 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper{
 		return disp;
 	}
 
- 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.avails.xml.AbstractRowHelper#mPublisher(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.avails.xml.AbstractRowHelper#mPublisher(java.lang.
+	 * String, java.lang.String)
 	 */
 	protected Element mPublisher(String elName, String colKey) {
 		Element pubEl = new Element(elName, xb.getAvailsNSpace());
@@ -240,10 +245,9 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper{
 			case "Tier":
 			case "Category":
 			case "LicenseFee":
-			case "N.A.":
 			case "NA":
 				process(termEl, "Text", xb.getAvailsNSpace(), prefix + "PriceValue");
-				break;
+				break; 
 			case "WSP":
 				if (workType.equals("Episode")) {
 					tName = "EpisodeWSP";
@@ -337,17 +341,15 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper{
 		addEcosystem("DMA", "Avail/DMA_ID");
 	}
 
-	protected void addEcosystem(String ecosysId, String colKey) { 
+	protected void addEcosystem(String ecosysId, String colKey) {
 		Pedigree pg = getPedigreedData(colKey);
 		if (this.isSpecified(pg)) {
 			Element eidEl = new Element("EcosystemID", xb.getAvailsNSpace());
-			eidEl.setText( pg.getRawValue());
+			eidEl.setText(pg.getRawValue());
 			Element avail = xb.getAvailElement(this);
 			xb.addEntitlement(avail, ecosysId, eidEl);
 		}
 	}
- 
- 
 
 	/**
 	 * Add zero or more child elements with the specified name and namespace.
@@ -459,5 +461,5 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper{
 			return value;
 		}
 	}
- 
+
 }
