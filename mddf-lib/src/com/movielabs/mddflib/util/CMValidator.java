@@ -458,7 +458,7 @@ public class CMValidator extends XmlIngester {
 			break;
 		case "eidr-urn":
 			srcRef = LogReference.getRef("EIDR-IDF", "eidr01-urn");
-			idPattern = "10\\.5240:[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-Z]";
+			idPattern = "urn:eidr:10\\.5240:[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-Z]";
 			break;
 		default:
 			msg = "ID uses scheme '" + idScheme + "', SSID format will not be verified";
