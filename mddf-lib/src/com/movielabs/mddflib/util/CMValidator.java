@@ -128,7 +128,7 @@ public class CMValidator extends XmlIngester {
 			/*
 			 * Language codes are in their own file
 			 */
-			JSONObject jsonRsrc =getMddfResource("rfc5646"); 
+			JSONObject jsonRsrc = getMddfResource("rfc5646");
 			JSONObject rfc5646 = jsonRsrc.getJSONObject("rfc5646");
 			iso639_2 = rfc5646.getJSONArray("iso639-2");
 			iso639_3 = rfc5646.getJSONArray("iso639-3");
@@ -349,11 +349,11 @@ public class CMValidator extends XmlIngester {
 				String srcLabel = null;
 				String targetLabel = null;
 				if (idAttribute != null) {
-					srcLabel = elementName+"@"+ idAttribute;
+					srcLabel = elementName + "@" + idAttribute;
 					targetLabel = elementName;
-				}else{
-					targetLabel =targetEl.getParentElement().getName();
-					srcLabel = targetLabel+"/"+elementName;
+				} else {
+					targetLabel = targetEl.getParentElement().getName();
+					srcLabel = targetLabel + "/" + elementName;
 				}
 				String msg = srcLabel + " not specified. References to this " + targetLabel
 						+ " will not be supportable.";
@@ -453,7 +453,7 @@ public class CMValidator extends XmlIngester {
 			idPattern = "[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-Z]";
 			break;
 		case "eidr-x":
-			srcRef = LogReference.getRef("EIDR-IDF",  "eidr01-x");
+			srcRef = LogReference.getRef("EIDR-IDF", "eidr01-x");
 			idPattern = "[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-F]{4}-[\\dA-Z]:[\\S]+";
 			break;
 		case "eidr-urn":
@@ -541,6 +541,43 @@ public class CMValidator extends XmlIngester {
 	}
 
 	// ########################################################################
+
+	/**
+	 * Use the specified <tt>xpath</tt> to retrieve and validate image
+	 * resolution. The resolution must be a String in the form colxrow (e.g.,
+	 * 800x600 would mean an image 800 pixels wide and 600 pixels tall).
+	 * 
+	 * @param xpath
+	 */
+	protected void validateResolution(String xpath) {
+		LogReference docRef = LogReference.getRef("CM", "cm_res");
+		String msg = "Invalid image resolution";
+		String details = "resolution must be in the form colxrow (e.g. 800x600)";
+		String pattern = "\\d+x\\d+"; 
+		XPathExpression<?> xpExpression = StructureValidation.resolveXPath(xpath);
+		List<?> targetList = xpExpression.evaluate(curRootEl);
+		for (Object target : targetList) {
+			String text = null;
+			Element targetEl = null;
+			Attribute targetAt = null;
+			if (target instanceof Element) {
+				targetEl = (Element) target;
+				text = targetEl.getTextNormalize();
+			} else if (target instanceof Attribute) {
+				targetAt = (Attribute) target;
+				text = targetAt.getValue();
+			}
+			if (target != null) { 
+				boolean match = text.matches(pattern);
+				if (!match) {
+					if (targetEl == null) {
+						targetEl = targetAt.getParent();
+					}
+					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, targetEl, msg, details, docRef, logMsgSrcId);
+				}
+			}
+		}
+	}
 
 	/**
 	 * Locate and validate all instances of a &lt;md:Rating&gt; Element.

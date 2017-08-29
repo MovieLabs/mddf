@@ -245,12 +245,15 @@ public class ManifestValidator extends CMValidator {
 		/*
 		 * Validate the usage of controlled vocab (i.e., places where XSD
 		 * specifies a xs:string but the documentation specifies an enumerated
-		 * set of allowed values).
+		 * set of allowed values or otherwise constrained).
 		 */
 		// start with Common Metadata spec..
 		validateCMVocab();
+		validateResolution("//{md}LocalizedInfo/{md}ArtReference/@resolution");
+		validateResolution("//{manifest}Picture/{manifest}ImageID/@resolution");
+		validateResolution("//{manifest}Picture/{manifest}ThumbnailImageID/@resolution");
 
-		// Now do any defined in Avails spec..
+		// Now do any defined in Manifest spec..
 		validateManifestVocab();
 
 		validateLocations();
