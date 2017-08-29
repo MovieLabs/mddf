@@ -651,6 +651,13 @@ public class XlsxBuilder {
 		return mappingLists;
 	}
 
+	/**
+	 * Similar to <tt>StructureValidation.resolveXPath()</tt> except that if
+	 * deals with the possible presence of a <i>cardinality indicator</i>.
+	 * 
+	 * @param mapping
+	 * @return
+	 */
 	private XPathExpression createXPath(String mapping) {
 		if (mapping.equals("n.a")) {
 			return null;
