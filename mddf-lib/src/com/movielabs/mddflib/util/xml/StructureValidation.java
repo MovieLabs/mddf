@@ -164,16 +164,14 @@ public class StructureValidation {
 	private IssueLogger logger;
 	protected String logMsgSrcId;
 
-	private XPathFactory xpfac = XPathFactory.instance();
-
 	public StructureValidation(IssueLogger logger, String logMsgSrcId) {
 		this.logger = logger;
 	}
 
 	public boolean validateDocStructure(Element rootEl, JSONObject rqmt) {
 		String rootPath = rqmt.getString("targetPath");
-		XPathExpression<Element> xpExp = resolveXPath(rootPath);
-		List<Element> targetElList = xpExp.evaluate(rootEl);
+		XPathExpression<?> xpExp = resolveXPath(rootPath);
+		List<Element> targetElList = (List<Element>) xpExp.evaluate(rootEl);
 		JSONArray constraintSet = rqmt.getJSONArray("constraint");
 		boolean isOk = true;
 		for (Element nextTargetEl : targetElList) {
@@ -193,7 +191,7 @@ public class StructureValidation {
 		String docRef = constraint.optString("docRef");
 
 		Object xpaths = constraint.opt("xpath");
-		List<XPathExpression<Element>> xpeList = new ArrayList<XPathExpression<Element>>();
+		List<XPathExpression<?>> xpeList = new ArrayList<XPathExpression<?>>();
 		String targetList = ""; // for use if error msg is required
 		String[] xpParts = null;
 		if (xpaths instanceof String) {
@@ -220,7 +218,7 @@ public class StructureValidation {
 
 		List<Element> matchedElList = new ArrayList<Element>();
 		for (int i = 0; i < xpeList.size(); i++) {
-			XPathExpression<Element> xpExp = xpeList.get(i);
+			XPathExpression<Element> xpExp = (XPathExpression<Element>) xpeList.get(i);
 			List<Element> nextElList = xpExp.evaluate(target);
 			matchedElList.addAll(nextElList);
 		}
@@ -261,7 +259,23 @@ public class StructureValidation {
 		return curFileIsValid;
 	}
 
-	private XPathExpression<Element> resolveXPath(String xpathDef) {
+	/**
+	 * Create a <tt>XPathExpression</tt> from a string representation. An
+	 * <tt>xpathDef</tt> is defined using the standard XPath syntax with one
+	 * modification. Namespaces are indicated using a variable indicating the
+	 * name of an MDDF schema. The appropriate namespace prefixes will be
+	 * inserted by the software. Supported namespaces are:
+	 * <ul>
+	 * <li>{avail}</li>
+	 * <li>{mdmec}</li>
+	 * <li>{manifest}</li>
+	 * <li>{md}</li>
+	 * </ul>
+	 * 
+	 * @param xpathDef
+	 * @return
+	 */
+	public static XPathExpression<?> resolveXPath(String xpathDef) {
 		Set<Namespace> nspaceSet = new HashSet<Namespace>();
 
 		/*
@@ -287,7 +301,7 @@ public class StructureValidation {
 			nspaceSet.add(XmlIngester.mdmecNSpace);
 		}
 		// Now compile the XPath
-		XPathExpression xpExpression;
+		XPathExpression<?> xpExpression;
 		/**
 		 * The following are examples of xpaths that return an attribute value
 		 * and that we therefore need to identity:
@@ -301,6 +315,7 @@ public class StructureValidation {
 		 * <li>avail:Term/avail:Event[../@termName='AnnounceDate']</li>
 		 * </ul>
 		 */
+		XPathFactory xpfac = XPathFactory.instance();
 		if (xpathDef.matches(".*/@[\\w]++(\\[.+\\])?")) {
 			// must be an attribute value we're after..
 			xpExpression = xpfac.compile(xpathDef, Filters.attribute(), null, nspaceSet);
