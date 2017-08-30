@@ -56,7 +56,6 @@ public class RatingSystem {
 	public static final Namespace mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.1/md");
 	private static final String idXPath = "./mdcr:RatingSystem/mdcr:RatingSystemID/mdcr:System";
 	private static Map<String, RatingSystem> cache = new HashMap<String, RatingSystem>();
-	private static String curVer = "v2.3";
 	private static Element cmrRootEl = null;
 
 	private XPathFactory xpfac = XPathFactory.instance();
@@ -64,7 +63,7 @@ public class RatingSystem {
 	private String ratingSysId;
 
 	static {
-		String xmlRsrc = "CMR_Ratings_" + curVer + ".xml";
+		String xmlRsrc = "CMR_Ratings_" + MddfContext.CUR_RATINGS_VER + ".xml";
 		String rsrcPath = MddfContext.RSRC_PATH + xmlRsrc;
 		SAXBuilder builder = new SAXBuilder();
 		builder.setJDOMFactory(new LocatedJDOMFactory());
