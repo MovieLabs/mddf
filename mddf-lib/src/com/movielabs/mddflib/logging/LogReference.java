@@ -71,8 +71,8 @@ public class LogReference {
 	 * Return a <tt>LogReference</tt> to documentation matching the query
 	 * arguments. The arguments are:
 	 * <ul>
-	 * <li>standard: indicates an MDDF standard using the appropriate code
-	 * (e.g., 'MMM' for Common Media Manifest Metadata)</li>
+	 * <li>standard: indicates an MDDF standards document using the appropriate
+	 * code (e.g., 'MMM' for Common Media Manifest Metadata)</li>
 	 * <li>refID: indicates topic.</li>
 	 * </ul>
 	 * If a match for a topic can not be found specific to the latest version of
@@ -88,7 +88,7 @@ public class LogReference {
 		if (rootEl == null) {
 			try {
 				loadXml(new File(srcPath));
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				return null;
 			}
 		}
