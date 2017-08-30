@@ -22,7 +22,15 @@
  */
 package com.movielabs.mddf.tools.util.xml;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -30,8 +38,9 @@ import java.awt.image.ImageObserver;
 import java.beans.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -59,18 +68,18 @@ public class TextLineNumber extends JPanel
 	 *
 	 */
 	public class LineListener implements MouseListener {
- 
+
 		private double minY;
 		private double maxY;
-		private LogEntryNode logEntry; 
+		private LogEntryNode logEntry;
 		private boolean active;
 
 		/**
 		 * @param r
 		 * @param textLineNumber
 		 */
-		public LineListener(Rectangle region, LogEntryNode logEntry, JPanel lnPanel) { 
-			this.logEntry = logEntry; 
+		public LineListener(Rectangle region, LogEntryNode logEntry, JPanel lnPanel) {
+			this.logEntry = logEntry;
 			minY = region.getY();
 			maxY = minY + region.getHeight();
 			lnPanel.addMouseListener(this);
@@ -108,11 +117,11 @@ public class TextLineNumber extends JPanel
 		public void mouseReleased(MouseEvent e) {
 			if (interects(e)) {
 				String msg = "Line " + logEntry.getLine() + ": " + logEntry.getSummary();
-				String tooltip = logEntry.getTooltip(); 
-				if(tooltip != null &&!tooltip.isEmpty()){
-					msg = "<html>"+msg+"<br/>"+tooltip+"</html>";
+				String tooltip = logEntry.getTooltip();
+				if (tooltip != null && !tooltip.isEmpty()) {
+					msg = "<html>" + msg + "<br/>" + tooltip + "</html>";
 				}
-//				editor.getMsgField().setToolTipText(tooltip);
+				// editor.getMsgField().setToolTipText(tooltip);
 				editor.getMsgField().setText(msg);
 			}
 		}
@@ -177,9 +186,11 @@ public class TextLineNumber extends JPanel
 
 	private HashMap<String, FontMetrics> fonts;
 	private int currentLine = -1;
-	private ArrayList<LogEntryNode> markerList;
-	private LogEntryNode[] markerArray;
-	private int[] markerIndexArray;
+	// private ArrayList<LogEntryNode> markerList;
+	// private LogEntryNode[] markerArray;
+	// private int[] markerIndexArray;
+
+	private Map<String, List> markerHash = new HashMap();
 
 	private BufferedImage[] markerImage = new BufferedImage[LogMgmt.logLevels.length];
 	private SimpleXmlEditor editor;
@@ -402,11 +413,22 @@ public class TextLineNumber extends JPanel
 				g.drawString(lineLabel, x, y);
 
 				int lineNum = getLineNumber(rowStartOffset);
-				// is there a marker for this line?
-				int markerPtr = Arrays.binarySearch(markerIndexArray, lineNum);
-				if (markerPtr >= 0) {
-					LogEntryNode nextMarker = markerList.get(markerPtr);
-					BufferedImage myImage = markerImage[nextMarker.getLevel()];
+				// are there any markers for this line?
+				String key = Integer.toString(lineNum);
+				List<LogEntryNode> nextList = markerHash.get(key);
+				if (nextList != null && !nextList.isEmpty()) {
+					/*
+					 * if there are multiple log entries we need the one with
+					 * the highest severity
+					 */
+					LogEntryNode lineMarker = null;
+					for (LogEntryNode nextMarker : nextList){
+						if((lineMarker == null) || (nextMarker.getLevel() > lineMarker.getLevel())){
+							lineMarker = nextMarker;
+						}
+					}
+					// now set the graphic based on most sever entry found
+					BufferedImage myImage = markerImage[lineMarker.getLevel()];
 					markerCnt++;
 					if (myImage != null) {
 						int imgX = 0;
@@ -414,14 +436,10 @@ public class TextLineNumber extends JPanel
 						int imgY = r.y;
 						Graphics2D g2 = (Graphics2D) g;
 						g2.drawImage(myImage, imgX, imgY, null);
-						new LineListener(r, nextMarker, this); 
-					} else {
-						System.out.println("paint()-- no marker for line=" + lineNum);
+						new LineListener(r, lineMarker, this);
 					}
-				}
-
+				} 
 				// Move to the next row
-
 				rowStartOffset = Utilities.getRowEnd(component, rowStartOffset) + 1;
 			} catch (Exception e) {
 				break;
@@ -445,7 +463,7 @@ public class TextLineNumber extends JPanel
 			}
 		}
 		String pkgName = getClass().getPackage().getName();
-		System.err.println("Couldn't find image reource: " + path + ", pkgName=" + pkgName);
+		System.err.println("Couldn't find image resource: " + path + ", pkgName=" + pkgName);
 		return null;
 
 	}
@@ -454,12 +472,22 @@ public class TextLineNumber extends JPanel
 	 * @param markerList
 	 */
 	public void setLineMarkers(ArrayList<LogEntryNode> markerList) {
-		this.markerList = markerList;
-		// need array that can be used in a binary search ....
-		markerIndexArray = new int[markerList.size()];
-		for (int i = 0; i < markerList.size(); i++) {
-			LogEntryNode next = markerList.get(i);
-			markerIndexArray[i] = next.getLine();
+		// this.markerList = markerList;
+		// // need array that can be used in a binary search ....
+		// markerIndexArray = new int[markerList.size()];
+		// for (int i = 0; i < markerList.size(); i++) {
+		// LogEntryNode next = markerList.get(i);
+		// markerIndexArray[i] = next.getLine();
+		// }
+		markerHash = new HashMap();
+		for (LogEntryNode nextEntry : markerList) {
+			String key = Integer.toString(nextEntry.getLine());
+			List<LogEntryNode> nextList = markerHash.get(key);
+			if (nextList == null) {
+				nextList = new ArrayList<LogEntryNode>();
+			}
+			nextList.add(nextEntry);
+			markerHash.put(key, nextList);
 		}
 	}
 
@@ -574,7 +602,7 @@ public class TextLineNumber extends JPanel
 	}
 
 	@Override
-	public void caretUpdate(CaretEvent e) { 
+	public void caretUpdate(CaretEvent e) {
 		int caretPosition = component.getCaretPosition();
 		Element root = component.getDocument().getDefaultRootElement();
 		currentLine = root.getElementIndex(caretPosition);
