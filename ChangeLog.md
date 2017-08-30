@@ -10,12 +10,17 @@ The latest release of the core mddf-lib is v1.3.
 ### mddf-lib Changes:
 
 #### mddf-lib v1.3 (PENDING)
+* Bug Fix: Manifest validation did not check image resolutions were properly formatted.
 * Bug fix: When using CLI, log file output did not specify name of file.
 * Bug Fix: Manifest validation incorrectly required an Audiovisual/Presentation to have an ID
 * Bug Fix: Manifest validation did not check value of Experience/App/Type
 * Bug fix: Avails XLSX processing of episodic content used wrong form of Metadata
-* Enhancement: Avails support for XLSX v1.7.2 added
-* Enhancement: Avails support for XML v2.2.2 added
+* Update: support for Avails XLSX v1.7.2 added
+* Update: support for Avails XML v2.2.2 added
+* Update: support for Manifest v1.6.1 added
+* Update: support for CM v2.6 added
+* Update: Ratings DB updated to v2.3.1
+* Other: non-compliance with Best Practice for ID syntax changed to a WARNING instead of ERROR
 * Enhancement: Identified use of Excel formats other than .xlsx as a security risk.
 * Internal: increased flexibility of Structure Validation module
 
