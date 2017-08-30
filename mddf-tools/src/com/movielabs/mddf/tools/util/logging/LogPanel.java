@@ -448,11 +448,12 @@ public class LogPanel extends JPanel {
 	 */
 	public LogEntryNode getLogEntryAt(MouseEvent evt) {
 		int rowNum = logTable.rowAtPoint(evt.getPoint());
+		int entryIndex = logTable.convertRowIndexToModel(rowNum);
 		/*
 		 * Can use any column to retrieve entry since append() uses the LogEntry
 		 * as the data for every column in the row.
 		 */
-		LogEntryNode entry = (LogEntryNode) model.getValueAt(rowNum, 1);
+		LogEntryNode entry = (LogEntryNode) model.getValueAt(entryIndex, 1);
 		return entry;
 	}
 
