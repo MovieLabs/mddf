@@ -309,8 +309,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		}
 
 		private void doPop(MouseEvent e) {
-			LogEntryNode logEntry = tableView.getLogEntryAt(e);
-			// System.out.println("Entry is at line " + logEntry.locLine);
+			LogEntryNode logEntry = tableView.getLogEntryAt(e); 
 			MsgLogPopup menu = new MsgLogPopup(logPanel, logEntry);
 			menu.show(e.getComponent(), e.getX(), e.getY());
 		}
