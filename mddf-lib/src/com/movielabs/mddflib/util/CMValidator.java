@@ -360,7 +360,7 @@ public class CMValidator extends XmlIngester {
 				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_WARN, targetEl, msg, null, null, logMsgSrcId);
 			} else {
 				if (!idSet.add(idValue)) {
-					LogReference srcRef = LogReference.getRef("CM", "2.4", "cm001a");
+					LogReference srcRef = LogReference.getRef("CM",  "cm001a");
 					String msg = idAttribute + " is not unique";
 					int msgLevel;
 					if (reqUniqueness) {
@@ -379,10 +379,11 @@ public class CMValidator extends XmlIngester {
 
 					String idSyntaxPattern = "[\\S-[:]]+:[\\S-[:]]+:[\\S-[:]]+:[\\S]+$";
 					if (!idValue.matches(idSyntaxPattern)) {
-						String msg = "Invalid Identifier syntax";
-						LogReference srcRef = LogReference.getRef("CM", "2.4", "cm001b");
-						logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, targetEl, msg, null, srcRef, logMsgSrcId);
-						curFileIsValid = false;
+						String msg = "ID syntax does not conform to recommendations.";
+						String details = "Best Practice is use of 'md:<type>:<scheme>:<SSID> syntax";
+						LogReference srcRef = LogReference.getRef("MMM-BP", "mmbp01.3");
+						logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_WARN, targetEl, msg, details, srcRef, logMsgSrcId);
+						// curFileIsValid = false;
 					} else {
 						String[] idParts = idValue.split(":");
 						String idNid = idParts[0];
@@ -417,7 +418,7 @@ public class CMValidator extends XmlIngester {
 			type = idAttribute.toLowerCase();
 		}
 		if (!idType.equals(type)) {
-			LogReference srcRef = LogReference.getRef("MMM-BP", "1.0", "mmbp01.3");
+			LogReference srcRef = LogReference.getRef("MMM-BP", "mmbp01.3");
 			String msg = "ID <type> does not conform to recommendation (i.e. '" + type + "')";
 			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_NOTICE, targetEl, msg, null, srcRef, logMsgSrcId);
 		}
@@ -430,9 +431,10 @@ public class CMValidator extends XmlIngester {
 	 */
 	protected void validateIdScheme(String idScheme, Element targetEl) {
 		if (!idScheme.startsWith("eidr")) {
-			String msg = "Use of EIDR identifiers is recommended";
-			LogReference srcRef = LogReference.getRef("MMM-BP", "1.0", "mmbp01.1");
-			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_NOTICE, targetEl, msg, null, srcRef, logMsgSrcId);
+			String msg = "Use of EIDR-based identifiers is recommended";
+			String details = "Best Practice is to derive IDs from an EIDR-base ALID";
+			LogReference srcRef = LogReference.getRef("MMM-BP",  "mmbp01.1");
+			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_NOTICE, targetEl, msg, details, srcRef, logMsgSrcId);
 		}
 	}
 
@@ -553,7 +555,7 @@ public class CMValidator extends XmlIngester {
 		LogReference docRef = LogReference.getRef("CM", "cm_res");
 		String msg = "Invalid image resolution";
 		String details = "resolution must be in the form colxrow (e.g. 800x600)";
-		String pattern = "\\d+x\\d+"; 
+		String pattern = "\\d+x\\d+";
 		XPathExpression<?> xpExpression = StructureValidation.resolveXPath(xpath);
 		List<?> targetList = xpExpression.evaluate(curRootEl);
 		for (Object target : targetList) {
@@ -567,7 +569,7 @@ public class CMValidator extends XmlIngester {
 				targetAt = (Attribute) target;
 				text = targetAt.getValue();
 			}
-			if (target != null) { 
+			if (target != null) {
 				boolean match = text.matches(pattern);
 				if (!match) {
 					if (targetEl == null) {
