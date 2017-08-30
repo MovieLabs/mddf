@@ -127,7 +127,19 @@ public abstract class XmlIngester implements IssueLogger {
 	 *         or is not valid JSON
 	 */
 	protected static Object getVocabResource(String rsrcId, String rsrcVersion) {
-		String rsrcPath = MddfContext.RSRC_PATH + "vocab_" + rsrcId + "_v" + rsrcVersion + ".json";
+		String key = rsrcId + "_v" + rsrcVersion;
+		/*
+		 * Check to see if a version is compatible with earlier version
+		 */
+		switch (key) {
+		case "manifest_v1.6.1":
+			key = "manifest_v1.6";
+			break;
+		case "cm_v2.6":
+			key = "cm_v2.5";
+			break;
+		}
+		String rsrcPath = MddfContext.RSRC_PATH + "vocab_" + key + ".json";
 		JSONObject rsrc = (JSONObject) rsrcCache.get(rsrcPath);
 		if (rsrc == null) {
 			try {
@@ -309,6 +321,10 @@ public abstract class XmlIngester implements IssueLogger {
 	 */
 	public static void setManifestVersion(String manifestSchemaVer) throws IllegalArgumentException {
 		switch (manifestSchemaVer) {
+		case "1.6.1":
+			MAN_VER = "1.6.1";
+			MD_VER = "2.6";
+			break;
 		case "1.6":
 			MAN_VER = "1.6";
 			MD_VER = "2.5";
