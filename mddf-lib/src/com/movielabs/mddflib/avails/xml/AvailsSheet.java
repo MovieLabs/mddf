@@ -23,7 +23,7 @@
  * Author: Paul Jensen <pgj@movielabs.com>
  */
 
-package com.movielabs.mddflib.avails.xlsx;
+package com.movielabs.mddflib.avails.xml;
 
 import java.util.*;
 import org.apache.poi.ss.usermodel.Cell;
@@ -282,4 +282,14 @@ public class AvailsSheet {
 		}
 
 	}
+	
+//	  public void filterEmptyCol( ) { 
+//		  for(Row nextRow : rows){
+//		        Cell c = row.getCell(column, Row.RETURN_BLANK_AS_NULL);
+//		        if (c != null) {
+//		            return false;
+//		        }
+//		  } 
+//
+//		}
 }

@@ -36,8 +36,8 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.output.DOMOutputter;
-import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
-import com.movielabs.mddflib.avails.xlsx.AvailsSheet.Version;
+
+import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 

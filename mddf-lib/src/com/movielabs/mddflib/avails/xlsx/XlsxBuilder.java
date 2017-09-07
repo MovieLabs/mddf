@@ -50,7 +50,7 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
 import com.movielabs.mddf.MddfContext;
-import com.movielabs.mddflib.avails.xlsx.AvailsSheet.Version;
+import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 

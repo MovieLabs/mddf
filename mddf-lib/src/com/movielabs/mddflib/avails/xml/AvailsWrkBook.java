@@ -23,7 +23,7 @@
  * Author: Paul Jensen <pgj@movielabs.com>
  */
 
-package com.movielabs.mddflib.avails.xlsx;
+package com.movielabs.mddflib.avails.xml;
 
 import java.io.File;
 import java.io.FileInputStream;

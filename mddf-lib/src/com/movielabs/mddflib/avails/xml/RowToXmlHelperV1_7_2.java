@@ -23,7 +23,6 @@
 package com.movielabs.mddflib.avails.xml;
 
 import org.apache.poi.ss.usermodel.Row;
-import com.movielabs.mddflib.avails.xlsx.AvailsSheet;
 
 /**
  * Create XML document from a v1.7.2 Excel spreadsheet. The XML generated will be
