@@ -43,9 +43,9 @@ import org.jdom2.xpath.XPathFactory;
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xlsx.XlsxBuilder;
+import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.XmlIngester;
-import com.movielabs.mddflib.avails.xlsx.AvailsSheet.Version;
 
 /**
  * Performs translation of Avails from one format or version to another and then
