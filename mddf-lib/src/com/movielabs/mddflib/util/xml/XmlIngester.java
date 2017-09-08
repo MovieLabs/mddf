@@ -46,6 +46,7 @@ import org.jdom2.xpath.XPathFactory;
 import org.xml.sax.SAXParseException;
 
 import com.movielabs.mddf.MddfContext;
+import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
@@ -58,14 +59,14 @@ import net.sf.json.JSONSerializer;
  *
  */
 public abstract class XmlIngester implements IssueLogger {
-	public static String MD_VER = "2.3";
+	public static String CM_VER = "2.3";
 	public static String MDMEC_VER = "2.4";
 	public static String MAN_VER = "1.5";
 	public static String AVAIL_VER = "2.1";
 	public static Namespace xsiNSpace = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 
 	public static Namespace mdNSpace = Namespace.getNamespace("md",
-			MddfContext.NSPACE_CMD_PREFIX + MD_VER + MddfContext.NSPACE_CMD_SUFFIX);
+			MddfContext.NSPACE_CMD_PREFIX + CM_VER + MddfContext.NSPACE_CMD_SUFFIX);
 
 	public static Namespace mdmecNSpace = Namespace.getNamespace("mdmec",
 			MddfContext.NSPACE_MDMEC_PREFIX + MDMEC_VER + MddfContext.NSPACE_MDMEC_SUFFIX);
@@ -320,29 +321,16 @@ public abstract class XmlIngester implements IssueLogger {
 	 * @throws IllegalArgumentException
 	 */
 	public static void setManifestVersion(String manifestSchemaVer) throws IllegalArgumentException {
-		switch (manifestSchemaVer) {
-		case "1.6.1":
-			MAN_VER = "1.6.1";
-			MD_VER = "2.6";
-			break;
-		case "1.6":
-			MAN_VER = "1.6";
-			MD_VER = "2.5";
-			break;
-		case "1.5":
-			MAN_VER = "1.5";
-			MD_VER = "2.4";
-			break;
-		case "1.4":
-			MAN_VER = "1.4";
-			MD_VER = "2.3";
-			break;
-		default:
+		FILE_FMT manifestFmt = MddfContext.identifyMddfFormat("manifest", manifestSchemaVer);
+		if(manifestFmt == null){
 			throw new IllegalArgumentException("Unsupported Manifest Schema version " + manifestSchemaVer);
 		}
+		Map<String, String> uses = MddfContext.getReferencedXsdVersions(manifestFmt); 		 
+		MAN_VER = manifestSchemaVer;
+		CM_VER = uses.get("CM");
 		/* Since MDMEC isn't used for Manifest, set to NULL */
 		MDMEC_VER = null;
-		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
+		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
 		manifestNSpace = Namespace.getNamespace("manifest",
 				MddfContext.NSPACE_MANIFEST_PREFIX + MAN_VER + MddfContext.NSPACE_MANIFEST_SUFFIX);
 	}
@@ -352,20 +340,17 @@ public abstract class XmlIngester implements IssueLogger {
 	 * @throws IllegalArgumentException
 	 */
 	public static void setMdMecVersion(String mecSchemaVer) throws IllegalArgumentException {
-		switch (mecSchemaVer) {
-		case "2.4":
-		case "2.3":
-			MD_VER = "2.4";
-			break;
-		case "2.5":
-			MD_VER = "2.5";
-			break;
-		default:
+		FILE_FMT mecFmt = MddfContext.identifyMddfFormat("mdmec", mecSchemaVer);
+		if(mecFmt == null){
 			throw new IllegalArgumentException("Unsupported MEC Schema version " + mecSchemaVer);
 		}
+		Map<String, String> uses = MddfContext.getReferencedXsdVersions(mecFmt); 		
 		MDMEC_VER = mecSchemaVer;
+		CM_VER = uses.get("CM");
+		/* Since Manifest isn't used for MEC, set to NULL */
+		MAN_VER = null;
 		mdmecNSpace = Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
-		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
+		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
 	}
 
 	/**
@@ -379,27 +364,18 @@ public abstract class XmlIngester implements IssueLogger {
 	 * @throws IllegalArgumentException
 	 */
 	public static void setAvailVersion(String availSchemaVer) throws IllegalArgumentException {
-		switch (availSchemaVer) {
-		case "2.2.2":
-		case "2.2.1":
-			MD_VER = "2.5";
-			MDMEC_VER = "2.5";
-			break;
-		case "2.2":
-		case "2.1":
-			MD_VER = "2.4";
-			MDMEC_VER = "2.4";
-			break;
-		case "1.7":
-			MD_VER = "2.3";
-			MDMEC_VER = "2.3";
-			break;
-		default:
+		FILE_FMT availsFmt = MddfContext.identifyMddfFormat("avails", availSchemaVer);
+		if(availsFmt == null){
 			throw new IllegalArgumentException("Unsupported Avails Schema version " + availSchemaVer);
 		}
-		AVAIL_VER = availSchemaVer;
+		Map<String, String> uses = MddfContext.getReferencedXsdVersions(availsFmt); 
+		AVAIL_VER = availSchemaVer; 
+		CM_VER = uses.get("CM");
+		MDMEC_VER = uses.get("MDMEC");
+		/* Since Manifest isn't used for Avails, set to NULL */
+		MAN_VER = null;
 		mdmecNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
-		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
+		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
 		availsNSpace = Namespace.getNamespace("avails",
 				"http://www.movielabs.com/schema/avails/v" + AVAIL_VER + "/avails");
 	}

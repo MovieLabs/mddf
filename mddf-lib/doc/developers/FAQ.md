@@ -6,7 +6,9 @@ Step 1: add the resource files to the `com.movielabs.mddf.resources` package. At
 
 Step 2: update the constants and enums in `com.movielabs.mddf.MddfContext`
 
-Step 3: if the new version is backwards compatible with a previous version's _vocab_ file, the linkage needs to specified in `XmiIngester.getVocabResource()`. `XmiIngester` also needs to be updated to link the _primary_ mddf standards (i.e., Avails, Manifest, and MEC) to the correct version of the Common Metadata standard (see `setManifestVersion()`, `setAvailVersion()`, etc).
+Step 3:  `MddfContext` also needs to be updated to link the _primary_ mddf standards (i.e., Avails, Manifest, and MEC) to the correct version of the Common Metadata standard (see `getReferencedXsdVersions()`).
+
+Step 4: if the new version is backwards compatible with a previous version's _vocab_ file, the linkage needs to specified in `XmiIngester.getVocabResource()`.
 
 Note that adding support for a new version of the Avails XLSX format requires a different set of steps (see below)
 

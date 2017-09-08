@@ -852,7 +852,7 @@ public class CMValidator extends XmlIngester {
 		 */
 		String errMsg = "Invalid Language code value '" + langTag + "'";
 		String details = "Language encoding must conform to RFC5646 syntax and use registered subtag value";
-		LogReference srcRef = LogReference.getRef("CM", MD_VER, "cm_lang");
+		LogReference srcRef = LogReference.getRef("CM", CM_VER, "cm_lang");
 		logIssue(tag4log, LogMgmt.LEV_ERR, targetEl, errMsg, details, srcRef, logMsgSrcId);
 		curFileIsValid = false;
 	}

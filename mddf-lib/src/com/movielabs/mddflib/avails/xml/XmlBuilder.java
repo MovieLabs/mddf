@@ -37,6 +37,8 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.output.DOMOutputter;
 
+import com.movielabs.mddf.MddfContext;
+import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
@@ -106,20 +108,15 @@ public class XmlBuilder {
 		availsNSpace = Namespace.getNamespace("avails",
 				"http://www.movielabs.com/schema/avails/v" + availXsdVersion + "/avails");
 		// Load supporting schemas:
-		switch (availXsdVersion) {
-		case "2.1":
-		case "2.2":
-			mdMecVer = "2.4";
-			mdVer = "2.4";
-			break;
-		case "2.2.2":
-			mdMecVer = "2.5";
-			mdVer = "2.5";
-			break;
-		default:
-			xsdVersion = null;
-			return false;
+
+		FILE_FMT availsFmt = MddfContext.identifyMddfFormat("avails", availXsdVersion);
+		if (availsFmt == null) {
+			throw new IllegalArgumentException("Unsupported Avails Schema version " + availXsdVersion);
 		}
+		Map<String, String> uses = MddfContext.getReferencedXsdVersions(availsFmt);
+
+		mdMecVer = uses.get("MDMEC");
+		mdVer = uses.get("CM");
 		mdMecSchema = SchemaWrapper.factory("mdmec-v" + mdMecVer);
 		mdMecNSpace = Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v" + mdMecVer);
 

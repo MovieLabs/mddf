@@ -71,7 +71,7 @@ public class MddfContext {
 		String[] MEC_VER = { "2.5", "2.4" };
 		String[] AVAILS_X_VER = { "2.2.2", "2.2.1", "2.2", "2.1" };
 		String[] AVAILS_E_VER = { "1.7.2", "1.7", "1.6" };
-		String[] MMM_BP = {"1.0"};
+		String[] MMM_BP = { "1.0" };
 
 		stdsVersions = new HashMap<String, String[]>();
 		stdsVersions.put("CM", CM_VER);
@@ -136,7 +136,11 @@ public class MddfContext {
 		String schemaPrefix = MddfContext.SCHEMA_PREFIX + schemaType + "/v";
 		String schemaVer = nSpaceUri.replace(schemaPrefix, "");
 		schemaVer = schemaVer.replace("/" + schemaType, "");
-		switch (schemaType) {
+		return identifyMddfFormat(schemaType, schemaVer);
+	}
+
+	public static FILE_FMT identifyMddfFormat(String standard, String schemaVer) {
+		switch (standard) {
 		case "manifest":
 			switch (schemaVer) {
 			case "1.4":
@@ -170,11 +174,60 @@ public class MddfContext {
 			}
 			break;
 		}
-
 		return null;
 	}
 
 	public static String[] getSupportedVersions(String standard) {
 		return stdsVersions.get(standard);
+	}
+
+	/**
+	 * Return the appropriate versions of the CM and MDMEC schemas that are to
+	 * be used with the specified standard.
+	 * 
+	 * @param standard
+	 *            an MDDF XML standard for Avails, Manifest, or MEC.
+	 * @return
+	 */
+	public static Map<String, String> getReferencedXsdVersions(FILE_FMT standard) {
+		Map<String, String> uses = new HashMap<String, String>();
+		switch (standard) {
+		case AVAILS_2_2_2:
+		case AVAILS_2_2_1:
+			uses.put("CM", "2.5");
+			uses.put("MDMEC", "2.5");
+			break;
+		case AVAILS_2_2:
+		case AVAILS_2_1:
+			uses.put("CM", "2.4");
+			uses.put("MDMEC", "2.4");
+			break;
+		case AVAILS_1_7:
+			uses.put("CM", "2.3");
+			uses.put("MDMEC", "2.3");
+			break;
+		case MANIFEST_1_4:
+			uses.put("CM", "2.3");
+			break;
+		case MANIFEST_1_5:
+			uses.put("CM", "2.4");
+			break;
+		case MANIFEST_1_6:
+			uses.put("CM", "2.5");
+			break;
+		case MANIFEST_1_6_1:
+			uses.put("CM", "2.6");
+			break;
+		case MDMEC_2_5:
+			uses.put("CM", "2.5");
+			break;
+		case MDMEC_2_4:
+			uses.put("CM", "2.4");
+			break;
+		default:
+			break;
+		}
+
+		return uses;
 	}
 }

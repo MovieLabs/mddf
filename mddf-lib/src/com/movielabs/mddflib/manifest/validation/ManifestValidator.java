@@ -294,7 +294,7 @@ public class ManifestValidator extends CMValidator {
 		JSONObject availVocab = (JSONObject) getVocabResource("avail", AVAIL_VER);
 		if (availVocab != null) {
 			allowed = availVocab.optJSONArray("ExperienceCondition");
-			srcRef = LogReference.getRef("CM", MD_VER, "cm007");
+			srcRef = LogReference.getRef("CM", CM_VER, "cm007");
 			validateVocab(manifestNSpace, "ExperienceID", null, "@condition", allowed, srcRef, true);
 		}
 
@@ -304,7 +304,7 @@ public class ManifestValidator extends CMValidator {
 	 * @return
 	 */
 	protected void validateCMVocab() {
-		JSONObject cmVocab = (JSONObject) getVocabResource("cm", MD_VER);
+		JSONObject cmVocab = (JSONObject) getVocabResource("cm", CM_VER);
 		if (cmVocab == null) {
 			String msg = "Unable to validate controlled vocab: missing resource file";
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
@@ -313,35 +313,35 @@ public class ManifestValidator extends CMValidator {
 		}
 
 		JSONArray allowed = cmVocab.optJSONArray("WorkType");
-		LogReference srcRef = LogReference.getRef("CM", MD_VER, "cm002");
+		LogReference srcRef = LogReference.getRef("CM", CM_VER, "cm002");
 		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("ColorType");
-		srcRef = LogReference.getRef("CM", MD_VER, "cm003");
+		srcRef = LogReference.getRef("CM", CM_VER, "cm003");
 		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("PictureFormat");
-		srcRef = LogReference.getRef("CM", MD_VER, "cm004");
+		srcRef = LogReference.getRef("CM", CM_VER, "cm004");
 		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("ReleaseType");
-		srcRef = LogReference.getRef("CM", MD_VER, "cm005");
+		srcRef = LogReference.getRef("CM", CM_VER, "cm005");
 		validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("TitleAlternate@type");
-		srcRef = LogReference.getRef("CM", MD_VER, "cm006");
+		srcRef = LogReference.getRef("CM", CM_VER, "cm006");
 		validateVocab(mdNSpace, "TitleAlternate", null, "@type", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("Parent@relationshipType");
-		srcRef = LogReference.getRef("CM", MD_VER, "cm007");
+		srcRef = LogReference.getRef("CM", CM_VER, "cm007");
 		validateVocab(mdNSpace, "Parent", null, "@relationshipType", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("EntryClass");
-		srcRef = LogReference.getRef("CM", MD_VER, "cm008");
+		srcRef = LogReference.getRef("CM", CM_VER, "cm008");
 		validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef, true);
 
 		allowed = cmVocab.optJSONArray("Parent@relationshipType");
-		srcRef = LogReference.getRef("CM", MD_VER, "cm007");
+		srcRef = LogReference.getRef("CM", CM_VER, "cm007");
 		validateVocab(manifestNSpace, "ExperienceChild", manifestNSpace, "Relationship", allowed, srcRef, true);
 
 		// ----------------------------------------
