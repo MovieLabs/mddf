@@ -96,16 +96,18 @@ public class LogPanel extends JPanel {
 		public Comparator<?> getComparator(int column) {
 			switch (column) {
 			case 0:
-				return new LogEntryComparator(Field.Level);
+				return new LogEntryComparator(Field.Num);
 			case 1:
-				return new LogEntryComparator(Field.Tag);
+				return new LogEntryComparator(Field.Level);
 			case 2:
-				return new LogEntryComparator(Field.Details);
+				return new LogEntryComparator(Field.Tag);
 			case 3:
-				return new LogEntryComparator(Field.Line);
+				return new LogEntryComparator(Field.Details);
 			case 4:
-				return new LogEntryComparator(Field.File);
+				return new LogEntryComparator(Field.Line);
 			case 5:
+				return new LogEntryComparator(Field.File);
+			case 6:
 				return new LogEntryComparator(Field.Reference);
 			}
 			return super.getComparator(column);
@@ -136,9 +138,9 @@ public class LogPanel extends JPanel {
 	private DefaultTableModel model;
 	private JScrollPane scPane;
 
-	private final String columnNames[] = { "Level", "Type", "Details", "Line", "File", "Reference" };
+	private final String columnNames[] = {"Num", "Level", "Type", "Details", "Line", "File", "Reference" };
 
-	private float[] colWidthBASE = { 0.08f, 0.08f, 0.50f, 0.07f, 0.2f, 0.12f };
+	private float[] colWidthBASE = {0.06f,  0.07f, 0.07f, 0.50f, 0.07f, 0.19f, 0.12f };
 	private float[] colWidthSaved = colWidthBASE;
 	private boolean firstResize = true;
 	private TableRowSorter<DefaultTableModel> sorter;
