@@ -91,7 +91,7 @@ public class MddfContext {
 
 	public enum FILE_FMT {
 		AVAILS_1_6("Avail", "1.6", "xlsx"), AVAILS_1_7("Avail", "1.7", "xlsx"), AVAILS_1_7_2("Avail", "1.7.2",
-				"xlsx"), AVAILS_2_1("Avail", "2.1", "xlsx"), AVAILS_2_2("Avail", "2.2", "xml"), AVAILS_2_2_1("Avail",
+				"xlsx"), AVAILS_2_1("Avail", "2.1", "xml"), AVAILS_2_2("Avail", "2.2", "xml"), AVAILS_2_2_1("Avail",
 						"2.2.1", "xml"), AVAILS_2_2_2("Avail", "2.2.2", "xml"), MANIFEST_1_4("Manifest", "1.4",
 								"xml"), MANIFEST_1_5("Manifest", "1.5", "xml"), MANIFEST_1_6("Manifest", "1.6",
 										"xml"), MANIFEST_1_6_1("Manifest", "1.6.1", "xml"), MDMEC_2_4("MEC", "2.4",
@@ -117,6 +117,17 @@ public class MddfContext {
 		@Override
 		public String toString() {
 			return label;
+		}
+		
+		public String getEncoding(){
+			return encoding;
+		}
+
+		/**
+		 * @return
+		 */
+		public String getVersion() { 
+			return ver;
 		}
 
 	}
