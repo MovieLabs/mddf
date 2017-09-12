@@ -22,6 +22,7 @@
  */
 package com.movielabs.mddflib.avails.xml;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -81,6 +82,7 @@ public class XmlBuilder {
 	private EpisodeMetadata mdHelper_episode;
 	private SeasonMetadata mdHelper_season;
 	private Version templateVersion;
+	private File curSrcXslxFile;
 
 	/**
 	 * @param logger
@@ -128,8 +130,6 @@ public class XmlBuilder {
 			return false;
 		}
 		xsdVersion = availXsdVersion;
-		String msg = "XmlBuilder initialized for v" + availXsdVersion;
-		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
 		return true;
 	}
 
@@ -143,16 +143,20 @@ public class XmlBuilder {
 	/**
 	 * Create an Avails XML document based on the data in the spreadsheet.
 	 * 
+	 * @param aSheet
 	 * @param shortDesc
 	 *            a short description that will appear in the document
+	 * @param srcXslxFile
+	 *            original file (used for logging; may be <tt>null</tt>
 	 * @return a JAXP document
 	 * @throws IllegalStateException
-	 */
-	public Document makeXmlAsJDom(AvailsSheet aSheet, String shortDesc) throws IllegalStateException {
+	 */ 
+	public Document makeXmlAsJDom(AvailsSheet aSheet, String shortDesc, File srcXslxFile) throws IllegalStateException {
 		this.shortDesc = shortDesc;
+		this.curSrcXslxFile = srcXslxFile;
 		if (xsdVersion == null) {
 			String msg = "Unable to generate XML from XLSX: XSD version was not set or is unsupported.";
-			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, null, moduleId);
+			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, msg, null, moduleId);
 			throw new IllegalStateException("The XSD version was not set or is unsupported.");
 		}
 		// initialize data structures...
@@ -175,8 +179,10 @@ public class XmlBuilder {
 		root.addNamespaceDeclaration(mdMecNSpace);
 		root.addNamespaceDeclaration(SchemaWrapper.xsiNSpace);
 		doc.setRootElement(root);
-		String msg = "Processing spreadsheet '" + aSheet.getName() + "'; RowCount=" + aSheet.getRowCount();
-		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
+		String msg = "Converting Excel Avails to XML v" + xsdVersion;
+		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
+		msg = "Processing spreadsheet '" + aSheet.getName() + "'; RowCount=" + aSheet.getRowCount();
+		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
 
 		// build document components row by row.
 		try {
@@ -185,7 +191,7 @@ public class XmlBuilder {
 			case V1_7:
 				for (Row row : aSheet.getRows()) {
 					msg = "Converting row " + row.getRowNum();
-					logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, msg, null, moduleId);
+					logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, null, moduleId);
 					RowToXmlHelperV1_7 xmlConverter = new RowToXmlHelperV1_7(aSheet, row);
 					xmlConverter.makeAvail(this);
 				}
@@ -193,7 +199,7 @@ public class XmlBuilder {
 			case V1_6:
 				for (Row row : aSheet.getRows()) {
 					msg = "Converting row " + row.getRowNum();
-					logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, msg, null, moduleId);
+					logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, null, moduleId);
 					RowToXmlHelperV1_7 xmlConverter = new RowToXmlHelperV1_6(aSheet, row);
 					xmlConverter.makeAvail(this);
 				}
@@ -203,7 +209,7 @@ public class XmlBuilder {
 			}
 		} catch (Exception e) {
 			msg = "Fatal Exception while ingesting XLSX file";
-			logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
+			logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
 			e.printStackTrace();
 			return null;
 		}
@@ -225,12 +231,12 @@ public class XmlBuilder {
 			root.addContent(nextAvailEl);
 		}
 		msg = "Completed ingesting XLSX file";
-		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, null, moduleId);
+		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
 		return doc;
 	}
 
 	public org.w3c.dom.Document makeXmlAsW3C(AvailsSheet aSheet, String shortDesc) throws IllegalStateException {
-		Document jdomDoc = makeXmlAsJDom(aSheet, shortDesc);
+		Document jdomDoc = makeXmlAsJDom(aSheet, shortDesc, null);
 		DOMOutputter domOut = new DOMOutputter();
 		try {
 			return domOut.output(jdomDoc);
@@ -258,11 +264,11 @@ public class XmlBuilder {
 		 * do we handle?
 		 */
 		String alid = alidPedigree.getRawValue();
-		logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_DEBUG, null, "Looking for Avail with ALID=[" + alid + "]", null,
+		logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, curSrcXslxFile, "Looking for Avail with ALID=[" + alid + "]", null,
 				null, moduleId);
 		Element availEL = availElRegistry.get(alid);
 		if (availEL == null) {
-			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_DEBUG, null, "Building Avail with ALID=[" + alid + "]", null,
+			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, curSrcXslxFile, "Building Avail with ALID=[" + alid + "]", null,
 					null, moduleId);
 			availEL = new Element("Avail", getAvailsNSpace());
 			/*
@@ -330,7 +336,7 @@ public class XmlBuilder {
 				String details = "AVAIL was 1st defined in row " + row4log + " which specifies AvailAsset/WorkType as "
 						+ srcRow.getData("AvailAsset/WorkType") + " and requires WorkType=" + definedValue;
 				Cell sourceCell = curRow.sheet.getCell("AvailAsset/WorkType", curRow.getRowNumber());
-				logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
+				logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
 			}
 		}
 		return availEL;
@@ -358,7 +364,7 @@ public class XmlBuilder {
 			String details = entityName + " was 1st defined in row " + row4log + " which specifies " + colKey + " as '"
 					+ definedValue + "'";
 			Cell sourceCell = curRow.sheet.getCell(colKey, curRow.getRowNumber());
-			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
+			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
 			return false;
 		}
 
@@ -607,7 +613,7 @@ public class XmlBuilder {
 			String details = "An Asset with " + cidSrc + "=" + contentID
 					+ " was previously defined. Asset-specific fields in row " + row4log + " will be ignored";
 			Cell sourceCell = curRow.sheet.getCell(cidColKey, curRow.getRowNumber());
-			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_DEBUG, sourceCell, msg, details, null, moduleId);
+			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, sourceCell, msg, details, null, moduleId);
 		}
 		/*
 		 * When dealing with a Movie or Episode, more that 1 ReleaseHistory and
@@ -694,6 +700,6 @@ public class XmlBuilder {
 	}
 
 	void appendToLog(String msg, int logLevel, Cell target) {
-		logger.logIssue(LogMgmt.TAG_AVAIL, logLevel, target, msg, null, null, moduleId);
+		logger.logIssue(LogMgmt.TAG_XLATE, logLevel, target, msg, null, null, moduleId); 
 	}
 }
