@@ -24,6 +24,7 @@ package com.movielabs.mddf.tools.util.logging;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -165,13 +166,15 @@ public class LogNavPanel extends JPanel {
 						FILE_FMT curFmt = fileFolder.getMddfFormat();
 						File srcFile = fileFolder.getFile();
 						xlateDialog.setContext(curFmt, srcFile);
+						Point p = tree.getLocationOnScreen();
+						xlateDialog.setLocation((int) p.getX(), (int) p.getY());
 						xlateDialog.setVisible(true);
 						EnumSet<FILE_FMT> selections = xlateDialog.getSelections();
 						if (!selections.isEmpty()) {
 							ValidatorTool curTool = ValidatorTool.getTool();
 							ValidationController controller = curTool.getController();
 							Translator.translateAvails(doc, selections, xlateDialog.getOutputDir(),
-									xlateDialog.getOutputFilePrefix(), parentLogger);
+									xlateDialog.getOutputFilePrefix(), xlateDialog.addVersion(), parentLogger);
 						}
 					}
 				});
