@@ -118,7 +118,7 @@ public class XlsxBuilder {
 	private LogMgmt logger;
 	private String rootPrefix = "avails:";
 
-	private int logMsgDefaultTag = LogMgmt.TAG_XLSX;
+	private int logMsgDefaultTag = LogMgmt.TAG_XLATE;
 	protected String logMsgSrcId = "XlsxBuilder";
 	private String MD_VER;
 	private String MDMEC_VER;
@@ -136,6 +136,8 @@ public class XlsxBuilder {
 	private Map<String, XSSFCellStyle> headerColors = new HashMap<String, XSSFCellStyle>();
 	private XSSFCellStyle defaultStyle;
 	private XSSFCellStyle headerStyleFill;
+	private ArrayList<String> colIdList;
+	private HashMap<Sheet, boolean[]> emptyColTracker = new HashMap<Sheet, boolean[]>();
 
 	static {
 		/*
@@ -273,13 +275,22 @@ public class XlsxBuilder {
 		XSSFSheet sheet = workbook.createSheet(category);
 		// get mappings that will be used for this specific sheet..
 		JSONObject mappingDefs = mappingVersion.getJSONObject(category);
-		List<String> colIdList = new ArrayList<String>();
+		colIdList = new ArrayList<String>();
 		colIdList.addAll(mappingDefs.keySet());
 		/*
 		 * First add TV-specific headers matching the template version being
 		 * used
 		 */
 		addHeaderRows(sheet, colIdList);
+
+		/*
+		 * init data structure used to identify empty columns
+		 */
+		boolean[] isEmptyCol = new boolean[colIdList.size()];
+		for (int i = 0; i < colIdList.size(); i++) {
+			isEmptyCol[i] = true;
+		}
+		emptyColTracker.put(sheet, isEmptyCol);
 
 		/* Initialize xpaths that implement the data mappings */
 		Map<String, Map<String, List<XPathExpression>>> xpathSets = initializeMappings(mappingDefs);
@@ -454,7 +465,7 @@ public class XlsxBuilder {
 						value = targetEl.getTextNormalize();
 					} else if (matchCnt > 1) {
 						String msg = warnMsg1.replace("XYZ", mappingKey);
-						logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_WARN, targetEl, msg, warnDetail1, null,
+						logger.logIssue(logMsgDefaultTag, LogMgmt.LEV_WARN, targetEl, msg, warnDetail1, null,
 								logMsgSrcId);
 					}
 				} else if (target instanceof Attribute) {
@@ -465,7 +476,7 @@ public class XlsxBuilder {
 					} else if (matchCnt > 1) {
 						Element targetEl = targetAt.getParent();
 						String msg = warnMsg1.replace("XYZ", mappingKey);
-						logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_WARN, targetEl, msg, warnDetail1, null,
+						logger.logIssue(logMsgDefaultTag, LogMgmt.LEV_WARN, targetEl, msg, warnDetail1, null,
 								logMsgSrcId);
 					}
 				}
@@ -561,6 +572,7 @@ public class XlsxBuilder {
 	 * @param cellData
 	 */
 	private void addRow(List<String> colIdList, Map<String, String> cellData, XSSFSheet sheet) {
+		boolean[] isEmptyCol = emptyColTracker.get(sheet);
 		int rowCount = sheet.getLastRowNum();
 		Row row = sheet.createRow(rowCount + 1);
 		for (int i = 0; i < colIdList.size(); i++) {
@@ -569,6 +581,7 @@ public class XlsxBuilder {
 			if ((cellValue != null) && !cellValue.isEmpty()) {
 				Cell cell = row.createCell(i);
 				cell.setCellValue(cellValue);
+				isEmptyCol[i] = false;
 			}
 		}
 	}
@@ -785,6 +798,7 @@ public class XlsxBuilder {
 	 */
 	private void setXmlVersion(String availSchemaVer) throws IllegalArgumentException {
 		switch (availSchemaVer) {
+		case "2.2.2":
 		case "2.2.1":
 			MD_VER = "2.5";
 			MDMEC_VER = "2.5";
@@ -810,7 +824,9 @@ public class XlsxBuilder {
 	 * @throws FileNotFoundException
 	 */
 	public void export(String destPath) throws FileNotFoundException, IOException {
-		/* First adjust column widths */
+		/* hide empty columns */
+		hideEmptyColumns();
+		/* adjust column widths */
 		int sheetCnt = workbook.getNumberOfSheets();
 		for (int i = 0; i < sheetCnt; i++) {
 			Sheet sheet = workbook.getSheetAt(i);
@@ -829,5 +845,26 @@ public class XlsxBuilder {
 
 		}
 
+	}
+
+	public int hideEmptyColumns() {
+		int hiddenColCnt = 0;
+		int sheetCnt = workbook.getNumberOfSheets();
+		for (int i = 0; i < sheetCnt; i++) {
+			Sheet sheet = workbook.getSheetAt(i);
+			if (sheet != null) {
+				boolean[] isEmptyCol = emptyColTracker.get(sheet);
+				for (int j = 0; j < isEmptyCol.length; j++) {
+					if (isEmptyCol[j]) {
+						sheet.setColumnHidden(j, true);
+						hiddenColCnt++;
+					}
+				}
+			}
+		}
+		logger.log(LogMgmt.LEV_INFO, logMsgDefaultTag,
+				hiddenColCnt + " empty XLSX columns have been hidden on " + sheetCnt + " worksheets", null,
+				logMsgSrcId);
+		return hiddenColCnt;
 	}
 }
