@@ -134,6 +134,23 @@ public class AvailsSheet {
 		}
 
 		// VERSION check and support..
+		identifyVersion();
+		// ...............................................
+		/*
+		 * Skip over the header rows and process all data rows...
+		 */
+		for (int idxR = 2; idxR <= excelSheet.getLastRowNum(); idxR++) {
+			Row nextRow = excelSheet.getRow(idxR);
+			if (nextRow == null) {
+				break;
+			}
+			if (isAvail(nextRow)) {
+				rows.add(nextRow);
+			}
+		}
+	}
+	
+	private void identifyVersion(){
 		/*
 		 * There is no explicit identification in a spreadsheet of the template
 		 * version being used. Instead we need to infer based on what the column
@@ -148,19 +165,6 @@ public class AvailsSheet {
 			version = Version.V1_7;
 		} else if (!hasALID && hasAltID) {
 			version = Version.V1_6;
-		}
-		// ...............................................
-		/*
-		 * Skip over the header rows and process all data rows...
-		 */
-		for (int idxR = 2; idxR <= excelSheet.getLastRowNum(); idxR++) {
-			Row nextRow = excelSheet.getRow(idxR);
-			if (nextRow == null) {
-				break;
-			}
-			if (isAvail(nextRow)) {
-				rows.add(nextRow);
-			}
 		}
 	}
 
@@ -282,14 +286,5 @@ public class AvailsSheet {
 		}
 
 	}
-	
-//	  public void filterEmptyCol( ) { 
-//		  for(Row nextRow : rows){
-//		        Cell c = row.getCell(column, Row.RETURN_BLANK_AS_NULL);
-//		        if (c != null) {
-//		            return false;
-//		        }
-//		  } 
-//
-//		}
+
 }
