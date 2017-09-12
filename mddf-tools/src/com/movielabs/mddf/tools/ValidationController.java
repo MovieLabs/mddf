@@ -427,7 +427,7 @@ public class ValidationController {
 				if ((exportDir != null) && (xportFmts != null)) {
 					String baseFileName = trimFileName(srcFile.getName());
 					xportFmts.remove(srcMddfFmt);
-					int cnt = Translator.translateAvails(xmlDoc, xportFmts, exportDir, baseFileName, logMgr);
+					int cnt = Translator.translateAvails(xmlDoc, xportFmts, exportDir, baseFileName, true, logMgr);
 					logMgr.log(LogMgmt.LEV_INFO, logTag, "Exported in " + cnt + " format(s)", srcFile, MODULE_ID);
 				}
 			}
@@ -544,7 +544,7 @@ public class ValidationController {
 		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
 		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp);
 		try {
-			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(as, shortDesc);
+			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(as, shortDesc, xslxFile);
 			Map<Object, Pedigree> pedigreeMap = xBuilder.getPedigreeMap();
 			Map<String, Object> results = new HashMap<String, Object>();
 			results.put("xlsx", xslxFile);
