@@ -299,6 +299,7 @@
 			"Avail:ReportingID": "{avail}Transaction/{avail}ReportingID",
 			"Avail:ServiceProvider": "{avail}ServiceProvider/{md}DisplayName",
 			"Avail:UV_ID": "{avail}SharedEntitlement[@ecosystem='UVVU']/{avail}EcosystemID",
+			"AvailAsset:AltID": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[../{md}Namespace='AltID']",
 			"AvailAsset:ContentID": "@contentID",
 			"AvailAsset:EditID": "{avail}Metadata/{avail}EditEIDR-URN",
 			"AvailAsset:Metadata": "n.a",
