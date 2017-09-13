@@ -100,6 +100,7 @@ public class Translator {
 					// did it work? if so, write to file system.
 					if (targetDoc != null) {
 						String fileName = outFileName;
+						fileName = fileName.replaceFirst("(?i)\\.xml$", "");
 						if (appendVersion) {
 							fileName = fileName + "_v" + targetFmt.getVersion() + ".xml";
 						} else {
@@ -139,7 +140,7 @@ public class Translator {
 		String targetVersion = targetFmt.getVersion();
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, "Translating to XML v"+targetFmt.getVersion()+" from XML v"+curVersion, null, moduleId);
 		if (curVersion.equals(targetVersion)) {
-			targetDoc = srcDoc;
+			return srcDoc;
 		} else {
 			switch (targetFmt) {
 			case AVAILS_2_1:
@@ -230,6 +231,10 @@ public class Translator {
 			case "2.2.1":
 				xmlDoc = avail2_2_1_to_2_2(xmlSrcDoc);
 				break;
+			case "2.2.2":
+				xmlDoc = avail2_2_2_to_2_2_1(xmlSrcDoc);
+				xmlDoc = avail2_2_1_to_2_2(xmlDoc);
+				break;
 			default:
 				// Unsupported request
 				break;
@@ -252,6 +257,9 @@ public class Translator {
 				xmlDoc = avail2_2_1_to_2_2(xmlSrcDoc);
 				xmlDoc = avail2_2_to_2_2_2(xmlDoc);
 				break;
+			case "2.2.2":
+				xmlDoc = xmlSrcDoc; 
+				break;
 			default:
 				// Unsupported request
 				break;
@@ -261,6 +269,7 @@ public class Translator {
 		if (xmlDoc != null) {
 			XlsxBuilder converter = new XlsxBuilder(xmlDoc.getRootElement(), excelVer, logMgr);
 			String fileName = outFileName;
+			fileName = fileName.replaceFirst("(?i)\\.xlsx$", "");
 			if (appendVersion) {
 				fileName = fileName + "_v" + targetFormat.getVersion() + ".xlsx";
 			} else {
