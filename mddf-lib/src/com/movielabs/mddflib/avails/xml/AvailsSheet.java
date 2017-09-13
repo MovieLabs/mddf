@@ -76,33 +76,11 @@ public class AvailsSheet {
 	 * @return created sheet object
 	 */
 	private void ingest(Sheet excelSheet) {
-		DataFormatter dataF = new DataFormatter();
-		/*
-		 * The spread sheet may be formatted with either one or two rows of
-		 * column headers. First step is determine which is the case.
-		 */
+		DataFormatter dataF = new DataFormatter(); 
 		Row headerRow1 = excelSheet.getRow(0);
-		Row headerRow2 = excelSheet.getRow(1);
-		if (headerRow2.getPhysicalNumberOfCells() < 1) {
-			return;
-		}
-		Iterator<Cell> cellIt = headerRow1.cellIterator();
-		boolean use2 = false;
-		while (cellIt.hasNext() && !use2) {
-			Cell next = cellIt.next();
-			String value = dataF.formatCellValue(next);
-			if (value.equalsIgnoreCase("AvailTrans")) {
-				use2 = true;
-			}
-		}
-		Row headerRow;
-		if (use2) {
-			logger.debug("XSLT Column headers in ROW 2");
-			headerRow = headerRow2;
-		} else {
-			logger.debug("XSLT Column headers in ROW 1");
-			headerRow = headerRow1;
-		}
+		Row headerRow2 = excelSheet.getRow(1); 
+		Row headerRow; 
+		headerRow = headerRow2; 
 		// ................
 		headerList = new ArrayList<String>();
 		headerMap = new HashMap<String, Integer>();
@@ -110,7 +88,13 @@ public class AvailsSheet {
 			int idx = headerCell.getColumnIndex();
 			String value = dataF.formatCellValue(headerCell);
 			if ((value != null) && !value.isEmpty()) {
-				String key = value;
+				String prefix;
+				if (noPrefix) {
+					prefix = "";
+				} else {
+					prefix = dataF.formatCellValue(headerRow1.getCell(idx)) + "/";
+				}
+				String key = prefix + value;
 				headerList.add(key);
 				headerMap.put(key, new Integer(idx));
 			}
@@ -149,19 +133,20 @@ public class AvailsSheet {
 			}
 		}
 	}
-	
-	private void identifyVersion(){
+
+	private void identifyVersion() {
 		/*
 		 * There is no explicit identification in a spreadsheet of the template
 		 * version being used. Instead we need to infer based on what the column
 		 * headers are.
 		 * 
 		 */
-		boolean hasAltID = (this.getColumnIdx("Avail/AltID") >= 0) || (this.getColumnIdx("Avail/EpisodeAltID") >= 0);
+		boolean hasAltID = (this.getColumnIdx("AvailAsset/AltID") >= 0)
+				|| (this.getColumnIdx("AvailMetadata/EpisodeAltID") >= 0);
 		boolean hasALID = (this.getColumnIdx("Avail/ALID") >= 0);
-		if (hasALID && hasAltID)  {
+		if (hasALID && hasAltID) {
 			version = Version.V1_7_2;
-		} else if (hasALID && !hasAltID)  {
+		} else if (hasALID && !hasAltID) {
 			version = Version.V1_7;
 		} else if (!hasALID && hasAltID) {
 			version = Version.V1_6;
