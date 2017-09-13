@@ -61,6 +61,7 @@ import com.movielabs.mddf.tools.MaskerDialog;
 import com.movielabs.mddf.tools.TranslatorDialog;
 import com.movielabs.mddf.tools.ValidationController;
 import com.movielabs.mddf.tools.ValidatorTool;
+import com.movielabs.mddf.tools.util.FileChooserDialog;
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
 import com.movielabs.mddflib.logging.LogEntryFolder;
@@ -171,18 +172,50 @@ public class LogNavPanel extends JPanel {
 						xlateDialog.setVisible(true);
 						EnumSet<FILE_FMT> selections = xlateDialog.getSelections();
 						if (!selections.isEmpty()) {
-							ValidatorTool curTool = ValidatorTool.getTool();
-							ValidationController controller = curTool.getController();
 							Translator.translateAvails(doc, selections, xlateDialog.getOutputDir(),
 									xlateDialog.getOutputFilePrefix(), xlateDialog.addVersion(), parentLogger);
 						}
 					}
 				});
-				
+				JMenuItem compressAvailsMItem = new JMenuItem("Compress");
+				compressAvailsMItem.setToolTipText("Hide empty Excel columns");
+				add(compressAvailsMItem);
+				FILE_FMT curFmt = fileFolder.getMddfFormat();
+				compressAvailsMItem.setEnabled(curFmt.getEncoding().equals("xlsx"));
+				compressAvailsMItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						/*
+						 * compression (i.e. column hiding) is handled as a form
+						 * of translation. The process is to translate the XML
+						 * representation of the original Avails to Excel of the
+						 * same version. This works since compression is an
+						 * automatic feature of the XML-to-Excel translation
+						 * process.
+						 */
+						Document doc = fileFolder.getXml();
+						EnumSet<FILE_FMT> selections = EnumSet.noneOf(FILE_FMT.class);
+						FILE_FMT curFmt = fileFolder.getMddfFormat();
+						selections.add(curFmt);
+						File srcFile = fileFolder.getFile();
+						File saveToFile = FileChooserDialog.getFilePath("Save file as...", srcFile.getAbsolutePath(), null, "AVAIL",
+								parentLogger);
+						String dirPath;
+						String fileName;
+						if(saveToFile.exists() && saveToFile.isDirectory()){
+							  dirPath = saveToFile.getPath();
+							  fileName = fileFolder.getFile().getName();
+						}else{
+							  dirPath = saveToFile.getParent();
+							  fileName = saveToFile.getName();
+						}
+						Translator.translateAvails(doc, selections, dirPath,
+								fileName, false, parentLogger);
+					}
+				});
 
 				JMenuItem maskAvailsMItem = new JMenuItem("Export Obfuscated");
 				add(maskAvailsMItem);
-//				maskAvailsMItem.setEnabled(maxErrLevelFound < LogMgmt.LEV_ERR);
 				maskAvailsMItem.addActionListener(new ActionListener() {
 
 					@Override
@@ -192,12 +225,10 @@ public class LogNavPanel extends JPanel {
 						FILE_FMT curFmt = fileFolder.getMddfFormat();
 						File srcFile = fileFolder.getFile();
 						xlateDialog.setContext(srcFile);
-						xlateDialog.setVisible(true); 
+						xlateDialog.setVisible(true);
 					}
 				});
-				
-				
-				
+
 				add(new JSeparator());
 			}
 
