@@ -510,7 +510,7 @@ public class ValidationController {
 		XmlBuilder xBuilder = new XmlBuilder(logMgr, templateVersion);
 		switch (templateVersion) {
 		case V1_7_2:
-			srcMddfFmt = FILE_FMT.AVAILS_1_7;
+			srcMddfFmt = FILE_FMT.AVAILS_1_7_2;
 			if (logNav != null) {
 				logNav.setMddfFormat(xslxFile, srcMddfFmt);
 			}
