@@ -14,7 +14,7 @@ Note that adding support for a new version of the Avails XLSX format requires a 
 
 ### 2. How do you add support for a new version of the Avails XLSX template?
 
-Step1: update the enum `AvailsSheet.Version`
+Step 1: update the enum `AvailsSheet.Version`
 
 Step 2: add any required code to `AvailsSheet.identifyVersion()`
 
@@ -23,11 +23,16 @@ Step 3: the code in `ValidationController.convertSpreadsheet()` determines which
 Step 4: `XmlBuilder.makeXmlAsJDom()` must be updated to match the XLSX version to the correct
 class of `AbstractRowHelper`. It may also be necessary to create a new subclass of `AbstractRowHelper`.
 
-Step 6: If the user is to have the option of converting an Avails **to** the new version, support must also be added in the translator modules:
+
+### 3. How do you add support for converting an Avails file to/from a new version of Avails?
+If the user is to have the option of converting an Avails **to** the new version, support must also be added in the translator modules:
 
 * `TranslatorDialog.addVersionSelectors()` to provide UI support
-* `Translator.translateAvails()` to perform the conversion
+* `Translator.translateAvails()` to manage the conversion
+* when adding a new XLSX version, resource file `Mappings.json` in package `com.movielabs.mddflib.avails.xlsx` specifies the rules for generating XLSX from XML.
+* when adding a new XML version, conversion is handled by Java code in the 'Translator' class. 
+Refer to `Translator.avails2_1_to_2_2()` for an example implementation.
 
-### 3. How do you update the global ratings DB?
+### 4. How do you update the global ratings DB?
 
 Add the XML file to the `com.movielabs.mddf.resources` package and then update `MddfContext.CUR_RATINGS_VER`
