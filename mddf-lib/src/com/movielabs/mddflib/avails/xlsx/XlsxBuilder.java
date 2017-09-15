@@ -51,6 +51,7 @@ import org.jdom2.xpath.XPathFactory;
 
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
+import com.movielabs.mddflib.avails.xml.DefaultMetadata;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -427,12 +428,7 @@ public class XlsxBuilder {
 				}
 				if (nextValue != null) {
 					matchCnt++;
-					/*
-					 * check for special cases where value has to be translated.
-					 * This mainly happens with durations where XSD specifies
-					 * xs:duration syntax.
-					 */
-					nextValue = convertDuration(nextValue);
+					nextValue = convertValue(nextValue, target);
 					if (matchCnt == 1) {
 						value = nextValue;
 					} else {
@@ -453,11 +449,12 @@ public class XlsxBuilder {
 	 */
 	private String extractSingleton(XPathExpression xpe, Element baseEl, String mappingKey) {
 		String value = null;
+		Object target = null;
 		List targetList = xpe.evaluate(baseEl);
 		int matchCnt = 0;
 		if (targetList != null && (!targetList.isEmpty())) {
 			for (int i = 0; i < targetList.size(); i++) {
-				Object target = targetList.get(i);
+				target = targetList.get(i);
 				if (target instanceof Element) {
 					matchCnt++;
 					Element targetEl = (Element) target;
@@ -483,16 +480,66 @@ public class XlsxBuilder {
 
 			}
 			if (value != null) {
-				/*
-				 * check for special cases where value has to be translated.
-				 * This mainly happens with durations where XSD specifies
-				 * xs:duration syntax.
-				 */
-				value = convertDuration(value);
+				value = convertValue(value, target);
 			}
 		}
 		return value;
+	}
 
+	/**
+	 * check for special cases where value has to be translated. This mainly
+	 * happens with durations where XSD specifies xs:duration syntax.
+	 * 
+	 * @param input
+	 * @return
+	 */
+	private String convertValue(String input, Object xmlSrc) {
+		String interim = convertDuration(input);
+		interim = convertDate(interim);
+		interim = convertAltID(interim, xmlSrc);
+		return interim;
+	}
+
+	/**
+	 * @param input
+	 * @param xmlSrc
+	 * @return
+	 */
+	private String convertAltID(String input, Object xmlSrc) {
+		if (!(xmlSrc instanceof Element)) {
+			return input;
+		}
+		Element srcEl = (Element) xmlSrc;
+		if (!srcEl.getName().equals("Identifier")) {
+			return input;
+		}
+		if (srcEl.getNamespace() != mdNSpace) {
+			return input;
+		}
+		Element parentEl = srcEl.getParentElement();
+		// check namespace
+		Element nsEl = parentEl.getChild("Namespace", mdNSpace);
+		if (nsEl == null) {
+			return input;
+		}
+		/*
+		 * If we got this far then we are dealing with some form of content
+		 * identifier. Now find out if its being used as an AltID...
+		 */
+		if (!(nsEl.getText().startsWith(DefaultMetadata.ALT_ID_NAMESPACE_PREFIX))) {
+			return input;
+		}
+		String[] parts = input.split(":", 2);
+		return parts[1];
+	}
+
+	/**
+	 * @param interim
+	 * @return
+	 */
+	private String convertDate(String input) {
+		// TODO Auto-generated method stub
+		return input;
 	}
 
 	/**
