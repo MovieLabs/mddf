@@ -9,7 +9,8 @@ The latest release of the core mddf-lib is v1.3.
 
 ### mddf-lib Changes:
 
-#### mddf-lib v1.3 (PENDING)
+#### mddf-lib v1.3_rc2 (PENDING)
+* Bug Fix: TPR terms were flagged as invalid in Avails XML v2.2 and Excel v1.7
 * Bug Fix: Manifest validation did not check image resolutions were properly formatted.
 * Bug fix: When using CLI, log file output did not specify name of file.
 * Bug Fix: Manifest validation incorrectly required an Audiovisual/Presentation to have an ID
@@ -22,7 +23,10 @@ The latest release of the core mddf-lib is v1.3.
 * Update: Ratings DB updated to v2.3.1
 * Other: non-compliance with Best Practice for ID syntax changed to a WARNING instead of ERROR
 * Enhancement: Identified use of Excel formats other than .xlsx as a security risk.
+* Enhancement: UI for Avails translation has improved layout and design.
+* Enhancement: hide empty Excel columns in saved Avails spreadsheets
 * Internal: increased flexibility of Structure Validation module
+* Internal: refactoring of Avails Translator and TranslatorDialog to improve modularity.
 
 #### mddf-lib v1.2
 * No changes. Functionally equivalent to v1.1.3_rc8
