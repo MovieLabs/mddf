@@ -299,7 +299,7 @@
 			"Avail:ReportingID": "{avail}Transaction/{avail}ReportingID",
 			"Avail:ServiceProvider": "{avail}ServiceProvider/{md}DisplayName",
 			"Avail:UV_ID": "{avail}SharedEntitlement[@ecosystem='UVVU']/{avail}EcosystemID",
-			"AvailAsset:AltID": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[../{md}Namespace='AltID']",
+			"AvailAsset:AltID": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'AltID')]",
 			"AvailAsset:ContentID": "@contentID",
 			"AvailAsset:EditID": "{avail}Metadata/{avail}EditEIDR-URN",
 			"AvailAsset:Metadata": "n.a",
@@ -316,9 +316,9 @@
 			"AvailMetadata:ReleaseHistoryOriginal": "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='original']",
 			"AvailMetadata:ReleaseHistoryPhysicalHV": "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']",
 			"AvailMetadata:ReleaseYear": "{avail}Metadata/{avail}ReleaseDate",
-			"AvailMetadata:RetailerId1": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[../{md}Namespace='RetailerId1']",
-			"AvailMetadata:RetailerId2": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[../{md}Namespace='RetailerId2']",
-			"AvailMetadata:RetailerId3": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[../{md}Namespace='RetailerId3']",
+			"AvailMetadata:RetailerId1": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID1')]",
+			"AvailMetadata:RetailerId2": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID2')]",
+			"AvailMetadata:RetailerId3": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID3')]",
 			"AvailMetadata:TitleDisplayUnlimited": "{avail}Metadata/{avail}TitleDisplayUnlimited",
 			"AvailMetadata:TitleInternalAlias": "{avail}Metadata/{avail}TitleInternalAlias",
 			"AvailMetadata:TotalRunTime": "{avail}Metadata/{avail}RunLength",
@@ -425,10 +425,10 @@
 			"AvailMetadata:EpisodeID": 
 			[
 				"{avail}EpisodeMetadata/{avail}EditEIDR-URN",
-				"{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[../{md}Namespace='EpisodeID']"
+				"{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., EpisodeID)]"
 			],
 
-			"AvailMetadata:EpisodeAltID":   "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[../{md}Namespace='EpisodeAltID']",
+			"AvailMetadata:EpisodeAltID":   "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'EpisodeAltID')]",
 
 			"AvailMetadata:EpisodeNumber": 
 			{
@@ -478,10 +478,10 @@
 				"Episode": "{avail}EpisodeMetadata/{avail}ReleaseDate"
 			},			
 			
-			"AvailMetadata:RetailerEpisodeId1": "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[../{md}Namespace='RetailerId1']",
-			"AvailMetadata:RetailerEpisodeId2": "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[../{md}Namespace='RetailerId2']", 
-			"AvailMetadata:RetailerSeasonId2": "{avail}SeasonMetadata/{avail}AltIdentifier/{md}Identifier[../{md}Namespace='RetailerSeasonId2']", 
-			"AvailMetadata:RetailerSerisId2": "{avail}SeriesMetadata/{avail}AltIdentifier/{md}Identifier[../{md}Namespace='RetailerSerisId2']",
+			"AvailMetadata:RetailerEpisodeID1": "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerEpisodeID1')]",
+			"AvailMetadata:RetailerEpisodeID2": "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerEpisodeID')]",
+			"AvailMetadata:RetailerSeasonID": "{avail}SeasonMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerSeasonID')]", 
+			"AvailMetadata:RetailerSeriesID": "{avail}SeriesMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerSeriesID')]",
 
 			"AvailMetadata:SeasonCount": 
 			{
@@ -497,8 +497,8 @@
 
 			"AvailMetadata:SeasonAltID": 
 			{
-				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier[../{md}Namespace='SeasonAltID']",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[../{md}Namespace='SeasonAltID']"
+				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., SeasonAltID)]",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonAltID')]"
 			},
 			
 			"AvailMetadata:SeasonNumber": 
@@ -527,8 +527,8 @@
 
 			"AvailMetadata:SeriesAltID": 
 			{
-				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[../{md}Namespace='SeriesAltID']",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[../{md}Namespace='SeriesAltID']"
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., SeriesAltID)]",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesAltID')]"
 			},
 			
 			"AvailMetadata:SeriesTitleDisplayUnlimited": 
