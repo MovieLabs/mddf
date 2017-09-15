@@ -43,6 +43,7 @@ import com.movielabs.mddflib.util.xml.RatingSystem;
  */
 public class DefaultMetadata {
 
+	public static final String ALT_ID_NAMESPACE_PREFIX = "org:mddf";
 	protected XmlBuilder xb;
 	protected String colPrefix = "";
 	protected XPathFactory xpfac = XPathFactory.instance();
@@ -76,7 +77,7 @@ public class DefaultMetadata {
 		idEl = addEIDR(metadata, "TitleEIDR-URN", "AvailAsset/TitleID", row);
 
 		addAltIdentifier(metadata, "AltIdentifier", "AvailMetadata/AltID", row);
-		
+
 		addStandardMetadata(metadata, row);
 
 		addCredits(metadata, row);
@@ -149,7 +150,7 @@ public class DefaultMetadata {
 		}
 	}
 
-	protected void addStandardMetadata(Element metadata, AbstractRowHelper row) { 
+	protected void addStandardMetadata(Element metadata, AbstractRowHelper row) {
 		row.process(metadata, "ReleaseDate", xb.getAvailsNSpace(), "AvailMetadata/ReleaseYear");
 		row.process(metadata, "RunLength", xb.getAvailsNSpace(), "AvailMetadata/TotalRunTime");
 		/*
@@ -323,8 +324,13 @@ public class DefaultMetadata {
 		} else if (idValue.startsWith("md:")) {
 			namespace = "movielabs";
 		} else {
-			// ??? Not sure how to handle
-			namespace = "user";
+			/*
+			 * we use a "namespace" with the 'org:mddf' SSID, then add the mapping (i.e. pedigree)
+			 * info as a prefix to the identifier
+			 */
+			namespace = ALT_ID_NAMESPACE_PREFIX;
+			String[] srcId = key.split("/");
+			idValue = srcId[srcId.length-1]+":"+idValue;
 		}
 		Element altIdEl = new Element(childName, xb.getAvailsNSpace());
 		xb.addToPedigree(altIdEl, pg);
