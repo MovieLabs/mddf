@@ -43,6 +43,7 @@ public class EpisodeMetadata extends DefaultMetadata {
 
 	public  void createAssetMetadata(Element parentEl, AbstractRowHelper row) {
 		Element episodeMetadataEl = new Element(colPrefix + "Metadata", xb.getAvailsNSpace());
+
 		addTitles(episodeMetadataEl, row);
 
 		addIdentifier(episodeMetadataEl, row);
@@ -60,10 +61,10 @@ public class EpisodeMetadata extends DefaultMetadata {
 		parentEl.addContent(episodeMetadataEl);
 	}
 
+
+
 	/**
 	 * @param episodeMetadataEl
-	 * @param string
-	 * @param string2
 	 * @param row
 	 */
 	private void addIdentifier(Element episodeMetadataEl, AbstractRowHelper row) {
