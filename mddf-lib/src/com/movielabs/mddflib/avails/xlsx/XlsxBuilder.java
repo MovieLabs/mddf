@@ -53,6 +53,7 @@ import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.DefaultMetadata;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 import net.sf.json.JSONArray;
@@ -110,11 +111,13 @@ import net.sf.json.JSONObject;
  */
 public class XlsxBuilder {
 	private static final String DURATION_REGEX = "P([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\\.[0-9]+)?S)?)?";
+	private static final String DATETIME_REGEX = "[\\d]{4}-[\\d]{2}-[\\d]{2}T[\\d:\\.]+";
 	private static DecimalFormat durFieldFmt = new DecimalFormat("00");
 	private static JSONObject mappings;
 	private static Pattern p_xsDuration;
 	private static String warnMsg1 = "XLSX xfer dropping additional XYZ values";
 	private static String warnDetail1 = "The Excel version of Avails only allows 1 value for this field. Additional XML elements will be ignored";
+	private static Pattern p_xsDateTime;
 	protected XPathFactory xpfac = XPathFactory.instance();
 	private LogMgmt logger;
 	private String rootPrefix = "avails:";
@@ -124,8 +127,10 @@ public class XlsxBuilder {
 	private String MD_VER;
 	private String MDMEC_VER;
 	private Namespace mdNSpace;
+	private SchemaWrapper mdSchema;
 	private String AVAIL_VER;
 	private Namespace availsNSpace;
+	private SchemaWrapper availsSchema;
 	private Element rootEl;
 	private ArrayList<Element> tvAvailsList;
 	private ArrayList<Element> movieAvailsList;
@@ -165,6 +170,8 @@ public class XlsxBuilder {
 		 * 
 		 */
 		p_xsDuration = Pattern.compile(DURATION_REGEX);
+		p_xsDateTime = Pattern.compile(DATETIME_REGEX);
+
 	}
 
 	/**
@@ -488,16 +495,47 @@ public class XlsxBuilder {
 
 	/**
 	 * check for special cases where value has to be translated. This mainly
-	 * happens with durations where XSD specifies xs:duration syntax.
+	 * happens with durations where XSD specifies xs:duration or xs:dateTime.
 	 * 
 	 * @param input
 	 * @return
 	 */
 	private String convertValue(String input, Object xmlSrc) {
-		String interim = convertDuration(input);
-		interim = convertDate(interim);
-		interim = convertAltID(interim, xmlSrc);
-		return interim;
+		String name = null;
+		String nsPrefix = null;
+		if (xmlSrc instanceof Element) {
+			Element xmlEl = (Element) xmlSrc;
+			name = xmlEl.getName();
+			nsPrefix = xmlEl.getNamespacePrefix();
+		} else {
+			// handle attributes w/o a namespace prefix
+			String interim = convertDuration(input);
+			interim = convertDate(interim);
+			return interim;
+		}
+		if (nsPrefix != null) {
+			SchemaWrapper sw;
+			switch (nsPrefix) {
+			case "avails":
+				sw = availsSchema;
+				break;
+			case "md":
+				sw = mdSchema;
+				break;
+			default:
+				return input;
+			}
+			String type = sw.getType(name);
+			switch (type) {
+			case "xs:duration":
+				return convertDuration(input);
+			case "xs:dateTime":
+				return convertDate(input);
+			default:
+				return convertAltID(input, xmlSrc);
+			}
+		}
+		return input;
 	}
 
 	/**
@@ -538,8 +576,12 @@ public class XlsxBuilder {
 	 * @return
 	 */
 	private String convertDate(String input) {
-		// TODO Auto-generated method stub
-		return input;
+		Matcher m = p_xsDateTime.matcher(input);
+		if (!m.matches()) {
+			return input;
+		}
+		String[] parts = input.split("T");
+		return parts[0];
 	}
 
 	/**
@@ -859,10 +901,13 @@ public class XlsxBuilder {
 			throw new IllegalArgumentException("Unsupported Avails Schema version " + availSchemaVer);
 		}
 		AVAIL_VER = availSchemaVer;
-		Namespace.getNamespace("md", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
+
 		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + MD_VER + "/md");
 		availsNSpace = Namespace.getNamespace("avails",
 				MddfContext.NSPACE_AVAILS_PREFIX + AVAIL_VER + MddfContext.NSPACE_AVAILS_SUFFIX);
+
+		mdSchema = SchemaWrapper.factory("md-v" + MD_VER);
+		availsSchema = SchemaWrapper.factory("avails-v" + AVAIL_VER);
 	}
 
 	/**
