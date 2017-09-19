@@ -433,10 +433,12 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 */
 		String structVer = null;
 		switch (availSchemaVer) {
+		case "2.2.2": 
+			structVer = "2.2.2";
+			break;
 		case "2.1":
 		case "2.2":
 		case "2.2.1":
-		case "2.2.2": 
 		default:
 			structVer = "2.2";
 		}
