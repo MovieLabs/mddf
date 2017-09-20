@@ -32,6 +32,7 @@ import org.jdom2.Element;
  * 
  * @author L. Levin, Critical Architectures LLC
  *
+ * @deprecated v1.6 Excel is no longer supported
  */
 public class RowToXmlHelperV1_6 extends RowToXmlHelperV1_7 {
 
