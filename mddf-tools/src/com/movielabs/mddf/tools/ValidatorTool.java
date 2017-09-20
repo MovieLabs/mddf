@@ -42,6 +42,8 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.TreePath;
 
+import org.jdom2.Document;
+
 import javax.swing.JButton;
 
 import java.awt.event.ActionEvent;
@@ -62,6 +64,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +82,9 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 
-import com.movielabs.mddf.tools.ValidationController; 
+import com.movielabs.mddf.MddfContext.FILE_FMT;
+import com.movielabs.mddf.tools.ValidationController;
+import com.movielabs.mddf.tools.ValidatorTool.StatusMsg;
 import com.movielabs.mddf.tools.util.AboutDialog;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
 import com.movielabs.mddf.tools.util.logging.LogNavPanel;
@@ -89,6 +94,7 @@ import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.Translator;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
 import com.movielabs.mddf.tools.util.HeaderPanel;
@@ -132,7 +138,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			setRunningState(true);
 			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			getTxtStatus().setText("Starting.....");
-			consoleLogger.collapse(); 
+			consoleLogger.collapse();
 			try {
 				controller.validate(srcPath, uxProfile, useCases);
 				refreshEditor(srcPath);
@@ -140,7 +146,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				consoleLogger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, e.getMessage(), null, "UI");
-				getTxtStatus().setText( e.getMessage());
+				getTxtStatus().setText(e.getMessage());
 			}
 			consoleLogger.expand();
 			((Component) consoleLogger).invalidate();
@@ -150,6 +156,35 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			return null;
 		}
 
+	}
+
+	public class TranslationWorker extends SwingWorker<Void, StatusMsg> {
+
+		private Document xmlDoc;
+		private EnumSet<FILE_FMT> selections;
+		private String dirPath;
+		private String outFileName;
+		private boolean appendVersion;
+
+		public TranslationWorker(Document xmlDoc, EnumSet<FILE_FMT> selections, String dirPath, String outFileName,
+				boolean appendVersion) {
+			this.xmlDoc = xmlDoc;
+			this.selections = selections;
+			this.dirPath = dirPath;
+			this.outFileName = outFileName;
+			this.appendVersion = appendVersion;
+		}
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			setRunningState(true);
+			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			getTxtStatus().setText("Starting.....");
+			Translator.translateAvails(xmlDoc, selections, dirPath, outFileName, appendVersion, consoleLogger);
+			frame.setCursor(null); // turn off the wait cursor
+			setRunningState(false);
+			return null;
+		}
 	}
 
 	public static class StatusMsg {
@@ -338,7 +373,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			editFileBtn.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					if(running){
+					if (running) {
 						editFileBtn.setEnabled(false);
 						return;
 					}
@@ -377,7 +412,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			runValidatorBtn.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					if(running){
+					if (running) {
 						runValidatorBtn.setEnabled(false);
 						return;
 					}
@@ -708,6 +743,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			loggingMenu.add(((AdvLogPanel) consoleLogger).createSaveLogMenu());
 		}
 		return loggingMenu;
+
 	}
 
 	protected LoggerWidget getConsoleLogPanel() {
@@ -745,7 +781,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					if(running){
+					if (running) {
 						inputSrcTField.setEnabled(false);
 						return;
 					}
@@ -757,7 +793,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	}
 
 	protected void openFile() {
-		if(running){
+		if (running) {
 			return;
 		}
 		// trigger the FileChooser dialog
@@ -965,7 +1001,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		controller = getController();
 		controller.setValidation(true, validateConstraintsCBox.isSelected(), validateBestPracCBox.isSelected());
 		// ....................................................
-		runInBackground(srcPath,uxProfile, useCases);
+		runInBackground(srcPath, uxProfile, useCases);
 		// .................................................
 		frame.setCursor(null); // turn off the wait cursor
 		consoleLogger.expand();
@@ -1021,7 +1057,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	 */
 	public ValidationController getController() {
 		if (controller == null) {
-			controller = new ValidationController( consoleLogger);
+			controller = new ValidationController(consoleLogger);
 		}
 		return controller;
 	}
@@ -1059,5 +1095,30 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			txtStatus.setColumns(90);
 		}
 		return txtStatus;
+	}
+
+	public void showBusy(boolean busy) {
+		if (busy) {
+			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		} else {
+			frame.setCursor(null);
+		}
+
+	}
+
+	public void runTranslation(Document doc, EnumSet<FILE_FMT> selections, String outputDir, String outputFilePrefix,
+			boolean addVersion) {
+
+		SwingWorker<Void, StatusMsg> worker = new ValidatorTool.TranslationWorker(doc, selections, outputDir,
+				outputFilePrefix, addVersion);
+		worker.execute();
+
+	}
+
+	/**
+	 * @return the running
+	 */
+	public boolean isRunning() {
+		return running;
 	}
 }

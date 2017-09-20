@@ -24,6 +24,7 @@ package com.movielabs.mddf.tools.util.logging;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,6 +46,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -61,6 +63,8 @@ import com.movielabs.mddf.tools.MaskerDialog;
 import com.movielabs.mddf.tools.TranslatorDialog;
 import com.movielabs.mddf.tools.ValidationController;
 import com.movielabs.mddf.tools.ValidatorTool;
+import com.movielabs.mddf.tools.ValidatorTool.StatusMsg;
+import com.movielabs.mddf.tools.ValidatorTool.ValidationWorker;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
@@ -172,8 +176,8 @@ public class LogNavPanel extends JPanel {
 						xlateDialog.setVisible(true);
 						EnumSet<FILE_FMT> selections = xlateDialog.getSelections();
 						if (!selections.isEmpty()) {
-							Translator.translateAvails(doc, selections, xlateDialog.getOutputDir(),
-									xlateDialog.getOutputFilePrefix(), xlateDialog.addVersion(), parentLogger);
+							ValidatorTool.getTool().runTranslation(doc, selections, xlateDialog.getOutputDir(),
+									xlateDialog.getOutputFilePrefix(), xlateDialog.addVersion());
 						}
 					}
 				});
@@ -198,19 +202,18 @@ public class LogNavPanel extends JPanel {
 						FILE_FMT curFmt = fileFolder.getMddfFormat();
 						selections.add(curFmt);
 						File srcFile = fileFolder.getFile();
-						File saveToFile = FileChooserDialog.getFilePath("Save file as...", srcFile.getAbsolutePath(), null, "AVAIL",
-								parentLogger);
+						File saveToFile = FileChooserDialog.getFilePath("Save file as...", srcFile.getAbsolutePath(),
+								null, "AVAIL", parentLogger);
 						String dirPath;
 						String fileName;
-						if(saveToFile.exists() && saveToFile.isDirectory()){
-							  dirPath = saveToFile.getPath();
-							  fileName = fileFolder.getFile().getName();
-						}else{
-							  dirPath = saveToFile.getParent();
-							  fileName = saveToFile.getName();
+						if (saveToFile.exists() && saveToFile.isDirectory()) {
+							dirPath = saveToFile.getPath();
+							fileName = fileFolder.getFile().getName();
+						} else {
+							dirPath = saveToFile.getParent();
+							fileName = saveToFile.getName();
 						}
-						Translator.translateAvails(doc, selections, dirPath,
-								fileName, false, parentLogger);
+						ValidatorTool.getTool().runTranslation(doc, selections, dirPath, fileName, false);
 					}
 				});
 
@@ -260,6 +263,9 @@ public class LogNavPanel extends JPanel {
 			/* add listener to trigger a pop-up menu */
 			this.addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent e) {
+					if(ValidatorTool.getTool().isRunning()){
+						return;
+					}
 					if (SwingUtilities.isRightMouseButton(e)) {
 						TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
 						int row = tree.getClosestRowForLocation(e.getX(), e.getY());
