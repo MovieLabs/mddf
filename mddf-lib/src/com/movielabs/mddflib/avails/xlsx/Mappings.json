@@ -103,7 +103,7 @@
 
 			"AvailAsset:SeriesContentID": 
 			{
-				"Series": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesContentID",
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesContentID",
 				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesContentID"
 			},
 
@@ -111,9 +111,9 @@
 			"AvailMetadata:Any": "n.a",
 			"AvailMetadata:CaptionExemption": 
 			{
-				"episode": "{avail}EpisodeMetadata/{avail}USACaptionsExemptionReason",
-				"season": "{avail}SeasonMetadata/{avail}USACaptionsExemptionReason",
-				"series": "{avail}SeriesMetadata/{avail}USACaptionsExemptionReason"
+				"Episode": "{avail}EpisodeMetadata/{avail}USACaptionsExemptionReason",
+				"Season": "{avail}SeasonMetadata/{avail}USACaptionsExemptionReason",
+				"Series": "{avail}SeriesMetadata/{avail}USACaptionsExemptionReason"
 			},
 
 			"AvailMetadata:CaptionIncluded": "n.a",
@@ -185,7 +185,7 @@
 
 			"AvailMetadata:SeasonCount": 
 			{
-				"Series": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons",
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons",
 				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons"
 			},
 
@@ -253,11 +253,11 @@
 			"AvailTrans:NGAudio": "{avail}FormatProfile/@NGAudio",
 			"AvailTrans:OtherInstructions": "{avail}OtherInstructions",
 			"AvailTrans:OtherTerms": "n.a",
-			"AvailTrans:PriceCurrency": "{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money/@currency",
-			"AvailTrans:PriceType": "{avail}Term/@termName[.='Tier' or .='WSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
+			"AvailTrans:PriceCurrency": "{avail}Term[@termName[.='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money/@currency",
+			"AvailTrans:PriceType": "{avail}Term/@termName[.='Tier' or .='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
 			"AvailTrans:PriceValue": 
 			[
-				"{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
+				"{avail}Term[@termName[.='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
 				"{avail}Term[@termName[.='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
 			],
 
@@ -281,7 +281,8 @@
 			"AvailTrans:WCG": "{avail}FormatProfile/@WCG",
 			"AvailTrans:Avail/AvailID": "@TransactionID"
 		}
-	},	
+	},
+
 	"V1_7_2": 
 	{
 		"Movies": 
@@ -332,6 +333,7 @@
 				"{avail}End",
 				"{avail}EndCondition"
 			],
+
 			"AvailTrans:FixedEndDate": "{avail}Term/{avail}Event[../@termName='FixedEndDate']",
 			"AvailTrans:FormatProfile": "{avail}FormatProfile",
 			"AvailTrans:HDR": "{avail}FormatProfile/@HDR",
@@ -395,7 +397,7 @@
 
 			"AvailAsset:SeriesContentID": 
 			{
-				"Series": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesContentID",
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesContentID",
 				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesContentID"
 			},
 
@@ -403,9 +405,9 @@
 			"AvailMetadata:Any": "n.a",
 			"AvailMetadata:CaptionExemption": 
 			{
-				"episode": "{avail}EpisodeMetadata/{avail}USACaptionsExemptionReason",
-				"season": "{avail}SeasonMetadata/{avail}USACaptionsExemptionReason",
-				"series": "{avail}SeriesMetadata/{avail}USACaptionsExemptionReason"
+				"Episode": "{avail}EpisodeMetadata/{avail}USACaptionsExemptionReason",
+				"Season": "{avail}SeasonMetadata/{avail}USACaptionsExemptionReason",
+				"Series": "{avail}SeriesMetadata/{avail}USACaptionsExemptionReason"
 			},
 
 			"AvailMetadata:CaptionIncluded": "n.a",
@@ -425,11 +427,10 @@
 			"AvailMetadata:EpisodeID": 
 			[
 				"{avail}EpisodeMetadata/{avail}EditEIDR-URN",
-				"{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., EpisodeID)]"
+				"{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'EpisodeID')]"
 			],
 
-			"AvailMetadata:EpisodeAltID":   "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'EpisodeAltID')]",
-
+			"AvailMetadata:EpisodeAltID": "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'EpisodeAltID')]",
 			"AvailMetadata:EpisodeNumber": 
 			{
 				"Episode": "{avail}EpisodeMetadata/{avail}EpisodeNumber/{md}Number"
@@ -476,31 +477,40 @@
 			{
 				"Season": "{avail}SeasonMetadata/{avail}ReleaseDate",
 				"Episode": "{avail}EpisodeMetadata/{avail}ReleaseDate"
-			},			
-			
+			},
+
 			"AvailMetadata:RetailerEpisodeID1": "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerEpisodeID1')]",
-			"AvailMetadata:RetailerEpisodeID2": "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerEpisodeID')]",
-			"AvailMetadata:RetailerSeasonID": "{avail}SeasonMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerSeasonID')]", 
-			"AvailMetadata:RetailerSeriesID": "{avail}SeriesMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerSeriesID')]",
+			"AvailMetadata:RetailerEpisodeID2": "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerEpisodeID2')]",
+			"AvailMetadata:RetailerSeasonID": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeasonID')]",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeasonID')]"
+			},
+
+			"AvailMetadata:RetailerSeriesID": 
+			{
+				"Season": "{avail}SeasonMetadata//{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeriesID')]",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata//{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeriesID')]"
+			},
 
 			"AvailMetadata:SeasonCount": 
 			{
-				"Series": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons",
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons",
 				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons"
 			},
 
 			"AvailMetadata:SeasonID": 
 			{
-				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier[../{md}Namespace='SeasonID']",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[../{md}Namespace='SeasonID']"
+				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonID')]",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonID')]"
 			},
 
 			"AvailMetadata:SeasonAltID": 
 			{
-				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., SeasonAltID)]",
+				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonAltID')]",
 				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonAltID')]"
 			},
-			
+
 			"AvailMetadata:SeasonNumber": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeasonNumber/{md}Number",
@@ -521,16 +531,16 @@
 
 			"AvailMetadata:SeriesID": 
 			{
-				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[../{md}Namespace='SeriesID']",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[../{md}Namespace='SeriesID']"
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesID')]",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesID')]"
 			},
 
 			"AvailMetadata:SeriesAltID": 
 			{
-				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., SeriesAltID)]",
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesAltID')]",
 				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesAltID')]"
 			},
-			
+
 			"AvailMetadata:SeriesTitleDisplayUnlimited": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleDisplayUnlimited",
@@ -565,11 +575,11 @@
 			"AvailTrans:NGAudio": "{avail}FormatProfile/@NGAudio",
 			"AvailTrans:OtherInstructions": "{avail}OtherInstructions",
 			"AvailTrans:OtherTerms": "n.a",
-			"AvailTrans:PriceCurrency": "{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money/@currency",
-			"AvailTrans:PriceType": "{avail}Term/@termName[.='Tier' or .='WSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
+			"AvailTrans:PriceCurrency": "{avail}Term[@termName[.='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money/@currency",
+			"AvailTrans:PriceType": "{avail}Term/@termName[.='Tier' or .='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
 			"AvailTrans:PriceValue": 
 			[
-				"{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
+				"{avail}Term[@termName[.='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
 				"{avail}Term[@termName[.='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
 			],
 
@@ -593,5 +603,5 @@
 			"AvailTrans:WCG": "{avail}FormatProfile/@WCG",
 			"AvailTrans:Avail/AvailID": "@TransactionID"
 		}
-		}
+	}
 }
