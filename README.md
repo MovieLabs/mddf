@@ -91,7 +91,7 @@ Executable jars are created for both stable and BETA releases and track the vers
 Example: mddf-tool-v3.1.jar would based on, and compatible with, v3.1 of mddf-lib.
 
 #### Native executables:
-Begining with the release of v1.3 of mddf-lib, native executables are assigned versions that append a letter to the 
+Beginning with the release of v1.3 of mddf-lib, native executables are assigned versions that append a letter to the 
 the underlying mddf-lib version.
 
 Examples: 

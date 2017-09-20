@@ -10,12 +10,14 @@ The latest release of the core mddf-lib is v1.3.
 ### mddf-lib Changes:
 
 #### mddf-lib v1.3_rc2 (PENDING)
+* Bug Fix: Translation of Avails to XLSX dropped termNames 'SeasonWSP' and 'EpisodeWSP'
 * Bug Fix: TPR terms were flagged as invalid in Avails XML v2.2 and Excel v1.7
 * Bug Fix: Manifest validation did not check image resolutions were properly formatted.
 * Bug fix: When using CLI, log file output did not specify name of file.
 * Bug Fix: Manifest validation incorrectly required an Audiovisual/Presentation to have an ID
 * Bug Fix: Manifest validation did not check value of Experience/App/Type
 * Bug fix: Avails XLSX processing of episodic content used wrong form of Metadata
+* Update: Avails format XLSX v1.6 has been DEPRECATED and is no longer supported.
 * Update: support for Avails XLSX v1.7.2 added
 * Update: support for Avails XML v2.2.2 added
 * Update: support for Manifest v1.6.1 added
