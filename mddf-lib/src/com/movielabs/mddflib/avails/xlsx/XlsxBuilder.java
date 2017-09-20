@@ -494,25 +494,31 @@ public class XlsxBuilder {
 	}
 
 	/**
-	 * check for special cases where value has to be translated. This mainly
-	 * happens with durations where XSD specifies xs:duration or xs:dateTime.
+	 * check for special cases where value has to be translated. This happens
+	 * where XSD specifies xs:duration or xs:dateTime and the Excel specifies
+	 * some simpler format. It also covers special cases such as translating the
+	 * 'EpisodeWSP' <tt>termName</tt> attribute.
 	 * 
 	 * @param input
 	 * @return
 	 */
 	private String convertValue(String input, Object xmlSrc) {
-		String name = null;
-		String nsPrefix = null;
-		if (xmlSrc instanceof Element) {
-			Element xmlEl = (Element) xmlSrc;
-			name = xmlEl.getName();
-			nsPrefix = xmlEl.getNamespacePrefix();
-		} else {
+		if (xmlSrc instanceof Attribute) {
 			// handle attributes w/o a namespace prefix
+			Attribute xmlAtt = (Attribute) xmlSrc;
+			String name = xmlAtt.getName();
+			if (name.equals("termName")) {
+				System.out.println("Checking att " + name);
+				return convertTermName(input);
+			}
+			// default handling...
 			String interim = convertDuration(input);
 			interim = convertDate(interim);
 			return interim;
 		}
+		Element xmlEl = (Element) xmlSrc;
+		String name = xmlEl.getName();
+		String nsPrefix = xmlEl.getNamespacePrefix();
 		if (nsPrefix != null) {
 			SchemaWrapper sw;
 			switch (nsPrefix) {
@@ -534,6 +540,20 @@ public class XlsxBuilder {
 			default:
 				return convertAltID(input, xmlSrc);
 			}
+		}
+		return input;
+	}
+
+	/**
+	 * 
+	 * @param input
+	 * @return
+	 */
+	private String convertTermName(String input) {
+		switch (input) {
+		case "EpisodeWSP":
+		case "SeasonWSP":
+			return "WSP";
 		}
 		return input;
 	}
