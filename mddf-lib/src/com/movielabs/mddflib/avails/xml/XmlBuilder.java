@@ -78,11 +78,9 @@ public class XmlBuilder {
 	private Map<String, Element> assetElRegistry;
 	private Map<Element, AbstractRowHelper> element2SrcRowMap;
 	private LogMgmt logger;
-	private DefaultMetadata mdHelper_basic;
-	private EpisodeMetadata mdHelper_episode;
-	private SeasonMetadata mdHelper_season;
 	private Version templateVersion;
 	private File curSrcXslxFile;
+	private MetadataBuilder mdBuilder;
 
 	/**
 	 * @param logger
@@ -92,9 +90,6 @@ public class XmlBuilder {
 	public XmlBuilder(LogMgmt logger, Version sstVersion) {
 		this.logger = logger;
 		this.templateVersion = sstVersion;
-		mdHelper_basic = new DefaultMetadata(this);
-		mdHelper_episode = new EpisodeMetadata(this);
-		mdHelper_season = new SeasonMetadata(this);
 	}
 
 	public boolean setVersion(String availXsdVersion) {
@@ -150,7 +145,7 @@ public class XmlBuilder {
 	 *            original file (used for logging; may be <tt>null</tt>
 	 * @return a JAXP document
 	 * @throws IllegalStateException
-	 */ 
+	 */
 	public Document makeXmlAsJDom(AvailsSheet aSheet, String shortDesc, File srcXslxFile) throws IllegalStateException {
 		this.shortDesc = shortDesc;
 		this.curSrcXslxFile = srcXslxFile;
@@ -168,6 +163,8 @@ public class XmlBuilder {
 		avail2EntilementMap = new HashMap<Element, Map<String, Element>>();
 		entitlement2IdMap = new HashMap<Element, List<String>>();
 		element2SrcRowMap = new HashMap<Element, AbstractRowHelper>();
+
+		mdBuilder = new MetadataBuilder(aSheet.getVersion(), logger, this);
 
 		// Create and initialize Document...
 		String xsdUri = "http://www.movielabs.com/schema/avails/v" + xsdVersion + "/avails";
@@ -196,20 +193,14 @@ public class XmlBuilder {
 					xmlConverter.makeAvail(this);
 				}
 				break;
-			case V1_6:
-				for (Row row : aSheet.getRows()) {
-					msg = "Converting row " + row.getRowNum();
-					logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, null, moduleId);
-					RowToXmlHelperV1_7 xmlConverter = new RowToXmlHelperV1_6(aSheet, row);
-					xmlConverter.makeAvail(this);
-				}
-				break;
 			default:
-				break;
+				logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE,
+						"Processing of " + templateVersion.toString() + " is not supported", srcXslxFile, moduleId);
+				return null;
 			}
 		} catch (Exception e) {
 			msg = "Fatal Exception while ingesting XLSX file";
-			logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
+			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
 			e.printStackTrace();
 			return null;
 		}
@@ -264,12 +255,12 @@ public class XmlBuilder {
 		 * do we handle?
 		 */
 		String alid = alidPedigree.getRawValue();
-		logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, curSrcXslxFile, "Looking for Avail with ALID=[" + alid + "]", null,
-				null, moduleId);
+		logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, curSrcXslxFile,
+				"Looking for Avail with ALID=[" + alid + "]", null, null, moduleId);
 		Element availEL = availElRegistry.get(alid);
 		if (availEL == null) {
-			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, curSrcXslxFile, "Building Avail with ALID=[" + alid + "]", null,
-					null, moduleId);
+			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, curSrcXslxFile,
+					"Building Avail with ALID=[" + alid + "]", null, null, moduleId);
 			availEL = new Element("Avail", getAvailsNSpace());
 			/*
 			 * No data value for the Avail element itself but for purposes of
@@ -458,42 +449,15 @@ public class XmlBuilder {
 		case "xs:anyURI":
 			break;
 		case "xs:duration":
-			/**
-			 * Input is one of the following:
-			 * <ul>
-			 * <li>hh</li>
-			 * <li>hh:mm</li>
-			 * <li>hh:mm:ss</li>
-			 * </ul>
-			 * The output format is 'PThhHmmMssS'
-			 */
-			String parts[] = formattedValue.split(":");
-			String xmlValue = "PT" + parts[0] + "H";
-			if (parts.length > 1) {
-				xmlValue = xmlValue + parts[1] + "M";
-				if (parts.length > 2) {
-					xmlValue = xmlValue + parts[2] + "S";
-				}
-			}
-			formattedValue = xmlValue;
+			formattedValue = formatDuration(formattedValue);
 			break;
 		case "xs:boolean":
-			if (formattedValue.equals("Yes")) {
-				formattedValue = "true";
-			} else if (formattedValue.equals("No")) {
-				formattedValue = "false";
-			}
+			formattedValue = formatBoolean(formattedValue);
 			break;
 		case "xs:date":
 			break;
 		case "xs:dateTime":
-			if (formattedValue.matches("[\\d]{4}-[\\d]{2}-[\\d]{2}")) {
-				if (elementName.startsWith("End")) {
-					formattedValue = formattedValue + "T23:59:59";
-				} else {
-					formattedValue = formattedValue + "T00:00:00";
-				}
-			}
+			formattedValue = formatDateTime(formattedValue, elementName.startsWith("End"));
 			break;
 		default:
 			// throw new IllegalArgumentException("Data type '" + type + "' not
@@ -501,6 +465,54 @@ public class XmlBuilder {
 
 		}
 		return formattedValue;
+	}
+
+	/**
+	 * @param rawValue
+	 * @return
+	 */
+	public String formatBoolean(String input) {
+		if (input.equals("Yes")) {
+			return "true";
+		} else if (input.equals("No")) {
+			return "false";
+		}
+		return null;
+	}
+
+	String formatDateTime(String input, boolean roundOff) {
+		String output = "";
+		if (input.matches("[\\d]{4}-[\\d]{2}-[\\d]{2}")) {
+			// if (elementName.startsWith("End")) {
+			if (!roundOff) {
+				output = input + "T23:59:59";
+			} else {
+				output = input + "T00:00:00";
+			}
+		}
+		return output;
+	}
+
+	String formatDuration(String input) {
+		/**
+		 * Input is one of the following:
+		 * <ul>
+		 * <li>hh</li>
+		 * <li>hh:mm</li>
+		 * <li>hh:mm:ss</li>
+		 * </ul>
+		 * The output format is 'PThhHmmMssS'
+		 */
+		String parts[] = input.split(":");
+		String xmlValue = "PT" + parts[0] + "H";
+		if (parts.length > 1) {
+			xmlValue = xmlValue + parts[1] + "M";
+			if (parts.length > 2) {
+				xmlValue = xmlValue + parts[2] + "S";
+			}
+		}
+		return xmlValue;
+
 	}
 
 	private SchemaWrapper getSchema(String schema) {
@@ -622,18 +634,17 @@ public class XmlBuilder {
 		 * Metadata. The WorkType will determine which type of Metadata element
 		 * we are looking for.
 		 */
-		Element metadataEl = null;
-		switch (workType) {
-		case "Movie":
-			metadataEl = assetEl.getChild("Metadata", getAvailsNSpace());
-			mdHelper_basic.extend(metadataEl, curRow);
-			break;
-		case "Episode":
-			metadataEl = assetEl.getChild("EpisodeMetadata", getAvailsNSpace());
-			mdHelper_episode.extend(metadataEl, curRow);
-			break;
-		default:
-		}
+		// Element metadataEl = null;
+		// switch (workType) {
+		// case "Movie":
+		// metadataEl =mdBuilder.buildMovieMData(curRow);
+		// break;
+		// case "Episode":
+		// metadataEl =mdBuilder.buildTvMData(curRow);
+		// break;
+		// default:
+		// }
+		// assetEl.addContent(metadataEl);
 	}
 
 	/**
@@ -651,24 +662,8 @@ public class XmlBuilder {
 	 * @param row
 	 */
 	void createAssetMetadata(Element assetEl, String assetWorkType, AbstractRowHelper row) {
-		/*
-		 * Need to determine what metadata structure to use based on the
-		 * Asset/WorkType
-		 */
-		switch (assetWorkType) {
-		case "Season":
-			mdHelper_season.createAssetMetadata(assetEl, row);
-			return;
-		case "Episode":
-			mdHelper_episode.createAssetMetadata(assetEl, row);
-			return;
-		case "Series":
-			return;
-		default:
-			// must be a Movie
-			mdHelper_basic.createAssetMetadata(assetEl, row);
-			return;
-		}
+		Element metadataEl = mdBuilder.appendMData(row, assetWorkType);
+		assetEl.addContent(metadataEl);
 	}
 
 	/**
@@ -694,12 +689,15 @@ public class XmlBuilder {
 				break;
 			}
 			if (mdEl != null) {
-				mdHelper_basic.finalize(mdEl);
+				/*
+				 * Is this still needed given new mode of md building?
+				 */
+				// mdHelper_basic.finalize(mdEl);
 			}
 		}
 	}
 
 	void appendToLog(String msg, int logLevel, Cell target) {
-		logger.logIssue(LogMgmt.TAG_XLATE, logLevel, target, msg, null, null, moduleId); 
+		logger.logIssue(LogMgmt.TAG_XLATE, logLevel, target, msg, null, null, moduleId);
 	}
 }
