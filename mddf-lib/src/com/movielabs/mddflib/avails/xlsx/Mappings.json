@@ -54,11 +54,11 @@
 			"AvailTrans:OtherInstructions": "{avail}OtherInstructions",
 			"AvailTrans:OtherTerms": "n.a",
 			"AvailTrans:PriceCurrency": "{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money/@currency",
-			"AvailTrans:PriceType": "{avail}Term/@termName[.='Tier' or .='WSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
+			"AvailTrans:PriceType": "{avail}Term/@termName[.='NA' or .='Tier' or .='WSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
 			"AvailTrans:PriceValue": 
 			[
 				"{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
-				"{avail}Term[@termName[.='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
+				"{avail}Term[@termName[.='NA' or .='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
 			],
 
 			"AvailTrans:RentalDuration": "{avail}Term/{avail}Duration[../@termName='RentalDuration']",
@@ -254,11 +254,11 @@
 			"AvailTrans:OtherInstructions": "{avail}OtherInstructions",
 			"AvailTrans:OtherTerms": "n.a",
 			"AvailTrans:PriceCurrency": "{avail}Term[@termName[.='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money/@currency",
-			"AvailTrans:PriceType": "{avail}Term/@termName[.='Tier' or .='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
+			"AvailTrans:PriceType": "{avail}Term/@termName[.='NA' or .='Tier' or .='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
 			"AvailTrans:PriceValue": 
 			[
 				"{avail}Term[@termName[.='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
-				"{avail}Term[@termName[.='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
+				"{avail}Term[@termName[.='NA' or .='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
 			],
 
 			"AvailTrans:RentalDuration": "{avail}Term/{avail}Duration[../@termName='RentalDuration']",
@@ -317,9 +317,9 @@
 			"AvailMetadata:ReleaseHistoryOriginal": "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='original']",
 			"AvailMetadata:ReleaseHistoryPhysicalHV": "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']",
 			"AvailMetadata:ReleaseYear": "{avail}Metadata/{avail}ReleaseDate",
-			"AvailMetadata:RetailerId1": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID1')]",
-			"AvailMetadata:RetailerId2": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID2')]",
-			"AvailMetadata:RetailerId3": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID3')]",
+			"AvailMetadata:RetailerID1": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID1')]",
+			"AvailMetadata:RetailerID2": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID2')]",
+			"AvailMetadata:RetailerID3": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID3')]",
 			"AvailMetadata:TitleDisplayUnlimited": "{avail}Metadata/{avail}TitleDisplayUnlimited",
 			"AvailMetadata:TitleInternalAlias": "{avail}Metadata/{avail}TitleInternalAlias",
 			"AvailMetadata:TotalRunTime": "{avail}Metadata/{avail}RunLength",
@@ -345,11 +345,11 @@
 			"AvailTrans:OtherInstructions": "{avail}OtherInstructions",
 			"AvailTrans:OtherTerms": "n.a",
 			"AvailTrans:PriceCurrency": "{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money/@currency",
-			"AvailTrans:PriceType": "{avail}Term/@termName[.='Tier' or .='WSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
+			"AvailTrans:PriceType": "{avail}Term/@termName[.='NA' or .='Tier' or .='WSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
 			"AvailTrans:PriceValue": 
 			[
 				"{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
-				"{avail}Term[@termName[.='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
+				"{avail}Term[@termName[.='NA' or .='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
 			],
 
 			"AvailTrans:RentalDuration": "{avail}Term/{avail}Duration[../@termName='RentalDuration']",
@@ -576,11 +576,11 @@
 			"AvailTrans:OtherInstructions": "{avail}OtherInstructions",
 			"AvailTrans:OtherTerms": "n.a",
 			"AvailTrans:PriceCurrency": "{avail}Term[@termName[.='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money/@currency",
-			"AvailTrans:PriceType": "{avail}Term/@termName[.='Tier' or .='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
+			"AvailTrans:PriceType": "{avail}Term/@termName[.='NA' or .='Tier' or .='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
 			"AvailTrans:PriceValue": 
 			[
 				"{avail}Term[@termName[.='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
-				"{avail}Term[@termName[.='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
+				"{avail}Term[@termName[.='NA' or .='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
 			],
 
 			"AvailTrans:RentalDuration": "{avail}Term/{avail}Duration[../@termName='RentalDuration']",
