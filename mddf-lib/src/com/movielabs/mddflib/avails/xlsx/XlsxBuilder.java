@@ -51,7 +51,7 @@ import org.jdom2.xpath.XPathFactory;
 
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
-import com.movielabs.mddflib.avails.xml.DefaultMetadata;
+import com.movielabs.mddflib.avails.xml.MetadataBuilder;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -584,7 +584,7 @@ public class XlsxBuilder {
 		 * If we got this far then we are dealing with some form of content
 		 * identifier. Now find out if its being used as an AltID...
 		 */
-		if (!(nsEl.getText().startsWith(DefaultMetadata.ALT_ID_NAMESPACE_PREFIX))) {
+		if (!(nsEl.getText().startsWith(MetadataBuilder.ALT_ID_NAMESPACE_PREFIX))) {
 			return input;
 		}
 		String[] parts = input.split(":", 2);
