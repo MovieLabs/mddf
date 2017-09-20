@@ -524,12 +524,10 @@ public class ValidationController {
 			xBuilder.setVersion("2.2");
 			break;
 		case V1_6:
-			srcMddfFmt = FILE_FMT.AVAILS_1_6;
-			if (logNav != null) {
-				logNav.setMddfFormat(xslxFile, FILE_FMT.AVAILS_1_6);
-			}
-			xBuilder.setVersion("2.1");
-			break;
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
+					"Version " + templateVersion + " has been deprecated and is no longer supported", xslxFile,
+					MODULE_ID);
+			return null;
 		case UNK:
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", xslxFile, MODULE_ID);
 			break;
