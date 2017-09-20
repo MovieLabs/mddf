@@ -290,6 +290,9 @@ public class MetadataBuilder {
 		case "contentRating":
 			func_contentRating(functionDef, curKey, parentEl);
 			break;
+		case "eidr":
+			func_eidr(functionDef, curKey, parentEl);
+			break;
 		case "formatType":
 			func_format(functionDef, curKey, parentEl);
 			break;
@@ -306,7 +309,7 @@ public class MetadataBuilder {
 	 * @param functionDef
 	 * @param altIdEl
 	 */
-	private void func_altId(JSONObject functionDef, String curKey, Element parentEl) {
+	protected void func_altId(JSONObject functionDef, String curKey, Element parentEl) {
 		JSONObject functionArgs = functionDef.getJSONObject("args");
 		String colKey = functionArgs.getString("col");
 		logger.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "func_altId prcessing Col key " + colKey, null, logMsgSrcId);
@@ -322,21 +325,9 @@ public class MetadataBuilder {
 		parentEl.addContent(altIdEl);
 
 		String idValue = pg.getRawValue();
-		// what's the namespace?
-		String namespace = "";
-		if (idValue.startsWith("urn:eidr:")) {
-			namespace = "eidr";
-		} else if (idValue.startsWith("md:")) {
-			namespace = "movielabs";
-		} else {
-			/*
-			 * we use a "namespace" with the 'org:mddf' SSID, then add the
-			 * mapping (i.e. pedigree) info as a prefix to the identifier
-			 */
-			namespace = ALT_ID_NAMESPACE_PREFIX;
-			String[] srcId = colKey.split("/");
-			idValue = srcId[srcId.length - 1] + ":" + idValue;
-		}
+		String namespace = ALT_ID_NAMESPACE_PREFIX;
+		String[] srcId = colKey.split("/");
+		idValue = srcId[srcId.length - 1] + ":" + idValue;
 		xmlBldr.addToPedigree(altIdEl, pg);
 
 		Element nsEl = row.mGenericElement("Namespace", namespace, xmlBldr.getMdNSpace());
@@ -355,9 +346,12 @@ public class MetadataBuilder {
 		JSONObject functionArgs = functionDef.getJSONObject("args");
 
 		Element ratings = parentEl.getChild("Ratings", xmlBldr.getAvailsNSpace());
+		boolean addToParent;
 		if (ratings == null) {
 			ratings = new Element("Ratings", xmlBldr.getAvailsNSpace());
-			parentEl.addContent(ratings);
+			addToParent = true;
+		} else {
+			addToParent = false;
 		}
 		/* These are the source columns for the data items.. */
 		String rSysCol = functionArgs.getString("system");
@@ -419,7 +413,33 @@ public class MetadataBuilder {
 			// TODO???
 			Element[] reasonList = row.process(rat, "Reason", xmlBldr.getMdNSpace(), rReasonCol, ",");
 		}
+		if (addToParent) {
+			parentEl.addContent(ratings);
+		}
 
+	}
+
+	private void func_eidr(JSONObject functionDef, String curKey, Element parentEl) {
+		JSONObject functionArgs = functionDef.getJSONObject("args");
+		Pedigree pg = row.getPedigreedData(functionArgs.getString("col"));
+		if (pg.isEmpty() && !isRequired(curKey)) {
+			return;
+		}
+
+		String idValue = pg.getRawValue();
+		// what's the namespace (i.e., encoding fmt)?
+		String namespace = parseIdFormat(idValue);
+		switch (namespace) {
+		case "eidr-5240":
+			idValue = idValue.replaceFirst("10.5240/", "urn:eidr:10.5240:");
+		case "eidr-URN":
+			break;
+		default:
+			break;
+		}
+		Element targetEl = buildElement(curKey);
+		parentEl.addContent(targetEl);
+		targetEl.setText(idValue);
 	}
 
 	/**
@@ -520,4 +540,28 @@ public class MetadataBuilder {
 		return new Element(name, childNs);
 	}
 
+	/**
+	 * Determine the format of an id string. Possible return values are:
+	 * <ul>
+	 * <li>eidr-URN</li>
+	 * <li>eidr-5240</li>
+	 * <li>MovieLabs (e.g. <tt>md:cid:org:mpm.craigsmovies.com:20938</tt>)</li>
+	 * <li>user: anything else</li>
+	 * </ul>
+	 * 
+	 * @param idValue
+	 * @return
+	 */
+	protected String parseIdFormat(String idValue) {
+		if (idValue.startsWith("urn:eidr:")) {
+			return "eidr-URN";
+		} else if (idValue.startsWith("10.5240/")) {
+			return "eidr-5240";
+		} else if (idValue.startsWith("md:")) {
+			return "MovieLabs";
+		} else {
+			// Set it w/o change and let the Validation code will flag as error
+			return "user";
+		}
+	}
 }
