@@ -8,8 +8,30 @@
 			{
 				"{avail}TitleDisplayUnlimited": "AvailMetadata/TitleDisplayUnlimited",
 				"{avail}TitleInternalAlias": "AvailMetadata/TitleInternalAlias",
-				"{avail}EditEIDR-URN": "AvailAsset/EditID",
-				"{avail}TitleEIDR-URN": "AvailAsset/TitleID",
+				"{avail}EditEIDR-URN": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "eidr",
+						"args": 
+						{
+							"col": "AvailAsset/EditID"
+						}
+					}
+				},
+
+				"{avail}TitleEIDR-URN": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "eidr",
+						"args": 
+						{
+							"col": "AvailAsset/TitleID"
+						}
+					}
+				},
+
 				"{avail}AltIdentifier": 
 				[
 					{
@@ -331,7 +353,6 @@
 				],
 
 				"{avail}NumberOfEpisodes": "AvailMetadata/EpisodeCount",
-
 				"{avail}SeriesMetadata": "#REF:Series/{avail}SeriesMetadata"
 			}
 		},
@@ -424,7 +445,337 @@
 				],
 
 				"{avail}NumberOfSeasons": "AvailMetadata/SeasonCount",
-				"{avail}CompanyDisplayCredit":
+				"{avail}CompanyDisplayCredit": 
+				{
+					"{md}DisplayString": "AvailMetadata/CompanyDisplayCredit"
+				}
+			}
+		}
+	},
+
+	"V2.2": 
+	{
+		"Documentation": "Avails mappings from EXCEL v1.7 to XML v2.2",
+		"Movies": 
+		{
+			"{avail}Metadata": 
+			{
+				"{avail}TitleDisplayUnlimited": "AvailMetadata/TitleDisplayUnlimited",
+				"{avail}TitleInternalAlias": "AvailMetadata/TitleInternalAlias",
+				"{avail}EditEIDR-URN": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "eidr",
+						"args": 
+						{
+							"col": "AvailAsset/EditID"
+						}
+					}
+				},
+
+				"{avail}TitleEIDR-URN": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "eidr",
+						"args": 
+						{
+							"col": "AvailAsset/TitleID"
+						}
+					}
+				},
+
+				"{avail}ReleaseDate": "AvailMetadata/ReleaseYear",
+				"{avail}RunLength": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "formatType",
+						"args": 
+						{
+							"col": "AvailMetadata/TotalRunTime",
+							"type": "xs:duration"
+						}
+					}
+				},
+
+				"{avail}ReleaseHistory": 
+				[
+					{
+						"%FUNCTION": 
+						{
+							"name": "releaseHistory",
+							"args": 
+							{
+								"col": "AvailMetadata/ReleaseHistoryOriginal",
+								"type": "original"
+							}
+						}
+					},
+
+					{
+						"%FUNCTION": 
+						{
+							"name": "releaseHistory",
+							"args": 
+							{
+								"col": "AvailMetadata/ReleaseHistoryPhysicalHV",
+								"type": "DVD"
+							}
+						}
+					}
+				],
+
+				"{avail}USACaptionsExemptionReason": "AvailMetadata/CaptionExemption",
+				"{avail}Ratings": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "contentRating",
+						"args": 
+						{
+							"system": "AvailMetadata/RatingSystem",
+							"value": "AvailMetadata/RatingValue",
+							"reason": "AvailMetadata/RatingReason",
+							"region": "AvailTrans/Territory"
+						}
+					}
+				},
+
+				"{avail}LocalizationOffering": "AvailMetadata/LocalizationType"
+			}
+		},
+
+		"Episode": 
+		{
+			"{avail}EpisodeMetadata": 
+			{
+				"{avail}TitleDisplayUnlimited": "AvailMetadata/EpisodeTitleDisplayUnlimited",
+				"{avail}TitleInternalAlias": "AvailMetadata/EpisodeTitleInternalAlias",
+				"{avail}AltIdentifier": 
+				[
+					{
+						"%FUNCTION": 
+						{
+							"name": "altId",
+							"args": 
+							{
+								"col": "AvailMetadata/EpisodeID"
+							}
+						}
+					}
+				],
+
+				"{avail}ReleaseDate": "AvailMetadata/ReleaseYear",
+				"{avail}RunLength": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "formatType",
+						"args": 
+						{
+							"col": "AvailMetadata/TotalRunTime",
+							"type": "xs:duration"
+						}
+					}
+				},
+
+				"{avail}ReleaseHistory": 
+				[
+					{
+						"%FUNCTION": 
+						{
+							"name": "releaseHistory",
+							"args": 
+							{
+								"col": "AvailMetadata/ReleaseHistoryOriginal",
+								"type": "original"
+							}
+						}
+					},
+
+					{
+						"%FUNCTION": 
+						{
+							"name": "releaseHistory",
+							"args": 
+							{
+								"col": "AvailMetadata/ReleaseHistoryPhysicalHV",
+								"type": "DVD"
+							}
+						}
+					}
+				],
+
+				"{avail}USACaptionsExemptionReason": "AvailMetadata/CaptionExemption",
+				"{avail}Ratings": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "contentRating",
+						"args": 
+						{
+							"system": "AvailMetadata/RatingSystem",
+							"value": "AvailMetadata/RatingValue",
+							"reason": "AvailMetadata/RatingReason",
+							"region": "AvailTrans/Territory"
+						}
+					}
+				},
+
+				"{avail}LocalizationOffering": "AvailMetadata/LocalizationType",
+				"{avail}EpisodeNumber": 
+				{
+					"{md}Number": "AvailMetadata/EpisodeNumber"
+				},
+
+				"{avail}SeasonMetadata": "#REF:Season/{avail}SeasonMetadata"
+			}
+		},
+
+		"Season": 
+		{
+			"{avail}SeasonMetadata": 
+			{
+				"{avail}SeasonContentID": "AvailAsset/SeasonContentID",
+				"{avail}SeasonTitleDisplayUnlimited": "AvailMetadata/SeasonTitleDisplayUnlimited",
+				"{avail}SeasonTitleInternalAlias": "AvailMetadata/SeasonTitleInternalAlias",
+				"{avail}SeasonNumber": 
+				{
+					"{md}Number": "AvailMetadata/SeasonNumber"
+				},
+
+				"{avail}ReleaseDate": "AvailMetadata/ReleaseYear",
+				"{avail}ReleaseHistory": 
+				[
+					{
+						"%FUNCTION": 
+						{
+							"name": "releaseHistory",
+							"args": 
+							{
+								"col": "AvailMetadata/ReleaseHistoryOriginal",
+								"type": "original"
+							}
+						}
+					},
+
+					{
+						"%FUNCTION": 
+						{
+							"name": "releaseHistory",
+							"args": 
+							{
+								"col": "AvailMetadata/ReleaseHistoryPhysicalHV",
+								"type": "DVD"
+							}
+						}
+					}
+				],
+
+				"{avail}USACaptionsExemptionReason": "AvailMetadata/CaptionExemption",
+				"{avail}Ratings": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "contentRating",
+						"args": 
+						{
+							"system": "AvailMetadata/RatingSystem",
+							"value": "AvailMetadata/RatingValue",
+							"reason": "AvailMetadata/RatingReason",
+							"region": "AvailTrans/Territory"
+						}
+					}
+				},
+
+				"{avail}SeasonAltIdentifier": 
+				[
+					{
+						"%FUNCTION": 
+						{
+							"name": "altId",
+							"args": 
+							{
+								"col": "AvailMetadata/SeasonID"
+							}
+						}
+					}
+				],
+
+				"{avail}NumberOfEpisodes": "AvailMetadata/EpisodeCount",
+				"{avail}SeriesMetadata": "#REF:Series/{avail}SeriesMetadata"
+			}
+		},
+
+		"Series": 
+		{
+			"{avail}SeriesMetadata": 
+			{
+				"{avail}SeriesContentID": "AvailAsset/SeriesContentID",
+				"{avail}SeriesTitleDisplayUnlimited": "AvailMetadata/SeriesTitleDisplayUnlimited",
+				"{avail}SeriesTitleInternalAlias": "AvailMetadata/SeriesTitleInternalAlias",
+				"{avail}ReleaseDate": "AvailMetadata/ReleaseYear",
+				"{avail}USACaptionsExemptionReason": "AvailMetadata/CaptionExemption",
+				"{avail}ReleaseHistory": 
+				[
+					{
+						"%FUNCTION": 
+						{
+							"name": "releaseHistory",
+							"args": 
+							{
+								"col": "AvailMetadata/ReleaseHistoryOriginal",
+								"type": "original"
+							}
+						}
+					},
+
+					{
+						"%FUNCTION": 
+						{
+							"name": "releaseHistory",
+							"args": 
+							{
+								"col": "AvailMetadata/ReleaseHistoryPhysicalHV",
+								"type": "DVD"
+							}
+						}
+					}
+				],
+
+				"{avail}Ratings": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "contentRating",
+						"args": 
+						{
+							"system": "AvailMetadata/RatingSystem",
+							"value": "AvailMetadata/RatingValue",
+							"reason": "AvailMetadata/RatingReason",
+							"region": "AvailTrans/Territory"
+						}
+					}
+				},
+
+				"{avail}SeriesAltIdentifier": 
+				[
+					{
+						"%FUNCTION": 
+						{
+							"name": "altId",
+							"args": 
+							{
+								"col": "AvailMetadata/SeriesID"
+							}
+						}
+					}
+				],
+
+				"{avail}NumberOfSeasons": "AvailMetadata/SeasonCount",
+				"{avail}CompanyDisplayCredit": 
 				{
 					"{md}DisplayString": "AvailMetadata/CompanyDisplayCredit"
 				}
