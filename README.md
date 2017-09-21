@@ -12,6 +12,7 @@
 5 [Executable Packages](#h_Versions)
 
 6 [Installing and Running](#h_Install)
+  1. [Downloading](#h_download)
   1. [Java](#h_Install_Java)
   1. [OS-X](#h_Install_OSX)
   1. [Windows](#h_Install_MS)
