@@ -11,12 +11,18 @@
 
 5 [Executable Packages](#h_Versions)
 
-6 [Past Releases](#h_History)
+6 [Installing and Running](#h_Install)
+  1. [Java](#h_Install_Java)
+  1. [OS-X](#h_Install_OSX)
+  1. [Windows](#h_Install_MS)
+  1. [Linux](#h_Install_LINUX)
+
+7 [Past Releases](#h_History)
 
 ---
 ## <a name="h_News">What's New</a>
 
-* **2017-May-09**: v1.2 is now available as either an executable jar or as native executables.
+* **mddf-tool v1.3.rc3 available for testing and evaluation.
 
 ## <a name="h_Overview">Overview:</a>
 
@@ -101,7 +107,19 @@ Examples:
 Prior to July 2017 and the release of v1.3 of the mddf-lib, the native executables were assigned a version ID
 independent of the mddf-lib version. 
 
-## <a name="h_History">Past Releases:</a>
+## <a name="h_Install">Installing and Running:</a>
+
+### <a name="h_Install_Java">Java Executable Jar:</a>
+
+### <a name="h_Install_OSX">OS-X:</a>
+
+### <a name="h_Install_MS">Windows:</a>
+
+### <a name="h_Install_LINUX">Linux:</a>
+
+## <a name="h_History">Release History:</a>
+
+* **2017-Sep-21**: mddf-tool v1.3.rc3 released for testing and evaluation.
 
 * **2017-May-09**: mddf-tool v1.2 released.
 
