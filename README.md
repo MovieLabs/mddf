@@ -67,7 +67,7 @@ The mddf-tools software currently implements two applications:
 
 ## <a name="h_Versions">Executables</a>
 
-### Formats:
+### <a name="h_formats">Available Formats:</a>
 
 Binary releases are available in two forms:
 
@@ -109,9 +109,37 @@ independent of the mddf-lib version.
 
 ## <a name="h_Install">Installing and Running:</a>
 
+The use of the Java executable Jar is highly recommended as it is always the most up-to-date version and provides 
+the full range of capabilities. Native executables for OS-X, Windows, and Linux are also provided but will
+not be available for all developmental candidate releases. See  [Available Formats](#h_formats) for download 
+locations for all versions.
+
 ### <a name="h_Install_Java">Java Executable Jar:</a>
 
+Once the jar file has been downloaded, it may be run using the standard Java command:
+
+`java -jar ./{path-to-directory}/mddf-tool-v{version}.jar -i`
+
+The `-i` argument indicates the toolkit should be started in interactive mode. A 
+`Tool Launcher`dialog will appear that allows the user to select the MDDF tool they 
+wish to use (e.g., the Avails Validator). To see all supported arguments, use `-h`
+
 ### <a name="h_Install_OSX">OS-X:</a>
+
+Due to issues with Apple's Gatekeeper security mechanism and JavaFX applications, OS-X executables are provided 
+in the form of zip files. Unlike with the Java jars, a separate file must be
+downloaded and installed for each MDDF tool.
+
+1. unzip the downloaded file(s) to the desired location (e.g. `/Applications`)
+1. make the applications executable. Open a terminal and enter the following:
+```
+  cd {install-directory}
+  chmod -R a+x ./AvailsValidator.app
+  chmod -R a+x ./ManifestValidator.app
+```
+
+The application may now be launched via the Finder. An error message that “the application can’t be opened” 
+indicates Step #2 was not performed correctly.
 
 ### <a name="h_Install_MS">Windows:</a>
 
