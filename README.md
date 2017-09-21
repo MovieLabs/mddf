@@ -143,7 +143,12 @@ indicates Step #2 was not performed correctly.
 
 ### <a name="h_Install_MS">Windows:</a>
 
+Executables for Windows environments are provided in the form of standard `.exe` files and require no special
+steps to install or run. The `.msi` formatted distro is not supported.
+
 ### <a name="h_Install_LINUX">Linux:</a>
+
+Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">Release History:</a>
 
