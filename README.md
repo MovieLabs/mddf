@@ -71,12 +71,9 @@ The mddf-tools software currently implements two applications:
 
 Binary releases are available in two forms:
 
-* as Native Executables for Windows, OS-X, and Linux systems. Each executable is specific to the processing of either Avails or Manifest files. These may be downloaded from the MovieLabs web site:
+* as Native Executables for Windows, OS-X, and Linux systems. Each executable is specific to the processing of either Avails or Manifest files. 
 
-   * Manifest Validator: <http://movielabs.com/md/manifest/validator/>
-   * Avails Validator: <http://movielabs.com/md/avails/validator/>
-
-* as an executable Java jar which supports the processing of either Avails or Manifest files. Jar files may be downloaded from the ./binaries directory of this repository. [NOTE: Version prior to v1.1.3 were not released as executable jars.]
+* as an executable Java jar which supports the processing of either Avails or Manifest files.  [NOTE: Version prior to v1.1.3 were not released as executable jars.]
 
 Note that the executable jar provides all of the capabilities available via the two native excutable packages. In addition, the jar provides a command
 line interface (CLI) that may be used either from a terminal window or in conjunction with scheduled jobs (e.g., via crontab).
@@ -113,6 +110,19 @@ The use of the Java executable Jar is highly recommended as it is always the mos
 the full range of capabilities. Native executables for OS-X, Windows, and Linux are also provided but will
 not be available for all developmental candidate releases. See  [Available Formats](#h_formats) for download 
 locations for all versions.
+
+
+### <a name="h_download">Downloading:</a>
+
+Executable jar files may be downloaded from the ./binaries directory of this repository. The native executables may be downloaded from
+one of two sources:
+
+* The latest stable releases may be downloaded from the MovieLabs web site:
+
+   * Manifest Validator: <http://movielabs.com/md/manifest/validator/>
+   * Avails Validator: <http://movielabs.com/md/avails/validator/>
+
+* Development releases (i.e., release candidates) are distributed via Dropbox. For access, contact the appropriate individuals at MovieLabs.
 
 ### <a name="h_Install_Java">Java Executable Jar:</a>
 
