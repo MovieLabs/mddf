@@ -20,7 +20,12 @@
 			"AvailAsset:WorkType": "{avail}WorkType",
 			"AvailMetadata:Any": "n.a",
 			"AvailMetadata:CaptionExemption": "{avail}Metadata/{avail}USACaptionsExemptionReason",
-			"AvailMetadata:CaptionIncluded": "n.a",
+			"AvailMetadata:CaptionIncluded": {
+				"%FUNCTION":
+				{
+				"name" : "caption"
+				}
+			},
 			"AvailMetadata:CompanyDisplayCredit": "{avail}Metadata/{avail}CompanyDisplayCredit/{md}DisplayString",
 			"AvailMetadata:LocalizationType": "{avail}Metadata/{avail}LocalizationOffering",
 			"AvailMetadata:RatingReason": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Reason",
@@ -116,7 +121,12 @@
 				"Series": "{avail}SeriesMetadata/{avail}USACaptionsExemptionReason"
 			},
 
-			"AvailMetadata:CaptionIncluded": "n.a",
+			"AvailMetadata:CaptionIncluded": {
+				"%FUNCTION":
+				{
+				"name" : "caption"
+				}
+			},
 			"AvailMetadata:CompanyDisplayCredit": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString",
@@ -308,7 +318,12 @@
 			"AvailAsset:WorkType": "{avail}WorkType",
 			"AvailMetadata:Any": "n.a",
 			"AvailMetadata:CaptionExemption": "{avail}Metadata/{avail}USACaptionsExemptionReason",
-			"AvailMetadata:CaptionIncluded": "n.a",
+			"AvailMetadata:CaptionIncluded": {
+				"%FUNCTION":
+				{
+				"name" : "caption"
+				}
+			},
 			"AvailMetadata:CompanyDisplayCredit": "{avail}Metadata/{avail}CompanyDisplayCredit/{md}DisplayString",
 			"AvailMetadata:LocalizationType": "{avail}Metadata/{avail}LocalizationOffering",
 			"AvailMetadata:RatingReason": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Reason",
@@ -410,7 +425,12 @@
 				"Series": "{avail}SeriesMetadata/{avail}USACaptionsExemptionReason"
 			},
 
-			"AvailMetadata:CaptionIncluded": "n.a",
+			"AvailMetadata:CaptionIncluded": {
+				"%FUNCTION":
+				{
+				"name" : "caption"
+				}
+			},
 			"AvailMetadata:CompanyDisplayCredit": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString",

@@ -112,6 +112,8 @@ import net.sf.json.JSONObject;
 public class XlsxBuilder {
 	private static final String DURATION_REGEX = "P([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\\.[0-9]+)?S)?)?";
 	private static final String DATETIME_REGEX = "[\\d]{4}-[\\d]{2}-[\\d]{2}T[\\d:\\.]+";
+	private static final String CONTEXT_DELIM = "#";
+	private static final String FUNCTION_IDENTIFIER = "%FUNCTION";
 	private static DecimalFormat durFieldFmt = new DecimalFormat("00");
 	private static JSONObject mappings;
 	private static Pattern p_xsDuration;
@@ -144,6 +146,8 @@ public class XlsxBuilder {
 	private XSSFCellStyle headerStyleFill;
 	private ArrayList<String> colIdList;
 	private HashMap<Sheet, boolean[]> emptyColTracker = new HashMap<Sheet, boolean[]>();
+	private HashMap<String, JSONObject> functionList;
+	private JSONObject mappingDefs;
 
 	static {
 		/*
@@ -282,7 +286,7 @@ public class XlsxBuilder {
 	private void addAvails(String category, List<Element> availList) {
 		XSSFSheet sheet = workbook.createSheet(category);
 		// get mappings that will be used for this specific sheet..
-		JSONObject mappingDefs = mappingVersion.getJSONObject(category);
+		mappingDefs = mappingVersion.getJSONObject(category);
 		colIdList = new ArrayList<String>();
 		colIdList.addAll(mappingDefs.keySet());
 		/*
@@ -384,9 +388,21 @@ public class XlsxBuilder {
 		Iterator<String> keyIt = mappings.keySet().iterator();
 		while (keyIt.hasNext()) {
 			String mappingKey = keyIt.next();
+			if (mappingKey.contains(FUNCTION_IDENTIFIER)) {
+				try {
+					String value = processFunction(mappingKey, baseEl, context);
+					if (value != null) {
+						String colKey = mappingKey.replace(FUNCTION_IDENTIFIER, "");
+						dataMap.put(colKey, value);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				continue;
+			}
 			List<XPathExpression> xpeList = null;
-			if (mappingKey.contains("#")) {
-				String[] parts = mappingKey.split("#");
+			if (mappingKey.contains(CONTEXT_DELIM)) {
+				String[] parts = mappingKey.split(CONTEXT_DELIM);
 				if (parts[1].equals(context)) {
 					xpeList = mappings.get(mappingKey);
 					mappingKey = parts[0];
@@ -491,6 +507,100 @@ public class XlsxBuilder {
 			}
 		}
 		return value;
+	}
+
+	/**
+	 * @param mappingKey
+	 * @param baseEl
+	 * @param context
+	 * @return
+	 */
+	private String processFunction(String mappingKey, Element baseEl, String context) {
+		String fKey = mappingKey.replaceAll(FUNCTION_IDENTIFIER, "");
+		JSONObject functionDef = functionList.get(fKey);
+		String funcName = functionDef.getString("name");
+		switch (funcName) {
+		case "caption":
+			return func_captions(functionDef, context, baseEl);
+		default:
+			throw new UnsupportedOperationException("Invalid JSON: unsupported function '" + funcName + "'");
+		}
+	}
+
+	/**
+	 * Handles special case of US caption exemptions. This function should only
+	 * be used with the <tt>AvailMetadata/CaptionIncluded</tt> field. This is
+	 * required in the US. Non-US territories may leave it blank.
+	 * <p>
+	 * Since there is no equivalent field in XML it must be inferred. The rule
+	 * is:
+	 * 
+	 * <pre>
+	 * IF (CaptionExemption is NOT set AND the Territory == 'US") THEN
+	 *     CaptionIncluded = YES
+	 * ELSE
+	 *    CaptionIncluded = NO
+	 * </pre>
+	 * 
+	 * Note that this is therefore a 'no argument' function in so far as the
+	 * functionDef goes. All that is required is the <tt>context</tt> and
+	 * <tt>baseEl</tt> parameters.
+	 * </p>
+	 * <p>
+	 * Since scope is limited to Avails applicable to US, that is a key issue.
+	 * The only territorial info in an Avails is part of a Transaction. The
+	 * problem is that there can be multiple Transactions and a single
+	 * Transaction may specify zero or many Territories. Thus, if there is
+	 * <b>any</b> Transaction row with “US” in-scope, then
+	 * <tt>CaptionIncluded</tt> should be set.
+	 * 
+	 * </p>
+	 * 
+	 * @param functionDef
+	 * @param context
+	 * @param baseEl
+	 * @return
+	 */
+	private String func_captions(JSONObject functionDef, String context, Element baseEl) {
+		// Q1: is <avails:CaptionExemption> set?
+		String ceSrcPath = null;
+		if (mappingDefs.containsKey("AvailMetadata:CaptionExemption")) {
+			ceSrcPath = mappingDefs.getString("AvailMetadata:CaptionExemption");
+		} else {
+			ceSrcPath = mappingDefs.getString("AvailMetadata:CaptionExemption" + CONTEXT_DELIM + context);
+		}
+		@SuppressWarnings("unchecked")
+		XPathExpression<Element> cePath = (XPathExpression<Element>) createXPath(ceSrcPath);
+		Element targetEl = cePath.evaluateFirst(baseEl);
+		boolean exemptionProvided;
+		if (targetEl == null) {
+			exemptionProvided = false;
+		} else {
+			String value = targetEl.getTextTrim();
+			exemptionProvided = !(value.isEmpty());
+		}
+		if (exemptionProvided) {
+			/*
+			 * CaptionIncluded should be set to NO on assumption that since a
+			 * reason is provided US must be in-scope.
+			 */
+			return "No";
+		}
+		// Need to know if US is in-scope.
+		Element parentAssetEl = baseEl.getParentElement();
+		String includedPath = "./{avail}Transaction/{avail}Territory/{md}country[. = 'US']";
+		@SuppressWarnings("unchecked")
+		XPathExpression<Element> inPath = (XPathExpression<Element>) createXPath(includedPath);
+		List<Element> inList = inPath.evaluate(parentAssetEl);
+		boolean inScope = !inList.isEmpty();
+		if (inScope) {
+			if (!exemptionProvided) {
+				return "Yes";
+			} else {
+				return "No";
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -703,6 +813,7 @@ public class XlsxBuilder {
 	 * @return
 	 */
 	private Map<String, Map<String, List<XPathExpression>>> initializeMappings(JSONObject mappingDefs) {
+		functionList = new HashMap<String, JSONObject>();
 		Map<String, Map<String, List<XPathExpression>>> organizedMappings = new HashMap<String, Map<String, List<XPathExpression>>>();
 		List<String> colIdList = new ArrayList<String>();
 		colIdList.addAll(mappingDefs.keySet());
@@ -748,18 +859,32 @@ public class XlsxBuilder {
 						mappingLists.put(colKey, xpeList);
 					}
 				} else if (value instanceof JSONObject) {
-					JSONObject mappingSet = (JSONObject) value;
-					Iterator<String> typeIt = mappingSet.keySet().iterator();
+					JSONObject innerMapping = (JSONObject) value;
+					/*
+					 * 'innerMapping' is either (a) a single %FUNCTION or (b) a
+					 * set of mappings, each one for a specific "context" (i.e.,
+					 * workType).
+					 */
+					Iterator<String> typeIt = innerMapping.keySet().iterator();
 					while (typeIt.hasNext()) {
 						String nextType = typeIt.next();
-						mapping = mappingSet.optString(nextType, "n.a");
-						if (!mapping.equals("n.a")) {
-							List<XPathExpression> xpeList = new ArrayList<XPathExpression>();
-							xpeList.add(createXPath(mapping));
-							mappingLists.put(colKey + "#" + nextType, xpeList);
+						if (nextType.equals(FUNCTION_IDENTIFIER)) {
+							mappingLists.put(colKey + FUNCTION_IDENTIFIER, null);
+							JSONObject functionDef = innerMapping.getJSONObject(nextType);
+							functionList.put(colKey, functionDef);
+						} else {
+							mapping = innerMapping.optString(nextType, "n.a");
+							if (!mapping.equals("n.a")) {
+								List<XPathExpression> xpeList = new ArrayList<XPathExpression>();
+								xpeList.add(createXPath(mapping));
+								mappingLists.put(colKey + CONTEXT_DELIM + nextType, xpeList);
+							}
 						}
 					}
 				} else if (value instanceof JSONArray) {
+					/*
+					 * Note that a %FUNCTION can not be used in an array
+					 */
 					JSONArray mappingSet = (JSONArray) value;
 					List<XPathExpression> xpeList = new ArrayList<XPathExpression>();
 					for (int i = 0; i < mappingSet.size(); i++) {
@@ -780,7 +905,7 @@ public class XlsxBuilder {
 	 * @param mapping
 	 * @return
 	 */
-	private XPathExpression createXPath(String mapping) {
+	private XPathExpression<?> createXPath(String mapping) {
 		if (mapping.equals("n.a")) {
 			return null;
 		}
