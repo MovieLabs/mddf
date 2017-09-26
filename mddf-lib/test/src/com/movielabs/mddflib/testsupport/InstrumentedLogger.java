@@ -36,6 +36,9 @@ import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 
 /**
+ * Logger that facilitates JUnit testing by providing <tt>getCountForXYZ()</tt>
+ * methods.
+ * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
