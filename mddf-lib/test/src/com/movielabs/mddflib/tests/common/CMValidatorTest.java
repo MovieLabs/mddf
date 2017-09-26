@@ -102,7 +102,7 @@ public class CMValidatorTest extends CMValidator {
 	@Test
 	public void testValidateNotEmpty() {
 		initialize("CM_withErrors.xml");
-		SchemaWrapper targetSchema = SchemaWrapper.factory("md-v" + XmlIngester.MD_VER);
+		SchemaWrapper targetSchema = SchemaWrapper.factory("md-v" + XmlIngester.CM_VER);
 		validateNotEmpty(targetSchema);
 		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 	}
@@ -134,15 +134,16 @@ public class CMValidatorTest extends CMValidator {
 
 		/* Reset and repeat with error-generating XML */
 		iLog.clearLog();
+		iLog.setPrintToConsole(true);
 		initialize("CM_ID-errors.xml");
 		super.validateConstraints();
 		validateId("Audio", "AudioTrackID", true, true);
 		validateId("Video", "VideoTrackID", true, true);
 		validateId("Metadata", "ContentID", true, true);
-		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertNotNull(iLog.getMsg(LogMgmt.LEV_ERR, LogMgmt.TAG_MD, 25));
-		assertNotNull(iLog.getMsg(LogMgmt.LEV_ERR, LogMgmt.TAG_MD, 33));
-		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		assertNotNull(iLog.getMsg(LogMgmt.LEV_ERR, LogMgmt.TAG_MD, 34));
+		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertNotNull(iLog.getMsg(LogMgmt.LEV_WARN, LogMgmt.TAG_MD, 26));
 		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
 
@@ -250,7 +251,7 @@ public class CMValidatorTest extends CMValidator {
 	@Test
 	public void testValidateVocab() {
 		initialize("CM_withErrors.xml");
-		JSONObject cmVocab = (JSONObject) getMddfResource("cm", MD_VER);
+		JSONObject cmVocab = (JSONObject) getVocabResource("cm", CM_VER);
 
 		JSONArray allowed = cmVocab.optJSONArray("WorkType");
 		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, null, true); 
