@@ -151,7 +151,7 @@ public class StructureValidationTest {
 			Element basicEl = basicElList.get(j);
 			for (int i = 0; i < rqmtSet.size(); i++) {
 				JSONObject nextRqmt = rqmtSet.getJSONObject(i);
-				boolean isValid = validator.validateStructure(basicEl, nextRqmt);
+				boolean isValid = validator.validateConstraint(basicEl, nextRqmt);
 				assertTrue(isValid);
 			}
 		} 
