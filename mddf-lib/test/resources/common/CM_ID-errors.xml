@@ -21,7 +21,8 @@
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Audio>
-		<!-- ERROR: Invalid Identifier syntax -->
+		<!-- WARNING: syntax does not conform to Best Practice (i.e use of 'md:<type>:<scheme>:<SSID> 
+			syntax ) -->
 		<manifest:Audio AudioTrackID="audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<md:Language>en</md:Language>
 			<manifest:ContainerReference>
@@ -53,7 +54,7 @@
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Video>
-		<!-- ERROR: Invalid EIDR-S syntax-->
+		<!-- ERROR: Invalid EIDR-S syntax -->
 		<manifest:Video VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7B0-E574">
 			<md:Picture />
 			<manifest:ContainerReference>
