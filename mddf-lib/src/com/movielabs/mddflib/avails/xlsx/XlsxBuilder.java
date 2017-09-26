@@ -522,9 +522,44 @@ public class XlsxBuilder {
 		switch (funcName) {
 		case "caption":
 			return func_captions(functionDef, context, baseEl);
+		case "eidr":
+			return func_eidr(functionDef, context, baseEl);
 		default:
 			throw new UnsupportedOperationException("Invalid JSON: unsupported function '" + funcName + "'");
 		}
+	}
+
+	/**
+	 * Convert all EIDR values to "eidr-5240" format. This is the default format
+	 * used for an XLSX formatted Avails.
+	 * 
+	 * @param functionDef
+	 * @param context
+	 * @param baseEl
+	 * @return
+	 */
+	private String func_eidr(JSONObject functionDef, String context, Element baseEl) {
+		JSONObject functionArgs = functionDef.getJSONObject("args");
+		String xpath = functionArgs.getString("xpath");
+		XPathExpression<Element> srcElPath = (XPathExpression<Element>) createXPath(xpath);
+		Element targetEl = srcElPath.evaluateFirst(baseEl);
+		if (targetEl == null) {
+			return null;
+		}
+		String value = targetEl.getTextNormalize();
+		// what's the namespace (i.e., encoding fmt)?
+		String namespace = MetadataBuilder.parseIdFormat(value);
+		switch (namespace) {
+		case "eidr-URN":
+			value = value.replaceFirst("urn:eidr:10.5240:", "10.5240/");
+			break;
+		case "eidr-5240":
+		default:
+			break;
+		}
+
+		return value;
+
 	}
 
 	/**

@@ -419,6 +419,13 @@ public class MetadataBuilder {
 
 	}
 
+	/**
+	 * Ensure all EIDR values are in URN format that is compatible with XML.
+	 * 
+	 * @param functionDef
+	 * @param curKey
+	 * @param parentEl
+	 */
 	private void func_eidr(JSONObject functionDef, String curKey, Element parentEl) {
 		JSONObject functionArgs = functionDef.getJSONObject("args");
 		Pedigree pg = row.getPedigreedData(functionArgs.getString("col"));
@@ -552,7 +559,7 @@ public class MetadataBuilder {
 	 * @param idValue
 	 * @return
 	 */
-	protected String parseIdFormat(String idValue) {
+	public static String parseIdFormat(String idValue) {
 		if (idValue.startsWith("urn:eidr:")) {
 			return "eidr-URN";
 		} else if (idValue.startsWith("10.5240/")) {

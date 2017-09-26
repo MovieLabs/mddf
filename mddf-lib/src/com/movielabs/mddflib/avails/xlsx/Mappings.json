@@ -14,18 +14,42 @@
 			"Avail:ServiceProvider": "{avail}ServiceProvider/{md}DisplayName",
 			"Avail:UV_ID": "{avail}SharedEntitlement[@ecosystem='UVVU']/{avail}EcosystemID",
 			"AvailAsset:ContentID": "@contentID",
-			"AvailAsset:EditID": "{avail}Metadata/{avail}EditEIDR-URN",
+			"AvailAsset:EditID": 
+			{
+				"%FUNCTION": 
+				{
+					"name": "eidr",
+					"args": 
+					{
+						"xpath": "{avail}Metadata/{avail}EditEIDR-URN"
+					}
+				}
+			},
+
 			"AvailAsset:Metadata": "n.a",
-			"AvailAsset:TitleID": "{avail}Metadata/{avail}TitleEIDR-URN",
+			"AvailAsset:TitleID": 
+			{
+				"%FUNCTION": 
+				{
+					"name": "eidr",
+					"args": 
+					{
+						"xpath": "{avail}Metadata/{avail}TitleEIDR-URN"
+					}
+				}
+			},
+
 			"AvailAsset:WorkType": "{avail}WorkType",
 			"AvailMetadata:Any": "n.a",
 			"AvailMetadata:CaptionExemption": "{avail}Metadata/{avail}USACaptionsExemptionReason",
-			"AvailMetadata:CaptionIncluded": {
-				"%FUNCTION":
+			"AvailMetadata:CaptionIncluded": 
+			{
+				"%FUNCTION": 
 				{
-				"name" : "caption"
+					"name": "caption"
 				}
 			},
+
 			"AvailMetadata:CompanyDisplayCredit": "{avail}Metadata/{avail}CompanyDisplayCredit/{md}DisplayString",
 			"AvailMetadata:LocalizationType": "{avail}Metadata/{avail}LocalizationOffering",
 			"AvailMetadata:RatingReason": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Reason",
@@ -121,12 +145,14 @@
 				"Series": "{avail}SeriesMetadata/{avail}USACaptionsExemptionReason"
 			},
 
-			"AvailMetadata:CaptionIncluded": {
-				"%FUNCTION":
+			"AvailMetadata:CaptionIncluded": 
+			{
+				"%FUNCTION": 
 				{
-				"name" : "caption"
+					"name": "caption"
 				}
 			},
+
 			"AvailMetadata:CompanyDisplayCredit": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString",
@@ -312,18 +338,42 @@
 			"Avail:UV_ID": "{avail}SharedEntitlement[@ecosystem='UVVU']/{avail}EcosystemID",
 			"AvailAsset:AltID": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'AltID')]",
 			"AvailAsset:ContentID": "@contentID",
-			"AvailAsset:EditID": "{avail}Metadata/{avail}EditEIDR-URN",
+			"AvailAsset:EditID": 
+			{
+				"%FUNCTION": 
+				{
+					"name": "eidr",
+					"args": 
+					{
+						"xpath": "{avail}Metadata/{avail}EditEIDR-URN"
+					}
+				}
+			},
+
 			"AvailAsset:Metadata": "n.a",
-			"AvailAsset:TitleID": "{avail}Metadata/{avail}TitleEIDR-URN",
+			"AvailAsset:TitleID": 
+			{
+				"%FUNCTION": 
+				{
+					"name": "eidr",
+					"args": 
+					{
+						"xpath": "{avail}Metadata/{avail}TitleEIDR-URN"
+					}
+				}
+			},
+
 			"AvailAsset:WorkType": "{avail}WorkType",
 			"AvailMetadata:Any": "n.a",
 			"AvailMetadata:CaptionExemption": "{avail}Metadata/{avail}USACaptionsExemptionReason",
-			"AvailMetadata:CaptionIncluded": {
-				"%FUNCTION":
+			"AvailMetadata:CaptionIncluded": 
+			{
+				"%FUNCTION": 
 				{
-				"name" : "caption"
+					"name": "caption"
 				}
 			},
+
 			"AvailMetadata:CompanyDisplayCredit": "{avail}Metadata/{avail}CompanyDisplayCredit/{md}DisplayString",
 			"AvailMetadata:LocalizationType": "{avail}Metadata/{avail}LocalizationOffering",
 			"AvailMetadata:RatingReason": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Reason",
@@ -425,12 +475,14 @@
 				"Series": "{avail}SeriesMetadata/{avail}USACaptionsExemptionReason"
 			},
 
-			"AvailMetadata:CaptionIncluded": {
-				"%FUNCTION":
+			"AvailMetadata:CaptionIncluded": 
+			{
+				"%FUNCTION": 
 				{
-				"name" : "caption"
+					"name": "caption"
 				}
 			},
+
 			"AvailMetadata:CompanyDisplayCredit": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString",
