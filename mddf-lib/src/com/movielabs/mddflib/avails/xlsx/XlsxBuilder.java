@@ -652,8 +652,7 @@ public class XlsxBuilder {
 			// handle attributes w/o a namespace prefix
 			Attribute xmlAtt = (Attribute) xmlSrc;
 			String name = xmlAtt.getName();
-			if (name.equals("termName")) {
-				System.out.println("Checking att " + name);
+			if (name.equals("termName")) { 
 				return convertTermName(input);
 			}
 			// default handling...
