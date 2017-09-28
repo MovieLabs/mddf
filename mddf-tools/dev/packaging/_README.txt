@@ -22,10 +22,6 @@ To Prep:
 	for BOTH ${app.version.cmm} and ${app.version.avail} is correct as 
 	it will be used for file names.
 	
-	MAKE SURE that the version specified in the build.xml in THIS directory
-	for BOTH ${app.version.cmm} and ${app.version.avail} matches the xxx_APP_VER
-	constants specified in the AvailsTool.java and ManifestTool.java source code.
-	
 	MAKE SURE correct version of mddf-lib is specified in the build.xml as this
 	is used to determined which mddf-lib jar file is copied.
 	
