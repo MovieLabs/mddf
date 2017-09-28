@@ -200,7 +200,6 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	private static final String PROP_KEY_minLogLevel = "pref.log.minLevel";
 	protected static ValidatorTool tool;
 	protected String htmlDocUrl;
-	protected String appVersion = "t.b.d.";
 	protected Context context = null;
 	protected String contextId; // version suitable for constructing paths,
 								// URLs, or property names

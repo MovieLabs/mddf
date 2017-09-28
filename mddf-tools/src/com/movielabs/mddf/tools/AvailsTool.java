@@ -34,7 +34,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class AvailsTool extends ValidatorTool {
 
-	public static final String AVAIL_APP_VER = "v1.1.2";
 	private static final String AVAIL_DOC_VER = "v1.1";
 
 	/**
@@ -63,7 +62,6 @@ public class AvailsTool extends ValidatorTool {
 	 */
 	public AvailsTool() {
 		super(Context.AVAILS);
-		super.appVersion = AVAIL_APP_VER;
 		htmlDocUrl = "http://www.movielabs.com/md/avails/validator/" + AVAIL_DOC_VER + "/";
 		/*
 		 * allow use of XLSX formatted Avails files..
