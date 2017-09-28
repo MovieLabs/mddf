@@ -76,11 +76,33 @@ public class AvailsSheet {
 	 * @return created sheet object
 	 */
 	private void ingest(Sheet excelSheet) {
-		DataFormatter dataF = new DataFormatter(); 
+		DataFormatter dataF = new DataFormatter();
+		/*
+		 * The spread sheet may be formatted with either one or two rows of
+		 * column headers. First step is determine which is the case.
+		 */
 		Row headerRow1 = excelSheet.getRow(0);
-		Row headerRow2 = excelSheet.getRow(1); 
-		Row headerRow; 
-		headerRow = headerRow2; 
+		Row headerRow2 = excelSheet.getRow(1);
+		if (headerRow2.getPhysicalNumberOfCells() < 1) {
+			return;
+		}
+		Iterator<Cell> cellIt = headerRow1.cellIterator();
+		boolean use2 = false;
+		while (cellIt.hasNext() && !use2) {
+			Cell next = cellIt.next();
+			String value = dataF.formatCellValue(next);
+			if (value.equalsIgnoreCase("AvailTrans")) {
+				use2 = true;
+			}
+		}
+		Row headerRow;
+		if (use2) {
+			logger.debug("XSLT Column headers in ROW 2");
+			headerRow = headerRow2;
+		} else {
+			logger.debug("XSLT Column headers in ROW 1");
+			headerRow = headerRow1;
+		}
 		// ................
 		headerList = new ArrayList<String>();
 		headerMap = new HashMap<String, Integer>();
