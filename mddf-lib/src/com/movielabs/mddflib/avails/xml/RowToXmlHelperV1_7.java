@@ -204,6 +204,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		process(transactionEl, "LicenseRightsDescription", xb.getAvailsNSpace(), prefix + "LicenseRightsDescription");
 		process(transactionEl, "FormatProfile", xb.getAvailsNSpace(), prefix + "FormatProfile");
 		process(transactionEl, "ContractID", xb.getAvailsNSpace(), prefix + "ContractID");
+		process(transactionEl, "ReportingID", xb.getAvailsNSpace(), prefix + "ReportingID");
 
 		addAllTerms(transactionEl);
 
