@@ -9,7 +9,11 @@ The latest release of the core mddf-lib is v1.3.
 
 ### mddf-lib Changes:
 
-#### mddf-lib v1.3_rc2 (PENDING)
+#### mddf-lib v1.3_rc4
+* Bug Fix: Translation of Avails to XLSX dropped 'AvailMetadata:CaptionIncluded'
+* BUG FIX: ReportingID was being dropped when converting Avails to XML
+
+#### mddf-lib v1.3_rc3
 * Bug Fix: Translation of Avails to XLSX dropped termNames 'SeasonWSP' and 'EpisodeWSP'
 * Bug Fix: TPR terms were flagged as invalid in Avails XML v2.2 and Excel v1.7
 * Bug Fix: Manifest validation did not check image resolutions were properly formatted.
