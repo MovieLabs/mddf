@@ -35,6 +35,8 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -217,8 +219,8 @@ public class XlsxBuilder {
 		XSSFColor c1 = new XSSFColor();
 		c1.setARGBHex("3776DB");
 		headerStyle1.setFillForegroundColor(c1);
-		headerStyle1.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		headerStyle1.setAlignment(CellStyle.ALIGN_CENTER);
+		headerStyle1.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		headerStyle1.setAlignment(HorizontalAlignment.CENTER);
 		headerColors.put("Avail", headerStyle1);
 		defaultStyle = headerStyle1;
 
@@ -227,8 +229,8 @@ public class XlsxBuilder {
 		XSSFColor c2 = new XSSFColor();
 		c2.setARGBHex("B54E9B");
 		headerStyle2.setFillForegroundColor(c2);
-		headerStyle2.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		headerStyle2.setAlignment(CellStyle.ALIGN_CENTER);
+		headerStyle2.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		headerStyle2.setAlignment(HorizontalAlignment.CENTER);
 		headerColors.put("AvailAsset", headerStyle2);
 
 		XSSFCellStyle headerStyle3 = workbook.createCellStyle();
@@ -236,8 +238,8 @@ public class XlsxBuilder {
 		XSSFColor c3 = new XSSFColor();
 		c3.setARGBHex("38761d");
 		headerStyle3.setFillForegroundColor(c3);
-		headerStyle3.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		headerStyle3.setAlignment(CellStyle.ALIGN_CENTER);
+		headerStyle3.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		headerStyle3.setAlignment(HorizontalAlignment.CENTER);
 		headerColors.put("AvailMetadata", headerStyle3);
 
 		XSSFCellStyle headerStyle4 = workbook.createCellStyle();
@@ -245,8 +247,8 @@ public class XlsxBuilder {
 		XSSFColor c4 = new XSSFColor();
 		c4.setARGBHex("85200c");
 		headerStyle4.setFillForegroundColor(c4);
-		headerStyle4.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		headerStyle4.setAlignment(CellStyle.ALIGN_CENTER);
+		headerStyle4.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		headerStyle4.setAlignment(HorizontalAlignment.CENTER);
 		headerColors.put("AvailTrans", headerStyle4);
 
 		headerStyleFill = workbook.createCellStyle();
@@ -254,8 +256,8 @@ public class XlsxBuilder {
 		XSSFColor c5 = new XSSFColor();
 		c5.setARGBHex("0c0c0c");
 		headerStyleFill.setFillForegroundColor(c5);
-		headerStyleFill.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		headerStyleFill.setAlignment(CellStyle.ALIGN_CENTER);
+		headerStyleFill.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		headerStyleFill.setAlignment(HorizontalAlignment.CENTER);
 	}
 
 	/**
@@ -652,7 +654,7 @@ public class XlsxBuilder {
 			// handle attributes w/o a namespace prefix
 			Attribute xmlAtt = (Attribute) xmlSrc;
 			String name = xmlAtt.getName();
-			if (name.equals("termName")) { 
+			if (name.equals("termName")) {
 				return convertTermName(input);
 			}
 			// default handling...
