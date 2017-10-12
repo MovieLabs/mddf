@@ -24,7 +24,6 @@ package com.movielabs.mddf.tools.util.logging;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,7 +45,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -61,10 +59,7 @@ import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddf.MddfContext.MDDF_TYPE;
 import com.movielabs.mddf.tools.MaskerDialog;
 import com.movielabs.mddf.tools.TranslatorDialog;
-import com.movielabs.mddf.tools.ValidationController;
 import com.movielabs.mddf.tools.ValidatorTool;
-import com.movielabs.mddf.tools.ValidatorTool.StatusMsg;
-import com.movielabs.mddf.tools.ValidatorTool.ValidationWorker;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
@@ -72,7 +67,6 @@ import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
-import com.movielabs.mddflib.util.Translator;
 
 /**
  * A <tt>JPanel</tt> that displays a <tt>JTree</tt> containing all log entries
@@ -181,26 +175,15 @@ public class LogNavPanel extends JPanel {
 						}
 					}
 				});
-				JMenuItem compressAvailsMItem = new JMenuItem("Compress");
+
+				JMenuItem compressAvailsMItem = new JMenuItem("Compress ");
 				compressAvailsMItem.setToolTipText("Hide empty Excel columns");
 				add(compressAvailsMItem);
 				FILE_FMT curFmt = fileFolder.getMddfFormat();
 				compressAvailsMItem.setEnabled(curFmt.getEncoding().equals("xlsx"));
 				compressAvailsMItem.addActionListener(new ActionListener() {
 					@Override
-					public void actionPerformed(ActionEvent e) {
-						/*
-						 * compression (i.e. column hiding) is handled as a form
-						 * of translation. The process is to translate the XML
-						 * representation of the original Avails to Excel of the
-						 * same version. This works since compression is an
-						 * automatic feature of the XML-to-Excel translation
-						 * process.
-						 */
-						Document doc = fileFolder.getXml();
-						EnumSet<FILE_FMT> selections = EnumSet.noneOf(FILE_FMT.class);
-						FILE_FMT curFmt = fileFolder.getMddfFormat();
-						selections.add(curFmt);
+					public void actionPerformed(ActionEvent e) { 
 						File srcFile = fileFolder.getFile();
 						File saveToFile = FileChooserDialog.getFilePath("Save file as...", srcFile.getAbsolutePath(),
 								null, "AVAIL", parentLogger);
@@ -213,11 +196,13 @@ public class LogNavPanel extends JPanel {
 							dirPath = saveToFile.getParent();
 							fileName = saveToFile.getName();
 						}
-						ValidatorTool.getTool().runTranslation(doc, selections, dirPath, fileName, false);
+						ValidatorTool.getTool().compress(srcFile, dirPath, fileName);
 					}
 				});
 
 				JMenuItem maskAvailsMItem = new JMenuItem("Export Obfuscated");
+				maskAvailsMItem.setToolTipText("Work-in-progress");
+				maskAvailsMItem.setEnabled(false);
 				add(maskAvailsMItem);
 				maskAvailsMItem.addActionListener(new ActionListener() {
 
@@ -334,7 +319,7 @@ public class LogNavPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	static Map<String, Icon> iconSet = new HashMap();
+	static Map<String, Icon> iconSet = new HashMap<String, Icon>();
 
 	static {
 		/*

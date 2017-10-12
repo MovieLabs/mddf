@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2015 MovieLabs
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -19,8 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * Author: Paul Jensen <pgj@movielabs.com>
+ * 
  */
 
 package com.movielabs.mddflib.avails.xml;
@@ -28,6 +27,7 @@ package com.movielabs.mddflib.avails.xml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -37,6 +37,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -50,6 +51,32 @@ public class AvailsWrkBook {
 	private boolean exitOnError;
 	private boolean cleanupData;
 	private XSSFWorkbook wrkBook;
+
+	/**
+	 * Compress an Avails XLSX file by hiding empty columns. Compression
+	 * mechanism does not require the file to be validated first.
+	 * 
+	 * @param srcFile
+	 * @param outputDir
+	 * @param outFileName
+	 * @return
+	 */
+	public static boolean compress(File srcFile, String outputDir, String outFileName) {
+		try {
+			XSSFWorkbook srcWrkBook = new XSSFWorkbook(new FileInputStream(srcFile));
+			XSSFSheet excelSheet = srcWrkBook.getSheetAt(0);
+			AvailsSheet.compress(excelSheet);
+			File outFile = new File(outputDir, outFileName);
+			FileOutputStream outputStream = new FileOutputStream(outFile);
+			srcWrkBook.write(outputStream);
+			srcWrkBook.close();
+			outputStream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * Create a Spreadsheet object
@@ -72,7 +99,11 @@ public class AvailsWrkBook {
 		this.exitOnError = exitOnError;
 		this.cleanupData = cleanupData;
 		sheets = new ArrayList<AvailsSheet>();
-		wrkBook = new XSSFWorkbook(new FileInputStream(file));
+		try {
+			wrkBook = new XSSFWorkbook(file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public AvailsSheet addSheet(String sheetName) throws Exception {

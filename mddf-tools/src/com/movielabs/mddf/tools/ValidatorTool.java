@@ -69,6 +69,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -84,13 +85,13 @@ import javax.swing.JSeparator;
 
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddf.tools.ValidationController;
-import com.movielabs.mddf.tools.ValidatorTool.StatusMsg;
 import com.movielabs.mddf.tools.util.AboutDialog;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
 import com.movielabs.mddf.tools.util.logging.LogNavPanel;
 import com.movielabs.mddf.tools.util.logging.LoggerWidget;
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
+import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -137,7 +138,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		protected Void doInBackground() throws Exception {
 			setRunningState(true);
 			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			getTxtStatus().setText("Starting.....");
+			getTxtStatus().setText("Starting validation.....");
 			consoleLogger.collapse();
 			try {
 				controller.validate(srcPath, uxProfile, useCases);
@@ -156,6 +157,19 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			return null;
 		}
 
+		protected void done() {
+			try { 
+				getTxtStatus().setText("Done");
+				get();
+			} catch (ExecutionException e) {
+				e.getCause().printStackTrace();
+				consoleLogger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_N_A, e.getMessage(), null, "UI");
+			} catch (InterruptedException e) {
+				e.getCause().printStackTrace();
+			}
+			frame.setCursor(null); // turn off the wait cursor
+			setRunningState(false);
+		}
 	}
 
 	public class TranslationWorker extends SwingWorker<Void, StatusMsg> {
@@ -179,11 +193,63 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		protected Void doInBackground() throws Exception {
 			setRunningState(true);
 			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			getTxtStatus().setText("Starting.....");
+			getTxtStatus().setText("Starting translation.....");
 			Translator.translateAvails(xmlDoc, selections, dirPath, outFileName, appendVersion, consoleLogger);
 			frame.setCursor(null); // turn off the wait cursor
 			setRunningState(false);
 			return null;
+		}
+
+		protected void done() {
+			try {
+				getTxtStatus().setText("Done");
+				get();
+			} catch (ExecutionException e) {
+				e.getCause().printStackTrace();
+				consoleLogger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_N_A, e.getMessage(), null, "UI");
+			} catch (InterruptedException e) {
+				e.getCause().printStackTrace();
+			}
+			frame.setCursor(null); // turn off the wait cursor
+			setRunningState(false);
+		}
+	}
+
+	public class CompressionWorker extends SwingWorker<Void, StatusMsg> {
+		private File srcFile;
+		private String dirPath;
+		private String fileName;
+
+		public CompressionWorker(File srcFile, String dirPath, String fileName) {
+			super();
+			this.srcFile = srcFile;
+			this.dirPath = dirPath;
+			this.fileName = fileName;
+		}
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			setRunningState(true);
+			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			getTxtStatus().setText("Starting compression.....");
+			AvailsWrkBook.compress(srcFile, dirPath, fileName);
+			frame.setCursor(null); // turn off the wait cursor
+			setRunningState(false);
+			return null;
+		}
+
+		protected void done() {
+			try {
+				getTxtStatus().setText("Done");
+				get();
+			} catch (ExecutionException e) {
+				e.getCause().printStackTrace();
+				consoleLogger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_N_A, e.getMessage(), null, "UI");
+			} catch (InterruptedException e) {
+				e.getCause().printStackTrace();
+			}
+			frame.setCursor(null); // turn off the wait cursor
+			setRunningState(false);
 		}
 	}
 
@@ -1107,11 +1173,14 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 	public void runTranslation(Document doc, EnumSet<FILE_FMT> selections, String outputDir, String outputFilePrefix,
 			boolean addVersion) {
-
 		SwingWorker<Void, StatusMsg> worker = new ValidatorTool.TranslationWorker(doc, selections, outputDir,
 				outputFilePrefix, addVersion);
 		worker.execute();
+	}
 
+	public void compress(File srcFile, String dirPath, String fileName) {
+		SwingWorker<Void, StatusMsg> worker = new ValidatorTool.CompressionWorker(srcFile, dirPath, fileName);
+		worker.execute();
 	}
 
 	/**

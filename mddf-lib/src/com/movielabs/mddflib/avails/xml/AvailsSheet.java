@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2015 MovieLabs
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -51,7 +51,13 @@ public class AvailsSheet {
 	private boolean isForTV;
 
 	/**
-	 * Create an object representing a single sheet of a spreadsheet
+	 * Create an object representing a single sheet of an Avails spreadsheet.
+	 * The spread sheet:
+	 * <ul>
+	 * <li>MUST be formatted with two rows of column headers.</li>
+	 * <li>MUST match one of the supported template versions.</li>
+	 * <li>MUST be named either 'TV' or 'Movies'.</li>
+	 * </ul>
 	 * 
 	 * @param parent
 	 *            the parent Spreadsheet object
@@ -78,35 +84,17 @@ public class AvailsSheet {
 	private void ingest(Sheet excelSheet) {
 		DataFormatter dataF = new DataFormatter();
 		/*
-		 * The spread sheet may be formatted with either one or two rows of
-		 * column headers. First step is determine which is the case.
+		 * The spread sheet MUST be formatted with two rows of column headers.
 		 */
 		Row headerRow1 = excelSheet.getRow(0);
 		Row headerRow2 = excelSheet.getRow(1);
 		if (headerRow2.getPhysicalNumberOfCells() < 1) {
 			return;
 		}
-		Iterator<Cell> cellIt = headerRow1.cellIterator();
-		boolean use2 = false;
-		while (cellIt.hasNext() && !use2) {
-			Cell next = cellIt.next();
-			String value = dataF.formatCellValue(next);
-			if (value.equalsIgnoreCase("AvailTrans")) {
-				use2 = true;
-			}
-		}
-		Row headerRow;
-		if (use2) {
-			logger.debug("XSLT Column headers in ROW 2");
-			headerRow = headerRow2;
-		} else {
-			logger.debug("XSLT Column headers in ROW 1");
-			headerRow = headerRow1;
-		}
 		// ................
 		headerList = new ArrayList<String>();
 		headerMap = new HashMap<String, Integer>();
-		for (Cell headerCell : headerRow) {
+		for (Cell headerCell : headerRow2) {
 			int idx = headerCell.getColumnIndex();
 			String value = dataF.formatCellValue(headerCell);
 			if ((value != null) && !value.isEmpty()) {
@@ -291,7 +279,83 @@ public class AvailsSheet {
 			}
 			System.out.println("]");
 		}
+	}
 
+	public static void compress(Sheet ssheet) {
+		Row headerRow1 = ssheet.getRow(0);
+		Row headerRow2 = ssheet.getRow(1);
+		int colCount = headerRow1.getPhysicalNumberOfCells();
+		boolean[] isEmptyCol = new boolean[colCount];
+		for (int i = 0; i < colCount; i++) {
+			isEmptyCol[i] = true;
+		}
+		int emptyColCount = colCount;
+		DataFormatter dataF = new DataFormatter();
+		/*
+		 * Skip over the header rows and process all data rows...
+		 */
+		checkLoop: for (int idxR = 2; idxR <= ssheet.getLastRowNum(); idxR++) {
+			Row nextRow = ssheet.getRow(idxR);
+			for (int idxC = 0; idxC < colCount; idxC++) {
+				// only check a column if it still shows as empty
+				if (isEmptyCol[idxC]) {
+					Cell nextCell = nextRow.getCell(idxC);
+					String value = dataF.formatCellValue(nextCell);
+					isEmptyCol[idxC] = value.isEmpty();
+					if (!isEmptyCol[idxC]) {
+						// col that was empty is now flagged as non-empty
+						emptyColCount--;
+						if (emptyColCount == 0) {
+							// no need to continue. All columns have data.
+							break checkLoop;
+						}
+					}
+				}
+			}
+		}
+		// now hide the empty ones.
+		for (int j = 0; j < isEmptyCol.length; j++) {
+			if (isEmptyCol[j]) {
+				ssheet.setColumnHidden(j, true);
+			}
+		}
+		// // autosize the columns
+		// for (int j = 0; j < colCount; j++) {
+		// ssheet.autoSizeColumn(j);
+		// }
+	}
+
+	/**
+	 * Determine if either one or two rows of column headers is being used and
+	 * return the identified <tt>Row</tt>. Returns <tt>null</tt> if the first
+	 * row is empty.
+	 * 
+	 * @param ssheet
+	 * @return
+	 */
+	public static Row getHeaderRow(Sheet ssheet) {
+		Row headerRow1 = ssheet.getRow(0);
+		Row headerRow2 = ssheet.getRow(1);
+		if (headerRow1.getPhysicalNumberOfCells() < 1) {
+			return null;
+		}
+		Iterator<Cell> cellIt = headerRow1.cellIterator();
+		boolean use2 = false;
+		DataFormatter dataF = new DataFormatter();
+		while (cellIt.hasNext() && !use2) {
+			Cell next = cellIt.next();
+			String value = dataF.formatCellValue(next);
+			if (value.equalsIgnoreCase("AvailTrans")) {
+				use2 = true;
+			}
+		}
+		Row headerRow;
+		if (use2) {
+			headerRow = headerRow2;
+		} else {
+			headerRow = headerRow1;
+		}
+		return headerRow;
 	}
 
 }
