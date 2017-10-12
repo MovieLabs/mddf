@@ -33,6 +33,7 @@ import java.util.*;
 
 import org.apache.logging.log4j.*;
 import org.apache.poi.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -91,19 +92,16 @@ public class AvailsWrkBook {
 	 *            true if minor validation errors should be auto-corrected
 	 * @throws IOException
 	 * @throws FileNotFoundException
+	 * @throws InvalidFormatException
 	 */
 	public AvailsWrkBook(File file, Logger logger, boolean exitOnError, boolean cleanupData)
-			throws FileNotFoundException, IOException, POIXMLException {
+			throws FileNotFoundException, IOException, POIXMLException, InvalidFormatException {
 		this.file = file;
 		this.logger = logger;
 		this.exitOnError = exitOnError;
 		this.cleanupData = cleanupData;
 		sheets = new ArrayList<AvailsSheet>();
-		try {
-			wrkBook = new XSSFWorkbook(file);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		wrkBook = new XSSFWorkbook(file);
 	}
 
 	public AvailsSheet addSheet(String sheetName) throws Exception {

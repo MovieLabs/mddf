@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -299,7 +300,7 @@ public class ValidationController {
 				validateFile(srcFile, uxProfile, useCases);
 			} catch (Exception e) {
 				e.printStackTrace();
-				String msg = e.getMessage();
+				String msg = e.getCause().getMessage();
 				if (msg == null) {
 					msg = "Unspecified Exception while validating";
 				}
@@ -494,6 +495,11 @@ public class ValidationController {
 			return null;
 		} catch (IOException e1) {
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", xslxFile, MODULE_ID);
+			return null;
+		} catch (InvalidFormatException e) {
+			// POI issue probably due to a missing file
+			String msg = e.getCause().getMessage();
+			e.printStackTrace();
 			return null;
 		}
 		int sheetNum = 0; // KLUDGE for now
