@@ -56,7 +56,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  *
  */
 public class Translator {
-	
+
 	private static String moduleId = "Translator";
 
 	/**
@@ -109,7 +109,8 @@ public class Translator {
 						File exported = new File(dirPath, fileName);
 						// Save as XML
 						if (XmlIngester.writeXml(exported, targetDoc)) {
-							logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, "Saved translated file as "+exported.getPath(), null, moduleId);
+							logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
+									"Saved translated file as " + exported.getPath(), null, moduleId);
 							outputCnt++;
 						}
 					}
@@ -138,7 +139,8 @@ public class Translator {
 		 */
 		String curVersion = XmlIngester.identifyXsdVersion(srcDoc.getRootElement());
 		String targetVersion = targetFmt.getVersion();
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, "Translating to XML v"+targetFmt.getVersion()+" from XML v"+curVersion, null, moduleId);
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
+				"Translating to XML v" + targetFmt.getVersion() + " from XML v" + curVersion, null, moduleId);
 		if (curVersion.equals(targetVersion)) {
 			return srcDoc;
 		} else {
@@ -201,7 +203,7 @@ public class Translator {
 	 * @param targetFormat
 	 * @param dirPath
 	 * @param outFileName
-	 * @param appendVersion 
+	 * @param appendVersion
 	 * @param logMgr
 	 * @return
 	 * @throws UnsupportedOperationException
@@ -211,7 +213,8 @@ public class Translator {
 		Document xmlDoc = null;
 		String curVersion = XmlIngester.identifyXsdVersion(xmlSrcDoc.getRootElement());
 		Version excelVer = null;
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, "Translating to Excel v"+targetFormat.getVersion()+" from XML v"+curVersion, null, moduleId);
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
+				"Translating to Excel v" + targetFormat.getVersion() + " from XML v" + curVersion, null, moduleId);
 		switch (targetFormat) {
 		case AVAILS_1_6:
 			// not yet implemented. May never be.
@@ -258,7 +261,7 @@ public class Translator {
 				xmlDoc = avail2_2_to_2_2_2(xmlDoc);
 				break;
 			case "2.2.2":
-				xmlDoc = xmlSrcDoc; 
+				xmlDoc = xmlSrcDoc;
 				break;
 			default:
 				// Unsupported request
@@ -274,11 +277,12 @@ public class Translator {
 				fileName = fileName + "_v" + targetFormat.getVersion() + ".xlsx";
 			} else {
 				fileName = fileName + ".xlsx";
-			} 
+			}
 			File exported = new File(dirPath, fileName);
 			try {
-				converter.export(exported.getPath()); 
-				logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, "Saved translated file as "+exported.getPath(), null, moduleId);
+				converter.getWorkbook().export(exported.getPath());
+				logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, "Saved translated file as " + exported.getPath(), null,
+						moduleId);
 				return true;
 			} catch (Exception e) {
 				e.printStackTrace();

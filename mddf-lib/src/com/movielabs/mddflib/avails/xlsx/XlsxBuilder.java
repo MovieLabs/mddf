@@ -23,9 +23,6 @@
 package com.movielabs.mddflib.avails.xlsx;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
@@ -33,17 +30,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -139,15 +126,10 @@ public class XlsxBuilder {
 	private ArrayList<Element> tvAvailsList;
 	private ArrayList<Element> movieAvailsList;
 	private HashSet<XPathExpression<?>> allowsMultiples = new HashSet<XPathExpression<?>>();
-	private XSSFWorkbook workbook;
+	private TemplateWorkBook workbook;
 	private JSONObject mappingVersion;
 	private String availPrefix;
-	private String mdPrefix;
-	private Map<String, XSSFCellStyle> headerColors = new HashMap<String, XSSFCellStyle>();
-	private XSSFCellStyle defaultStyle;
-	private XSSFCellStyle headerStyleFill;
-	private ArrayList<String> colIdList;
-	private HashMap<Sheet, boolean[]> emptyColTracker = new HashMap<Sheet, boolean[]>();
+	private String mdPrefix; 
 	private HashMap<String, JSONObject> functionList;
 	private JSONObject mappingDefs;
 
@@ -196,68 +178,9 @@ public class XlsxBuilder {
 		availPrefix = availsNSpace.getPrefix() + ":";
 		mdPrefix = mdNSpace.getPrefix() + ":";
 		sortAvails();
-		initializeWorkbook();
+		workbook = new TemplateWorkBook(logger);
 		addMovieAvails();
 		addTvAvails();
-	}
-
-	/**
-	 * Initialize workbook styles to match as closely as possible the 'template'
-	 * spreadsheets.
-	 */
-	private void initializeWorkbook() {
-		workbook = new XSSFWorkbook();
-		/* Initialize any styles used to make output more readable */
-		XSSFFont font = workbook.createFont();
-		font.setBold(true);
-		font.setFontHeightInPoints((short) 8);
-		XSSFColor hdrFontColor = new XSSFColor();
-		hdrFontColor.setARGBHex("FFFFFF");
-		font.setColor(hdrFontColor);
-		XSSFCellStyle headerStyle1 = workbook.createCellStyle();
-		headerStyle1.setFont(font);
-		XSSFColor c1 = new XSSFColor();
-		c1.setARGBHex("3776DB");
-		headerStyle1.setFillForegroundColor(c1);
-		headerStyle1.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		headerStyle1.setAlignment(HorizontalAlignment.CENTER);
-		headerColors.put("Avail", headerStyle1);
-		defaultStyle = headerStyle1;
-
-		XSSFCellStyle headerStyle2 = workbook.createCellStyle();
-		headerStyle2.setFont(font);
-		XSSFColor c2 = new XSSFColor();
-		c2.setARGBHex("B54E9B");
-		headerStyle2.setFillForegroundColor(c2);
-		headerStyle2.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		headerStyle2.setAlignment(HorizontalAlignment.CENTER);
-		headerColors.put("AvailAsset", headerStyle2);
-
-		XSSFCellStyle headerStyle3 = workbook.createCellStyle();
-		headerStyle3.setFont(font);
-		XSSFColor c3 = new XSSFColor();
-		c3.setARGBHex("38761d");
-		headerStyle3.setFillForegroundColor(c3);
-		headerStyle3.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		headerStyle3.setAlignment(HorizontalAlignment.CENTER);
-		headerColors.put("AvailMetadata", headerStyle3);
-
-		XSSFCellStyle headerStyle4 = workbook.createCellStyle();
-		headerStyle4.setFont(font);
-		XSSFColor c4 = new XSSFColor();
-		c4.setARGBHex("85200c");
-		headerStyle4.setFillForegroundColor(c4);
-		headerStyle4.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		headerStyle4.setAlignment(HorizontalAlignment.CENTER);
-		headerColors.put("AvailTrans", headerStyle4);
-
-		headerStyleFill = workbook.createCellStyle();
-		headerStyleFill.setFont(font);
-		XSSFColor c5 = new XSSFColor();
-		c5.setARGBHex("0c0c0c");
-		headerStyleFill.setFillForegroundColor(c5);
-		headerStyleFill.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		headerStyleFill.setAlignment(HorizontalAlignment.CENTER);
 	}
 
 	/**
@@ -286,25 +209,12 @@ public class XlsxBuilder {
 	}
 
 	private void addAvails(String category, List<Element> availList) {
-		XSSFSheet sheet = workbook.createSheet(category);
 		// get mappings that will be used for this specific sheet..
 		mappingDefs = mappingVersion.getJSONObject(category);
-		colIdList = new ArrayList<String>();
+		ArrayList<String> colIdList = new ArrayList<String>();
 		colIdList.addAll(mappingDefs.keySet());
-		/*
-		 * First add TV-specific headers matching the template version being
-		 * used
-		 */
-		addHeaderRows(sheet, colIdList);
 
-		/*
-		 * init data structure used to identify empty columns
-		 */
-		boolean[] isEmptyCol = new boolean[colIdList.size()];
-		for (int i = 0; i < colIdList.size(); i++) {
-			isEmptyCol[i] = true;
-		}
-		emptyColTracker.put(sheet, isEmptyCol);
+		XSSFSheet sheet = workbook.addSheet(category, colIdList);
 
 		/* Initialize xpaths that implement the data mappings */
 		Map<String, Map<String, List<XPathExpression>>> xpathSets = initializeMappings(mappingDefs);
@@ -370,7 +280,7 @@ public class XlsxBuilder {
 					 */
 					String trueAvailID = rowData.get("AvailTrans:Avail/AvailID");
 					rowData.put("Avail:AvailID", trueAvailID);
-					addRow(colIdList, rowData, sheet);
+					workbook.addDataRow(rowData, sheet);
 				}
 			}
 		}
@@ -823,25 +733,6 @@ public class XlsxBuilder {
 	}
 
 	/**
-	 * @param colIdList
-	 * @param cellData
-	 */
-	private void addRow(List<String> colIdList, Map<String, String> cellData, XSSFSheet sheet) {
-		boolean[] isEmptyCol = emptyColTracker.get(sheet);
-		int rowCount = sheet.getLastRowNum();
-		Row row = sheet.createRow(rowCount + 1);
-		for (int i = 0; i < colIdList.size(); i++) {
-			String colTag = colIdList.get(i);
-			String cellValue = cellData.get(colTag);
-			if ((cellValue != null) && !cellValue.isEmpty()) {
-				Cell cell = row.createCell(i);
-				cell.setCellValue(cellValue);
-				isEmptyCol[i] = false;
-			}
-		}
-	}
-
-	/**
 	 * Group, filter, and re-format the XML-to-XSLX mappings to facilitate later
 	 * usage.
 	 * 
@@ -1025,37 +916,6 @@ public class XlsxBuilder {
 	}
 
 	/**
-	 * Add header row(s) that conform to the specified version of the Avails
-	 * XLSX template.
-	 * 
-	 * @param sheet
-	 */
-	private void addHeaderRows(XSSFSheet sheet, List<String> colIdList) {
-		Row row1 = sheet.createRow(0);
-		Row row2 = sheet.createRow(1);
-		// need to add an empty row cause spec sez Avails start on Row 4 :(
-		Row row3 = sheet.createRow(2);
-		for (int i = 0; i < colIdList.size(); i++) {
-			String colTag = colIdList.get(i);
-			String[] part = colTag.split(":");
-			Cell cell1 = row1.createCell(i);
-			cell1.setCellValue(part[0]);
-			Cell cell2 = row2.createCell(i);
-			cell2.setCellValue(part[1]);
-			/* add styling to make it more readable */
-			XSSFCellStyle headerStyle = headerColors.get(part[0]);
-			if (headerStyle == null) {
-				headerStyle = defaultStyle;
-			}
-			cell1.setCellStyle(headerStyle);
-			cell2.setCellStyle(headerStyle);
-			// empty header cell..
-			Cell cell3 = row3.createCell(i);
-			cell3.setCellStyle(headerStyleFill);
-		}
-	}
-
-	/**
 	 * Configure all XML-related functions to work with the specified version of
 	 * the Avails XSD. This includes setting the correct version of the Common
 	 * Metadata and MDMEC XSD that are used with the specified Avails version.
@@ -1092,52 +952,10 @@ public class XlsxBuilder {
 	}
 
 	/**
-	 * @param destPath
-	 * @throws IOException
-	 * @throws FileNotFoundException
+	 * @return the workbook
 	 */
-	public void export(String destPath) throws FileNotFoundException, IOException {
-		/* hide empty columns */
-		hideEmptyColumns();
-		/* adjust column widths */
-		int sheetCnt = workbook.getNumberOfSheets();
-		for (int i = 0; i < sheetCnt; i++) {
-			Sheet sheet = workbook.getSheetAt(i);
-			if (sheet != null) {
-				String name = sheet.getSheetName();
-				int colCount = mappingVersion.getJSONObject(name).size();
-				for (int j = 0; j < colCount; j++) {
-					sheet.autoSizeColumn(j);
-				}
-			}
-
-		}
-		try (FileOutputStream outputStream = new FileOutputStream(destPath)) {
-			workbook.write(outputStream);
-			logger.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "XLSX saved to " + destPath, null, logMsgSrcId);
-
-		}
-
+	public TemplateWorkBook getWorkbook() {
+		return workbook;
 	}
 
-	public int hideEmptyColumns() {
-		int hiddenColCnt = 0;
-		int sheetCnt = workbook.getNumberOfSheets();
-		for (int i = 0; i < sheetCnt; i++) {
-			Sheet sheet = workbook.getSheetAt(i);
-			if (sheet != null) {
-				boolean[] isEmptyCol = emptyColTracker.get(sheet);
-				for (int j = 0; j < isEmptyCol.length; j++) {
-					if (isEmptyCol[j]) {
-						sheet.setColumnHidden(j, true);
-						hiddenColCnt++;
-					}
-				}
-			}
-		}
-		logger.log(LogMgmt.LEV_INFO, logMsgDefaultTag,
-				hiddenColCnt + " empty XLSX columns have been hidden on " + sheetCnt + " worksheets", null,
-				logMsgSrcId);
-		return hiddenColCnt;
-	}
 }
