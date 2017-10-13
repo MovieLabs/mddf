@@ -42,8 +42,14 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
- * Wrapper for an Excel spreadsheet comprising multiple individual sheets, each
- * of which are represented by an AvailsSheet object.
+ * Wrapper for an Excel spreadsheet file comprising multiple individual sheets,
+ * each of which are represented by an AvailsSheet object. The
+ * <tt>AvailsWrkBook</tt> class should be used to wrap pre-existing Avails XLSX
+ * files. This is in contrast to the <tt>TemplateWorkBook</tt> class that is
+ * used when programmatically constructing an Avails (e.g. when converting an
+ * XML-formatted Avails to the XLSX format).
+ * 
+ * 
  */
 public class AvailsWrkBook {
 	private File file;
