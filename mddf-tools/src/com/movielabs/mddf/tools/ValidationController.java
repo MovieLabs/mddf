@@ -505,7 +505,7 @@ public class ValidationController {
 		int sheetNum = 0; // KLUDGE for now
 		AvailsSheet as;
 		try {
-			as = ss.addSheet(sheetNum);
+			as = ss.ingestSheet(sheetNum);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

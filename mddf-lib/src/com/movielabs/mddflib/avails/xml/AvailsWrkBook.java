@@ -42,8 +42,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
- * Represents an Excel spreadsheet comprising multiple individual sheets, each
- * of which are represented by an AvailsSheet object
+ * Wrapper for an Excel spreadsheet comprising multiple individual sheets, each
+ * of which are represented by an AvailsSheet object.
  */
 public class AvailsWrkBook {
 	private File file;
@@ -104,7 +104,7 @@ public class AvailsWrkBook {
 		wrkBook = new XSSFWorkbook(file);
 	}
 
-	public AvailsSheet addSheet(String sheetName) throws Exception {
+	public AvailsSheet ingestSheet(String sheetName) throws Exception {
 		Sheet excelSheet = wrkBook.getSheet(sheetName);
 		if (excelSheet == null) {
 			wrkBook.close();
@@ -116,17 +116,19 @@ public class AvailsWrkBook {
 	}
 
 	/**
-	 * Add a sheet from an Excel spreadsheet to a spreadsheet object
+	 * Ingest a sheet from the Excel spreadsheet. The ingest process will
+	 * <i>wrap</i> the Excel sheet in an instance of the <tt>AvailsSheet</tt>
+	 * class and include it in the scope of the AvailsWrkBook object.
 	 * 
 	 * @param sheetNumber
 	 *            zero-based index of sheet to add
-	 * @return created sheet object
+	 * @return created AvailsSheet object
 	 * @throws IllegalArgumentException
 	 *             if the sheet does not exist in the Excel spreadsheet
 	 * @throws Exception
 	 *             other error conditions may also throw exceptions
 	 */
-	public AvailsSheet addSheet(int sheetNumber) throws Exception {
+	public AvailsSheet ingestSheet(int sheetNumber) throws Exception {
 		Sheet excelSheet;
 		try {
 			excelSheet = wrkBook.getSheetAt(sheetNumber);
