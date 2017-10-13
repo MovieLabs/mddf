@@ -32,7 +32,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 /**
- * Represents an individual sheet of an Excel spreadsheet
+ * Wrapper class for an individual sheet of an Excel spreadsheet that has been
+ * fully populated with Avails data.
  */
 public class AvailsSheet {
 	public static enum Version {
@@ -254,15 +255,6 @@ public class AvailsSheet {
 		} else {
 			return excelSheet.getRow(row).getCell(idx);
 		}
-	}
-
-	/**
-	 * get the parent Spreadsheet object for this sheet
-	 * 
-	 * @return the parent of this sheet
-	 */
-	public AvailsWrkBook getAvailSS() {
-		return parent;
 	}
 
 	/**
