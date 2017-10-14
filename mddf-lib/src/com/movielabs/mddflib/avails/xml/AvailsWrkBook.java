@@ -41,6 +41,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.movielabs.mddflib.logging.LogMgmt;
+
 /**
  * Wrapper for an Excel spreadsheet file comprising multiple individual sheets,
  * each of which are represented by an AvailsSheet object. The
@@ -52,9 +54,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * 
  */
 public class AvailsWrkBook {
+	protected static String logMsgSrcId = "AvailsWrkBook";
 	private File file;
 	private ArrayList<AvailsSheet> sheets;
-	private Logger logger;
+	private LogMgmt logger;
 	private boolean exitOnError;
 	private boolean cleanupData;
 	private XSSFWorkbook wrkBook;
@@ -100,7 +103,7 @@ public class AvailsWrkBook {
 	 * @throws FileNotFoundException
 	 * @throws InvalidFormatException
 	 */
-	public AvailsWrkBook(File file, Logger logger, boolean exitOnError, boolean cleanupData)
+	public AvailsWrkBook(File file, LogMgmt logger, boolean exitOnError, boolean cleanupData)
 			throws FileNotFoundException, IOException, POIXMLException, InvalidFormatException {
 		this.file = file;
 		this.logger = logger;
@@ -152,8 +155,15 @@ public class AvailsWrkBook {
 	 * 
 	 * @return Logger for this instance
 	 */
-	public Logger getLogger() {
+	LogMgmt getLogger() {
 		return logger;
+	}
+
+	/**
+	 * @return the file
+	 */
+	File getFile() {
+		return file;
 	}
 
 	/**

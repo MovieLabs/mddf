@@ -31,11 +31,14 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
+import com.movielabs.mddflib.logging.LogMgmt;
+
 /**
  * Wrapper class for an individual sheet of an Excel spreadsheet that has been
  * fully populated with Avails data.
  */
 public class AvailsSheet {
+	protected static String logMsgSrcId = "AvailsSheet";
 	public static enum Version {
 		V1_7_2, V1_7, V1_6, UNK
 	};
@@ -45,7 +48,7 @@ public class AvailsSheet {
 	private String name;
 	private ArrayList<String> headerList;
 	private HashMap<String, Integer> headerMap;
-	private org.apache.logging.log4j.Logger logger;
+	private LogMgmt logger;
 	private Sheet excelSheet;
 	private Version version = Version.UNK;
 	private boolean noPrefix = true;
@@ -110,7 +113,7 @@ public class AvailsSheet {
 				headerMap.put(key, new Integer(idx));
 			}
 		}
-		logger.debug("Found " + headerList.size() + " defined columns");
+		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Found " + headerList.size() + " defined columns", parent.getFile(), logMsgSrcId); 
 
 		/*
 		 * TYPE Check: Is this for movies or TV? The current rule is that this
@@ -124,7 +127,7 @@ public class AvailsSheet {
 			isForTV = false;
 			break;
 		default:
-			logger.fatal("Unrecognized sheet name: Must be 'TV' or 'Movies'");
+			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unrecognized sheet name: Must be 'TV' or 'Movies'", parent.getFile(), logMsgSrcId); 
 			return;
 		}
 

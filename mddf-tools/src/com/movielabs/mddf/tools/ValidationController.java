@@ -50,7 +50,6 @@ import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.avails.xml.XmlBuilder;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
-import com.movielabs.mddflib.logging.Log4jAdapter;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.CpeValidator;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator;
@@ -479,13 +478,11 @@ public class ValidationController {
 	 * @return
 	 */
 	private Map<String, Object> convertSpreadsheet(File xslxFile) {
-		org.apache.logging.log4j.Logger log4j = new Log4jAdapter(logMgr, LogMgmt.TAG_AVAIL, "xlsx Converter");
-		((Log4jAdapter) log4j).setFile(xslxFile);
 		boolean autoCorrect = false;
 		boolean exitOnError = false;
 		AvailsWrkBook ss;
 		try {
-			ss = new AvailsWrkBook(xslxFile, log4j, exitOnError, autoCorrect);
+			ss = new AvailsWrkBook(xslxFile, logMgr, exitOnError, autoCorrect);
 		} catch (FileNotFoundException e1) {
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found", xslxFile, MODULE_ID);
 			return null;
