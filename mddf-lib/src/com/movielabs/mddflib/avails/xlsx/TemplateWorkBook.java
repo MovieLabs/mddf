@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -43,9 +42,14 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.movielabs.mddflib.avails.xlsx.TemplateWorkBook.SheetProperties;
+import com.movielabs.mddflib.avails.xml.AbstractRowHelper;
 import com.movielabs.mddflib.avails.xml.AvailsSheet;
+import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
+import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
+import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
+
+import net.sf.json.JSONObject;
 
 /**
  * Wrapper for an Excel-formatted Avails that is initially empty. The
@@ -88,12 +92,66 @@ public class TemplateWorkBook {
 
 	private LogMgmt logger;
 	private int logMsgDefaultTag = LogMgmt.TAG_XLSX;
-	protected String logMsgSrcId = "TemplateWorkBook";
+	protected static String logMsgSrcId = "TemplateWorkBook";
 	private XSSFWorkbook workbook;
 	private Map<String, XSSFCellStyle> headerColors = new HashMap<String, XSSFCellStyle>();
 	private XSSFCellStyle defaultStyle;
 	private XSSFCellStyle headerStyleFill;
 	private Map<XSSFSheet, SheetProperties> sheetData = new HashMap<XSSFSheet, SheetProperties>();
+
+	/**
+	 * Create a clean copy of an Avails workbook. The copy will have the same
+	 * data but
+	 * <ol>
+	 * <li>columns will be re-ordered and grouped</li>
+	 * <li>styles will match the template styles (e/g/ colors of column titles)
+	 * </li>
+	 * <li>empty columns will be hidden</li>
+	 * </ol>
+	 * 
+	 * @param srcFile
+	 * @param outputDir
+	 * @param outFileName
+	 * @param log
+	 * @return
+	 */
+	public static boolean clone(File srcFile, String outputDir, String outFileName, LogMgmt log) {
+		try {
+			AvailsWrkBook srcWrkBook = new AvailsWrkBook(srcFile, log, true, false);
+			AvailsSheet srcSheet = srcWrkBook.ingestSheet(0);
+
+			TemplateWorkBook clone = new TemplateWorkBook(log);
+			/*
+			 * column headers are derived from the keys used in the XML-to-XLSX
+			 * mappingDefs. The defs are version and category dependent.
+			 * 
+			 */
+			Version ver = srcSheet.getVersion();
+			JSONObject mappingsByVersion = XlsxBuilder.mappings.getJSONObject(ver.name());
+			String category = srcSheet.getName();
+			JSONObject mappingDefs = mappingsByVersion.getJSONObject(category);
+			ArrayList<String> colIdList = new ArrayList<String>();
+			colIdList.addAll(mappingDefs.keySet());
+			XSSFSheet clonedSheet = clone.addSheet(category, colIdList);
+			// now we can copy the rows.
+
+			rowLoop: for (Row row : srcSheet.getRows()) {
+				AbstractRowHelper rowHelper = AbstractRowHelper.createHelper(srcSheet, row);
+				if (rowHelper != null) {
+					clone.addDataRow(rowHelper, clonedSheet);
+				} else {
+					log.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported XLSX version", srcFile, logMsgSrcId);
+					break rowLoop;
+				}
+			}
+			File outFile = new File(outputDir, outFileName);
+			clone.export(outFile.getCanonicalPath());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * @param logger
@@ -224,6 +282,36 @@ public class TemplateWorkBook {
 	}
 
 	/**
+	 * Copy a row from a source spreadsheet into the template's sheet.
+	 * 
+	 * @param srcRow
+	 * @param destSheet
+	 */
+	public void addDataRow(AbstractRowHelper srcRow, XSSFSheet destSheet) {
+		SheetProperties sProps = sheetData.get(destSheet);
+		boolean[] isEmptyCol = sProps.isEmptyCol;
+		List<String> colIdList = sProps.colIdList;
+		int rowCount = destSheet.getLastRowNum();
+		Row row = destSheet.createRow(rowCount + 1);
+		for (int i = 0; i < colIdList.size(); i++) {
+			String colTag = colIdList.get(i);
+			/*
+			 * The colIdList use ":" as a separator (e.g. "AvailTrans:Start")
+			 * while the 'getPedigreedData()' expects the keys to use "/" (e.g.
+			 * "AvailTrans:/Start")
+			 */
+			colTag = colTag.replaceFirst(":", "/");
+			Pedigree pg = srcRow.getPedigreedData(colTag);
+			if (AbstractRowHelper.isSpecified(pg)) {
+				Cell cell = row.createCell(i);
+				cell.setCellValue(pg.getRawValue());
+				isEmptyCol[i] = false;
+			}
+		}
+
+	}
+
+	/**
 	 * @param destPath
 	 * @throws IOException
 	 * @throws FileNotFoundException
@@ -250,7 +338,7 @@ public class TemplateWorkBook {
 		}
 	}
 
-	public int hideEmptyColumns() {
+	private int hideEmptyColumns() {
 		int hiddenColCnt = 0;
 		int sheetCnt = workbook.getNumberOfSheets();
 		for (int i = 0; i < sheetCnt; i++) {

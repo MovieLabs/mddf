@@ -28,12 +28,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
+import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
  * Create XML document from an Excel spreadsheet. The XML generated will be
  * based on the matching version of the Avails XSD and reflects a "best effort"
- * in that there is no guarantee that it is valid. 
+ * in that there is no guarantee that it is valid.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -47,6 +48,18 @@ public abstract class AbstractRowHelper {
 	protected String workType = "";
 	protected DataFormatter dataF = new DataFormatter();
 	protected Pedigree workTypePedigree;
+
+	public static AbstractRowHelper createHelper(AvailsSheet aSheet, Row row) {
+		Version ver = aSheet.getVersion();
+		switch (ver) {
+		case V1_7_2:
+		case V1_7:
+			RowToXmlHelperV1_7 helper = new RowToXmlHelperV1_7(aSheet, row);
+			return helper;
+		default:
+			return null;
+		}
+	}
 
 	/**
 	 * @param fields
@@ -148,7 +161,7 @@ public abstract class AbstractRowHelper {
 	 * @param colKey
 	 * @return
 	 */
-	protected Pedigree getPedigreedData(String colKey) {
+	public Pedigree getPedigreedData(String colKey) {
 		int cellIdx = sheet.getColumnIdx(colKey);
 		if (cellIdx < 0) {
 			return null;
@@ -175,7 +188,7 @@ public abstract class AbstractRowHelper {
 	 * @param valueSrc
 	 * @throws IllegalArgumentException
 	 */
-	protected boolean isSpecified(Object valueSrc) throws IllegalArgumentException {
+	public static boolean isSpecified(Object valueSrc) throws IllegalArgumentException {
 		if (valueSrc == null) {
 			return false;
 		}
@@ -193,5 +206,10 @@ public abstract class AbstractRowHelper {
 	int getRowNumber() {
 		return row.getRowNum();
 	}
+
+	/**
+	 * @param xmlBuilder
+	 */
+	abstract protected void makeAvail(XmlBuilder xmlBuilder);
 
 }

@@ -105,7 +105,7 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelperV1_7 {
 	 * @param colKey
 	 * @return
 	 */
-	protected Pedigree getPedigreedData(String colKey) {
+	public Pedigree getPedigreedData(String colKey) {
 		String mappedKey = mapKey(colKey);
 		if (mappedKey != null) {
 			return super.getPedigreedData(mappedKey);

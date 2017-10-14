@@ -91,6 +91,7 @@ import com.movielabs.mddf.tools.util.logging.LogNavPanel;
 import com.movielabs.mddf.tools.util.logging.LoggerWidget;
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
+import com.movielabs.mddflib.avails.xlsx.TemplateWorkBook;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
@@ -233,6 +234,46 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			getTxtStatus().setText("Starting compression.....");
 			AvailsWrkBook.compress(srcFile, dirPath, fileName);
+			frame.setCursor(null); // turn off the wait cursor
+			setRunningState(false);
+			return null;
+		}
+
+		protected void done() {
+			try {
+				getTxtStatus().setText("Done");
+				get();
+			} catch (ExecutionException e) {
+				e.getCause().printStackTrace();
+				consoleLogger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_N_A, e.getMessage(), null, "UI");
+			} catch (InterruptedException e) {
+				e.getCause().printStackTrace();
+			}
+			frame.setCursor(null); // turn off the wait cursor
+			setRunningState(false);
+		}
+	}
+	
+
+	public class CleanExcelWorker extends SwingWorker<Void, StatusMsg> {
+		private File srcFile;
+		private String dirPath;
+		private String fileName;
+
+		public CleanExcelWorker(File srcFile, String dirPath, String fileName) {
+			super();
+			this.srcFile = srcFile;
+			this.dirPath = dirPath;
+			this.fileName = fileName;
+		}
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			setRunningState(true);
+			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			getTxtStatus().setText("Starting clone-n-clean.....");
+			LogMgmt logger = getConsoleLogPanel();
+			TemplateWorkBook.clone(srcFile, dirPath, fileName, logger);
 			frame.setCursor(null); // turn off the wait cursor
 			setRunningState(false);
 			return null;
@@ -1180,6 +1221,11 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 	public void compress(File srcFile, String dirPath, String fileName) {
 		SwingWorker<Void, StatusMsg> worker = new ValidatorTool.CompressionWorker(srcFile, dirPath, fileName);
+		worker.execute();
+	}
+
+	public void cleanup(File srcFile, String dirPath, String fileName) {
+		SwingWorker<Void, StatusMsg> worker = new ValidatorTool.CleanExcelWorker(srcFile, dirPath, fileName);
 		worker.execute();
 	}
 

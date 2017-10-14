@@ -183,7 +183,7 @@ public class LogNavPanel extends JPanel {
 				compressAvailsMItem.setEnabled(curFmt.getEncoding().equals("xlsx"));
 				compressAvailsMItem.addActionListener(new ActionListener() {
 					@Override
-					public void actionPerformed(ActionEvent e) { 
+					public void actionPerformed(ActionEvent e) {
 						File srcFile = fileFolder.getFile();
 						File saveToFile = FileChooserDialog.getFilePath("Save file as...", srcFile.getAbsolutePath(),
 								null, "AVAIL", parentLogger);
@@ -197,6 +197,30 @@ public class LogNavPanel extends JPanel {
 							fileName = saveToFile.getName();
 						}
 						ValidatorTool.getTool().compress(srcFile, dirPath, fileName);
+					}
+				});
+
+				JMenuItem reformatAvailsMItem = new JMenuItem("Reformat");
+				reformatAvailsMItem.setToolTipText("Reorder columns; Hide empty columns");
+				add(reformatAvailsMItem);
+				curFmt = fileFolder.getMddfFormat();
+				reformatAvailsMItem.setEnabled(curFmt.getEncoding().equals("xlsx"));
+				reformatAvailsMItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						File srcFile = fileFolder.getFile();
+						File saveToFile = FileChooserDialog.getFilePath("Save file as...", srcFile.getAbsolutePath(),
+								null, "AVAIL", parentLogger);
+						String dirPath;
+						String fileName;
+						if (saveToFile.exists() && saveToFile.isDirectory()) {
+							dirPath = saveToFile.getPath();
+							fileName = fileFolder.getFile().getName();
+						} else {
+							dirPath = saveToFile.getParent();
+							fileName = saveToFile.getName();
+						}
+						ValidatorTool.getTool().cleanup(srcFile, dirPath, fileName);
 					}
 				});
 
@@ -248,7 +272,7 @@ public class LogNavPanel extends JPanel {
 			/* add listener to trigger a pop-up menu */
 			this.addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent e) {
-					if(ValidatorTool.getTool().isRunning()){
+					if (ValidatorTool.getTool().isRunning()) {
 						return;
 					}
 					if (SwingUtilities.isRightMouseButton(e)) {

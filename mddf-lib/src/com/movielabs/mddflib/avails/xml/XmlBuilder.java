@@ -183,20 +183,16 @@ public class XmlBuilder {
 
 		// build document components row by row.
 		try {
-			switch (templateVersion) {
-			case V1_7_2:
-			case V1_7:
-				for (Row row : aSheet.getRows()) {
-					msg = "Converting row " + row.getRowNum();
-					logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, null, moduleId);
-					RowToXmlHelperV1_7 xmlConverter = new RowToXmlHelperV1_7(aSheet, row);
-					xmlConverter.makeAvail(this);
+			rowLoop: for (Row row : aSheet.getRows()) {
+				msg = "Converting row " + row.getRowNum();
+				logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, null, moduleId);
+				AbstractRowHelper rowHelper = AbstractRowHelper.createHelper(aSheet, row);
+				if (rowHelper != null) {
+					rowHelper.makeAvail(this);
+				} else {
+					logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLATE, "Unsupported XLSX version", srcXslxFile, moduleId);
+					break rowLoop;
 				}
-				break;
-			default:
-				logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE,
-						"Processing of " + templateVersion.toString() + " is not supported", srcXslxFile, moduleId);
-				return null;
 			}
 		} catch (Exception e) {
 			msg = "Fatal Exception while ingesting XLSX file";

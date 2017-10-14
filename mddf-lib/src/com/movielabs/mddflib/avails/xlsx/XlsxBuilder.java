@@ -104,7 +104,7 @@ public class XlsxBuilder {
 	private static final String CONTEXT_DELIM = "#";
 	private static final String FUNCTION_IDENTIFIER = "%FUNCTION";
 	private static DecimalFormat durFieldFmt = new DecimalFormat("00");
-	private static JSONObject mappings;
+	protected static JSONObject mappings;
 	private static Pattern p_xsDuration;
 	private static String warnMsg1 = "XLSX xfer dropping additional XYZ values";
 	private static String warnDetail1 = "The Excel version of Avails only allows 1 value for this field. Additional XML elements will be ignored";
