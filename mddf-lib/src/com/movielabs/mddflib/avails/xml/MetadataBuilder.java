@@ -316,7 +316,7 @@ public class MetadataBuilder {
 
 		Pedigree pg = row.getPedigreedData(colKey);
 		if (pg == null) {
-			throw new UnsupportedOperationException("Invalid JSON: unsupported column '" + colKey + "'");
+			throw new UnsupportedOperationException("Invalid XLSX: unsupported column '" + colKey + "'");
 		}
 		if (pg.isEmpty() && !isRequired(curKey)) {
 			return;

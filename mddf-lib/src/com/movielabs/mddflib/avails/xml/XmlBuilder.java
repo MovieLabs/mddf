@@ -195,9 +195,8 @@ public class XmlBuilder {
 				}
 			}
 		} catch (Exception e) {
-			msg = "Fatal Exception while ingesting XLSX file";
+			msg = "Exception while ingesting XLSX: "+e.getLocalizedMessage();
 			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
-			e.printStackTrace();
 			return null;
 		}
 
