@@ -149,7 +149,11 @@
 				{
 					"docRef": "AVAIL:struc01",
 					"min": "2",
-					"xpath": "./{avail}Asset",
+					"xpath": 
+						[
+							"./{avail}Asset",
+							"./{avail}Asset/{avail}BundledAsset"						
+						],
 					"severity": "Error",
 					"msg": "Avail's type requires two or more Assets"
 				}
