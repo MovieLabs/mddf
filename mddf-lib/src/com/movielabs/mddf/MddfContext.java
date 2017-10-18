@@ -60,7 +60,7 @@ public class MddfContext {
 	 */
 	public static final String RSRC_PATH = "/com/movielabs/mddf/resources/";
 
-	public static final String CUR_RATINGS_VER = "v2.3.1";
+	public static final String CUR_RATINGS_VER = "v2.3.2";
 
 	private static Map<String, String[]> stdsVersions;
 

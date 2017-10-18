@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mdcr:RatingSystemSet xmlns:mdcr="http://www.movielabs.com/schema/mdcr/v1.1" xmlns:md="http://www.movielabs.com/schema/md/v2.1/md" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.movielabs.com/schema/mdcr/v1.1 http://www.movielabs.com/schema/mdcr/v1.1/mdcr-v1.1.xsd">
-  <!--Saved 2017-01-02 22:10:54 as version v2.3-->
+  <!--Saved 2017-10-18 13:43:37 as version v2.3.2-->
   <mdcr:RatingSystem lastValidated="2013-10-11T10:47:34" lastSave="2014-12-12T16:01:03" version="3">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
@@ -33,7 +33,7 @@ Tour Mirabeau
     <mdcr:Rating ratingID="10">
       <mdcr:Ordinal>1</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/FR/CSA/3/10</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.csa.fr/var/ezflow_site/storage/images/media/images/protection-des-mineurs-10/330309-1-fre-FR/Protection-des-mineurs-10.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/FR_CSA_Protection-des-mineurs-10.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>10</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -46,7 +46,7 @@ Tour Mirabeau
     <mdcr:Rating ratingID="12">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/FR/CSA/3/12</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.csa.fr/var/ezflow_site/storage/images/media/images/logos/protection-des-mineurs-12/330313-1-fre-FR/Protection-des-mineurs-12.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/FR_CSA_Protection-des-mineurs-12.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>12</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -59,7 +59,7 @@ Tour Mirabeau
     <mdcr:Rating ratingID="16">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/FR/CSA/3/16</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.csa.fr/var/ezflow_site/storage/images/media/images/logos/protection-des-mineurs-16/330317-1-fre-FR/Protection-des-mineurs-16.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/FR_CSA_Protection-des-mineurs-16.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -72,7 +72,7 @@ Tour Mirabeau
     <mdcr:Rating ratingID="18">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/FR/CSA/3/18</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.csa.fr/var/ezflow_site/storage/images/media/images/logos/protection-des-mineurs-18/330321-1-fre-FR/Protection-des-mineurs-18.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/FR_CSA_Protection-des-mineurs-18.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -1344,7 +1344,7 @@ New York, NY 10017</mdcr:ContactString>
     <mdcr:Rating ratingID="E">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/ESRB/0/E</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.esrb.org/images/ratingsymbol_e.png</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_ESRB_e.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -1357,7 +1357,7 @@ New York, NY 10017</mdcr:ContactString>
     <mdcr:Rating ratingID="RP">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/ESRB/0/RP</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.esrb.org/images/ratingsymbol_rp.png</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_ESRB_rp.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -1371,7 +1371,7 @@ New York, NY 10017</mdcr:ContactString>
     <mdcr:Rating ratingID="C">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/ESRB/0/C</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.esrb.org/images/ratingsymbol_ec.png</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_ESRB_ec.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -1384,7 +1384,7 @@ New York, NY 10017</mdcr:ContactString>
     <mdcr:Rating ratingID="10-plus">
       <mdcr:Ordinal>60</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/ESRB/0/10-plus</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.esrb.org/images/ratingsymbol_e10.png</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_ESRB_e10.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>10</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -1397,7 +1397,7 @@ New York, NY 10017</mdcr:ContactString>
     <mdcr:Rating ratingID="T">
       <mdcr:Ordinal>70</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/ESRB/0/T</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.esrb.org/images/ratingsymbol_t.png</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_ESRB_t.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>17</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -1410,7 +1410,7 @@ New York, NY 10017</mdcr:ContactString>
     <mdcr:Rating ratingID="M">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/ESRB/0/M</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.esrb.org/images/ratingsymbol_m.png</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_ESRB_m.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>17</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -1423,7 +1423,7 @@ New York, NY 10017</mdcr:ContactString>
     <mdcr:Rating ratingID="A">
       <mdcr:Ordinal>90</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/ESRB/0/A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.esrb.org/images/ratingsymbol_ao.png</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_ESRB_ao.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -1891,7 +1891,7 @@ Fax: +40 (0)21 305 5354/56</mdcr:ContactString>
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastSave="2016-12-22T15:56:36" version="2">
+  <mdcr:RatingSystem lastValidated="2017-07-28T03:50:25" lastSave="2017-08-07T14:19:35" version="2">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -1911,6 +1911,7 @@ Fax: +40 (0)21 305 5354/56</mdcr:ContactString>
         <mdcr:Environment>other</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
+    <mdcr:LastChecked>2017-07-27</mdcr:LastChecked>
     <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CBSC/2</mdcr:URI>
     <mdcr:RatingsOrg organizationID="Canadian Broadcast Standards Council">
       <md:DisplayName>Canadian Broadcast Standards Council</md:DisplayName>
@@ -1924,7 +1925,7 @@ K1P 6H8</mdcr:ContactString>
     <mdcr:Rating ratingID="C">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CBSC/2/C</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.cbsc.ca/assets/agvot-rating-c.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CBSC_C.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -1975,7 +1976,7 @@ Depictions of aggressive behaviour will be infrequent and limited to portrayals 
     <mdcr:Rating ratingID="C8">
       <mdcr:Ordinal>2</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CBSC/2/C8</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.cbsc.ca/assets/agvot-rating-c8.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CBSC_C8.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>8</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -2018,7 +2019,7 @@ might include mild physical violence, comedic violence, comic horror, special ef
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>4</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CBSC/2/G</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.cbsc.ca/assets/agvot-rating-g.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CBSC_G.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>8</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -2051,7 +2052,7 @@ minimize or gloss over the effects of violent acts.</div>]]></mdcr:Explanation>
     <mdcr:Rating ratingID="PG">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CBSC/2/PG</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.cbsc.ca/assets/agvot-rating-pg.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CBSC_PG.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>8</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -2094,7 +2095,7 @@ Any such depictions should not be pervasive, and must be justified within the co
     <mdcr:Rating ratingID="14">
       <mdcr:Ordinal>14</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CBSC/2/14</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.cbsc.ca/assets/agvot-rating-14plus.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CBSC_14plus.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -2131,7 +2132,7 @@ could deal with mature themes and societal issues in a realistic fashion.</div>]
     <mdcr:Rating ratingID="18">
       <mdcr:Ordinal>90</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CBSC/2/18</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.cbsc.ca/assets/agvot-rating-18plus.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CBSC_18plus.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -2889,7 +2890,7 @@ Washington, DC 20004</mdcr:ContactString>
     <mdcr:Rating ratingID="PAL">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/RIAA/0/PAL</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.riaa.com/images/parentaladvisory.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_RIAA_pal.jpeg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -3609,7 +3610,7 @@ extent that is permissible in the Maldives</mdcr:Explanation>
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/IE/IFCO/1/G</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ifco.ie/ifco/ifcoweb.nsf/lookupgraphics/general_40_web.gif/$File/general_40_web.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/IE_IFCO_general_40_web.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -3669,7 +3670,7 @@ who know their own children best - consult the consumer advice available on this
     <mdcr:Rating ratingID="PG">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/IE/IFCO/1/PG</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ifco.ie/ifco/ifcoweb.nsf/lookupgraphics/pg_40_web.gif/$File/pg_40_web.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/IE_IFCO_pg_40_web.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>12</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -3728,7 +3729,7 @@ who know their own children best - consult the consumer advice available on this
     <mdcr:Rating ratingID="12">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/IE/IFCO/1/12</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ifco.ie/ifco/ifcoweb.nsf/lookupgraphics/12_40_web.gif/$File/12_40_web.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/IE_IFCO_12_40_web.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>12</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -3787,7 +3788,7 @@ of drugs is not glamorized.</mdcr:Explanation>
     <mdcr:Rating ratingID="15">
       <mdcr:Ordinal>9</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/IE/IFCO/1/15</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ifco.ie/ifco/ifcoweb.nsf/lookupgraphics/15_40_web.gif/$File/15_40_web.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/IE_IFCO_15_40_web.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>15</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -3849,7 +3850,7 @@ Strong horror and threat are acceptable but will not include the strongest image
     <mdcr:Rating ratingID="18">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/IE/IFCO/1/18</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ifco.ie/ifco/ifcoweb.nsf/lookupgraphics/18_40_web.gif/$File/18_40_web.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/IE_IFCO_18_40_web.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -3941,7 +3942,7 @@ Montréal (Québec) H2Y 1T9</mdcr:ContactString>
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/RCQ/2/G</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.rcq.gouv.qc.ca/images/general.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_RCQ_general.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -3960,7 +3961,7 @@ Montréal (Québec) H2Y 1T9</mdcr:ContactString>
     <mdcr:Rating ratingID="13+">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/RCQ/2/13+</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.rcq.gouv.qc.ca/images/c13.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_RCQ_c13.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>13</mdcr:MinRecAge>
       <mdcr:MinAge>13</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -3979,7 +3980,7 @@ Montréal (Québec) H2Y 1T9</mdcr:ContactString>
     <mdcr:Rating ratingID="16+">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/RCQ/2/16+</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.rcq.gouv.qc.ca/images/c16.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_RCQ_c16.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>16</mdcr:MinAge>
       <mdcr:MinAgeSupervised>16</mdcr:MinAgeSupervised>
@@ -3998,7 +3999,7 @@ Montréal (Québec) H2Y 1T9</mdcr:ContactString>
     <mdcr:Rating ratingID="18+">
       <mdcr:Ordinal>90</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/RCQ/2/18+</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.rcq.gouv.qc.ca/images/c18.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_RCQ_c18.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -4285,7 +4286,7 @@ Telefax: +49 611 77891-39</mdcr:ContactString>
     <mdcr:Rating ratingID="0">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/DE/FSK/1/0</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.fsk.de/media_content/1139.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/DE_FSK_1139.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -4304,7 +4305,7 @@ Telefax: +49 611 77891-39</mdcr:ContactString>
     <mdcr:Rating ratingID="6">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/DE/FSK/0/6</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.fsk.de/media_content/1135.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/DE_FSK_1135.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>6</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -4323,7 +4324,7 @@ Telefax: +49 611 77891-39</mdcr:ContactString>
     <mdcr:Rating ratingID="12">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/DE/FSK/0/12</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.fsk.de/media_content/1134.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/DE_FSK_1134.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>12</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -4342,7 +4343,7 @@ Telefax: +49 611 77891-39</mdcr:ContactString>
     <mdcr:Rating ratingID="16">
       <mdcr:Ordinal>9</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/DE/FSK/0/16</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.fsk.de/media_content/1133.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/DE_FSK_1133.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -4379,7 +4380,7 @@ Telefax: +49 611 77891-39</mdcr:ContactString>
     <mdcr:Rating ratingID="18">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/DE/FSK/1/18</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.fsk.de/media_content/1132.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/DE_FSK_1132.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -4432,7 +4433,7 @@ Fax:(323) 469-8541</mdcr:ContactString>
     <mdcr:Rating ratingID="F">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/FAB/2/F</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.filmadvisoryboard.com/images/rating/Family.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_FAB_Family.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -4446,7 +4447,7 @@ Fax:(323) 469-8541</mdcr:ContactString>
     <mdcr:Rating ratingID="C">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/FAB/2/C</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.filmadvisoryboard.com/images/rating/Children.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_FAB_Children.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -4459,7 +4460,7 @@ Fax:(323) 469-8541</mdcr:ContactString>
     <mdcr:Rating ratingID="PD">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/FAB/2/PD</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.filmadvisoryboard.com/images/rating/ParentalDiscretion.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_FAB_ParentalDiscretion.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -4473,7 +4474,7 @@ Fax:(323) 469-8541</mdcr:ContactString>
     <mdcr:Rating ratingID="PD-M">
       <mdcr:Ordinal>9</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/FAB/1/PD-M</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.filmadvisoryboard.com/images/rating/ParentalDiscretion_Mature.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_FAB_ParentalDiscretion_Mature.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>13</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -4516,7 +4517,7 @@ Is equivalent to MPAA 'PG-13' rating.</mdcr:Explanation>
     <mdcr:Rating ratingID="EM">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/FAB/2/EM</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.filmadvisoryboard.com/images/rating/ExtremelyMature.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_FAB_ExtremelyMature.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>17</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -4530,7 +4531,7 @@ Is equivalent to MPAA 'PG-13' rating.</mdcr:Explanation>
     <mdcr:Rating ratingID="AO">
       <mdcr:Ordinal>90</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/FAB/2/AO</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.filmadvisoryboard.com/images/rating/AdultsOnly.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_FAB_AdultsOnly.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -4655,7 +4656,7 @@ Equivalent to the 'X' rating for pornography. Content description may read 'male
       </mdcr:GeneralDescriptor>
     </mdcr:Reason>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastSave="2014-12-19T20:52:51" version="0">
+  <mdcr:RatingSystem lastSave="2017-01-17T19:37:15" version="0">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -4678,8 +4679,8 @@ Equivalent to the 'X' rating for pornography. Content description may read 'male
     <mdcr:URI>http://www.movielabs.com/md/ratings/IL/Film/0</mdcr:URI>
     <mdcr:RatingsOrg organizationID="Film Review Board">
       <md:DisplayName>Film Review Board</md:DisplayName>
-      <mdcr:ContactString>Ms  Sonia David-Elmaleh phone:03-7239003 Mobile:050-6283762</mdcr:ContactString>
-      <mdcr:URL>http://mcs.gov.il/about/AuthoritiesCouncilsCorporations/Film Review Council/Pages/default.aspx</mdcr:URL>
+      <mdcr:ContactString>Ms  Sonia David-Elmaleh soniael@most.gov.il, phone:03-7239003 Mobile:050-6283762</mdcr:ContactString>
+      <mdcr:URL>https://www.gov.il/he/Departments/Units/film_review_council</mdcr:URL>
       <mdcr:OrgType>Gov</mdcr:OrgType>
     </mdcr:RatingsOrg>
     <mdcr:Rating ratingID="ALL">
@@ -4743,7 +4744,7 @@ Equivalent to the 'X' rating for pornography. Content description may read 'male
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastValidated="2013-09-11T21:30:03" lastSave="2013-12-29T17:47:30" version="1">
+  <mdcr:RatingSystem lastValidated="2013-09-12T01:30:03" lastSave="2017-08-08T20:11:46" version="1">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -4762,15 +4763,16 @@ Equivalent to the 'X' rating for pornography. Content description may read 'male
         <mdcr:Environment>Broadcast</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
-    <mdcr:LastChecked>2013-09-28</mdcr:LastChecked>
+    <mdcr:LastChecked>2017-08-08</mdcr:LastChecked>
     <mdcr:URI>http://www.movielabs.com/md/ratings/AT/BMUKK/1</mdcr:URI>
-    <mdcr:RatingsOrg organizationID="Bundesministeriums für Unterricht, Kunst und Kultur!">
-      <md:DisplayName>Bundesministeriums für Unterricht, Kunst und Kultur!</md:DisplayName>
-      <mdcr:ContactString>Postanschrift:Bundesministerium für Unterricht, Kunst und Kultur
-Minoritenplatz 51014 Wien, 
-T +43 (0)1 53 120-0 F +43 (0)1 53 120-3099 
-ministerium@bmukk.gv.at</mdcr:ContactString>
-      <mdcr:URL>http://www.bmukk.gv.at/index.xml</mdcr:URL>
+    <mdcr:RatingsOrg organizationID="Jugendmedienkommission beim Bundesministerium für Bildung">
+      <md:DisplayName>Jugendmedienkommission beim Bundesministerium für Bildung</md:DisplayName>
+      <mdcr:ContactString>Geschäftsführender Leiter 
+ADir . Michael Kluger 
+T +43 1 53120-4835 
+F +43 1 53120-814835 
+michael.kluger@bmb.gv.at</mdcr:ContactString>
+      <mdcr:URL>https://www.bmb.gv.at/schulen/service/jmk/</mdcr:URL>
       <mdcr:OrgType>Gov</mdcr:OrgType>
     </mdcr:RatingsOrg>
     <mdcr:Rating ratingID="AA">
@@ -5084,7 +5086,7 @@ tel: 085 4011690</mdcr:ContactString>
     <mdcr:Rating ratingID="AL">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/NL/Kijkwijzer/1/AL</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.kijkwijzer.nl/upload/pic/50_groen_al.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/NL_Kijkwijzer_50_groen_al.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -5097,7 +5099,7 @@ tel: 085 4011690</mdcr:ContactString>
     <mdcr:Rating ratingID="6">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/NL/Kijkwijzer/1/6</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.kijkwijzer.nl/upload/pic/51_groen_6.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/NL_Kijkwijzer_51_groen_6.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>6</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -5110,7 +5112,7 @@ tel: 085 4011690</mdcr:ContactString>
     <mdcr:Rating ratingID="9">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/NL/Kijkwijzer/1/9</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.kijkwijzer.nl/images/icons/groen_9.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/NL_Kijkwijzer_groen_9.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>9</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -5123,7 +5125,7 @@ tel: 085 4011690</mdcr:ContactString>
     <mdcr:Rating ratingID="12">
       <mdcr:Ordinal>9</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/NL/Kijkwijzer/1/12</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.kijkwijzer.nl/images/icons/groen_12.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/NL_Kijkwijzer_groen_12.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>12</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -5136,7 +5138,7 @@ tel: 085 4011690</mdcr:ContactString>
     <mdcr:Rating ratingID="16">
       <mdcr:Ordinal>12</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/NL/Kijkwijzer/1/16</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.kijkwijzer.nl/images/icons/groen_16.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/NL_Kijkwijzer_groen_16.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -5431,7 +5433,7 @@ Phone: +234 9 220 0246
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastValidated="2013-09-21T14:02:57" lastSave="2016-12-22T15:55:23" version="2">
+  <mdcr:RatingSystem lastValidated="2017-07-28T03:50:00" lastSave="2017-08-07T14:19:53" version="2">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -5454,23 +5456,25 @@ Phone: +234 9 220 0246
         <mdcr:Environment>Broadcast</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
-    <mdcr:LastChecked>2013-09-28</mdcr:LastChecked>
+    <mdcr:LastChecked>2017-07-27</mdcr:LastChecked>
     <mdcr:URI>http://www.movielabs.com/md/ratings/CA/OFRB/2</mdcr:URI>
     <mdcr:RatingsOrg organizationID="Ontario Film Review Board,">
       <md:DisplayName>Ontario Film Review Board,</md:DisplayName>
-      <mdcr:ContactString>Ontario Film Review Board
+      <mdcr:ContactString>Ontario Film Authority
 4950 Yonge Street, Suite 101B
-Toronto ON  M2N 6K1
-Phone: (416) 314-3626   
-Fax: (416) 314-3632   
-Toll-free: 1-800-268-6024</mdcr:ContactString>
-      <mdcr:URL>http://www.ofrb.gov.on.ca/english/default.htm</mdcr:URL>
+Toronto ON
+M2N 6K1
+Telephone: 416-224-8000
+Toll-Free: 1-844-229-8009
+Fax: 416-224-8085
+Email: info@ontariofilmauthority.ca</mdcr:ContactString>
+      <mdcr:URL>https://www.ontariofilmauthority.ca/</mdcr:URL>
       <mdcr:OrgType>Gov</mdcr:OrgType>
     </mdcr:RatingsOrg>
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/OFRB/2/G</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ofrb.gov.on.ca/english/images/G_high.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_OFRB_G.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -5483,7 +5487,7 @@ Toll-free: 1-800-268-6024</mdcr:ContactString>
     <mdcr:Rating ratingID="PG">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/OFRB/2/PG</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ofrb.gov.on.ca/english/images/PG_high.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_OFRB_PG.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -5497,7 +5501,7 @@ Toll-free: 1-800-268-6024</mdcr:ContactString>
     <mdcr:Rating ratingID="14A">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/OFRB/2/14A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ofrb.gov.on.ca/english/images/14a_high.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_OFRB_14A.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>14</mdcr:MinRecAge>
       <mdcr:MinAge>14</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -5511,7 +5515,7 @@ Toll-free: 1-800-268-6024</mdcr:ContactString>
     <mdcr:Rating ratingID="18A">
       <mdcr:Ordinal>75</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/OFRB/2/18A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ofrb.gov.on.ca/english/images/18a_high.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_OFRB_18A.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -5525,7 +5529,7 @@ Toll-free: 1-800-268-6024</mdcr:ContactString>
     <mdcr:Rating ratingID="R">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/OFRB/2/R</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ofrb.gov.on.ca/english/images/R_high.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_OFRB_R.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -6153,7 +6157,7 @@ Email: info@mpa-canada.org</mdcr:ContactString>
       <mdcr:LinkToLogo>./imageCache/TR_IBMCT_Sex.jpg</mdcr:LinkToLogo>
     </mdcr:Reason>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastValidated="2013-09-07T17:29:33" lastSave="2016-12-06T16:14:58" version="1">
+  <mdcr:RatingSystem lastValidated="2017-07-28T03:50:46" lastSave="2017-08-07T14:25:35" version="2">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -6175,18 +6179,18 @@ Email: info@mpa-canada.org</mdcr:ContactString>
         <mdcr:Environment>other</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
-    <mdcr:LastChecked>2013-09-28</mdcr:LastChecked>
-    <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/1</mdcr:URI>
+    <mdcr:LastChecked>2017-07-27</mdcr:LastChecked>
+    <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/2</mdcr:URI>
     <mdcr:RatingsOrg organizationID="Office of FIlm and Literature Classification">
       <md:DisplayName>Office of FIlm and Literature Classification</md:DisplayName>
       <mdcr:ContactString>PO Box 1999, Wellington 6140, New Zealand</mdcr:ContactString>
-      <mdcr:URL>http://www.censorship.govt.nz/home.html</mdcr:URL>
+      <mdcr:URL>https://www.classificationoffice.govt.nz/</mdcr:URL>
       <mdcr:OrgType>Gov</mdcr:OrgType>
     </mdcr:RatingsOrg>
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/1/G</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.censorship.govt.nz/images/g-label-small.jpg</mdcr:LinkToLogo>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/2/G</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/NZ_OFLC_g.gif</mdcr:LinkToLogo>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
       <mdcr:Descriptor language="en">
@@ -6197,8 +6201,8 @@ Email: info@mpa-canada.org</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="PG">
       <mdcr:Ordinal>3</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/1/PG</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.censorship.govt.nz/images/pg-label-small.jpg</mdcr:LinkToLogo>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/2/PG</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/NZ_OFLC_pg.gif</mdcr:LinkToLogo>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
       <mdcr:Descriptor language="en">
@@ -6209,8 +6213,8 @@ Email: info@mpa-canada.org</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="RP13">
       <mdcr:Ordinal>6</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/1/RP13</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.censorship.govt.nz/images/rp13-label-small.jpg</mdcr:LinkToLogo>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/2/RP13</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/NZ_OFLC_rp13.gif</mdcr:LinkToLogo>
       <mdcr:MinAge>13</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
@@ -6222,8 +6226,8 @@ Email: info@mpa-canada.org</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="R13">
       <mdcr:Ordinal>9</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/1/R13</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.censorship.govt.nz/images/r13-label-small.jpg</mdcr:LinkToLogo>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/2/R13</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/NZ_OFLC_r13.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>13</mdcr:MinRecAge>
       <mdcr:MinAge>13</mdcr:MinAge>
       <mdcr:MinAgeSupervised>13</mdcr:MinAgeSupervised>
@@ -6236,8 +6240,8 @@ Email: info@mpa-canada.org</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="R15">
       <mdcr:Ordinal>12</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/1/R15</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.censorship.govt.nz/images/r15-label-small.jpg</mdcr:LinkToLogo>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/2/R15</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/NZ_OFLC_r15.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>15</mdcr:MinRecAge>
       <mdcr:MinAge>15</mdcr:MinAge>
       <mdcr:MinAgeSupervised>15</mdcr:MinAgeSupervised>
@@ -6250,8 +6254,8 @@ Email: info@mpa-canada.org</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="M">
       <mdcr:Ordinal>15</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/1/M</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.censorship.govt.nz/images/m-label-small.jpg</mdcr:LinkToLogo>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/2/M</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/NZ_OFLC_m.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
@@ -6263,8 +6267,8 @@ Email: info@mpa-canada.org</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="RP16">
       <mdcr:Ordinal>18</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/1/RP16</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.censorship.govt.nz/images/rp16-label-small.jpg</mdcr:LinkToLogo>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/2/RP16</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/NZ_OFLC_rp16.gif</mdcr:LinkToLogo>
       <mdcr:MinAge>16</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
@@ -6276,8 +6280,8 @@ Email: info@mpa-canada.org</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="R16">
       <mdcr:Ordinal>21</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/1/R16</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.censorship.govt.nz/images/r16-label-small.jpg</mdcr:LinkToLogo>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/2/R16</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/NZ_OFLC_r16.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>16</mdcr:MinAge>
       <mdcr:MinAgeSupervised>16</mdcr:MinAgeSupervised>
@@ -6288,10 +6292,24 @@ Email: info@mpa-canada.org</mdcr:ContactString>
         <mdcr:Explanation><![CDATA[<div class="userHtml">If something has one of these labels it can only be supplied to people of and over the age shown on the label. A parent, shop or cinema is breaking the law if they supply an age-restricted item to someone who is not legally allowed to access it. You will see these labels on films, games, DVDs and a few music recordings, magazines and books.</div>]]></mdcr:Explanation>
       </mdcr:Descriptor>
     </mdcr:Rating>
+    <mdcr:Rating ratingID="RP18">
+      <mdcr:Ordinal>79</mdcr:Ordinal>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/2/RP18</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/NZ_OFLC_rp18.gif</mdcr:LinkToLogo>
+      <mdcr:MinRecAge>18</mdcr:MinRecAge>
+      <mdcr:MinAge>18</mdcr:MinAge>
+      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
+      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
+      <mdcr:Descriptor language="en">
+        <mdcr:Label>Restricted to persons 18 years of age and over unless accomp[anied by Parent/Guardian</mdcr:Label>
+        <mdcr:Definition>It is illegal to sell, hire, show or give a film or game with an age restricted label to anyone under the age specified.</mdcr:Definition>
+        <mdcr:Explanation><![CDATA[<div class="userHtml">If something has one of these labels it can only be supplied to people of and over the age shown on the label. A parent, shop or cinema is breaking the law if they supply an age-restricted item to someone who is not legally allowed to access it. You will see these labels on films, games, DVDs and a few music recordings, magazines and books.</div>]]></mdcr:Explanation>
+      </mdcr:Descriptor>
+    </mdcr:Rating>
     <mdcr:Rating ratingID="R18">
       <mdcr:Ordinal>80</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/1/R18</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.censorship.govt.nz/images/r18-label-small.jpg</mdcr:LinkToLogo>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/2/R18</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/NZ_OFLC_r18.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -6304,14 +6322,92 @@ Email: info@mpa-canada.org</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="R">
       <mdcr:Ordinal>95</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/1/R</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.censorship.govt.nz/images/r-label-small.jpg</mdcr:LinkToLogo>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/NZ/OFLC/2/R</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/NZ_OFLC_r.gif</mdcr:LinkToLogo>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
       <mdcr:Descriptor language="en">
         <mdcr:Label>Restricted to a particular class of persons, or for particular purposes, or both, specified by the Office of Film and Literature Classification</mdcr:Label>
         <mdcr:Definition>R means that there is a special restriction.</mdcr:Definition>
         <mdcr:Explanation><![CDATA[<div class="userHtml">Refer to the words on the right of the label for the full conditions.</div>]]></mdcr:Explanation>
+      </mdcr:Descriptor>
+    </mdcr:Rating>
+  </mdcr:RatingSystem>
+  <mdcr:RatingSystem lastValidated="2013-09-14T11:41:02" lastSave="2017-10-17T20:08:49" version="1">
+    <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
+    <mdcr:RatingSystemID>
+      <mdcr:Region>
+        <md:country>JP</md:country>
+        <mdcr:RegionName>JAPAN</mdcr:RegionName>
+      </mdcr:Region>
+      <mdcr:System>EIRIN</mdcr:System>
+    </mdcr:RatingSystemID>
+    <mdcr:AdoptiveRegion>
+      <md:country>JP</md:country>
+      <mdcr:RegionName>JAPAN</mdcr:RegionName>
+      <mdcr:Usage>
+        <mdcr:Media>Film</mdcr:Media>
+        <mdcr:Environment>Theater</mdcr:Environment>
+        <mdcr:Environment>Broadcast</mdcr:Environment>
+      </mdcr:Usage>
+    </mdcr:AdoptiveRegion>
+    <mdcr:LastChecked>2013-09-28</mdcr:LastChecked>
+    <mdcr:URI>http://www.movielabs.com/md/ratings/JP/ERIN/1</mdcr:URI>
+    <mdcr:RatingsOrg organizationID="EIGA RINRI IINKAI">
+      <md:DisplayName>EIGA RINRI IINKAI</md:DisplayName>
+      <mdcr:URL>http://www.eirin.jp/</mdcr:URL>
+      <mdcr:OrgType>other</mdcr:OrgType>
+    </mdcr:RatingsOrg>
+    <mdcr:Rating ratingID="G">
+      <mdcr:Ordinal>0</mdcr:Ordinal>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/JP/ERIN/1/G</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/JP-ERIN-G.jpg</mdcr:LinkToLogo>
+      <mdcr:MinRecAge>0</mdcr:MinRecAge>
+      <mdcr:MinAge>0</mdcr:MinAge>
+      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
+      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
+      <mdcr:Descriptor language="EN">
+        <mdcr:Label>General</mdcr:Label>
+        <mdcr:Definition>Suitable for all ages</mdcr:Definition>
+      </mdcr:Descriptor>
+    </mdcr:Rating>
+    <mdcr:Rating ratingID="PG12">
+      <mdcr:Ordinal>3</mdcr:Ordinal>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/JP/ERIN/1/PG12</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/JP-ERIN-PG12.jpg</mdcr:LinkToLogo>
+      <mdcr:MinRecAge>12</mdcr:MinRecAge>
+      <mdcr:MinAge>0</mdcr:MinAge>
+      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
+      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
+      <mdcr:Descriptor language="EN">
+        <mdcr:Label>Parental guidance - 12 and Above</mdcr:Label>
+        <mdcr:Definition>Parental guidance requested for young people under 12 years</mdcr:Definition>
+      </mdcr:Descriptor>
+    </mdcr:Rating>
+    <mdcr:Rating ratingID="R15+">
+      <mdcr:Ordinal>6</mdcr:Ordinal>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/JP/ERIN/1/R15+</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/JP-ERIN-R15.jpg</mdcr:LinkToLogo>
+      <mdcr:MinRecAge>15</mdcr:MinRecAge>
+      <mdcr:MinAge>15</mdcr:MinAge>
+      <mdcr:MinAgeSupervised>15</mdcr:MinAgeSupervised>
+      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
+      <mdcr:Descriptor language="EN">
+        <mdcr:Label>15 and above only</mdcr:Label>
+        <mdcr:Definition>for persons aged 15 and above only (No one under 15 admitted).</mdcr:Definition>
+      </mdcr:Descriptor>
+    </mdcr:Rating>
+    <mdcr:Rating ratingID="R18+">
+      <mdcr:Ordinal>80</mdcr:Ordinal>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/JP/ERIN/1/R18+</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/JP-ERIN-R18.jpg</mdcr:LinkToLogo>
+      <mdcr:MinRecAge>18</mdcr:MinRecAge>
+      <mdcr:MinAge>18</mdcr:MinAge>
+      <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
+      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
+      <mdcr:Descriptor language="EN">
+        <mdcr:Label>18 and above only</mdcr:Label>
+        <mdcr:Definition>for persons aged 18 and above only (No one under 18 admitted).</mdcr:Definition>
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
@@ -6352,7 +6448,7 @@ Fax  (02) 9289 7101</mdcr:ContactString>
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/AU/NCS/1/G</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.classification.gov.au/Guidelines/PublishingImages/image1.jpeg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/AU_NCS_image1.jpeg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -6366,7 +6462,7 @@ Fax  (02) 9289 7101</mdcr:ContactString>
     <mdcr:Rating ratingID="PG">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/AU/NCS/1/PG</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.classification.gov.au/Guidelines/PublishingImages/image2.jpeg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/AU_NCS_image2.jpeg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>15</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -6380,7 +6476,7 @@ Fax  (02) 9289 7101</mdcr:ContactString>
     <mdcr:Rating ratingID="M">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/AU/NCS/1/M</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.classification.gov.au/Guidelines/PublishingImages/image3.jpeg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/AU_NCS_image3.jpeg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>15</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -6394,7 +6490,7 @@ Fax  (02) 9289 7101</mdcr:ContactString>
     <mdcr:Rating ratingID="MA15">
       <mdcr:Ordinal>9</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/AU/NCS/1/MA15</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.classification.gov.au/Guidelines/PublishingImages/image4.jpeg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/AU_NCS_image4.jpeg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>15</mdcr:MinRecAge>
       <mdcr:MinAge>15</mdcr:MinAge>
       <mdcr:MinAgeSupervised>15</mdcr:MinAgeSupervised>
@@ -6408,7 +6504,7 @@ Fax  (02) 9289 7101</mdcr:ContactString>
     <mdcr:Rating ratingID="R18+">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/AU/NCS/1/R18+</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.classification.gov.au/Guidelines/PublishingImages/image5.jpeg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/AU_NCS_image5.jpeg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -6422,7 +6518,7 @@ Fax  (02) 9289 7101</mdcr:ContactString>
     <mdcr:Rating ratingID="CTC">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/AU/NCS/1/CTC</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.classification.gov.au/Guidelines/PublishingImages/Check-the-Classification.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/AU_NCS_Check-the-Classification.jpg</mdcr:LinkToLogo>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
       <mdcr:Descriptor language="en">
@@ -6434,7 +6530,7 @@ Fax  (02) 9289 7101</mdcr:ContactString>
     <mdcr:Rating ratingID="X18+">
       <mdcr:Ordinal>90</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/AU/NCS/1/X18+</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.classification.gov.au/Guidelines/PublishingImages/image6.jpeg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/AU_NCS_image6.jpeg</mdcr:LinkToLogo>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
@@ -6987,7 +7083,7 @@ Children’s Ombudsman http://www.brpd.gov.pl
     <mdcr:Rating ratingID="I">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/PL/NBC-PL/1/I</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.krrit.gov.pl/Data/Files/_public/images/elementy-graf/ochrona-znaki/usmiech_kolor.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/PL_NBC-PL_usmiech_kolor.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7004,7 +7100,7 @@ Children’s Ombudsman http://www.brpd.gov.pl
     <mdcr:Rating ratingID="II">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/PL/NBC-PL/0/II</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.krrit.gov.pl/Data/Files/_public/images/elementy-graf/ochrona-znaki/7_kolor.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/PL_NBC-PL_7_kolor.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>7</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7021,7 +7117,7 @@ Children’s Ombudsman http://www.brpd.gov.pl
     <mdcr:Rating ratingID="III">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/PL/NBC-PL/0/III</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.krrit.gov.pl/Data/Files/_public/images/elementy-graf/ochrona-znaki/12_kolor.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/PL_NBC-PL_12_kolor.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>12</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7038,7 +7134,7 @@ Children’s Ombudsman http://www.brpd.gov.pl
     <mdcr:Rating ratingID="IV">
       <mdcr:Ordinal>9</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/PL/NBC-PL/0/IV</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.krrit.gov.pl/Data/Files/_public/images/elementy-graf/ochrona-znaki/16_kolor.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/PL_NBC-PL_16_kolor.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7055,7 +7151,7 @@ Children’s Ombudsman http://www.brpd.gov.pl
     <mdcr:Rating ratingID="18+">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/PL/NBC-PL/1/18+</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.krrit.gov.pl/Data/Files/_public/images/elementy-graf/ochrona-znaki/klucz_kolor.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/PL_NBC-PL_klucz_kolor.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7248,7 +7344,7 @@ PO Box 9244 Victoria BC V8W 9J2</mdcr:ContactString>
     <mdcr:Rating ratingID="AP">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CPBC-T/2/AP</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/approved.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CPBC-T_approved.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7261,7 +7357,7 @@ PO Box 9244 Victoria BC V8W 9J2</mdcr:ContactString>
     <mdcr:Rating ratingID="SP">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CPBC-T/2/SP</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/special%20permission.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CPBC-T_special%20permission.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>14</mdcr:MinRecAge>
       <mdcr:MinAge>14</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7274,7 +7370,7 @@ PO Box 9244 Victoria BC V8W 9J2</mdcr:ContactString>
     <mdcr:Rating ratingID="A">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CPBC-T/2/A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/a.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CPBC-T_a.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -7282,84 +7378,6 @@ PO Box 9244 Victoria BC V8W 9J2</mdcr:ContactString>
       <mdcr:Descriptor language="EN">
         <mdcr:Label>Adult</mdcr:Label>
         <mdcr:Definition>Approved for exhibition with films classified as Restricted or Adult.</mdcr:Definition>
-      </mdcr:Descriptor>
-    </mdcr:Rating>
-  </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastValidated="2013-09-14T07:41:02" lastSave="2014-12-22T20:28:57" version="1">
-    <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
-    <mdcr:RatingSystemID>
-      <mdcr:Region>
-        <md:country>JP</md:country>
-        <mdcr:RegionName>JAPAN</mdcr:RegionName>
-      </mdcr:Region>
-      <mdcr:System>EIRIN</mdcr:System>
-    </mdcr:RatingSystemID>
-    <mdcr:AdoptiveRegion>
-      <md:country>JP</md:country>
-      <mdcr:RegionName>JAPAN</mdcr:RegionName>
-      <mdcr:Usage>
-        <mdcr:Media>Film</mdcr:Media>
-        <mdcr:Environment>Theater</mdcr:Environment>
-        <mdcr:Environment>Broadcast</mdcr:Environment>
-      </mdcr:Usage>
-    </mdcr:AdoptiveRegion>
-    <mdcr:LastChecked>2013-09-28</mdcr:LastChecked>
-    <mdcr:URI>http://www.movielabs.com/md/ratings/JP/ERIN/1</mdcr:URI>
-    <mdcr:RatingsOrg organizationID="EIGA RINRI IINKAI">
-      <md:DisplayName>EIGA RINRI IINKAI</md:DisplayName>
-      <mdcr:URL>http://www.eirin.jp/</mdcr:URL>
-      <mdcr:OrgType>other</mdcr:OrgType>
-    </mdcr:RatingsOrg>
-    <mdcr:Rating ratingID="G">
-      <mdcr:Ordinal>0</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/JP/ERIN/1/G.</mdcr:URI>
-      <mdcr:LinkToLogo>./imageCache/JP-ERIN-G.jpg</mdcr:LinkToLogo>
-      <mdcr:MinRecAge>0</mdcr:MinRecAge>
-      <mdcr:MinAge>0</mdcr:MinAge>
-      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
-      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="EN">
-        <mdcr:Label>General</mdcr:Label>
-        <mdcr:Definition>Suitable for all ages</mdcr:Definition>
-      </mdcr:Descriptor>
-    </mdcr:Rating>
-    <mdcr:Rating ratingID="PG12">
-      <mdcr:Ordinal>3</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/JP/ERIN/1/PG12</mdcr:URI>
-      <mdcr:LinkToLogo>./imageCache/JP-ERIN-PG12.jpg</mdcr:LinkToLogo>
-      <mdcr:MinRecAge>12</mdcr:MinRecAge>
-      <mdcr:MinAge>0</mdcr:MinAge>
-      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
-      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="EN">
-        <mdcr:Label>Parental guidance - 12 and Above</mdcr:Label>
-        <mdcr:Definition>Parental guidance requested for young people under 12 years</mdcr:Definition>
-      </mdcr:Descriptor>
-    </mdcr:Rating>
-    <mdcr:Rating ratingID="R15+">
-      <mdcr:Ordinal>6</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/JP/ERIN/1/R15+</mdcr:URI>
-      <mdcr:LinkToLogo>./imageCache/JP-ERIN-R15.jpg</mdcr:LinkToLogo>
-      <mdcr:MinRecAge>15</mdcr:MinRecAge>
-      <mdcr:MinAge>15</mdcr:MinAge>
-      <mdcr:MinAgeSupervised>15</mdcr:MinAgeSupervised>
-      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="EN">
-        <mdcr:Label>15 and above only</mdcr:Label>
-        <mdcr:Definition>for persons aged 15 and above only (No one under 15 admitted).</mdcr:Definition>
-      </mdcr:Descriptor>
-    </mdcr:Rating>
-    <mdcr:Rating ratingID="R18+">
-      <mdcr:Ordinal>80</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/JP/ERIN/1/R18+</mdcr:URI>
-      <mdcr:LinkToLogo>./imageCache/JP-ERIN-R18.jpg</mdcr:LinkToLogo>
-      <mdcr:MinRecAge>18</mdcr:MinRecAge>
-      <mdcr:MinAge>18</mdcr:MinAge>
-      <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
-      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="EN">
-        <mdcr:Label>18 and above only</mdcr:Label>
-        <mdcr:Definition>for persons aged 18 and above only (No one under 18 admitted).</mdcr:Definition>
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
@@ -7466,7 +7484,7 @@ Washington, DC 20004
     <mdcr:Rating ratingID="TV-Y">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/TVPG/1/TV-Y</mdcr:URI>
-      <mdcr:LinkToLogo>http://tvguidelines.org/images/tvy.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_TVPG_tvy.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7480,7 +7498,7 @@ Washington, DC 20004
     <mdcr:Rating ratingID="TV-G">
       <mdcr:Ordinal>2</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/TVPG/1/TV-G</mdcr:URI>
-      <mdcr:LinkToLogo>http://tvguidelines.org/images/tvg.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_TVPG_tvg.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7502,7 +7520,7 @@ Washington, DC 20004
     <mdcr:Rating ratingID="TV-Y7">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/TVPG/1/TV-Y7</mdcr:URI>
-      <mdcr:LinkToLogo>http://tvguidelines.org/images/tvy7.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_TVPG_tvy7.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>7</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7524,7 +7542,7 @@ Washington, DC 20004
     <mdcr:Rating ratingID="TV-Y7-FV">
       <mdcr:Ordinal>7</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/TVPG/1/TV-Y7-FV</mdcr:URI>
-      <mdcr:LinkToLogo>http://tvguidelines.org/images/tvy7fv.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_TVPG_tvy7fv.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>7</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7545,7 +7563,7 @@ Washington, DC 20004
     <mdcr:Rating ratingID="TV-PG">
       <mdcr:Ordinal>10</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/TVPG/1/TV-PG</mdcr:URI>
-      <mdcr:LinkToLogo>http://tvguidelines.org/images/tvpg.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_TVPG_tvpg.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>10</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7591,7 +7609,7 @@ Washington, DC 20004
     <mdcr:Rating ratingID="TV-14">
       <mdcr:Ordinal>14</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/TVPG/1/TV-14</mdcr:URI>
-      <mdcr:LinkToLogo>http://tvguidelines.org/images/tv14.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_TVPG_tv14.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>14</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7637,7 +7655,7 @@ Washington, DC 20004
     <mdcr:Rating ratingID="TV-MA">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/US/TVPG/1/TV-MA</mdcr:URI>
-      <mdcr:LinkToLogo>http://tvguidelines.org/images/tvma.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/US_TVPG_tvma.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>17</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7771,7 +7789,7 @@ Dartmouth, N.S.</mdcr:ContactString>
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/MFCB/2/G</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/g.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_MFCB_g.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7784,7 +7802,7 @@ Dartmouth, N.S.</mdcr:ContactString>
     <mdcr:Rating ratingID="PG">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/MFCB/2/PG</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/pg.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_MFCB_pg.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7798,7 +7816,7 @@ Dartmouth, N.S.</mdcr:ContactString>
     <mdcr:Rating ratingID="14A">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/MFCB/2/14A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/14a.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_MFCB_14a.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>14</mdcr:MinRecAge>
       <mdcr:MinAge>15</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7812,7 +7830,7 @@ Dartmouth, N.S.</mdcr:ContactString>
     <mdcr:Rating ratingID="18A">
       <mdcr:Ordinal>75</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/MFCB/2/18A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/18a.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_MFCB_18a.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -7827,7 +7845,7 @@ explicit violence, frequent coarse language, sexual activity and/or horror.</div
     <mdcr:Rating ratingID="R">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/MFCB/2/R</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/r.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_MFCB_r.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -7841,7 +7859,7 @@ explicit violence, frequent coarse language, sexual activity and/or horror.</div
     <mdcr:Rating ratingID="A">
       <mdcr:Ordinal>90</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/MFCB/2/A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/a.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_MFCB_a.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -7972,7 +7990,7 @@ explicit violence, frequent coarse language, sexual activity and/or horror.</div
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastSave="2016-12-22T15:24:28" version="2">
+  <mdcr:RatingSystem lastValidated="2017-07-27T23:49:20" lastSave="2017-07-27T20:08:30" version="2">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -7990,7 +8008,7 @@ explicit violence, frequent coarse language, sexual activity and/or horror.</div
         <mdcr:Environment>Theater</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
-    <mdcr:LastChecked>2013-09-28</mdcr:LastChecked>
+    <mdcr:LastChecked>2017-07-27</mdcr:LastChecked>
     <mdcr:URI>http://www.movielabs.com/md/ratings/CA/AFC/2</mdcr:URI>
     <mdcr:RatingsOrg organizationID="Consumer Protection BC">
       <md:DisplayName>Consumer Protection BC</md:DisplayName>
@@ -8006,7 +8024,7 @@ Fax: (780) 427-0195</mdcr:ContactString>
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/AFC/2/G</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.albertafilmratings.ca/images/G.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_AFC_G.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -8020,7 +8038,7 @@ Fax: (780) 427-0195</mdcr:ContactString>
     <mdcr:Rating ratingID="PG">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/AFC/2/PG</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.albertafilmratings.ca/images/PG.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_AFC_PG.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -8034,7 +8052,7 @@ Fax: (780) 427-0195</mdcr:ContactString>
     <mdcr:Rating ratingID="14A">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/AFC/2/14A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.albertafilmratings.ca/images/14A.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_AFC_14A.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>14</mdcr:MinRecAge>
       <mdcr:MinAge>15</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -8048,7 +8066,7 @@ Fax: (780) 427-0195</mdcr:ContactString>
     <mdcr:Rating ratingID="18A">
       <mdcr:Ordinal>70</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/AFC/2/18A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.albertafilmratings.ca/images/18A.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_AFC_18A.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -8067,7 +8085,7 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
     <mdcr:Rating ratingID="R">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/AFC/2/R</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.albertafilmratings.ca/images/R.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_AFC_R.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -8079,7 +8097,7 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastValidated="2013-09-18T07:29:17" lastSave="2014-01-04T15:04:39" version="1">
+  <mdcr:RatingSystem lastValidated="2013-09-18T11:29:17" lastSave="2017-10-17T20:44:45" version="1">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -8103,7 +8121,7 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
         <mdcr:Environment>other</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
-    <mdcr:LastChecked>2013-09-28</mdcr:LastChecked>
+    <mdcr:LastChecked>2017-10-17</mdcr:LastChecked>
     <mdcr:URI>http://www.movielabs.com/md/ratings/GB/BBFC/1</mdcr:URI>
     <mdcr:RatingsOrg organizationID="British Board of Film Classification">
       <md:DisplayName>British Board of Film Classification</md:DisplayName>
@@ -8113,7 +8131,7 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
     <mdcr:Rating ratingID="U">
       <mdcr:Ordinal>1</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/GB/BBFC/1/U</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.bbfc.co.uk/sites/default/files/styles/large/public/U-150px.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/GB_BBFC_U-150px.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>4</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -8122,17 +8140,17 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
         <mdcr:Label>Universal</mdcr:Label>
         <mdcr:Definition>A U film should be suitable for audiences aged four years and over. However, it is impossible to predict what might upset a particular child, especially at this lower end of the category range.</mdcr:Definition>
       </mdcr:Descriptor>
-      <mdcr:RatingReason reasonID="Theme">
-        <mdcr:Value>Theme</mdcr:Value>
+      <mdcr:RatingReason reasonID="Drugs">
+        <mdcr:Value>Drugs</mdcr:Value>
         <mdcr:Descriptor language="en">
-          <mdcr:Label>Theme</mdcr:Label>
+          <mdcr:Label>Drugs</mdcr:Label>
           <mdcr:Definition>n.a</mdcr:Definition>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
-      <mdcr:RatingReason reasonID="Behaviour">
-        <mdcr:Value>Behaviour</mdcr:Value>
+      <mdcr:RatingReason reasonID="Discrimination">
+        <mdcr:Value>Discrimination</mdcr:Value>
         <mdcr:Descriptor language="en">
-          <mdcr:Label>Behaviour</mdcr:Label>
+          <mdcr:Label>Discrimination</mdcr:Label>
           <mdcr:Definition>n.a</mdcr:Definition>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
@@ -8143,17 +8161,10 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
           <mdcr:Definition>n.a</mdcr:Definition>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
-      <mdcr:RatingReason reasonID="Nudity">
-        <mdcr:Value>Nudity</mdcr:Value>
+      <mdcr:RatingReason reasonID="Behaviour">
+        <mdcr:Value>Behaviour</mdcr:Value>
         <mdcr:Descriptor language="en">
-          <mdcr:Label>Nudity</mdcr:Label>
-          <mdcr:Definition>n.a</mdcr:Definition>
-        </mdcr:Descriptor>
-      </mdcr:RatingReason>
-      <mdcr:RatingReason reasonID="Discrimination">
-        <mdcr:Value>Discrimination</mdcr:Value>
-        <mdcr:Descriptor language="en">
-          <mdcr:Label>Discrimination</mdcr:Label>
+          <mdcr:Label>Behaviour</mdcr:Label>
           <mdcr:Definition>n.a</mdcr:Definition>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
@@ -8171,13 +8182,6 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
           <mdcr:Definition>n.a</mdcr:Definition>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
-      <mdcr:RatingReason reasonID="Drugs">
-        <mdcr:Value>Drugs</mdcr:Value>
-        <mdcr:Descriptor language="en">
-          <mdcr:Label>Drugs</mdcr:Label>
-          <mdcr:Definition>n.a</mdcr:Definition>
-        </mdcr:Descriptor>
-      </mdcr:RatingReason>
       <mdcr:RatingReason reasonID="Sex">
         <mdcr:Value>Sex</mdcr:Value>
         <mdcr:Descriptor language="en">
@@ -8185,11 +8189,25 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
           <mdcr:Definition>n.a</mdcr:Definition>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Nudity">
+        <mdcr:Value>Nudity</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Nudity</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Theme">
+        <mdcr:Value>Theme</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Theme</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
     </mdcr:Rating>
     <mdcr:Rating ratingID="PG">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/GB/BBFC/1/PG</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.bbfc.co.uk/sites/default/files/styles/large/public/PG-150px_1.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/GB_BBFC_PG-150px_1.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>8</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -8199,17 +8217,17 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
         <mdcr:Definition>Film is suitable for general viewing, but some scenes may be unsuitable for younger children. A PG film should not disturb a child aged around eight or older.</mdcr:Definition>
         <mdcr:Explanation><![CDATA[<div class="userHtml">Parents should consider whether the content might upset younger or more sensitive children. Some films are given a PG certificate but have not been made with a young audience in mind. However, the certificate means that any issues in the work are appropriate for the majority of this age group and nothing should upset a child of eight or over.</div>]]></mdcr:Explanation>
       </mdcr:Descriptor>
-      <mdcr:RatingReason reasonID="Theme">
-        <mdcr:Value>Theme</mdcr:Value>
+      <mdcr:RatingReason reasonID="Drugs">
+        <mdcr:Value>Drugs</mdcr:Value>
         <mdcr:Descriptor language="en">
-          <mdcr:Label>Theme</mdcr:Label>
+          <mdcr:Label>Drugs</mdcr:Label>
           <mdcr:Definition>n.a</mdcr:Definition>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
-      <mdcr:RatingReason reasonID="Behaviour">
-        <mdcr:Value>Behaviour</mdcr:Value>
+      <mdcr:RatingReason reasonID="Discrimination">
+        <mdcr:Value>Discrimination</mdcr:Value>
         <mdcr:Descriptor language="en">
-          <mdcr:Label>Behaviour</mdcr:Label>
+          <mdcr:Label>Discrimination</mdcr:Label>
           <mdcr:Definition>n.a</mdcr:Definition>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
@@ -8220,17 +8238,10 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
           <mdcr:Definition>n.a</mdcr:Definition>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
-      <mdcr:RatingReason reasonID="Nudity">
-        <mdcr:Value>Nudity</mdcr:Value>
+      <mdcr:RatingReason reasonID="Behaviour">
+        <mdcr:Value>Behaviour</mdcr:Value>
         <mdcr:Descriptor language="en">
-          <mdcr:Label>Nudity</mdcr:Label>
-          <mdcr:Definition>n.a</mdcr:Definition>
-        </mdcr:Descriptor>
-      </mdcr:RatingReason>
-      <mdcr:RatingReason reasonID="Discrimination">
-        <mdcr:Value>Discrimination</mdcr:Value>
-        <mdcr:Descriptor language="en">
-          <mdcr:Label>Discrimination</mdcr:Label>
+          <mdcr:Label>Behaviour</mdcr:Label>
           <mdcr:Definition>n.a</mdcr:Definition>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
@@ -8248,13 +8259,6 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
           <mdcr:Definition>n.a</mdcr:Definition>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
-      <mdcr:RatingReason reasonID="Drugs">
-        <mdcr:Value>Drugs</mdcr:Value>
-        <mdcr:Descriptor language="en">
-          <mdcr:Label>Drugs</mdcr:Label>
-          <mdcr:Definition>n.a</mdcr:Definition>
-        </mdcr:Descriptor>
-      </mdcr:RatingReason>
       <mdcr:RatingReason reasonID="Sex">
         <mdcr:Value>Sex</mdcr:Value>
         <mdcr:Descriptor language="en">
@@ -8262,32 +8266,25 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
           <mdcr:Definition>n.a</mdcr:Definition>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
-    </mdcr:Rating>
-    <mdcr:Rating ratingID="12A">
-      <mdcr:Ordinal>6</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/GB/BBFC/1/12A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.bbfc.co.uk/sites/default/files/styles/large/public/12A-150px.jpg</mdcr:LinkToLogo>
-      <mdcr:MinRecAge>12</mdcr:MinRecAge>
-      <mdcr:MinAge>12</mdcr:MinAge>
-      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
-      <mdcr:Override>
-        <md:country>GB</md:country>
-        <mdcr:RegionName>UNITED KINGDOM</mdcr:RegionName>
-        <mdcr:Usage>
-          <mdcr:Media>Film</mdcr:Media>
-          <mdcr:Environment>Theater</mdcr:Environment>
-        </mdcr:Usage>
-      </mdcr:Override>
-      <mdcr:HPCApplicable>false</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="EN">
-        <mdcr:Label>Accompanied under 12</mdcr:Label>
-        <mdcr:Definition>Children younger than 12 may see the film if they are accompanied by an adult (eg someone over the age of 18), who must watch the film with them.</mdcr:Definition>
-      </mdcr:Descriptor>
+      <mdcr:RatingReason reasonID="Nudity">
+        <mdcr:Value>Nudity</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Nudity</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Theme">
+        <mdcr:Value>Theme</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Theme</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
     </mdcr:Rating>
     <mdcr:Rating ratingID="12">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/GB/BBFC/1/12</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.bbfc.co.uk/sites/default/files/styles/large/public/12-150px.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/GB_BBFC_12-150px.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>12</mdcr:MinRecAge>
       <mdcr:MinAge>12</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -8308,11 +8305,177 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
         <mdcr:Definition>Suitable for 12 years and over</mdcr:Definition>
         <mdcr:Explanation><![CDATA[<div class="userHtml">The 12 certificate is just for videos, DVDs and Blu-rays. 12A is for films at the cinema only.</div>]]></mdcr:Explanation>
       </mdcr:Descriptor>
+      <mdcr:RatingReason reasonID="Drugs">
+        <mdcr:Value>Drugs</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Drugs</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Discrimination">
+        <mdcr:Value>Discrimination</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Discrimination</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+          <mdcr:Explanation><![CDATA[<div class="userHtml" />]]></mdcr:Explanation>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Horror">
+        <mdcr:Value>Horror</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Horror</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Behaviour">
+        <mdcr:Value>Behaviour</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Behaviour</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Language">
+        <mdcr:Value>Language</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Language</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Violence">
+        <mdcr:Value>Violence</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Violence</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+          <mdcr:Explanation><![CDATA[<div class="userHtml">There should be no emphasis on injuries or blood,
+but occasional gory moments may be permitted if
+justified by the context.
+Sexual violence may only be implied or briefly and
+discreetly indicated, and must have a strong contextual
+justification.</div>]]></mdcr:Explanation>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Sex">
+        <mdcr:Value>Sex</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Sex</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+          <mdcr:Explanation><![CDATA[<div class="userHtml">Sex references should not go beyond what is suitable for
+young teenagers. Frequent crude references are unlikely
+to be acceptable.</div>]]></mdcr:Explanation>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Nudity">
+        <mdcr:Value>Nudity</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Nudity</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Theme">
+        <mdcr:Value>Theme</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Theme</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+    </mdcr:Rating>
+    <mdcr:Rating ratingID="12A">
+      <mdcr:Ordinal>6</mdcr:Ordinal>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/GB/BBFC/1/12A</mdcr:URI>
+      <mdcr:LinkToLogo>./imageCache/GB_BBFC_12A-150px.jpg</mdcr:LinkToLogo>
+      <mdcr:MinRecAge>12</mdcr:MinRecAge>
+      <mdcr:MinAge>12</mdcr:MinAge>
+      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
+      <mdcr:Override>
+        <md:country>GB</md:country>
+        <mdcr:RegionName>UNITED KINGDOM</mdcr:RegionName>
+        <mdcr:Usage>
+          <mdcr:Media>Film</mdcr:Media>
+          <mdcr:Environment>Theater</mdcr:Environment>
+        </mdcr:Usage>
+      </mdcr:Override>
+      <mdcr:HPCApplicable>false</mdcr:HPCApplicable>
+      <mdcr:Descriptor language="EN">
+        <mdcr:Label>Accompanied under 12</mdcr:Label>
+        <mdcr:Definition>Children younger than 12 may see the film if they are accompanied by an adult (eg someone over the age of 18), who must watch the film with them.</mdcr:Definition>
+      </mdcr:Descriptor>
+      <mdcr:RatingReason reasonID="Drugs">
+        <mdcr:Value>Drugs</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Drugs</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Discrimination">
+        <mdcr:Value>Discrimination</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Discrimination</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Horror">
+        <mdcr:Value>Horror</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Horror</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Behaviour">
+        <mdcr:Value>Behaviour</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Behaviour</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Language">
+        <mdcr:Value>Language</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Language</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Violence">
+        <mdcr:Value>Violence</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Violence</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+          <mdcr:Explanation><![CDATA[<div class="userHtml">There should be no emphasis on injuries or blood,
+but occasional gory moments may be permitted if
+justified by the context.
+Sexual violence may only be implied or briefly and
+discreetly indicated, and must have a strong contextual
+justification.</div>]]></mdcr:Explanation>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Sex">
+        <mdcr:Value>Sex</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Sex</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+          <mdcr:Explanation><![CDATA[<div class="userHtml">Sex references should not go beyond what is suitable for
+young teenagers. Frequent crude references are unlikely
+to be acceptable.</div>]]></mdcr:Explanation>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Nudity">
+        <mdcr:Value>Nudity</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Nudity</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Theme">
+        <mdcr:Value>Theme</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Theme</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
     </mdcr:Rating>
     <mdcr:Rating ratingID="15">
       <mdcr:Ordinal>9</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/GB/BBFC/1/15</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.bbfc.co.uk/sites/default/files/styles/large/public/15-150px.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/GB_BBFC_15-150px.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>15</mdcr:MinRecAge>
       <mdcr:MinAge>15</mdcr:MinAge>
       <mdcr:MinAgeSupervised>15</mdcr:MinAgeSupervised>
@@ -8321,11 +8484,81 @@ The Hangover Part II (2011), and Project X (2012). Most horror movies that inclu
         <mdcr:Label>15 and Older</mdcr:Label>
         <mdcr:Definition>15 rated works are not suitable for children under 15 years of age. No theme is prohibited, provided the treatment is appropriate for 15 year olds.</mdcr:Definition>
       </mdcr:Descriptor>
+      <mdcr:RatingReason reasonID="Drugs">
+        <mdcr:Value>Drugs</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Drugs</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Discrimination">
+        <mdcr:Value>Discrimination</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Discrimination</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Horror">
+        <mdcr:Value>Horror</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Horror</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Behaviour">
+        <mdcr:Value>Behaviour</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Behaviour</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Language">
+        <mdcr:Value>Language</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Language</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Violence">
+        <mdcr:Value>Violence</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Violence</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+          <mdcr:Explanation><![CDATA[<div class="userHtml">The strongest gory images are unlikely to
+be acceptable. Strong sadistic or sexualised violence is also
+unlikely to be acceptable.
+There may be detailed verbal references to sexual violence
+but any portrayal of sexual violence must be discreet and
+have a strong contextual justification.</div>]]></mdcr:Explanation>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Sex">
+        <mdcr:Value>Sex</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Sex</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+          <mdcr:Explanation><![CDATA[<div class="userHtml">There may be strong verbal references to sexual behaviour, but the strongest references are unlikely to be acceptable unless justified by context. Works whose primary purpose is sexual arousal or stimulation are unlikely to be acceptable.</div>]]></mdcr:Explanation>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Nudity">
+        <mdcr:Value>Nudity</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Nudity</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
+      <mdcr:RatingReason reasonID="Theme">
+        <mdcr:Value>Theme</mdcr:Value>
+        <mdcr:Descriptor language="en">
+          <mdcr:Label>Theme</mdcr:Label>
+          <mdcr:Definition>n.a</mdcr:Definition>
+        </mdcr:Descriptor>
+      </mdcr:RatingReason>
     </mdcr:Rating>
     <mdcr:Rating ratingID="18">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/GB/BBFC/1/18</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.bbfc.co.uk/sites/default/files/styles/large/public/18-150px.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/GB_BBFC_18-150px.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -8346,7 +8579,7 @@ images, or other very strong sexual images will be confined to the R18 category.
     <mdcr:Rating ratingID="R18">
       <mdcr:Ordinal>90</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/GB/BBFC/1/R18</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.bbfc.co.uk/sites/default/files/styles/large/public/R18-150px.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/GB_BBFC_R18-150px.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -8417,6 +8650,7 @@ images, or other very strong sexual images will be confined to the R18 category.
       <mdcr:GeneralDescriptor language="EN">
         <mdcr:Label>Violence</mdcr:Label>
         <mdcr:Definition>n.a</mdcr:Definition>
+        <mdcr:Explanation><![CDATA[<div class="userHtml" />]]></mdcr:Explanation>
       </mdcr:GeneralDescriptor>
     </mdcr:Reason>
   </mdcr:RatingSystem>
@@ -8547,7 +8781,7 @@ NW Washington, D.C. 20006
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastValidated="2013-10-01T19:42:17" lastSave="2013-10-28T19:00:51" version="1">
+  <mdcr:RatingSystem lastValidated="2013-10-01T23:42:17" lastSave="2017-09-28T20:23:44" version="1">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -8561,13 +8795,17 @@ NW Washington, D.C. 20006
       <mdcr:RegionName>HUNGARY</mdcr:RegionName>
       <mdcr:Usage>
         <mdcr:Media>Film</mdcr:Media>
+        <mdcr:Media>TV</mdcr:Media>
         <mdcr:Environment>Theater</mdcr:Environment>
+        <mdcr:Environment>Broadcast</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
+    <mdcr:LastChecked>2017-09-28</mdcr:LastChecked>
     <mdcr:URI>http://www.movielabs.com/md/ratings/HU/RCNOF/1</mdcr:URI>
-    <mdcr:RatingsOrg organizationID="Rating Committee of the National Office of Film">
-      <md:DisplayName>Rating Committee of the National Office of Film</md:DisplayName>
-      <mdcr:URL>http://www.ortt.hu/belso_oldal.php?belso_id=55</mdcr:URL>
+    <mdcr:RatingsOrg organizationID="NATIONAL MEDIA AND COMMUNICATIONS AUTHORITY">
+      <md:DisplayName>NATIONAL MEDIA AND COMMUNICATIONS AUTHORITY</md:DisplayName>
+      <mdcr:ContactString>1015 Budapest, Ostrom u. 23-25; email: info@nmhh.hu; tel: (06 1) 457 7100</mdcr:ContactString>
+      <mdcr:URL>http://nmhh.hu/</mdcr:URL>
       <mdcr:OrgType>Gov</mdcr:OrgType>
     </mdcr:RatingsOrg>
     <mdcr:Rating ratingID="I">
@@ -8578,66 +8816,61 @@ NW Washington, D.C. 20006
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="EN">
-        <mdcr:Label>category I</mdcr:Label>
-        <mdcr:Definition>suitable for all.</mdcr:Definition>
-        <mdcr:Explanation />
+      <mdcr:Descriptor language="HU">
+        <mdcr:Label>I</mdcr:Label>
+        <mdcr:Definition>A korhatárra tekintet nélkül megtekinthető műsorokat a csatornáknak nem kell jelöléssel ellátniuk, és bármikor bemutathatók.</mdcr:Definition>
       </mdcr:Descriptor>
     </mdcr:Rating>
     <mdcr:Rating ratingID="II">
       <mdcr:Ordinal>3</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/HU/RCNOF/0/II</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/HU/RCNOF/1/II</mdcr:URI>
       <mdcr:LinkToLogo>./imageCache/HU_Cat_II.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>6</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="EN">
-        <mdcr:Label>category II</mdcr:Label>
-        <mdcr:Definition>not suitable for children under 6.</mdcr:Definition>
-        <mdcr:Explanation>Mild violence, sex references and drug references are allowed.</mdcr:Explanation>
+      <mdcr:Descriptor language="HU">
+        <mdcr:Label>II</mdcr:Label>
+        <mdcr:Definition>A 6 éven aluliak számára nem ajánlott műsor a megfelelőjelzéssel bármikor vetíthető, de 6 éven aluliaknak szánt műsorszámok között nem tehető közzé.</mdcr:Definition>
       </mdcr:Descriptor>
     </mdcr:Rating>
     <mdcr:Rating ratingID="III">
       <mdcr:Ordinal>6</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/HU/RCNOF/0/III</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/HU/RCNOF/1/III</mdcr:URI>
       <mdcr:LinkToLogo>./imageCache/HU_Cat_III.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>12</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="EN">
-        <mdcr:Label>category III</mdcr:Label>
-        <mdcr:Definition>not suitable for children under 12.</mdcr:Definition>
-        <mdcr:Explanation>Moderate violence, sex stuff, drug references and also strong language is allowed.</mdcr:Explanation>
+      <mdcr:Descriptor language="HU">
+        <mdcr:Label>III</mdcr:Label>
+        <mdcr:Definition>A 12 éven aluliak számára nem ajánlott műsorok a jelzéssel bármikor adásba kerülhetnek, kivéve a 12 éven aluliaknak szánt műsorszám között.</mdcr:Definition>
       </mdcr:Descriptor>
     </mdcr:Rating>
     <mdcr:Rating ratingID="IV">
       <mdcr:Ordinal>9</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/HU/RCNOF/0/IV</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/HU/RCNOF/1/IV</mdcr:URI>
       <mdcr:LinkToLogo>./imageCache/HU_Cat_IV.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="EN">
-        <mdcr:Label>category IV</mdcr:Label>
-        <mdcr:Definition>not suitable for children under 16.</mdcr:Definition>
-        <mdcr:Explanation>Strong violence, drugs, themes, sex scenes and also very strong language.</mdcr:Explanation>
+      <mdcr:Descriptor language="HU">
+        <mdcr:Label>IV</mdcr:Label>
+        <mdcr:Definition>A 16 éven aluliak számára nem ajánlott műsorok csak 21 óra és hajnali 5 óra között vetíthetők.</mdcr:Definition>
       </mdcr:Descriptor>
     </mdcr:Rating>
     <mdcr:Rating ratingID="V">
       <mdcr:Ordinal>12</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/HU/RCNOF/0/V</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/HU/RCNOF/1/V</mdcr:URI>
       <mdcr:LinkToLogo>./imageCache/HU_Cat_V.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="EN">
-        <mdcr:Label>category V</mdcr:Label>
-        <mdcr:Definition>not suitable for children under 18.</mdcr:Definition>
-        <mdcr:Explanation>Strong graphic violence, torture, glamorisation of drugs, very strong sexual content and also themes involving killing, incest and explicit content.</mdcr:Explanation>
+      <mdcr:Descriptor language="HU">
+        <mdcr:Label>V</mdcr:Label>
+        <mdcr:Definition>A 18 éven aluliak számára nem ajánlott műsorok csak 22 óra és hajnali 5 óra között vetíthetők.</mdcr:Definition>
       </mdcr:Descriptor>
     </mdcr:Rating>
     <mdcr:Rating ratingID="VI">
@@ -8648,10 +8881,9 @@ NW Washington, D.C. 20006
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
       <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="EN">
-        <mdcr:Label>category V</mdcr:Label>
-        <mdcr:Definition>only for adults.</mdcr:Definition>
-        <mdcr:Explanation>Very gruesome violent content or high impact sexual content</mdcr:Explanation>
+      <mdcr:Descriptor language="HU">
+        <mdcr:Label>VI</mdcr:Label>
+        <mdcr:Definition>Az ebbe a kategóriába tartozó műsorok olyan szélsőségesen erőszakos jeleneteket mutatnak be, ami miatt nem kerülhetnek adásba.</mdcr:Definition>
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
@@ -8918,7 +9150,7 @@ Fax:(00) 32 2 612 17 78</mdcr:ContactString>
     <mdcr:Rating ratingID="PEGI-OK">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/BE/PEGI/0/PEGI-OK</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.pegi.info/en/index/id/1382/media/img/255.GIF</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/BE_PEGI_255.GIF</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -8946,7 +9178,7 @@ scary scenes</div>]]></mdcr:Explanation>
     <mdcr:Rating ratingID="PEGI-3">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/BE/PEGI/0/PEGI-3</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.pegi.info/en/index/id/33/media/img/320.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/BE_PEGI_320.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -8963,7 +9195,7 @@ scare or frighten young children. No bad language should be heard.</div>]]></mdc
     <mdcr:Rating ratingID="PEGI-7">
       <mdcr:Ordinal>7</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/BE/PEGI/0/PEGI-7</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.pegi.info/en/index/id/33/media/img/321.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/BE_PEGI_321.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>7</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -8993,24 +9225,24 @@ screams or rustling in the undergrowth).</div>]]></mdcr:Explanation>
           <mdcr:Label>Violence</mdcr:Label>
           <mdcr:Definition>n.a</mdcr:Definition>
           <mdcr:Explanation><![CDATA[<div class="userHtml">
-					<ul>
-						<li>
+          <ul>
+            <li>
               Depictions of non-realistic violence towards fantasy characters:
               <p>A fantasy character is a character that does not exist  in real life and does not take a human appearance
 and includes ghosts, gremlins, dragons and other mythical creatures. The characters react in a way
 that would not be expected of human-like characters and although you know that the characters are being
 killed or injured you do not really see very much (eg. the characters immediately disappear in a puff
 of smoke or are otherwise so small that you really cannot see what exactly is happening).</p>
-						</li>
-						<li>
+            </li>
+            <li>
               Depictions of non-detailed and non-realistic violence towards nondetailed human-like characters:
               <p>This is where the depiction gives only a basic
 representation of a human (stick men or pixelated
 characters). If the characters are small but are detailed
 enough to be clearly recognisable as humans a ‘yes’
 answer to this question is not appropriate.</p>
-						</li>
-						<li>
+            </li>
+            <li>
               Depictions of non-realistic violence of a minor nature towards a humanlike or animal-like character:
               <p>Characters must react to the violence in an unrealistic
  way, e.g. they flash or disappear when hit, but do
@@ -9018,12 +9250,12 @@ not show any apparent reactions consistent with
  real life. The important aspect will be the minor
 nature of the violence. Therefore there cannot be
  any of the following:</p>
-							<ul>
-								<li>Emphasis on the violence in depictions or audio, e.g. close-ups, slow motion</li>
-								<li>Depictions of pain or suffering</li>
-							</ul>
-						</li>
-						<li>
+              <ul>
+                <li>Emphasis on the violence in depictions or audio, e.g. close-ups, slow motion</li>
+                <li>Depictions of pain or suffering</li>
+              </ul>
+            </li>
+            <li>
               Depictions of implied violence to humans where the actual violence is not shown:
               <p>This is where you do not actually see any violence to humans but it is obvious what is happening. It
 covers such matters as the bombing of a city where you know civilians are killed and injured, blowing
@@ -9031,8 +9263,8 @@ up a tank or shooting down a plane where you know the crew are killed, smashing 
 other vehicles where the driver/passenger must be injured. It also includes depictions of violence
 against humans where you do not see any violent act, or the immediate reaction to this act, but you
 do see the cause and/or the result.</p>
-						</li>
-						<li>
+            </li>
+            <li>
               Depictions of violence that is humorous and/or is set in a cartoon, slapstick or child-like setting, and is likely to be disturbing
 to younger children:
               <p>
@@ -9041,28 +9273,28 @@ to younger children:
                 is a setting that is more likely to appeal to younger children. Such a setting may
 include (but is not limited to):
               </p>
-							<ul>
-								<li>a fantastical theme</li>
-								<li>bright colors</li>
-								<li>playful music</li>
-								<li>cheerful sounds and/or an overall cartoonlike atmosphere</li>
-							</ul>
-							<p>Whether the violence in that setting is likely to be disturbing to younger children is determined by elements such as:</p>
-							<ul>
-								<li>fierce sounds</li>
-								<li>nature of the characters</li>
-								<li>the severity of the violence and/or dark overtones</li>
-							</ul>
-						</li>
-					</ul>
-				</div>]]></mdcr:Explanation>
+              <ul>
+                <li>a fantastical theme</li>
+                <li>bright colors</li>
+                <li>playful music</li>
+                <li>cheerful sounds and/or an overall cartoonlike atmosphere</li>
+              </ul>
+              <p>Whether the violence in that setting is likely to be disturbing to younger children is determined by elements such as:</p>
+              <ul>
+                <li>fierce sounds</li>
+                <li>nature of the characters</li>
+                <li>the severity of the violence and/or dark overtones</li>
+              </ul>
+            </li>
+          </ul>
+        </div>]]></mdcr:Explanation>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
     </mdcr:Rating>
     <mdcr:Rating ratingID="PEGI-12">
       <mdcr:Ordinal>12</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/BE/PEGI/0/PEGI-12</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.pegi.info/en/index/id/33/media/img/322.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/BE_PEGI_322.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>12</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9118,7 +9350,7 @@ and other racially or gender offensive words</div>]]></mdcr:Explanation>
           <mdcr:Label>Sex</mdcr:Label>
           <mdcr:Definition>n.a</mdcr:Definition>
           <mdcr:Explanation><![CDATA[<div class="userHtml">
-					<p>This can refer to words or pictures that may be
+          <p>This can refer to words or pictures that may be
  sexually explicit but do not amount to eroticism (a
 brief glimpse of a lady with bare boobs at a window
  or a brief glimpse of a naked couple (not showing
@@ -9129,24 +9361,24 @@ foreplay and can consist of words and/or activity.
 sexual intercourse is taking place but the participants
  are out of view, under sheets etc. The importance is
 sexual connotation.</p>
-					<p>If however, the couple can be seen, even if they are
+          <p>If however, the couple can be seen, even if they are
  partially clothed, then question 14 ‘sexual intercourse
 without visible genitals’ will be more appropriate.
  The test is whether the images could prompt sexual
 curiosity on behalf of the player.</p>
-					<p>Sexual posturing means dancing or posing (while
+          <p>Sexual posturing means dancing or posing (while
  remaining clothed) in a manner intended to put across
 a sexual message or suggestion. This will include
  such things as pole dancing, lap dancing and even
 some of the more suggestive music video sequences.</p>
-				</div>]]></mdcr:Explanation>
+        </div>]]></mdcr:Explanation>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
     </mdcr:Rating>
     <mdcr:Rating ratingID="PEGI-16">
       <mdcr:Ordinal>16</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/BE/PEGI/0/PEGI-16</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.pegi.info/en/index/id/33/media/img/323.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/BE_PEGI_323.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9180,7 +9412,7 @@ in horse racing.</div>]]></mdcr:Explanation>
           <mdcr:Label>Language</mdcr:Label>
           <mdcr:Definition>n.a</mdcr:Definition>
           <mdcr:Explanation><![CDATA[<div class="userHtml">
-					<p>The most common sexual expletives are fuck, cunt,
+          <p>The most common sexual expletives are fuck, cunt,
 motherfucker and cocksucker although this list is not
 exhaustive. Blasphemy means irreverent depictions
 or words concerning sacred matters or religious
@@ -9188,7 +9420,7 @@ beliefs (not restricted to the Christian faith). It should
 be noted that blasphemy is likely to be illegal under
 national criminal laws and may not be included in
 the game in any event.</p>
-				</div>]]></mdcr:Explanation>
+        </div>]]></mdcr:Explanation>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
       <mdcr:RatingReason reasonID="Violence">
@@ -9204,18 +9436,18 @@ the game in any event.</p>
           <mdcr:Label>Drugs</mdcr:Label>
           <mdcr:Definition>n.a</mdcr:Definition>
           <mdcr:Explanation><![CDATA[<div class="userHtml">
-					<ul>
-						<li>
+          <ul>
+            <li>
               Encouragement of the use of tobacco or alcohol:
               <p>This means where the character gains advantage in the game by the use of tobacco or alcohol. It
 also includes prominent advertising encouraging the use of tobacco or alcohol products.</p>
-						</li>
-						<li>
+            </li>
+            <li>
               Depictions of the use of illegal drugs:
               <p>This includes the use of illegal drugs in any circumstances.</p>
-						</li>
-					</ul>
-				</div>]]></mdcr:Explanation>
+            </li>
+          </ul>
+        </div>]]></mdcr:Explanation>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
       <mdcr:RatingReason reasonID="Sex">
@@ -9224,27 +9456,27 @@ also includes prominent advertising encouraging the use of tobacco or alcohol pr
           <mdcr:Label>Sex</mdcr:Label>
           <mdcr:Definition>n.a</mdcr:Definition>
           <mdcr:Explanation><![CDATA[<div class="userHtml">
-					<ol>
-						<li>
+          <ol>
+            <li>
               Depictions of sexual intercourse without visible genitals:
               <p>This is self-explanatory although it must be fairly apparent what the characters are doing. ‘Boobs
 and bums’ do not count as genital organs and nor does the showing of pubic hair only.</p>
-						</li>
-						<li>
+            </li>
+            <li>
               Depictions of erotic or sexual nudity:
               <p>This is where the depiction of nudity (including partial nudity) could result in sexual arousal or is
 shown as a prelude to human sexual activity. This can include still pictures particularly if they depict
 an erotic activity. This will not generally include straightforward pin-ups.</p>
-						</li>
-					</ol>
-				</div>]]></mdcr:Explanation>
+            </li>
+          </ol>
+        </div>]]></mdcr:Explanation>
         </mdcr:Descriptor>
       </mdcr:RatingReason>
     </mdcr:Rating>
     <mdcr:Rating ratingID="PEGI-18">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/BE/PEGI/0/PEGI-18</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.pegi.info/en/index/id/33/media/img/324.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/BE_PEGI_324.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9442,7 +9674,7 @@ in horse racing.</div>]]></mdcr:Explanation>
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastSave="2013-12-09T18:39:14" version="0">
+  <mdcr:RatingSystem lastValidated="2017-07-28T03:50:35" lastSave="2017-08-07T14:30:10" version="0">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -9459,6 +9691,7 @@ in horse racing.</div>]]></mdcr:Explanation>
         <mdcr:Environment>Broadcast</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
+    <mdcr:LastChecked>2017-07-27</mdcr:LastChecked>
     <mdcr:URI>http://www.movielabs.com/md/ratings/AU/ACMA/0</mdcr:URI>
     <mdcr:RatingsOrg organizationID="Australian Communications and Media Authority">
       <md:DisplayName>Australian Communications and Media Authority</md:DisplayName>
@@ -9472,7 +9705,7 @@ Fax 02 9334 7799</mdcr:ContactString>
     <mdcr:Rating ratingID="P">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/AU/ACMA/0/P</mdcr:URI>
-      <mdcr:LinkToLogo>http://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Oflcp.png/40px-Oflcp.png</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/AU_ACMA_P.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9480,25 +9713,20 @@ Fax 02 9334 7799</mdcr:ContactString>
       <mdcr:Descriptor language="EN">
         <mdcr:Label>Preschool</mdcr:Label>
         <mdcr:Definition>Intended for preschool children</mdcr:Definition>
-        <mdcr:Explanation>C and P programs are different from material produced for a family audience. They are designed specifically to meet children’s needs and interests. They deal with stories, concepts and ideas that are of interest to children and present them in a manner appropriate for the child audience (for example, from the child’s perspective or through the use of age-appropriate themes).
-
-The CTS specifies that a children’s program:
-
-is made specifically for children or groups of children; and
-
-is entertaining; and
-
-is well produced using sufficient resources to ensure a high standard of script, cast, direction, editing, shooting, sound and other production elements; and
-
-enhances a child's understanding and experience; and
-
-is appropriate for Australian children.</mdcr:Explanation>
+        <mdcr:Explanation><![CDATA[<div class="userHtml">A program meets the criteria of suitability for a P program if it:
+(a) is made specifically for preschool children; and
+(b) is entertaining; and
+(c) is well produced using sufficient resources to ensure a high standard of
+script, cast, direction, editing, shooting, sound and other production
+elements; and
+(d) enhances the understanding and experience of preschool children; and
+(e) is appropriate for Australian preschool children.</div>]]></mdcr:Explanation>
       </mdcr:Descriptor>
     </mdcr:Rating>
     <mdcr:Rating ratingID="C">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/AU/ACMA/0/C</mdcr:URI>
-      <mdcr:LinkToLogo>http://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Oflcp.png/40px-Oflcc.png</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/AU_ACMA_C.png</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9506,14 +9734,16 @@ is appropriate for Australian children.</mdcr:Explanation>
       <mdcr:Descriptor language="EN">
         <mdcr:Label>Children</mdcr:Label>
         <mdcr:Definition>Intended for children under 14</mdcr:Definition>
-        <mdcr:Explanation>C and P programs are different from material produced for a family audience. They are designed specifically to meet children’s needs and interests. They deal with stories, concepts and ideas that are of interest to children and present them in a manner appropriate for the child audience (for example, from the child’s perspective or through the use of age-appropriate themes).
-
-The CTS specifies that a children’s program:
-is made specifically for children or groups of children; and
-is entertaining; and
-is well produced using sufficient resources to ensure a high standard of script, cast, direction, editing, shooting, sound and other production elements; and
-enhances a child's understanding and experience; and
-is appropriate for Australian children.</mdcr:Explanation>
+        <mdcr:Explanation><![CDATA[<div class="userHtml">A program meets the criteria of suitability for a C program if it:
+(a) is made specifically for children, or groups of children, of school age;
+and
+(b) is entertaining; and
+(c) is well produced using sufficient resources to ensure a high standard of
+script, cast, direction, editing, shooting, sound and other production
+elements; and
+(d) enhances the understanding and experience of children of school age;
+and
+(e) is appropriate for Australian children of school age.</div>]]></mdcr:Explanation>
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
@@ -9550,7 +9780,7 @@ K1P 6H8</mdcr:ContactString>
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CBSC-F/0/G</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.rcq.gouv.qc.ca/images/general.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CBSC-F_general.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9569,7 +9799,7 @@ K1P 6H8</mdcr:ContactString>
     <mdcr:Rating ratingID="8+">
       <mdcr:Ordinal>2</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CBSC-F/0/8+</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.cbsc.ca/assets/clip_image003.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CBSC-F_clip_image003.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>8</mdcr:MinRecAge>
       <mdcr:MinAge>8</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9583,7 +9813,7 @@ K1P 6H8</mdcr:ContactString>
     <mdcr:Rating ratingID="13+">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CBSC-F/0/13+</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.rcq.gouv.qc.ca/images/c13.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CBSC-F_c13.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>13</mdcr:MinRecAge>
       <mdcr:MinAge>13</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9602,7 +9832,7 @@ K1P 6H8</mdcr:ContactString>
     <mdcr:Rating ratingID="16+">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/RCQ/1/16+</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.rcq.gouv.qc.ca/images/c16.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CBSC-F_c16.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>16</mdcr:MinAge>
       <mdcr:MinAgeSupervised>16</mdcr:MinAgeSupervised>
@@ -9621,7 +9851,7 @@ K1P 6H8</mdcr:ContactString>
     <mdcr:Rating ratingID="18+">
       <mdcr:Ordinal>90</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/RCQ/1/18+</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.rcq.gouv.qc.ca/images/c18.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CBSC-F_c18.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -9688,7 +9918,7 @@ scenes of hyperrealistic cruelty, torture and horror.</div>]]></mdcr:Explanation
     <mdcr:Rating ratingID="A">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/DK/MCCYP/1/A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.medieraadet.dk/html/hva/hva_grafik/a.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/DK_MCCYP_a.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>4</mdcr:MinRecAge>
       <mdcr:MinAge>4</mdcr:MinAge>
       <mdcr:MinAgeSupervised>4</mdcr:MinAgeSupervised>
@@ -9706,7 +9936,7 @@ scenes of hyperrealistic cruelty, torture and horror.</div>]]></mdcr:Explanation
     <mdcr:Rating ratingID="7">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/DK/MCCYP/1/7</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.medieraadet.dk/html/hva/hva_grafik/7.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/DK_MCCYP_7.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>7</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9724,7 +9954,7 @@ scenes of hyperrealistic cruelty, torture and horror.</div>]]></mdcr:Explanation
     <mdcr:Rating ratingID="11">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/DK/MCCYP/1/11</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.medieraadet.dk/html/hva/hva_grafik/11.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/DK_MCCYP_11.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>11</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9742,7 +9972,7 @@ scenes of hyperrealistic cruelty, torture and horror.</div>]]></mdcr:Explanation
     <mdcr:Rating ratingID="15">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/DK/MCCYP/1/15</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.medieraadet.dk/html/hva/hva_grafik/15.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/DK_MCCYP_15.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>15</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9794,7 +10024,7 @@ E-mail: post@medietilsynet.no</mdcr:ContactString>
     <mdcr:Rating ratingID="A">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/NO/Medietilsynet/2/A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.medietilsynet.no/globalassets/aldersgrense-ikoner-og-veiledning-no-og-eng/a_stor-ny.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/NO_Medietilsynet_a_stor-ny.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9808,7 +10038,7 @@ E-mail: post@medietilsynet.no</mdcr:ContactString>
     <mdcr:Rating ratingID="6">
       <mdcr:Ordinal>1</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/NO/Medietilsynet/2/6</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.medietilsynet.no/globalassets/aldersgrense-ikoner-og-veiledning-no-og-eng/6_stor-ny.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/NO_Medietilsynet_6_stor-ny.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>6</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9822,7 +10052,7 @@ E-mail: post@medietilsynet.no</mdcr:ContactString>
     <mdcr:Rating ratingID="9">
       <mdcr:Ordinal>4</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/NO/Medietilsynet/2/9</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.medietilsynet.no/globalassets/aldersgrense-ikoner-og-veiledning-no-og-eng/9_stor-ny.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/NO_Medietilsynet_9_stor-ny.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>9</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9864,7 +10094,7 @@ E-mail: post@medietilsynet.no</mdcr:ContactString>
     <mdcr:Rating ratingID="12">
       <mdcr:Ordinal>8</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/NO/Medietilsynet/2/12</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.medietilsynet.no/globalassets/aldersgrense-ikoner-og-veiledning-no-og-eng/12_stor-ny.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/NO_Medietilsynet_12_stor-ny.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>12</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9878,7 +10108,7 @@ E-mail: post@medietilsynet.no</mdcr:ContactString>
     <mdcr:Rating ratingID="15">
       <mdcr:Ordinal>9</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/NO/Medietilsynet/2/15</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.medietilsynet.no/globalassets/aldersgrense-ikoner-og-veiledning-no-og-eng/15_stor-ny.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/NO_Medietilsynet_15_stor-ny.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>15</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9892,7 +10122,7 @@ E-mail: post@medietilsynet.no</mdcr:ContactString>
     <mdcr:Rating ratingID="18">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/NO/Medietilsynet/2/18</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.medietilsynet.no/globalassets/aldersgrense-ikoner-og-veiledning-no-og-eng/18_stor-ny.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/NO_Medietilsynet_18_stor-ny.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -10430,7 +10660,7 @@ Fax 081/7507616</mdcr:ContactString>
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/IE/IFCOF/1/G</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ifco.ie/ifco/ifcoweb.nsf/g_icon1.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/IE_IFCOF_g_icon1.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -10486,7 +10716,7 @@ While a General certificate does not necessarily signify a ‘children’s pictu
     <mdcr:Rating ratingID="PG">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/IE/IFCO/1/PG</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ifco.ie/ifco/ifcoweb.nsf/pg_icon1.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/IE_IFCOF_pg_icon1.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>8</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -10544,7 +10774,7 @@ set within a clearly educational context.</div>]]></mdcr:Explanation>
     <mdcr:Rating ratingID="12A">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/IE/IFCO/1/12A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ifco.ie/ifco/ifcoweb.nsf/12pg_icon1.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/IE_IFCOF_12pg_icon1.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>12</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -10600,7 +10830,7 @@ of drugs is not glamorized.</div>]]></mdcr:Explanation>
     <mdcr:Rating ratingID="15A">
       <mdcr:Ordinal>9</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/IE/IFCOF/1/15A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ifco.ie/ifco/ifcoweb.nsf/15pg_icon1.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/IE_IFCOF_15pg_icon1.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>15</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -10655,7 +10885,7 @@ encouragement as to use.</div>]]></mdcr:Explanation>
     <mdcr:Rating ratingID="16">
       <mdcr:Ordinal>12</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/IE/IFCOF/1/16</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ifco.ie/ifco/ifcoweb.nsf/16_icon1.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/IE_IFCOF_16_icon1.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>16</mdcr:MinAge>
       <mdcr:MinAgeSupervised>16</mdcr:MinAgeSupervised>
@@ -10711,7 +10941,7 @@ Strong horror and sustained threat may be acceptable but will not include the st
     <mdcr:Rating ratingID="18">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/IE/IFCOF/1/18</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.ifco.ie/ifco/ifcoweb.nsf/18_icon1.jpg</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/IE_IFCOF_18_icon1.jpg</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -10790,7 +11020,7 @@ PO Box 9244 Victoria BC V8W 9J2</mdcr:ContactString>
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CPBC/2/G</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/g.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CPBC_g.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -10804,7 +11034,7 @@ PO Box 9244 Victoria BC V8W 9J2</mdcr:ContactString>
     <mdcr:Rating ratingID="PG">
       <mdcr:Ordinal>3</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CPBC/2/PG</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/pg.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CPBC_pg.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -10818,7 +11048,7 @@ PO Box 9244 Victoria BC V8W 9J2</mdcr:ContactString>
     <mdcr:Rating ratingID="14A">
       <mdcr:Ordinal>6</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CPBC/2/14A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/14a.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CPBC_14a.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>14</mdcr:MinRecAge>
       <mdcr:MinAge>15</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -10832,7 +11062,7 @@ PO Box 9244 Victoria BC V8W 9J2</mdcr:ContactString>
     <mdcr:Rating ratingID="18A">
       <mdcr:Ordinal>70</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CPBC/2/18A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/18a.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CPBC_18a.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -10847,7 +11077,7 @@ PO Box 9244 Victoria BC V8W 9J2</mdcr:ContactString>
     <mdcr:Rating ratingID="R">
       <mdcr:Ordinal>75</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CPBC/2/R</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/r.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CPBC_r.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -10864,7 +11094,7 @@ educational or scientific.</div>]]></mdcr:Explanation>
     <mdcr:Rating ratingID="A">
       <mdcr:Ordinal>80</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/CA/CPBC/2/A</mdcr:URI>
-      <mdcr:LinkToLogo>http://www.consumerprotectionbc.ca/images/FCO/ratings/a.gif</mdcr:LinkToLogo>
+      <mdcr:LinkToLogo>./imageCache/CA_CPBC_a.gif</mdcr:LinkToLogo>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
