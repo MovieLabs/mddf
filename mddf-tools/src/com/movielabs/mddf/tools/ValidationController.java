@@ -40,6 +40,7 @@ import org.xml.sax.SAXParseException;
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddf.MddfContext.MDDF_TYPE;
+import com.movielabs.mddf.tools.ValidationController.MddfFileFilter;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
 import com.movielabs.mddf.tools.util.logging.LogNavPanel;
 import com.movielabs.mddflib.Obfuscator;
@@ -76,6 +77,21 @@ import net.sf.json.JSONObject;
  *
  */
 public class ValidationController {
+
+	public class MddfFileFilter implements FileFilter {
+
+		private final String[] okFileExtensions = new String[] { "xml", "xlsx" };
+
+		public boolean accept(File file) {
+			for (String extension : okFileExtensions) {
+				if (file.getName().toLowerCase().endsWith(extension)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+	}
 
 	public static final String MODULE_ID = "Validator";
 	private static File tempDir = new File("./tmp");
@@ -268,7 +284,7 @@ public class ValidationController {
 	public void validate(String srcPath, String uxProfile, List<String> useCases) throws IOException {
 		File srcFile = new File(srcPath);
 		if (srcFile.isDirectory()) {
-			File[] inputFiles = srcFile.listFiles();
+			File[] inputFiles = srcFile.listFiles(new MddfFileFilter());
 			int fileCount = inputFiles.length;
 			for (int i = 0; i < fileCount; i++) {
 				File aFile = (File) inputFiles[i];
@@ -546,7 +562,7 @@ public class ValidationController {
 		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp);
 		try {
 			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(as, shortDesc, xslxFile);
-			if(xmlJDomDoc==null){
+			if (xmlJDomDoc == null) {
 				// Ingest failed
 				return null;
 			}
