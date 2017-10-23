@@ -84,10 +84,14 @@ public class ValidationController {
 
 		public boolean accept(File file) {
 			for (String extension : okFileExtensions) {
+				if(file.isDirectory()){
+					return true;
+				}
 				if (file.getName().toLowerCase().endsWith(extension)) {
 					return true;
 				}
 			}
+			System.out.println("Rejecting "+file.getName());
 			return false;
 		}
 
