@@ -90,9 +90,9 @@ public class MddfContext {
 	};
 
 	public enum FILE_FMT {
-		AVAILS_1_6("Avail", "1.6", "xlsx"), AVAILS_1_7("Avail", "1.7", "xlsx"), AVAILS_1_7_2("Avail", "1.7.2",
-				"xlsx"), AVAILS_2_1("Avail", "2.1", "xml"), AVAILS_2_2("Avail", "2.2", "xml"), AVAILS_2_2_1("Avail",
-						"2.2.1", "xml"), AVAILS_2_2_2("Avail", "2.2.2", "xml"), MANIFEST_1_4("Manifest", "1.4",
+		AVAILS_1_6("Avails", "1.6", "xlsx"), AVAILS_1_7("Avails", "1.7", "xlsx"), AVAILS_1_7_2("Avails", "1.7.2",
+				"xlsx"), AVAILS_2_1("Avails", "2.1", "xml"), AVAILS_2_2("Avails", "2.2", "xml"), AVAILS_2_2_1("Avails",
+						"2.2.1", "xml"), AVAILS_2_2_2("Avails", "2.2.2", "xml"), MANIFEST_1_4("Manifest", "1.4",
 								"xml"), MANIFEST_1_5("Manifest", "1.5", "xml"), MANIFEST_1_6("Manifest", "1.6",
 										"xml"), MANIFEST_1_6_1("Manifest", "1.6.1", "xml"), MDMEC_2_4("MEC", "2.4",
 												"xml"), MDMEC_2_5("MEC", "2.5", "xml");
@@ -205,40 +205,40 @@ public class MddfContext {
 		switch (standard) {
 		case AVAILS_2_2_2:
 		case AVAILS_2_2_1:
-			uses.put("CM", "2.5");
+			uses.put("MD", "2.5");
 			uses.put("MDMEC", "2.5");
 			break;
 		case AVAILS_2_2:
 		case AVAILS_2_1:
-			uses.put("CM", "2.4");
+			uses.put("MD", "2.4");
 			uses.put("MDMEC", "2.4");
 			break;
 		case AVAILS_1_7:
-			uses.put("CM", "2.3");
+			uses.put("MD", "2.3");
 			uses.put("MDMEC", "2.3");
 			break;
 		case MANIFEST_1_4:
-			uses.put("CM", "2.3");
+			uses.put("MD", "2.3");
 			break;
 		case MANIFEST_1_5:
-			uses.put("CM", "2.4");
+			uses.put("MD", "2.4");
 			break;
 		case MANIFEST_1_6:
-			uses.put("CM", "2.5");
+			uses.put("MD", "2.5");
 			break;
 		case MANIFEST_1_6_1:
-			uses.put("CM", "2.6");
+			uses.put("MD", "2.6");
 			break;
 		case MDMEC_2_5:
-			uses.put("CM", "2.5");
+			uses.put("MD", "2.5");
 			break;
 		case MDMEC_2_4:
-			uses.put("CM", "2.4");
+			uses.put("MD", "2.4");
 			break;
 		default:
 			break;
-		}
-
+		} 
+		uses.put(standard.standard.toUpperCase(), standard.ver);
 		return uses;
 	}
 }

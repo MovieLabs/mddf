@@ -327,7 +327,7 @@ public abstract class XmlIngester implements IssueLogger {
 		}
 		Map<String, String> uses = MddfContext.getReferencedXsdVersions(manifestFmt); 		 
 		MAN_VER = manifestSchemaVer;
-		CM_VER = uses.get("CM");
+		CM_VER = uses.get("MD");
 		/* Since MDMEC isn't used for Manifest, set to NULL */
 		MDMEC_VER = null;
 		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
@@ -346,7 +346,7 @@ public abstract class XmlIngester implements IssueLogger {
 		}
 		Map<String, String> uses = MddfContext.getReferencedXsdVersions(mecFmt); 		
 		MDMEC_VER = mecSchemaVer;
-		CM_VER = uses.get("CM");
+		CM_VER = uses.get("MD");
 		/* Since Manifest isn't used for MEC, set to NULL */
 		MAN_VER = null;
 		mdmecNSpace = Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
@@ -370,7 +370,7 @@ public abstract class XmlIngester implements IssueLogger {
 		}
 		Map<String, String> uses = MddfContext.getReferencedXsdVersions(availsFmt); 
 		AVAIL_VER = availSchemaVer; 
-		CM_VER = uses.get("CM");
+		CM_VER = uses.get("MD");
 		MDMEC_VER = uses.get("MDMEC");
 		/* Since Manifest isn't used for Avails, set to NULL */
 		MAN_VER = null;

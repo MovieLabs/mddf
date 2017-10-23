@@ -113,7 +113,7 @@ public class XmlBuilder {
 		Map<String, String> uses = MddfContext.getReferencedXsdVersions(availsFmt);
 
 		mdMecVer = uses.get("MDMEC");
-		mdVer = uses.get("CM");
+		mdVer = uses.get("MD");
 		mdMecSchema = SchemaWrapper.factory("mdmec-v" + mdMecVer);
 		mdMecNSpace = Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v" + mdMecVer);
 
