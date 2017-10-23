@@ -39,6 +39,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
  */
 public class AvailsSheet {
 	protected static String logMsgSrcId = "AvailsSheet";
+
 	public static enum Version {
 		V1_7_2, V1_7, V1_6, UNK
 	};
@@ -113,7 +114,8 @@ public class AvailsSheet {
 				headerMap.put(key, new Integer(idx));
 			}
 		}
-		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Found " + headerList.size() + " defined columns", parent.getFile(), logMsgSrcId); 
+		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Found " + headerList.size() + " defined columns",
+				parent.getFile(), logMsgSrcId);
 
 		/*
 		 * TYPE Check: Is this for movies or TV? The current rule is that this
@@ -127,7 +129,8 @@ public class AvailsSheet {
 			isForTV = false;
 			break;
 		default:
-			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unrecognized sheet name: Must be 'TV' or 'Movies'", parent.getFile(), logMsgSrcId); 
+			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unrecognized sheet name: Must be 'TV' or 'Movies'",
+					parent.getFile(), logMsgSrcId);
 			return;
 		}
 
@@ -276,6 +279,12 @@ public class AvailsSheet {
 		}
 	}
 
+	/**
+	 * Hide empty columns. Unlike <tt>TemplateWorkBook.clone()</tt>, columns are
+	 * not re-ordered.
+	 * 
+	 * @param ssheet
+	 */
 	public static void compress(Sheet ssheet) {
 		Row headerRow1 = ssheet.getRow(0);
 		Row headerRow2 = ssheet.getRow(1);
