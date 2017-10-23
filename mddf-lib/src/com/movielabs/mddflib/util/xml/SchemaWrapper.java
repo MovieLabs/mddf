@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,13 +34,16 @@ import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.jdom2.filter.ElementFilter;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
-import com.movielabs.mddf.MddfContext;
+import com.movielabs.mddf.MddfContext; 
+
+import net.sf.json.JSONObject;
 
 /**
  * Wrapper for an XSD specification. This class provides functions supporting
@@ -147,6 +151,107 @@ public class SchemaWrapper {
 
 		// can now process
 		buildReqElList();
+	}
+
+	/**
+	 * @param type
+	 * @return
+	 */
+	public JSONObject getContentStructure(String type) {
+		XPathExpression<Element> xpExpression = xpfac.compile("./xs:complexType[@name= '" + type + "']",
+				Filters.element(), null, xsNSpace);
+		Element target = xpExpression.evaluateFirst(rootEl);
+		if (target == null) {
+			// not a complex type
+			return null;
+		}
+		Element seqEl = target.getChild("sequence", xsNSpace);
+		if (seqEl != null) {
+			return addSequenceToContent(seqEl);
+		}
+		Element ccEl = target.getChild("complexContent", xsNSpace);
+		if (ccEl != null) {
+			return addExtensionToContent(ccEl);
+		}
+		return null;
+	}
+
+	/**
+	 * @param ccEl
+	 * @return
+	 */
+	private JSONObject addExtensionToContent(Element ccEl) {
+		Element extEl = ccEl.getChild("extension", xsNSpace);
+		String base = extEl.getAttributeValue("base");
+		String[] parts = base.split(":");
+		String baseNSpace = parts[0];
+		SchemaWrapper baseWrapper;
+		if (nSpace.getPrefix().equals(baseNSpace)) {
+			baseWrapper = this;
+		} else {
+			baseWrapper = otherSchemas.get(baseNSpace);
+		}
+		String baseType = parts[1];
+		JSONObject baseContent = baseWrapper.getContentStructure(baseType);
+		// now look for any extension in the form of a <xs:sequence>
+		Element seqEl = extEl.getChild("sequence", xsNSpace);
+		if (seqEl != null) {
+			JSONObject additionalContent = addSequenceToContent(seqEl);
+			if(additionalContent != null){
+				// merge 
+				Iterator keyIt = additionalContent.keys(); 
+				while (keyIt.hasNext()) {
+					String childName = (String) keyIt.next();
+					JSONObject childDef = additionalContent.getJSONObject(childName); 
+					baseContent.put(childName, childDef);
+				}
+			}
+		}
+		return baseContent;
+	}
+
+	/**
+	 * @param seqEl
+	 * @return
+	 */
+	private JSONObject addSequenceToContent(Element seqEl) {
+		List<Element> childList = seqEl.getContent(new ElementFilter());
+		JSONObject childSeq = new JSONObject();
+		kinderLoop: for (Element nextEl : childList) {
+			String childType = nextEl.getName();
+			switch (childType) {
+			case "element":
+				String name = nextEl.getAttributeValue("name");
+				JSONObject childObj = new JSONObject();
+				/*
+				 * NOTE: is subType comes back null it means we are dealing with
+				 * a complexType or simpleType which is a union or extension.
+				 */
+				String subtype = nextEl.getAttributeValue("type");
+				// TODO: handle NULL subtype
+				if (subtype == null || subtype.isEmpty()) {
+					continue kinderLoop;
+				}
+				String[] parts = subtype.split(":");
+				childObj.put("type", parts[1]);
+				childObj.put("nspace", parts[0]);
+				String min = nextEl.getAttributeValue("minOccurs", "1");
+				int minVal = Integer.parseInt(min);
+				childObj.put("min", minVal);
+				String max = nextEl.getAttributeValue("maxOccurs", "1");
+				if (max.equals("unbounded")) {
+					max = "-1";
+				}
+				int maxVal = Integer.parseInt(max);
+				childObj.put("max", maxVal);
+				childSeq.put(name, childObj);
+				break;
+			case "choice":
+				break;
+			default:
+			}
+		}
+		return childSeq;
 	}
 
 	public String getType(String elementName) {
