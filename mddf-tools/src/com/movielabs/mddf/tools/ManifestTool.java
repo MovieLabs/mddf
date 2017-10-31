@@ -32,6 +32,7 @@ import javax.swing.JMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * @author L. Levin, Critical Architectures LLC
@@ -69,6 +70,7 @@ public class ManifestTool extends ValidatorTool {
 	public ManifestTool() {
 		super(Context.MANIFEST); 
 		htmlDocUrl = "http://www.movielabs.com/md/manifest/validator/" + MANIFEST_DOC_VER + "/";
+		inputFileFilter = new FileNameExtensionFilter("XML file", "xml");
 	}
 
 	/**

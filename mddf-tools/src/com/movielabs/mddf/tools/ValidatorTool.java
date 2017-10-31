@@ -339,7 +339,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected Map<String, File> selectedFiles = new HashMap<String, File>();
 	private JMenu fileRecentMenu;
 	protected boolean inputSrcTFieldLocked = false;
-	protected FileFilter inputFileFilter = new FileNameExtensionFilter("XML file", "xml");
+	protected FileFilter inputFileFilter = null;
 	private JPanel statusPanel;
 	private JTextField txtStatus;
 	private JMenuItem openFileMI;
