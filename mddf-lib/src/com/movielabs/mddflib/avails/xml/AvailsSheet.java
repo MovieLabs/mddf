@@ -114,7 +114,7 @@ public class AvailsSheet {
 				headerMap.put(key, new Integer(idx));
 			}
 		}
-		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Found " + headerList.size() + " defined columns",
+		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLSX, "Found " + headerList.size() + " defined columns",
 				parent.getFile(), logMsgSrcId);
 
 		/*
@@ -129,7 +129,7 @@ public class AvailsSheet {
 			isForTV = false;
 			break;
 		default:
-			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unrecognized sheet name: Must be 'TV' or 'Movies'",
+			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLSX, "Unrecognized sheet name: Must be 'TV' or 'Movies'",
 					parent.getFile(), logMsgSrcId);
 			return;
 		}
@@ -140,7 +140,12 @@ public class AvailsSheet {
 		/*
 		 * Skip over the header rows and process all data rows...
 		 */
-		for (int idxR = 2; idxR <= excelSheet.getLastRowNum(); idxR++) {
+
+		if (isAvail(excelSheet.getRow(2))) {
+			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLSX, "Third row should not contain an Avail (reserved for header)",
+					parent.getFile(), logMsgSrcId);
+		}
+		for (int idxR = 3; idxR <= excelSheet.getLastRowNum(); idxR++) {
 			Row nextRow = excelSheet.getRow(idxR);
 			if (nextRow == null) {
 				break;
