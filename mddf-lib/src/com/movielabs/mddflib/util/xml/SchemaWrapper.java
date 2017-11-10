@@ -120,7 +120,7 @@ public class SchemaWrapper {
 		return null;
 	}
 
-	private SchemaWrapper(String xsdRsrc) { 
+	private SchemaWrapper(String xsdRsrc) {
 		schemaXSD = getSchemaXSD(xsdRsrc);
 		if (schemaXSD == null) {
 			throw new IllegalArgumentException("XSD for " + xsdRsrc + " is not an available resource");
@@ -211,16 +211,38 @@ public class SchemaWrapper {
 			} else {
 				baseWrapper = otherSchemas.get(baseNSpace);
 			}
-			baseContent = baseWrapper.getContentStructure(baseType);
+			JSONObject extContent = baseWrapper.getContentStructure(baseType);
+			if (extContent != null) {
+				baseContent = extContent;
+				System.out.println("Wrapper " + nSpace.getPrefix()
+						+ "; addExtensionToStructure: replaced baseContent with...\n" + extContent.toString(3));
+			} else {
+				System.out.println("++++++++\nWrapper " + nSpace.getPrefix()
+						+ "; addExtensionToStructure: baseWrapper returned NULL for " + base);
+				boolean isST = baseWrapper.isSimpleType(baseType);
+				String[] tType = baseWrapper.resolveType(base);
+				System.out.println("Wrapper " + nSpace.getPrefix() + "; addExtensionToStructure: isSimpleType=" + isST
+						+ " trueType=" + tType[0] + ":" + tType[1]);
+				baseContent.put("prefix", nSpace.getPrefix());
+				baseContent.put("name", base.replaceAll("-type", ""));
+				baseContent.put("isAtt", false);
+				baseContent.put("type", tType[1]);
+				baseContent.put("nspace", tType[0]);
+				baseContent.put("min", 1);
+				baseContent.put("max", 1);
+				System.out
+						.println("Wrapper " + nSpace.getPrefix() + "; addExtensionToStructure: new baseContent is...\n"
+								+ baseContent.toString(3) + "\n++++++++\n");
+			}
 		} else {
-			String name = "base (t.b.d)"; 
+			String name = "base (t.b.d)";
 			baseContent.put("prefix", nSpace.getPrefix());
 			baseContent.put("name", name);
 			baseContent.put("isAtt", false);
 			baseContent.put("type", baseType);
 			baseContent.put("nspace", baseNSpace);
 			baseContent.put("min", 1);
-			baseContent.put("max", 1); 
+			baseContent.put("max", 1);
 		}
 
 		// now look for any extension in the form of a <xs:sequence>
@@ -289,7 +311,7 @@ public class SchemaWrapper {
 							if (additionalContent != null) {
 								// merge
 								Iterator keyIt = additionalContent.keys();
-								while(keyIt.hasNext()){
+								while (keyIt.hasNext()) {
 									Object key = keyIt.next();
 									Object value = additionalContent.get(key);
 									childObj.put(key, value);
@@ -310,10 +332,22 @@ public class SchemaWrapper {
 							 * 'scheduled' to extended the base 'xs:date'
 							 */
 							Element scEl = ctEl.getChild("simpleContent", xsNSpace);
+							System.out
+									.println("Wrapper " + nSpace.getPrefix() + "; need simpleContent for name=" + name);
 							additionalContent = addExtensionToStructure(scEl);
+							System.out.println("Wrapper " + nSpace.getPrefix() + "; have content for name=" + name);
 							if (additionalContent != null) {
-								parts[0] = additionalContent.getString("nspace");
-								parts[1] = additionalContent.getString("type");
+								try {
+									parts[0] = additionalContent.getString("nspace");
+									parts[1] = additionalContent.getString("type");
+								} catch (Exception e) {
+									System.out.println(
+											"Wrapper " + nSpace.getPrefix() + "; addSequenceToStructure: EXCEPTION...\n"
+													+ additionalContent.toString(3));
+
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 							}
 						}
 					} else {
@@ -455,7 +489,7 @@ public class SchemaWrapper {
 		 * Is this an 'anonymous' (i.e. inline) definition or does it have a
 		 * name of it's own?
 		 */
-		Element parentEl = choiceEl.getParentElement(); 
+		Element parentEl = choiceEl.getParentElement();
 		String baseType = parentEl.getAttributeValue("name");
 		if (baseType == null) {
 			// generate a name using the names of the choices...
@@ -496,7 +530,7 @@ public class SchemaWrapper {
 				baseWrapper = otherSchemas.get(baseNSpace);
 			}
 			if (baseWrapper.isSimpleType(baseType)) {
-				String trueType = baseWrapper.resolveTypeRestriction(baseType);
+				String trueType = baseWrapper.resolveRestrictionBase(baseType);
 				parts = trueType.split(":");
 				baseNSpace = parts[0];
 				baseType = parts[1];
@@ -509,19 +543,36 @@ public class SchemaWrapper {
 	}
 
 	/**
-	 * @param baseType
+	 * Identify the <i>base type</i> that is used to define a
+	 * <tt>&lt;xs:simpleType&gt;</tt>.
+	 * <p>
+	 * A <tt>simpleType</tt> is a restriction on a base type. The restriction
+	 * may be in the form of a <i>pattern</i>, <i>enumeration</i>, or
+	 * <i>union</i>. It may also be non-existent (i.e, missing).
+	 * </p>
+	 * <p>
+	 * In the case of a <tt>union</tt> no explicit base is identified. The type
+	 * returned is therefore 'xs:string' on the assumption that the member-types
+	 * are all defining a specific pattern-based restriction on a xs:string
+	 * (e.g.,
+	 * <tt> &lt;xs:union memberTypes="xs:gYear xs:date xs:dateTime"/&gt;</tt>)
+	 * </p>
+	 * 
+	 * @param referencedType
 	 * @return
 	 */
-	private String resolveTypeRestriction(String type) {
-		XPathExpression<Element> xpExpression = xpfac.compile("./xs:simpleType[@name= '" + type + "']",
+	private String resolveRestrictionBase(String referencedType) {
+		XPathExpression<Element> xpExpression = xpfac.compile("./xs:simpleType[@name= '" + referencedType + "']",
 				Filters.element(), null, xsNSpace);
 		Element target = xpExpression.evaluateFirst(rootEl);
 		Element baseEl = target.getChild("restriction", xsNSpace);
 		if (baseEl == null) {
-			// must be a union
+			/*
+			 * must be a union.
+			 */
 			System.out.println("    SchemaWrapper " + nSpace.getPrefix()
-					+ ": resolveTypeRestriction found UNION(?) for:: " + type);
-			return nSpace.getPrefix() + ":" + type;
+					+ ": resolveTypeRestriction (found UNION ?) for:: " + referencedType);
+			return "xs:string";
 		}
 		String restrictedType = baseEl.getAttributeValue("base");
 		if (restrictedType.startsWith("xs:")) {
@@ -537,13 +588,13 @@ public class SchemaWrapper {
 				baseWrapper = otherSchemas.get(baseNSpace);
 			}
 			if (baseWrapper.isSimpleType(baseType)) {
-				String trueType = baseWrapper.resolveTypeRestriction(baseType);
+				String trueType = baseWrapper.resolveRestrictionBase(baseType);
 				return trueType;
 			}
 		}
-		System.out.println(
-				"    SchemaWrapper " + nSpace.getPrefix() + ": resolveTypeRestriction unable to resolve:: " + type);
-		return nSpace.getPrefix() + ":" + type;
+		System.out.println("    SchemaWrapper " + nSpace.getPrefix() + ": resolveTypeRestriction unable to resolve:: "
+				+ referencedType);
+		return nSpace.getPrefix() + ":" + referencedType;
 	}
 
 	/**
@@ -722,4 +773,7 @@ public class SchemaWrapper {
 		return nSpace.getPrefix();
 	}
 
+	public static void main(String[] args) {
+		
+	}
 }
