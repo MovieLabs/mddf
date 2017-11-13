@@ -9,9 +9,17 @@ The latest release of the core mddf-lib is v1.3.
 
 ### mddf-lib Changes:
 
+#### mddf-lib v1.3
+* v1.3_rc4 has been released as v1.3
+
 #### mddf-lib v1.3_rc4
+* Bug Fix: Flag as an ERROR when Avails XLSX contains Avail in 3rd row.
+* Bug Fix: Error handling when an Excel column is missing
+* Bug Fix: BundledAssets in Collections were ignored when validating structure
 * Bug Fix: Translation of Avails to XLSX dropped 'AvailMetadata:CaptionIncluded'
 * BUG FIX: ReportingID was being dropped when converting Avails to XML
+* BUG FIX: Avails XSLX compression (i.e. empty column hiding) now preserves all data formats
+* Enhancement: Avails XLSX file may be re-formatted and cleaned up.
 
 #### mddf-lib v1.3_rc3
 * Bug Fix: Translation of Avails to XLSX dropped termNames 'SeasonWSP' and 'EpisodeWSP'
