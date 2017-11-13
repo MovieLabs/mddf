@@ -23,7 +23,7 @@
 ---
 ## <a name="h_News">What's New</a>
 
-* **mddf-tool v1.3.rc3 available for testing and evaluation.
+* **mddf-tool v1.3 has been released
 
 ## <a name="h_Overview">Overview:</a>
 
@@ -109,7 +109,12 @@ independent of the mddf-lib version.
 
 The use of the Java executable Jar is highly recommended as it is always the most up-to-date version and provides 
 the full range of capabilities. Native executables for OS-X, Windows, and Linux are also provided but will
-not be available for all developmental candidate releases. See  [Available Formats](#h_formats) for download 
+not be available for all developmental candidate releases. A single Java jar file provides support
+for both the Avails and Manifest Validators. This is in contrast to the OS-specific executables in which there is a separate 
+executable for each validation tool.
+
+
+See  [Available Formats](#h_formats) for download 
 locations for all versions.
 
 
@@ -126,6 +131,10 @@ one of two sources:
 * Development releases (i.e., release candidates) are distributed via Dropbox. For access, contact the appropriate individuals at MovieLabs.
 
 ### <a name="h_Install_Java">Java Executable Jar:</a>
+
+The mddf-tool jar may be used on any machine that supports Java 1.8 or a more recent jvm. A single jar file provides support
+for both the Avails and Manifest Validators. This is in contrast to the OS-specific executables in which there is a separate 
+executable for each validation tool.
 
 Once the jar file has been downloaded, it may be run using the standard Java command:
 
@@ -162,6 +171,10 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">Release History:</a>
+
+* **2017-Nov-13**: mddf-tool v1.3 released.
+
+* **2017-Oct-13**: mddf-tool v1.3.rc4 released for testing and evaluation.
 
 * **2017-Sep-21**: mddf-tool v1.3.rc3 released for testing and evaluation.
 
