@@ -37,6 +37,7 @@ import org.jdom2.Namespace;
 import org.jdom2.filter.ElementFilter;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.located.LocatedElement;
 import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
@@ -51,7 +52,7 @@ import net.sf.json.JSONObject;
  * queries and comparisons that facilitate checking an XML file for
  * compatibility with a given schema. It is not intended to replace the classes
  * in the <tt>javax.xml.validation</tt> package but it is rather a supplement
- * intended to make some types of checks easier.
+ * intended to make some types of checks easier. 
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -204,14 +205,10 @@ public class SchemaWrapper {
 	 * @param type
 	 * @return
 	 */
-	public JSONObject getContentStructure(String type) {
-		// System.out.println("\n\nSchemaWrapper " + nSpace.getPrefix() + ":
-		// Looking for " + type);
+	public JSONObject getContentStructure(String type) throws SchemaException {
 		Element target = getXmlTarget(type);
 		if (target == null) {
 			// not a complex type
-			// System.out.println(" " + nSpace.getPrefix() + ": " + type + " not
-			// a complex type");
 			return null;
 		}
 		Element seqEl = target.getChild("sequence", xsNSpace);
@@ -256,8 +253,9 @@ public class SchemaWrapper {
 	/**
 	 * @param contentEl
 	 * @return
+	 * @throws SchemaException 
 	 */
-	private JSONObject addExtensionToStructure(Element contentEl) {
+	private JSONObject addExtensionToStructure(Element contentEl) throws SchemaException {
 		Element extEl = contentEl.getChild("extension", xsNSpace);
 		String base = extEl.getAttributeValue("base");
 		String[] parts = base.split(":");
@@ -340,8 +338,9 @@ public class SchemaWrapper {
 	 * 
 	 * @param seqEl
 	 * @return
+	 * @throws SchemaException 
 	 */
-	private JSONObject addSequenceToStructure(Element seqEl) {
+	private JSONObject addSequenceToStructure(Element seqEl) throws SchemaException {
 		JSONObject seqStruct = new JSONObject();
 
 		// First add any ATTRIBUTES
@@ -386,14 +385,15 @@ public class SchemaWrapper {
 									Object value = additionalContent.get(key);
 									childObj.put(key, value);
 								}
-								try {
+								if (additionalContent.containsKey("nspace")) {
 									parts[0] = additionalContent.getString("nspace");
-								} catch (Exception e) {
-									System.out.println("DEBUG: Extension of " + subtype + "\n     "
-											+ additionalContent.toString(3));
-									e.printStackTrace();
+									parts[1] = additionalContent.getString("type");
+								} else {
+									String[] extType = resolveExtendedType(innerContent);
+									if (extType != null) {
+										parts = extType;
+									}
 								}
-								parts[1] = additionalContent.getString("type");
 							}
 						} else {
 							/*
@@ -436,7 +436,7 @@ public class SchemaWrapper {
 					if (isChoice) {
 						childObj.put("isChoice", isChoice);
 						JSONObject baseStruct = baseWrapper.getContentStructure(baseType);
-						childObj.put("baseChoice",baseStruct);
+						childObj.put("baseChoice", baseStruct);
 					}
 				}
 
@@ -501,7 +501,7 @@ public class SchemaWrapper {
 		parentSeq.put("attributes", attSet);
 	}
 
-	private JSONObject addChoiceToStructure(Element choiceEl) {
+	private JSONObject addChoiceToStructure(Element choiceEl) throws SchemaException {
 		boolean allSimple = true;
 		JSONObject choiceStruct = new JSONObject();
 		List<Element> choiceList = choiceEl.getChildren("element", xsNSpace);
@@ -516,13 +516,23 @@ public class SchemaWrapper {
 			if (type == null || type.isEmpty()) {
 				Element ctEl = nextEl.getChild("complexType", xsNSpace);
 				if (ctEl != null) {
-					Element ccEl = ctEl.getChild("complexContent", xsNSpace);
-					if (ccEl != null) {
-						String[] extType = resolveExtendedType(ccEl);
-						if (extType != null) {
-							parts = extType;
-						}
+					/*
+					 * looking at complexContent or simpleContent that defines
+					 * an extension.
+					 */
+					Element targetEl = ctEl.getChild("complexContent", xsNSpace);
+					if (targetEl == null) {
+						targetEl = ctEl.getChild("simpleContent", xsNSpace);
 					}
+					if(targetEl == null){
+						String msg = "Unsupportable complexType; nSpace="+nSpace.getPrefix()+", line="+((LocatedElement) ctEl).getLine();
+						throw new SchemaException(msg);
+					}
+					String[] extType = resolveExtendedType(targetEl);
+					if (extType != null) {
+						parts = extType;
+					}
+
 				} else {
 					// sinpleType???
 					Element stEl = nextEl.getChild("simpleType", xsNSpace);
@@ -539,7 +549,7 @@ public class SchemaWrapper {
 
 			String baseNSpace = parts[0];
 			String baseType = parts[1];
-			SchemaWrapper baseWrapper = getReferencedSchema(baseNSpace);
+			SchemaWrapper baseWrapper =  getReferencedSchema(baseNSpace); 
 			if (baseWrapper != null) {
 				if (!baseWrapper.isSimpleType(baseType)) {
 					allSimple = false;
@@ -580,7 +590,6 @@ public class SchemaWrapper {
 	 * @return
 	 */
 	private String[] resolveType(String type) {
-		// System.out.println("resolveType::" + type);
 		String[] parts = type.split(":");
 		/*
 		 * IFF the subtype's nspace is NOT 'xs' then check for a simpleType that
@@ -605,23 +614,37 @@ public class SchemaWrapper {
 		return actual;
 	}
 
-	private String[] resolveExtendedType(Element contentEl) {
+	private String[] resolveExtendedType(Element contentEl) throws SchemaException {
 		Element extEl = contentEl.getChild("extension", xsNSpace);
-		String base = extEl.getAttributeValue("base");
-		String[] parts = base.split(":");
-		String baseNSpace = parts[0];
+		if (extEl != null) {
+			String base = extEl.getAttributeValue("base");
+			String[] parts = base.split(":");
+			String baseNSpace = parts[0];
 
-		SchemaWrapper baseWrapper = getReferencedSchema(baseNSpace);
-		if (baseWrapper != null) {
-			String baseType = parts[1];
-			JSONObject extContent = baseWrapper.getContentStructure(baseType);
-			if (extContent != null) {
-				parts[0] = extContent.getString("nspace");
-				parts[1] = extContent.getString("type");
-			} else {
-				parts = baseWrapper.resolveType(base);
+			SchemaWrapper baseWrapper = getReferencedSchema(baseNSpace);
+			if (baseWrapper != null) {
+				String baseType = parts[1];
+				JSONObject extContent = baseWrapper.getContentStructure(baseType);
+				if (extContent != null && extContent.containsKey("nspace")) {
+					parts[0] = extContent.getString("nspace");
+					parts[1] = extContent.getString("type");
+				} else {
+					parts = baseWrapper.resolveType(base);
+				}
 			}
+			return parts;
 		}
+		// Argh! must by a xs:union, e.g.:
+		// <xs:simpleType>
+		// .....<xs:union memberTypes="xs:gYear xs:gYearMonth xs:date"/>
+		// </xs:simpleType>
+		/*
+		 * default for now is to treat as a string..
+		 */
+
+		String[] parts = new String[2];
+		parts[0] = "xs";
+		parts[1] = "string";
 		return parts;
 	}
 
@@ -671,8 +694,6 @@ public class SchemaWrapper {
 				return trueType;
 			}
 		}
-		System.out.println("    SchemaWrapper " + nSpace.getPrefix() + ": resolveTypeRestriction unable to resolve:: "
-				+ referencedType);
 		return nSpace.getPrefix() + ":" + referencedType;
 	}
 
@@ -889,7 +910,13 @@ public class SchemaWrapper {
 
 	public static void test(String schema, String type) {
 		SchemaWrapper sw = factory(schema);
-		JSONObject def = sw.getContentStructure(type);
+		JSONObject def=null;
+		try {
+			def = sw.getContentStructure(type);
+		} catch (SchemaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (def != null) {
 			System.out.println("\n~~~~~~~~~~~\n" + def.toString(4) + "\n================\n");
 		}
