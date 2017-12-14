@@ -726,8 +726,12 @@ public class CMValidator extends XmlIngester {
 	}
 
 	/**
-	 * Validate a language entry conforms to RFC5646. The source of the entry is
-	 * the <i>child</i> node. The child may be:
+	 * Validate a language entry conforms to RFC5646. This method is a more
+	 * flexible way to check language codes than
+	 * <tt>validateLanguage(Namespace primaryNS)</tt> in that the arguments
+	 * allow full specification of the source of the language code.
+	 * <p>
+	 * The source of the entry is the <i>child</i> node. The child may be:
 	 * <ul>
 	 * <li>A JDOM Element,</li>
 	 * <li>an attribute of the primary JDOM Element (as indicated by the '@'
@@ -735,6 +739,7 @@ public class CMValidator extends XmlIngester {
 	 * <li><tt>null</tt>, in which case the text value of the <tt>primaryEl</tt>
 	 * will be used.</li>
 	 * </ul>
+	 * </p>
 	 * <p>
 	 * Use of RFC5646 is limited to a subset of the complete syntax in that only
 	 * the <tt>Language</tt>, <tt>Region</tt>, and <tt>Variant</tt> subtags are
@@ -746,6 +751,7 @@ public class CMValidator extends XmlIngester {
 	 * @param childNS
 	 * @param child
 	 * @return
+	 * @see validateLanguage(Namespace primaryNS)
 	 */
 	protected void validateLanguage(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
 		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
@@ -777,6 +783,26 @@ public class CMValidator extends XmlIngester {
 						reportLangError(langEl, tag4log, text);
 					}
 				}
+			}
+		}
+	}
+
+	/**
+	 * Validate language codes specified in any <tt>@language</tt> attribute
+	 * conform to RFC5646.
+	 * 
+	 * @param primaryNS
+	 *            used only for log messages
+	 */
+	protected void validateLanguage(Namespace primaryNS) {
+		XPathExpression<Attribute> xpExpression = xpfac.compile("//@language", Filters.attribute(), null, primaryNS);
+		List<Attribute> attList = xpExpression.evaluate(curRootEl);
+		int tag4log = getLogTag(primaryNS, null);
+		for (int i = 0; i < attList.size(); i++) {
+			Attribute targetAtt = (Attribute) attList.get(i);
+			String text = targetAtt.getValue();
+			if (!checkLangTag(text)) {
+				reportLangError(targetAtt.getParent(), tag4log, text);
 			}
 		}
 	}

@@ -391,22 +391,21 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 		/* Validate language codes */
 
-		validateLanguage(primaryNS, "LocalSeriesTitle", primaryNS, "@language");
+		/* First check all usage of the '@language' attribute */
+		validateLanguage(manifestNSpace);
+		
+		// other usages...
 		validateLanguage(primaryNS, "Transaction", primaryNS, "AllowedLanguage");
 		validateLanguage(primaryNS, "Transaction", primaryNS, "AssetLanguage");
 		validateLanguage(primaryNS, "Transaction", primaryNS, "HoldbackLanguage");
-		validateLanguage(primaryNS, "Term", primaryNS, "Language");
+		validateLanguage(primaryNS, "Term", primaryNS, "Language"); 
 
 		/*
 		 * Additions for v2.2.2
 		 */
 		validateRegion(primaryNS, "TitleInternalAlias", null, "@region");
 		validateRegion(primaryNS, "SeasonTitleInternalAlias", null, "@region");
-		validateRegion(primaryNS, "SeriesTitleInternalAlias", null, "@region");
-
-		validateLanguage(primaryNS, "TitleDisplayUnlimited", primaryNS, "@language");
-		validateLanguage(primaryNS, "SeasonTitleDisplayUnlimited", primaryNS, "@language");
-		validateLanguage(primaryNS, "SeriesTitleDisplayUnlimited", primaryNS, "@language");
+		validateRegion(primaryNS, "SeriesTitleInternalAlias", null, "@region"); 
 	}
 
  

@@ -386,6 +386,10 @@ public class ManifestValidator extends CMValidator {
 
 		// --------------- Validate language codes
 		// ----------------------------------------
+		
+		/* First check all usage of the '@language' attribute */
+		validateLanguage(manifestNSpace);
+		
 		/*
 		 * Language codes in INVENTORY:
 		 */
@@ -394,21 +398,13 @@ public class ManifestValidator extends CMValidator {
 		validateLanguage(mdNSpace, "SignedLanguage", null, null);
 		validateLanguage(mdNSpace, "PrimarySpokenLanguage", null, null);
 		validateLanguage(mdNSpace, "OriginalLanguage", null, null);
-		validateLanguage(mdNSpace, "VersionLanguage", null, null);
-		validateLanguage(mdNSpace, "LocalizedInfo", null, "@language");
-		validateLanguage(mdNSpace, "JobDisplay", null, "@language");
-		validateLanguage(mdNSpace, "DisplayName", null, "@language");
-		validateLanguage(mdNSpace, "SortName", null, "@language");
-		validateLanguage(mdNSpace, "TitleAlternate", null, "@language");
-		validateLanguage(manifestNSpace, "TextObject", null, "@language");
+		validateLanguage(mdNSpace, "VersionLanguage", null, null); 
 		/*
 		 * PRESENTATION:
 		 */
 		validateLanguage(manifestNSpace, "SystemLanguage", null, null);
 		validateLanguage(manifestNSpace, "AudioLanguage", null, null);
-		validateLanguage(manifestNSpace, "SubtitleLanguage", null, null);
-		validateLanguage(manifestNSpace, "DisplayLabel", null, "@language");
-		validateLanguage(manifestNSpace, "ImageID", null, "@language");
+		validateLanguage(manifestNSpace, "SubtitleLanguage", null, null); 
 		/*
 		 * PLAYABLE SEQ:
 		 */
@@ -418,19 +414,15 @@ public class ManifestValidator extends CMValidator {
 		 * PICTURE GROUPS:
 		 */
 		validateLanguage(manifestNSpace, "LanguageInImage", null, null);
-		validateLanguage(manifestNSpace, "AlternateText", null, "@language");
-		validateLanguage(manifestNSpace, "Caption", null, "@language");
 		/*
 		 * TEXT GROUP:
-		 */
-		validateLanguage(manifestNSpace, "TextGroup", null, "@language");
+		 */ 
+		
 		/*
 		 * EXPERIENCES:
 		 */
 		validateLanguage(manifestNSpace, "Language", null, null);
-		validateLanguage(manifestNSpace, "ExcludedLanguage", null, null);
-		validateLanguage(manifestNSpace, "AppName", null, "@language");
-		validateLanguage(manifestNSpace, "GalleryName", null, "@language");
+		validateLanguage(manifestNSpace, "ExcludedLanguage", null, null); 
 
 		validateRatings();
 

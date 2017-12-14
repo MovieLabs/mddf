@@ -128,11 +128,11 @@ public class MecValidator extends CMValidator {
 		validateRegion(mdNSpace, "Region", mdNSpace, "country");
 
 		/* Validate language codes */
-		validateLanguage(mdNSpace, "LocalizedInfo", null, "@language");
-		validateLanguage(mdNSpace, "TitleAlternate", null, "@language");
-		validateLanguage(mdNSpace, "DisplayName", null, "@language");
-		validateLanguage(mdNSpace, "SortName", null, "@language");
-		validateLanguage(mdNSpace, "DisplayString", null, "@language");
+		
+		/* First check all usage of the '@language' attribute */
+		validateLanguage(manifestNSpace);
+		
+		// Now check any other usage....
 		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "PrimarySpokenLanguage");
 		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "OriginalLanguage");
 		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "VersionLanguage"); 
