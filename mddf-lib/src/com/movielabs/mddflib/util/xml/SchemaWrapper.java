@@ -24,11 +24,19 @@ package com.movielabs.mddflib.util.xml;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jdom2.Attribute;
 import org.jdom2.Document;
@@ -52,7 +60,7 @@ import net.sf.json.JSONObject;
  * queries and comparisons that facilitate checking an XML file for
  * compatibility with a given schema. It is not intended to replace the classes
  * in the <tt>javax.xml.validation</tt> package but it is rather a supplement
- * intended to make some types of checks easier. 
+ * intended to make some types of checks easier.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -75,6 +83,7 @@ public class SchemaWrapper {
 	private ArrayList<XPathExpression<?>> reqElXpList;
 	private HashMap<String, SchemaWrapper> otherSchemas = new HashMap<String, SchemaWrapper>();
 	private int anonSeqNum = 0;
+	private String xsdRsrc;
 
 	public static SchemaWrapper factory(String xsdRsrc) {
 		synchronized (cache) {
@@ -102,8 +111,7 @@ public class SchemaWrapper {
 	 * @param xsdRsrc
 	 * @return
 	 */
-	private static Document getSchemaXSD(String xsdRsrc) {
-		String rsrcPath = RSRC_PACKAGE + xsdRsrc + ".xsd";
+	private static Document getSchemaXSD(String rsrcPath) {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setJDOMFactory(new LocatedJDOMFactory());
 		InputStream inp = SchemaWrapper.class.getResourceAsStream(rsrcPath);
@@ -122,7 +130,9 @@ public class SchemaWrapper {
 	}
 
 	private SchemaWrapper(String xsdRsrc) {
-		schemaXSD = getSchemaXSD(xsdRsrc);
+		String rsrcPath = RSRC_PACKAGE + xsdRsrc + ".xsd";
+		this.xsdRsrc = rsrcPath;
+		schemaXSD = getSchemaXSD(rsrcPath);
 		if (schemaXSD == null) {
 			throw new IllegalArgumentException("XSD for " + xsdRsrc + " is not an available resource");
 		}
@@ -237,13 +247,21 @@ public class SchemaWrapper {
 		return null;
 	}
 
-	private Element getXmlTarget(String type) {
-		XPathExpression<Element> xpExp1 = xpfac.compile("./xs:complexType[@name= '" + type + "']", Filters.element(),
+	/**
+	 * Return the <tt>xs:complexType</tt> or <tt>xs:element</tt> Element whose
+	 * <tt>name</tt> attribute matches the specified value. A null value is
+	 * returned if a match can not be found.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	private Element getXmlTarget(String name) {
+		XPathExpression<Element> xpExp1 = xpfac.compile("./xs:complexType[@name= '" + name + "']", Filters.element(),
 				null, xsNSpace);
 		Element target = xpExp1.evaluateFirst(rootEl);
 		if (target == null) {
 			// check for an anonymous in-line definition
-			XPathExpression<Element> xpExp2 = xpfac.compile("//xs:element[@name='" + type + "']/xs:complexType",
+			XPathExpression<Element> xpExp2 = xpfac.compile("//xs:element[@name='" + name + "']/xs:complexType",
 					Filters.element(), null, xsNSpace);
 			target = xpExp2.evaluateFirst(rootEl);
 		}
@@ -253,7 +271,7 @@ public class SchemaWrapper {
 	/**
 	 * @param contentEl
 	 * @return
-	 * @throws SchemaException 
+	 * @throws SchemaException
 	 */
 	private JSONObject addExtensionToStructure(Element contentEl) throws SchemaException {
 		Element extEl = contentEl.getChild("extension", xsNSpace);
@@ -338,7 +356,7 @@ public class SchemaWrapper {
 	 * 
 	 * @param seqEl
 	 * @return
-	 * @throws SchemaException 
+	 * @throws SchemaException
 	 */
 	private JSONObject addSequenceToStructure(Element seqEl) throws SchemaException {
 		JSONObject seqStruct = new JSONObject();
@@ -524,8 +542,9 @@ public class SchemaWrapper {
 					if (targetEl == null) {
 						targetEl = ctEl.getChild("simpleContent", xsNSpace);
 					}
-					if(targetEl == null){
-						String msg = "Unsupportable complexType; nSpace="+nSpace.getPrefix()+", line="+((LocatedElement) ctEl).getLine();
+					if (targetEl == null) {
+						String msg = "Unsupportable complexType; nSpace=" + nSpace.getPrefix() + ", line="
+								+ ((LocatedElement) ctEl).getLine();
 						throw new SchemaException(msg);
 					}
 					String[] extType = resolveExtendedType(targetEl);
@@ -549,7 +568,7 @@ public class SchemaWrapper {
 
 			String baseNSpace = parts[0];
 			String baseType = parts[1];
-			SchemaWrapper baseWrapper =  getReferencedSchema(baseNSpace); 
+			SchemaWrapper baseWrapper = getReferencedSchema(baseNSpace);
 			if (baseWrapper != null) {
 				if (!baseWrapper.isSimpleType(baseType)) {
 					allSimple = false;
@@ -697,6 +716,19 @@ public class SchemaWrapper {
 		return nSpace.getPrefix() + ":" + referencedType;
 	}
 
+	/**
+	 * Return true if the specified <tt>type</tt> is structured as a
+	 * <tt>xs:choice</tt>. Note that the 'type' argument should NOT include a
+	 * namespace prefix (e.g. use <tt>Region-type</tt> rather than
+	 * <tt>md:Region-type</tt>).
+	 * <p>
+	 * If the schema does not contain a definition for the requested type a
+	 * value of <tt>false</tt> is returned.
+	 * </p>
+	 * 
+	 * @param type
+	 * @return
+	 */
 	public boolean isChoice(String type) {
 		Element target = getXmlTarget(type);
 		if (target == null) {
@@ -707,10 +739,19 @@ public class SchemaWrapper {
 	}
 
 	/**
+	 * Return true if the specified <tt>type</tt> is structured as a
+	 * <tt>simpleType</tt>. Note that the 'type' argument should NOT include a
+	 * namespace prefix (e.g. use <tt>Region-type</tt> rather than
+	 * <tt>md:Region-type</tt>).
+	 * <p>
+	 * If the schema does not contain a definition for the requested type a
+	 * value of <tt>false</tt> is returned.
+	 * </p>
+	 * 
 	 * @param type
 	 * @return
 	 */
-	private boolean isSimpleType(String type) {
+	public boolean isSimpleType(String type) {
 		XPathExpression<Element> xpExpression = xpfac.compile("./xs:simpleType[@name= '" + type + "']",
 				Filters.element(), null, xsNSpace);
 		Element target = xpExpression.evaluateFirst(rootEl);
@@ -908,9 +949,110 @@ public class SchemaWrapper {
 		return nSpace.getPrefix();
 	}
 
+	/**
+	 * Return a list of all <tt>simpleTypes</tt> used by this schema. This will
+	 * include those referenced that are defined in other schemas as well (e.g.
+	 * from Common Metadata). While <u>all</u> types defined in the current
+	 * schema will be included, only those in a referenced schema that are
+	 * actually used are included.
+	 * <p>
+	 * The <tt>repeatsOnly</tt> argument may be used to limit the returned list
+	 * to only those types that are repeatedly used.
+	 * </p>
+	 * 
+	 * @param repeatsOnly
+	 * @return
+	 */
+	public List<String> getTypeUsage(boolean repeatsOnly) {
+		InputStream rsrc = SchemaWrapper.class.getResourceAsStream(xsdRsrc);
+		Scanner vain = new Scanner(rsrc, "UTF-8");
+		vain.useDelimiter("\\A");
+		String text = vain.next();
+		Pattern p = Pattern.compile(" type=\\\"[a-zA-Z]{2}:[a-zA-Z\\-]+");
+		Matcher m = p.matcher(text);
+		Set<String> found = new HashSet<String>();
+		Set<String> repeats = new HashSet<String>();
+		while (m.find()) {
+			String result = m.group();
+			result = result.replaceFirst(" type=\\\"", "");
+			String[] parts = result.split(":");
+			// complex or simple?
+
+			switch (parts[0]) {
+			case "xs":
+				switch (parts[1]) {
+				case "anyURI":
+				case "dateTime":
+				case "duration":
+				case "language":
+				case "time":
+					break;
+				default:
+					parts[1] = null;
+				}
+				break;
+			default:
+				SchemaWrapper sw = getReferencedSchema(parts[0]);
+				if (!sw.isSimpleType(parts[1])) {
+					System.out.println("SchemaWrapper " + nSpace.getPrefix() + ": typeUsage: COMPLEX type " + result);
+					if (sw.isChoice(parts[1])) {
+						Element target = sw.getXmlTarget(parts[1]);
+						try {
+							Element choiceEl = target.getChild("choice", xsNSpace);
+							/*
+							 * if the individual choices are 'simple' (or
+							 * extensions of a simpleType) then they get added
+							 * in lieu of the complexTyppe defining the choice.
+							 */
+							JSONObject struct = sw.addChoiceToStructure(choiceEl);
+							Iterator<String> keys = struct.keys();
+							while (keys.hasNext()) {
+								String next = keys.next();
+								JSONObject choice = struct.optJSONObject(next);
+								if ((choice != null) && choice.getString("nspace").equals("xs")) {
+									String simpleChoice = choice.getString("prefix") + ":" + choice.getString("name");
+									// adding to set will eliminate redundancy
+									if (!found.add(simpleChoice)) {
+										// multiple usage
+										repeats.add(simpleChoice);
+									}
+								}
+							}
+
+							parts[1] = null; // indicate addition to 'founds'
+												// NOT required.
+						} catch (SchemaException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					} else {
+						// TBD???
+						parts[1] = null;
+					}
+				}
+			}
+			if (parts[1] != null) {
+				// adding to set will eliminate redundancy
+				if (!found.add(result)) {
+					// multiple usage
+					repeats.add(result);
+				}
+			}
+		}
+		List<String> resultList = new ArrayList<String>();
+		if (repeatsOnly) {
+			resultList.addAll(repeats);
+		} else {
+			resultList.addAll(found);
+
+		}
+		Collections.sort(resultList);
+		return resultList;
+	}
+
 	public static void test(String schema, String type) {
 		SchemaWrapper sw = factory(schema);
-		JSONObject def=null;
+		JSONObject def = null;
 		try {
 			def = sw.getContentStructure(type);
 		} catch (SchemaException e) {
