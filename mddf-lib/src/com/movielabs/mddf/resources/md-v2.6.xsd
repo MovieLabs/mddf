@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2015 sp1 (x64) (http://www.altova.com) by Craig Seidel (private) -->
-<xs:schema 
-	xmlns:md="http://www.movielabs.com/schema/md/v2.6/md" 
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-	targetNamespace="http://www.movielabs.com/schema/md/v2.6/md" 
-	elementFormDefault="qualified" 
-	attributeFormDefault="unqualified" 
-	version="2.6">
+<xs:schema xmlns:md="http://www.movielabs.com/schema/md/v2.6/md" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.movielabs.com/schema/md/v2.6/md" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.6">
 	<!--Common Metadata-->
-	<!--Verson 2.6 DRAFT  a/0 2017-JUNE-26 -->
+	<!--Verson 2.6-->
 	<!-- *** Metadata References ***-->
 	<xs:simpleType name="id-type">
 		<xs:restriction base="xs:anyURI"/>
@@ -104,7 +98,7 @@
 			<xs:element name="TitleDisplay19" type="xs:string" minOccurs="0"/>
 			<xs:element name="TitleDisplay60" type="xs:string" minOccurs="0"/>
 			<xs:element name="TitleDisplayUnlimited" type="xs:string" minOccurs="0"/>
-			<xs:element name="TitleSort" type="xs:string"/>
+			<xs:element name="TitleSort" type="xs:string" minOccurs="0"/>
 			<xs:element name="ArtReference" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:simpleContent>
@@ -115,7 +109,7 @@
 					</xs:simpleContent>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="Summary190">
+			<xs:element name="Summary190" minOccurs="0">
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:string">
@@ -173,6 +167,7 @@
 		</xs:sequence>
 		<xs:attribute name="language" type="md:language-redefine" use="required"/>
 		<xs:attribute name="default" type="xs:boolean"/>
+		<xs:attribute name="condition" type="md:string-condition"/>
 	</xs:complexType>
 	<xs:complexType name="BasicMetadataJob-type">
 		<xs:sequence>
@@ -333,6 +328,14 @@
 		</xs:sequence>
 		<xs:attribute name="guaranteedAbsent" type="xs:boolean" use="optional"/>
 	</xs:complexType>
+	<xs:complexType name="DigitalAssetAudioLoudness-type">
+		<xs:sequence>
+			<xs:element name="Level" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Deviation" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="LeqM" type="xs:decimal" minOccurs="0"/>
+			<xs:element name="Compliance" type="md:string-Audio-Enc-Loud-Compliance" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="DigitalAssetAudioAmbisonics-type">
 		<xs:sequence>
 			<xs:element name="Type" type="md:string-Audio-Enc-Amb-Type" minOccurs="0"/>
@@ -354,6 +357,7 @@
 			<xs:element name="Watermark" type="md:DigitalAssetWatermark-type" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="ActualLength" type="xs:duration" minOccurs="0"/>
 			<xs:element name="Ambisonics" type="md:DigitalAssetAudioAmbisonics-type" minOccurs="0"/>
+			<xs:element name="Loudness" type="md:DigitalAssetAudioLoudness-type" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="DigitalAssetAudioLanguage-type">
@@ -363,6 +367,12 @@
 				<xs:attribute name="forced" type="xs:boolean"/>
 			</xs:extension>
 		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetAudioMCALabel-type">
+		<xs:sequence>
+			<xs:element name="ContentKind" type="xs:string" minOccurs="0"/>
+			<xs:element name="ElementKind" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="DigitalAssetAudioData-type">
 		<xs:sequence>
@@ -381,6 +391,7 @@
 			<xs:element name="Language" type="md:DigitalAssetAudioLanguage-type" maxOccurs="unbounded"/>
 			<xs:element name="People" type="md:BasicMetadataPeople-type" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="Channels" type="md:string-Audio-Channels" minOccurs="0"/>
+			<xs:element name="MCALabelSubdescriptor" type="md:DigitalAssetAudioMCALabel-type" minOccurs="0"/>
 			<xs:element name="TrackReference" type="md:string-TrackReference" minOccurs="0"/>
 			<xs:element name="TrackIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="Private" type="md:PrivateData-type" minOccurs="0"/>
@@ -500,6 +511,12 @@
 			<xs:element name="InitialView" type="md:DigitalAssetVideoPicture360Initial-type" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="DigitalAssetVideoPictureOriginal-type">
+		<xs:sequence>
+			<xs:element name="FrameRate" type="md:DigitalAssetVideoPictureFrameRate-type" minOccurs="0"/>
+			<xs:element name="Progressive" type="md:DigitalAssetVideoPictureProgressive-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
 	<xs:complexType name="DigitalAssetVideoPicture-type">
 		<xs:sequence>
 			<xs:element name="AspectRatio" type="md:string-Video-Pic-AspectRatio" minOccurs="0"/>
@@ -518,6 +535,7 @@
 			<xs:element name="LightLevel" type="md:DigitalAssetVideoPictureLightLevel-type" minOccurs="0"/>
 			<xs:element name="HDRPlaybackInfo" type="md:DigitalAssetVideoPictureHDRPlaybackInfo-type" minOccurs="0"/>
 			<xs:element name="ThreeSixty" type="md:DigitalAssetVideoPicture360-type" minOccurs="0"/>
+			<xs:element name="OriginalPicture" type="md:DigitalAssetVideoPictureOriginal-type" minOccurs="0"/>
 			<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
@@ -855,16 +873,12 @@
 		<xs:choice>
 			<xs:element name="country">
 				<xs:simpleType>
-					<xs:restriction base="md:string-Region-country">
-						<xs:pattern value="[A-Z][A-Z]"/>
-					</xs:restriction>
+					<xs:restriction base="md:string-Region-country"/>
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="countryRegion">
 				<xs:simpleType>
-					<xs:restriction base="md:string-Region-countryRegion">
-						<xs:pattern value="[A-Z][A-Z]-[A-Z0-9]+"/>
-					</xs:restriction>
+					<xs:restriction base="md:string-Region-countryRegion"/>
 				</xs:simpleType>
 			</xs:element>
 		</xs:choice>
@@ -992,6 +1006,7 @@
 		<xs:attribute name="updateNum" type="xs:int"/>
 		<xs:attribute name="workflow" type="md:string-Workflow-workflow"/>
 		<xs:attribute name="updateDeliveryType" type="md:string-Workflow-updateDeliveryType"/>
+		<xs:attribute name="versionDescription" type="xs:string"/>
 	</xs:attributeGroup>
 	<!---->
 	<!--*** REDEFINE TYPES ***-->
@@ -1014,6 +1029,9 @@
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
 	<!--*** Basic Metadata Redefine types ***-->
+	<xs:simpleType name="string-condition">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
 	<xs:simpleType name="string-Genre">
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
@@ -1146,6 +1164,9 @@
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
 	<xs:simpleType name="string-Audio-Enc-Amb-Norm">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Audio-Enc-Loud-Compliance">
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
 	<xs:simpleType name="string-Video-Type">
@@ -1320,13 +1341,24 @@
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
 	<xs:simpleType name="string-Region-country">
+		<xs:restriction base="md:string-ISO3166"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Region-countryRegion">
+		<xs:union memberTypes="md:string-ISO3166-2 md:string-UN-M49"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-ISO3166">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="[A-Z][A-Z]"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="string-Region-countryRegion">
+	<xs:simpleType name="string-ISO3166-2">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="[A-Z][A-Z]-[A-Z0-9]+"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="string-UN-M49">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{3}"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="string-OrgName-idType">

@@ -67,8 +67,8 @@ public class MddfContext {
 	static {
 		// --- Supported versions of standards (in order) ---
 		String[] CM_VER = { "2.6", "2.5", "2.4" };
-		String[] MANIFEST_VER = { "1.6.1", "1.6", "1.5" };
-		String[] MEC_VER = { "2.5", "2.4" };
+		String[] MANIFEST_VER = { "1.7", "1.6.1", "1.6", "1.5" };
+		String[] MEC_VER = { "2.6", "2.5", "2.4" };
 		String[] AVAILS_X_VER = { "2.2.2", "2.2.1", "2.2", "2.1" };
 		String[] AVAILS_E_VER = { "1.7.2", "1.7", "1.6" };
 		String[] MMM_BP = { "1.0" };
@@ -94,8 +94,9 @@ public class MddfContext {
 				"xlsx"), AVAILS_2_1("Avails", "2.1", "xml"), AVAILS_2_2("Avails", "2.2", "xml"), AVAILS_2_2_1("Avails",
 						"2.2.1", "xml"), AVAILS_2_2_2("Avails", "2.2.2", "xml"), MANIFEST_1_4("Manifest", "1.4",
 								"xml"), MANIFEST_1_5("Manifest", "1.5", "xml"), MANIFEST_1_6("Manifest", "1.6",
-										"xml"), MANIFEST_1_6_1("Manifest", "1.6.1", "xml"), MDMEC_2_4("MEC", "2.4",
-												"xml"), MDMEC_2_5("MEC", "2.5", "xml");
+										"xml"), MANIFEST_1_6_1("Manifest", "1.6.1", "xml"), MANIFEST_1_7("Manifest",
+												"1.7", "xml"), MDMEC_2_4("MEC", "2.4", "xml"), MDMEC_2_5("MEC", "2.5",
+														"xml"), MDMEC_2_6("MEC", "2.6", "xml");
 
 		private String standard;
 		private String ver;
@@ -118,15 +119,15 @@ public class MddfContext {
 		public String toString() {
 			return label;
 		}
-		
-		public String getEncoding(){
+
+		public String getEncoding() {
 			return encoding;
 		}
 
 		/**
 		 * @return
 		 */
-		public String getVersion() { 
+		public String getVersion() {
 			return ver;
 		}
 
@@ -162,6 +163,8 @@ public class MddfContext {
 				return FILE_FMT.MANIFEST_1_6;
 			case "1.6.1":
 				return FILE_FMT.MANIFEST_1_6_1;
+			case "1.7":
+				return FILE_FMT.MANIFEST_1_7;
 			}
 			break;
 		case "avails":
@@ -182,6 +185,8 @@ public class MddfContext {
 				return FILE_FMT.MDMEC_2_4;
 			case "2.5":
 				return FILE_FMT.MDMEC_2_5;
+			case "2.6":
+				return FILE_FMT.MDMEC_2_6;
 			}
 			break;
 		}
@@ -229,6 +234,12 @@ public class MddfContext {
 		case MANIFEST_1_6_1:
 			uses.put("MD", "2.6");
 			break;
+		case MANIFEST_1_7:
+			uses.put("MD", "2.6");
+			break;
+		case MDMEC_2_6:
+			uses.put("MD", "2.6");
+			break;
 		case MDMEC_2_5:
 			uses.put("MD", "2.5");
 			break;
@@ -237,7 +248,7 @@ public class MddfContext {
 			break;
 		default:
 			break;
-		} 
+		}
 		uses.put(standard.standard.toUpperCase(), standard.ver);
 		return uses;
 	}

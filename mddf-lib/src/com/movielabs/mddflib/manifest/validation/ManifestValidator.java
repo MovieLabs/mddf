@@ -24,6 +24,8 @@ package com.movielabs.mddflib.manifest.validation;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import net.sf.json.JSONArray;
@@ -45,8 +47,8 @@ import com.movielabs.mddflib.util.xml.XsdValidation;
 /**
  * Validates a Manifest file as conforming to the Common Media Manifest (CMM) as
  * specified in <tt>TR-META-MMM (v1.5)</tt>. Validation also includes testing
- * for conformance with the <tt>Common Metadata (md)</tt> specification as
- * defined in <tt>TR-META-CM (v2.4)</tt>
+ * for conformance with the appropriate version of the
+ * <tt>Common Metadata (md)</tt> specification.
  * 
  * @see <a href= "http://www.movielabs.com/md/manifest/v1.5/Manifest_v1.5.pdf">
  *      TR-META-MMM (v1.5)</a>
@@ -192,6 +194,7 @@ public class ManifestValidator extends CMValidator {
 		validateId("PictureGroup", "PictureGroupID", true, true);
 		validateId("TextGroup", "TextGroupID", true, true);
 		validateId("AppGroup", "AppGroupID", true, true);
+		validateId("App", "AppID", true, true);
 		validateId("Presentation", "PresentationID", true, true);
 		validateId("PlayableSequence", "PlayableSequenceID", true, true);
 		validateId("TimedEventSequence", "TimedSequenceID", true, true);
@@ -199,43 +202,65 @@ public class ManifestValidator extends CMValidator {
 		validateId("Gallery", "GalleryID", false, true);
 
 		/* Now validate cross-references */
-		validateXRef("Experience", "ContentID", "Metadata");
-		validateXRef("Experience", "PictureGroupID", "PictureGroup");
-		validateXRef("Experience", "TextGroupID", "TextGroup");
-		validateXRef("Experience", "TimedSequenceID", "TimedEventSequence");
-		validateXRef("ExperienceChild", "ExperienceID", "Experience");
+		validateXRef(".//manifest:Experience/manifest:ContentID", "Metadata");
+		validateXRef(".//manifest:Experience/manifest:PictureGroupID", "PictureGroup");
+		validateXRef(".//manifest:Experience/manifest:TextGroupID", "TextGroup");
+		validateXRef(".//manifest:Experience/manifest:TimedSequenceID", "TimedEventSequence");
+		String xpath = ".//manifest:ExperienceChild/manifest:ExperienceID[not(../manifest:ExternalManifestID)]";
+		validateXRef(xpath, "Experience"); 
+		
+		validateXRef(".//manifest:Gallery/manifest:PictureGroupID", "PictureGroup");
+		validateXRef(".//manifest:Gallery/manifest:ContentID", "Metadata");
 
-		validateXRef("Gallery", "PictureGroupID", "PictureGroup");
-		validateXRef("Gallery", "ContentID", "Metadata");
+		validateXRef(".//manifest:Audiovisual/@ContentID", "Metadata");
+		validateXRef(".//manifest:Audiovisual/manifest:PresentationID", "Presentation");
+		validateXRef(".//manifest:Audiovisual/manifest:PlayableSequenceID", "PlayableSequence");
 
-		validateXRef("Audiovisual", "ContentID", "Metadata");
-		validateXRef("Audiovisual", "PresentationID", "Presentation");
-		validateXRef("Audiovisual", "PlayableSequenceID", "PlayableSequence");
+		validateXRef(".//manifest:Clip/manifest:PresentationID", "Presentation");
+		validateXRef(".//manifest:ImageClip/manifest:ImageID", "Image");
 
-		validateXRef("Clip", "PresentationID", "Presentation");
-		validateXRef("ImageClip", "ImageID", "Image");
+		validateXRef(".//manifest:Chapter/manifest:ImageID", "Image");
 
-		validateXRef("Chapter", "ImageID", "Image");
+		validateXRef(".//manifest:Picture/manifest:ImageID", "Image");
+		validateXRef(".//manifest:Picture/manifest:ThumbnailImageID", "Image");
 
-		validateXRef("Picture", "ImageID", "Image");
-		validateXRef("Picture", "ThumbnailImageID", "Image");
+		validateXRef(".//manifest:VideoTrackReference/manifest:VideoTrackID", "Video");
+		validateXRef(".//manifest:AudioTrackReference/manifest:AudioTrackID", "Audio");
+		validateXRef(".//manifest:AncillaryTrackReference/manifest:AncillaryTrackID", "Ancillary");
+		validateXRef(".//manifest:SubtitleTrackReference/manifest:SubtitleTrackID", "Subtitle");
 
-		validateXRef("VideoTrackReference", "VideoTrackID", "Video");
-		validateXRef("AudioTrackReference", "AudioTrackID", "Audio");
-		validateXRef("AncillaryTrackReference", "AncillaryTrackID", "Ancillary");
-		validateXRef("SubtitleTrackReference", "SubtitleTrackID", "Subtitle");
+		validateXRef(".//manifest:TimedEventSequence/manifest:PresentationID", "Presentation");
+		validateXRef(".//manifest:TimedEventSequence/manifest:PlayableSequenceID", "PlayableSequence");
 
-		validateXRef("TimedEventSequence", "PresentationID", "Presentation");
-		validateXRef("TimedEventSequence", "PlayableSequenceID", "PlayableSequence");
+		validateXRef(".//manifest:TimedEvent/manifest:PresentationID", "Presentation");
+		validateXRef(".//manifest:TimedEvent/manifest:PlayableSequenceID", "PlayableSequence");
+		validateXRef(".//manifest:TimedEvent/manifest:ExperienceID", "Experience");
+		validateXRef(".//manifest:TimedEvent/manifest:GalleryID", "Gallery");
+		validateXRef(".//manifest:TimedEvent/manifest:AppGroupID", "AppGroup");
+		validateXRef(".//manifest:TimedEvent/manifest:AppID", "App");
+		validateXRef(".//manifest:TimedEvent/manifest:TextGroupID", "TextGroup");
 
-		validateXRef("TimedEvent", "PresentationID", "Presentation");
-		validateXRef("TimedEvent", "PlayableSequenceID", "PlayableSequence");
-		validateXRef("TimedEvent", "ExperienceID", "Experience");
-		validateXRef("TimedEvent", "GalleryID", "Gallery");
-		validateXRef("TimedEvent", "AppGroupID", "AppGroup");
-		validateXRef("TimedEvent", "TextGroupID", "TextGroup");
-
-		validateXRef("ALIDExperienceMap", "ExperienceID", "Experience");
+		validateXRef(".//manifest:ALIDExperienceMap/manifest:ExperienceID", "Experience");
+		/*
+		 * SPECIAL CASE: For v1.7 and after.... When ExternalManifestID is
+		 * present in a ExperienceChild, there may not be an Experience with
+		 * that ID contained in the same file. That is, the Manifest is valid
+		 * only if the Experience is NOT present."
+		 */
+		HashSet<String> idSet = idSets.get("Experience");
+		xpath = ".//manifest:ExperienceChild/manifest:ExperienceID[../manifest:ExternalManifestID]";
+		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null,
+				manifestNSpace);
+		List<Element> elementList = xpExpression.evaluate(curRootEl); 
+		for (int i = 0; i < elementList.size(); i++) {
+			Element refEl = (Element) elementList.get(i);
+			String targetId = refEl.getTextNormalize();
+			if (idSet.contains(targetId)) {
+				String msg = "When ExternalManifestID is  present in a ExperienceChild, there may not be an Experience with that ID contained in the same file";
+				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, refEl, msg, null, null, logMsgSrcId);
+				curFileIsValid = false;
+			}
+		}
 
 		checkForOrphans();
 
@@ -260,6 +285,7 @@ public class ManifestValidator extends CMValidator {
 
 		validateMetadata();
 
+		validateUsage();
 	}
 
 	/**
@@ -509,5 +535,54 @@ public class ManifestValidator extends CMValidator {
 				}
 			}
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.util.CMValidator#validateUsage()
+	 */
+	protected void validateUsage() {
+		// TODO Auto-generated method stub
+		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.LEV_INFO, "Validating structure...", curFile, LOGMSG_ID);
+
+		/*
+		 * Load JSON that defines various constraints on structure of the XML
+		 * This is version-specific but not all schema versions have their own
+		 * unique struct file (e.g., a minor release may be compatible with a
+		 * previous release).
+		 */
+		String structVer = null;
+		switch (MAN_VER) {
+		case "1.7":
+			structVer = "1.7";
+			break;
+		default:
+			// Not supported for the version
+			return;
+		}
+
+		JSONObject structDefs = XmlIngester.getMddfResource("structure_manifest", structVer);
+		if (structDefs == null) {
+			// LOG a FATAL problem.
+			String msg = "Unable to process; missing structure definitions for Manifest v" + MAN_VER;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
+			return;
+		}
+
+		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
+		Iterator<String> keys = rqmtSet.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
+			// NOTE: This block of code requires a 'targetPath' be defined
+			if (rqmtSpec.has("targetPath")) {
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, "Structure check; key= " + key, curFile,
+						logMsgSrcId);
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
+			}
+		}
+
+		return;
 	}
 }

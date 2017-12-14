@@ -193,6 +193,26 @@ public class CMValidator extends XmlIngester {
 	}
 
 	/**
+	 * Check for consistent usage. This typically means that an OPTIONAL element
+	 * will be either REQUIRED or INVALID for certain use-cases (e.g.
+	 * BundledAsset is only allowed when WorkType is 'Collection').
+	 * <p>
+	 * Validation is based primarily on the <i>structure definitions</i> defined
+	 * in a version-specific JSON file. This will define various criteria that
+	 * must be satisfied for a given usage. The criteria are specified in the
+	 * form of XPATHs.
+	 * </p>
+	 * 
+	 * @return
+	 * @see com.movielabs.mddflib.util.xml.StructureValidation
+	 */
+	protected void validateUsage() {
+		/*
+		 * nothing to deo Should be overridden by extending classes.
+		 */
+	}
+
+	/**
 	 * 
 	 */
 	private void validateCardinality() {
@@ -296,17 +316,27 @@ public class CMValidator extends XmlIngester {
 	// ..................
 
 	/**
-	 * Check for the presence of an ID attribute and, if provided, verify it is
-	 * unique and has the correct structure and syntax as defined in Section 3
-	 * of <tt>Manifest/Avails Delivery Best Practices (BP-META-MMMD)</tt>
+	 * Check for the presence of an ID and, if provided, verify it is unique and
+	 * has the correct structure and syntax as defined in Section 3 of
+	 * <tt>Manifest/Avails Delivery Best Practices (BP-META-MMMD)</tt>. All
+	 * extracted ID values will be saved as an <tt>idSet</tt> that can latter be
+	 * used to validate cross-references.
+	 * <p>
+	 * The value of the ID is extracted using the <tt>idElement</tt> and
+	 * (optional) <tt>idAttribute</tt> arguments. If the <tt>idAttribute</tt> is
+	 * <tt>null</tt> the value used is the idElement's text.
+	 * </p>
 	 * 
-	 * @param elementName
+	 * @param idElement
 	 * @param idAttribute
+	 *            (optional)
+	 * @param reqUniqueness
+	 * @param chkSyntax
 	 * @return the <tt>Set</tt> of unique IDs found.
 	 */
-	protected HashSet<String> validateId(String elementName, String idAttribute, boolean reqUniqueness,
+	protected HashSet<String> validateId(String idElement, String idAttribute, boolean reqUniqueness,
 			boolean chkSyntax) {
-		XPathExpression<Element> xpExpression = xpfac.compile(".//" + rootNS.getPrefix() + ":" + elementName,
+		XPathExpression<Element> xpExpression = xpfac.compile(".//" + rootNS.getPrefix() + ":" + idElement,
 				Filters.element(), null, rootNS);
 		HashSet<String> idSet = new HashSet<String>();
 
@@ -336,31 +366,31 @@ public class CMValidator extends XmlIngester {
 			String idKey = null;
 			if (idAttribute == null) {
 				idValue = targetEl.getTextNormalize();
-				idKey = elementName;
+				idKey = idElement;
 			} else {
 				idValue = targetEl.getAttributeValue(idAttribute);
 				idKey = idAttribute;
 			}
 			id2XmlMap.put(idValue, targetEl);
-			XrefCounter count = new XrefCounter(elementName, idValue);
+			XrefCounter count = new XrefCounter(idElement, idValue);
 			idXRefCounter.put(idValue, count);
 
 			if ((idValue == null) || (idValue.isEmpty())) {
 				String srcLabel = null;
 				String targetLabel = null;
 				if (idAttribute != null) {
-					srcLabel = elementName + "@" + idAttribute;
-					targetLabel = elementName;
+					srcLabel = idElement + "@" + idAttribute;
+					targetLabel = idElement;
 				} else {
 					targetLabel = targetEl.getParentElement().getName();
-					srcLabel = targetLabel + "/" + elementName;
+					srcLabel = targetLabel + "/" + idElement;
 				}
 				String msg = srcLabel + " not specified. References to this " + targetLabel
 						+ " will not be supportable.";
 				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_WARN, targetEl, msg, null, null, logMsgSrcId);
 			} else {
 				if (!idSet.add(idValue)) {
-					LogReference srcRef = LogReference.getRef("CM",  "cm001a");
+					LogReference srcRef = LogReference.getRef("CM", "cm001a");
 					String msg = idAttribute + " is not unique";
 					int msgLevel;
 					if (reqUniqueness) {
@@ -397,9 +427,9 @@ public class CMValidator extends XmlIngester {
 				}
 			}
 		}
-		idSets.put(elementName, idSet);
-		id2XmlMappings.put(elementName, id2XmlMap);
-		idXRefCounts.put(elementName, idXRefCounter);
+		idSets.put(idElement, idSet);
+		id2XmlMappings.put(idElement, id2XmlMap);
+		idXRefCounts.put(idElement, idXRefCounter);
 		return idSet;
 	}
 
@@ -433,7 +463,7 @@ public class CMValidator extends XmlIngester {
 		if (!idScheme.startsWith("eidr")) {
 			String msg = "Use of EIDR-based identifiers is recommended";
 			String details = "Best Practice is to derive IDs from an EIDR-base ALID";
-			LogReference srcRef = LogReference.getRef("MMM-BP",  "mmbp01.1");
+			LogReference srcRef = LogReference.getRef("MMM-BP", "mmbp01.1");
 			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_NOTICE, targetEl, msg, details, srcRef, logMsgSrcId);
 		}
 	}
@@ -479,15 +509,23 @@ public class CMValidator extends XmlIngester {
 	 * @param srcElement
 	 * @param xrefElement
 	 * @param targetElType
+	 * @deprecated
 	 */
 	protected void validateXRef(String srcElement, String xrefElement, String targetElType) {
+		String xpath = ".//manifest:" + srcElement + "/manifest:" + xrefElement;
+		validateXRef(xpath, targetElType);
+	}
+
+	/**
+	 * @param srcElement
+	 * @param xrefElement
+	 * @param targetElType
+	 */
+	protected void validateXRef(String xpath, String targetElType) {
 		HashSet<String> idSet = idSets.get(targetElType);
 		Map<String, XrefCounter> idXRefCounter = idXRefCounts.get(targetElType);
-		XPathExpression<Element> xpExpression = xpfac.compile(".//manifest:" + srcElement + "/manifest:" + xrefElement,
-				Filters.element(), null, manifestNSpace);
+		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, manifestNSpace);
 		List<Element> elementList = xpExpression.evaluate(curRootEl);
-		String debugMsg = "Found " + elementList.size() + " cross-refs by a " + srcElement + " to a " + targetElType;
-		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, debugMsg, curFile, LOGMSG_ID);
 		for (int i = 0; i < elementList.size(); i++) {
 			Element refEl = (Element) elementList.get(i);
 			String targetId = refEl.getTextNormalize();
