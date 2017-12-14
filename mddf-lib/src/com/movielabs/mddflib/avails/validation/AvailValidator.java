@@ -44,8 +44,8 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 /**
  * Validates an Avails file as conforming to EMA Content Availability Data
  * (Avails) as specified in <tt>TR-META-AVAIL (v2.1)</tt>. Validation also
- * includes testing for conformance with the <tt>Common Metadata (md)</tt>
- * specification as defined in <tt>TR-META-CM (v2.4)</tt>
+ * includes testing for conformance with the appropriate version of the
+ * <tt>Common Metadata (md)</tt> specification.
  * 
  * @see <a href= "http://www.movielabs.com/md/avails/v2.1/Avails_v2.1.pdf"> TR-
  *      META-AVAIL (v2.1)</a>
@@ -409,20 +409,11 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateLanguage(primaryNS, "SeriesTitleDisplayUnlimited", primaryNS, "@language");
 	}
 
-	/**
-	 * Check for consistent usage. This typically means that an OPTIONAL element
-	 * will be either REQUIRED or INVALID for certain use-cases (e.g.
-	 * BundledAsset is only allowed when WorkType is 'Collection').
-	 * <p>
-	 * Validation is based primarily on the <i>structure definitions</i> defined
-	 * in a version-specific JSON file. This will define various criteria that
-	 * must be satisfied for a given usage. The criteria are specified in the
-	 * form of XPATHs.
-	 * </p>
-	 * 
-	 * @return
+ 
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.util.CMValidator#validateUsage()
 	 */
-	private void validateUsage() {
+	protected void validateUsage() {
 		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.LEV_INFO, "Validating structure...", curFile, LOGMSG_ID);
 
 		/*
@@ -433,7 +424,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 */
 		String structVer = null;
 		switch (availSchemaVer) {
-		case "2.2.2": 
+		case "2.2.2":
 			structVer = "2.2.2";
 			break;
 		case "2.1":
