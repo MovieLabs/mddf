@@ -25,9 +25,12 @@ package com.movielabs.mddflib.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.jdom2.Attribute;
 import org.jdom2.Document;
@@ -49,7 +52,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
- * Performs translation of Avails from one format or version to another and then
+ * Performs translation of an Avails file from one format or version to another and then
  * exports (i.e., saves) the translated file(s).
  * 
  * @author L. Levin, Critical Architectures LLC
@@ -58,6 +61,71 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 public class Translator {
 
 	private static String moduleId = "Translator";
+	private static Map<FILE_FMT, List<FILE_FMT>> supported = new HashMap<FILE_FMT, List<FILE_FMT>>();
+
+	static {
+		/* identify what a given format may be translated to */
+		List<FILE_FMT> for_AVAILS_2_1 = new ArrayList<FILE_FMT>();
+		for_AVAILS_2_1.add(FILE_FMT.AVAILS_2_2);
+		for_AVAILS_2_1.add(FILE_FMT.AVAILS_2_2_1);
+		for_AVAILS_2_1.add(FILE_FMT.AVAILS_2_2_2);
+		for_AVAILS_2_1.add(FILE_FMT.AVAILS_2_3);
+		for_AVAILS_2_1.add(FILE_FMT.AVAILS_1_7);
+		for_AVAILS_2_1.add(FILE_FMT.AVAILS_1_7_2);
+		supported.put(FILE_FMT.AVAILS_2_1, for_AVAILS_2_1);
+
+		List<FILE_FMT> for_AVAILS_2_2 = new ArrayList<FILE_FMT>();
+		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_2_1);
+		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_2_2);
+		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_3);
+		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7);
+		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7_2);
+		supported.put(FILE_FMT.AVAILS_2_2, for_AVAILS_2_2);
+
+		List<FILE_FMT> for_AVAILS_2_2_1 = new ArrayList<FILE_FMT>();
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_2_2);
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_2_2_2);
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7);
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7_2);
+		supported.put(FILE_FMT.AVAILS_2_2_1, for_AVAILS_2_2_1);
+
+		List<FILE_FMT> for_AVAILS_2_2_2 = new ArrayList<FILE_FMT>();
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_2_1);
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_3);
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7);
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7_2);
+		supported.put(FILE_FMT.AVAILS_2_2_2, for_AVAILS_2_2_2);
+
+		List<FILE_FMT> for_AVAILS_2_3 = new ArrayList<FILE_FMT>();
+		supported.put(FILE_FMT.AVAILS_2_3, for_AVAILS_2_3);
+
+		List<FILE_FMT> for_AVAILS_1_7 = new ArrayList<FILE_FMT>();
+		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_2);
+		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_2_1);
+		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_2_2);
+		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_3);
+		for_AVAILS_1_7.add(FILE_FMT.AVAILS_1_7_2);
+		supported.put(FILE_FMT.AVAILS_1_7, for_AVAILS_1_7);
+
+		List<FILE_FMT> for_AVAILS_1_7_2 = new ArrayList<FILE_FMT>();
+		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_2);
+		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_2_1);
+		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_2_2);
+		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_3);
+		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_7);
+		supported.put(FILE_FMT.AVAILS_1_7_2, for_AVAILS_1_7_2);
+	}
+
+	/**
+	 * Return a list of all formats that a file using the specified
+	 * <tt>sourceFmt</tt> may be converted to.
+	 * 
+	 * @param sourceFmt
+	 * @return
+	 */
+	public static List<FILE_FMT> supportedTranslations(FILE_FMT sourceFmt) {
+		return supported.get(sourceFmt);
+	}
 
 	/**
 	 * @param xmlDoc
@@ -138,6 +206,7 @@ public class Translator {
 		 * already be a match for the desired format.
 		 */
 		String curVersion = XmlIngester.identifyXsdVersion(srcDoc.getRootElement());
+		FILE_FMT curFmt = MddfContext.identifyMddfFormat("avails", curVersion);
 		String targetVersion = targetFmt.getVersion();
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
 				"Translating to XML v" + targetFmt.getVersion() + " from XML v" + curVersion, null, moduleId);
@@ -165,10 +234,10 @@ public class Translator {
 				switch (curVersion) {
 				case "2.1":
 					targetDoc = avail2_1_to_2_2(srcDoc);
-					targetDoc = avail2_2_to_2_2_1(targetDoc);
+					targetDoc = simpleConversion(targetDoc, curFmt, targetFmt);
 					return targetDoc;
 				case "2.2":
-					targetDoc = avail2_2_to_2_2_1(srcDoc);
+					targetDoc = simpleConversion(srcDoc, curFmt, targetFmt);
 					return targetDoc;
 				case "2.2.2":
 					targetDoc = avail2_2_2_to_2_2_1(srcDoc);
@@ -181,10 +250,26 @@ public class Translator {
 				switch (curVersion) {
 				case "2.1":
 					targetDoc = avail2_1_to_2_2(srcDoc);
-					targetDoc = avail2_2_to_2_2_2(targetDoc);
+					targetDoc = simpleConversion(targetDoc, curFmt, targetFmt);
 					return targetDoc;
 				case "2.2":
-					targetDoc = avail2_2_to_2_2_2(srcDoc);
+					targetDoc = simpleConversion(srcDoc, curFmt, targetFmt);
+					return targetDoc;
+				default:
+					// Unsupported request
+					break;
+				}
+			case AVAILS_2_3:
+				switch (curVersion) {
+				case "2.1":
+					targetDoc = avail2_1_to_2_2(srcDoc);
+					targetDoc = simpleConversion(targetDoc, curFmt, targetFmt);
+					return targetDoc;
+				case "2.2":
+					targetDoc = simpleConversion(srcDoc, curFmt, targetFmt);
+					return targetDoc;
+				case "2.2.2":
+					targetDoc = simpleConversion(srcDoc, curFmt, targetFmt);
 					return targetDoc;
 				default:
 					// Unsupported request
@@ -212,6 +297,7 @@ public class Translator {
 			boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
 		Document xmlDoc = null;
 		String curVersion = XmlIngester.identifyXsdVersion(xmlSrcDoc.getRootElement());
+		FILE_FMT curFmt = MddfContext.identifyMddfFormat("avails", curVersion);
 		Version excelVer = null;
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
 				"Translating to Excel v" + targetFormat.getVersion() + " from XML v" + curVersion, null, moduleId);
@@ -251,14 +337,14 @@ public class Translator {
 			switch (curVersion) {
 			case "2.1":
 				xmlDoc = avail2_1_to_2_2(xmlSrcDoc);
-				xmlDoc = avail2_2_to_2_2_2(xmlDoc);
+				xmlDoc = simpleConversion(xmlDoc, curFmt, targetFormat);
 				break;
 			case "2.2":
-				xmlDoc = avail2_2_to_2_2_2(xmlSrcDoc);
+				xmlDoc = simpleConversion(xmlSrcDoc, curFmt, targetFormat);
 				break;
 			case "2.2.1":
 				xmlDoc = avail2_2_1_to_2_2(xmlSrcDoc);
-				xmlDoc = avail2_2_to_2_2_2(xmlDoc);
+				xmlDoc = simpleConversion(xmlDoc, curFmt, targetFormat);
 				break;
 			case "2.2.2":
 				xmlDoc = xmlSrcDoc;
@@ -300,8 +386,6 @@ public class Translator {
 	 * @return
 	 */
 	private static Document avail2_1_to_2_2(Document xmlDocIn) {
-		// XmlIngester.writeXml(new File("./tmp/Conversion-TEST.xml"),
-		// xmlDocIn);
 		/*
 		 * STAGE ONE: some changes are easiest to do by converting the Doc to a
 		 * string and then doing string replacements prior to converting back to
@@ -353,25 +437,6 @@ public class Translator {
 	}
 
 	/**
-	 * @param xmlDocIn
-	 * @return
-	 */
-	private static Document avail2_2_to_2_2_1(Document xmlDocIn) {
-		/*
-		 * STAGE ONE: some changes are easiest to do by converting the Doc to a
-		 * string and then doing string replacements prior to converting back to
-		 * Doc form.
-		 */
-		XMLOutputter outputter = new XMLOutputter();
-		String inDoc = outputter.outputString(xmlDocIn);
-		// Change Namespace declaration
-		String t1 = inDoc.replaceFirst("/avails/v2.2/avails", "/avails/v2.2.1/avails");
-		String outDoc = t1.replaceFirst("/schema/md/v2.4/md", "/schema/md/v2.5/md");
-		// Now gen a new doc
-		return regenXml(outDoc);
-	}
-
-	/**
 	 * 
 	 * 
 	 * @param xmlDocIn
@@ -405,23 +470,35 @@ public class Translator {
 	}
 
 	/**
-	 * @param xmlInputDoc
+	 * Handle conversion that only requires changes to the <tt>Namespace</tt>
+	 * versions.
+	 * 
+	 * @param xmlDocIn
+	 * @param srcFmt
+	 * @param targetFmt
 	 * @return
 	 */
-	private static Document avail2_2_to_2_2_2(Document xmlDocIn) {
-
+	private static Document simpleConversion(Document xmlDocIn, FILE_FMT srcFmt, FILE_FMT targetFmt) {
 		XmlIngester.writeXml(new File("./tmp/Conversion-TEST.xml"), xmlDocIn);
-
 		XMLOutputter outputter = new XMLOutputter();
 		String inDoc = outputter.outputString(xmlDocIn);
-		// Change Namespace declaration
-		String t1 = inDoc.replaceFirst("/avails/v2.2/avails", "/avails/v2.2.2/avails");
-		String outDoc = t1.replaceFirst("/schema/md/v2.4/md", "/schema/md/v2.5/md");
-		/*
-		 * v2.2.2 adds several new elements and attributes. However, since all
-		 * are optional no further changes are required.
-		 */
+		Map<String, String> srcVers = MddfContext.getReferencedXsdVersions(srcFmt);
+		Map<String, String> targetVers = MddfContext.getReferencedXsdVersions(targetFmt);
+		String outDoc = convertNS(inDoc, "md", srcVers.get("MD"), targetVers.get("MD"));
+		outDoc = convertNS(outDoc, "mdmec", srcVers.get("MDMEC"), targetVers.get("MDMEC"));
+		outDoc = convertNS(outDoc, "avails", srcFmt.getVersion(), targetFmt.getVersion());
 		return regenXml(outDoc);
+	}
+
+	private static String convertNS(String inDoc, String schema, String verIn, String verOut) {
+		String target = "/schema/" + schema + "/v" + verIn + "/" + schema;
+		String replacement = "/schema/" + schema + "/v" + verOut + "/" + schema;
+		String t1 = inDoc.replaceFirst(target, replacement);
+
+		target = schema + "-v" + verIn + ".xsd";
+		replacement = schema + "-v" + verOut + ".xsd";
+		String outDoc = t1.replaceFirst(target, replacement);
+		return outDoc;
 	}
 
 	/**
