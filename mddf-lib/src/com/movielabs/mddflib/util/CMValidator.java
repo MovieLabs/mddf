@@ -921,10 +921,35 @@ public class CMValidator extends XmlIngester {
 		curFileIsValid = false;
 	}
 
-	protected boolean validateRegion(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
-		String mdVersion = "2.4";
-		LogReference srcRef = LogReference.getRef("CM", mdVersion, "cm_regions");
+	protected boolean validateRegion(Namespace primaryNS, String primaryEl, Namespace childNS, String child) { 
+		LogReference srcRef = LogReference.getRef("CM", "cm_regions");
 		return validateCode(primaryNS, primaryEl, childNS, child, iso3166_1_codes, srcRef, false);
+	}
+	
+	/**
+	 * Validate country codes specified in any <tt>@region</tt> attribute
+	 * conform to ISO 3166-1
+	 * 
+	 * @param primaryNS
+	 *            used only for log messages
+	 */
+	protected boolean validateRegion(Namespace primaryNS) {
+		boolean allOK = true;
+		String errMsg = "Unrecognized value for @region attribute";
+		LogReference srcRef = LogReference.getRef("CM",   "cm_regions");
+		XPathExpression<Attribute> xpExpression = xpfac.compile("//@region", Filters.attribute(), null, primaryNS);
+		List<Attribute> attList = xpExpression.evaluate(curRootEl);
+		int tag4log = getLogTag(primaryNS, null);
+		for (int i = 0; i < attList.size(); i++) {
+			Attribute targetAtt = (Attribute) attList.get(i);
+			String text = targetAtt.getValue();
+			if (!iso3166_1_codes.containsKey(text)) {
+				logIssue(tag4log, LogMgmt.LEV_ERR, targetAtt.getParent(), errMsg, null, srcRef, logMsgSrcId);
+				allOK = false;
+				curFileIsValid = false;
+			}
+		}
+		return allOK;
 	}
 
 	protected boolean validateCode(Namespace primaryNS, String primaryEl, Namespace childNS, String child,

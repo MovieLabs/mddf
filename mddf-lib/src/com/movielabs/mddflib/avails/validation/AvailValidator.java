@@ -43,7 +43,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
  * Validates an Avails file as conforming to EMA Content Availability Data
- * (Avails) as specified in <tt>TR-META-AVAIL (v2.1)</tt>. Validation also
+ * (Avails) as specified in <tt>TR-META-AVAIL</tt>. Validation also
  * includes testing for conformance with the appropriate version of the
  * <tt>Common Metadata (md)</tt> specification.
  * 
@@ -128,8 +128,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		XrefCounter(String elType, String elId) {
 			super();
 			this.elType = elType;
-			this.elId = elId;
-			// System.out.println("CONSTRUCT: "+elId+", cnt="+count);
+			this.elId = elId; 
 		}
 
 		int increment() {
@@ -137,8 +136,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			return count;
 		}
 
-		void validate() {
-			// System.out.println(" VALIDATE: "+elId+", cnt="+count);
+		void validate() { 
 			if (count > 0) {
 				return;
 			} else {
@@ -155,9 +153,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	public static final String LOGMSG_ID = "AvailValidator";
 
 	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL", "avail01");
-
-	// private JSONObject availTypeStruct;
-	private JSONArray genericAvailTypes;
+  
 	private Map<Object, Pedigree> pedigreeMap;
 
 	private String availSchemaVer;
@@ -281,6 +277,10 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		Namespace primaryNS = availsNSpace;
 		String doc = "AVAIL";
 		String vocabVer = availSchemaVer;
+		/*
+		 * handle any case of backwards (or forwards) compatibility between
+		 * versions.
+		 */
 		switch (availSchemaVer) {
 		case "2.2.1":
 			vocabVer = "2.2";
@@ -374,8 +374,11 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 				LOGMSG_ID);
 		Namespace primaryNS = availsNSpace;
 		/*
-		 * Validate use of Country identifiers....
+		 * Validate use of Country identifiers starting with use of @region
+		 * attribute
 		 */
+		validateRegion(primaryNS);
+
 		// In 'Metadata/Release History/DistrTerritory'
 		validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country");
 
@@ -393,23 +396,17 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 		/* First check all usage of the '@language' attribute */
 		validateLanguage(manifestNSpace);
-		
+
 		// other usages...
 		validateLanguage(primaryNS, "Transaction", primaryNS, "AllowedLanguage");
 		validateLanguage(primaryNS, "Transaction", primaryNS, "AssetLanguage");
 		validateLanguage(primaryNS, "Transaction", primaryNS, "HoldbackLanguage");
-		validateLanguage(primaryNS, "Term", primaryNS, "Language"); 
-
-		/*
-		 * Additions for v2.2.2
-		 */
-		validateRegion(primaryNS, "TitleInternalAlias", null, "@region");
-		validateRegion(primaryNS, "SeasonTitleInternalAlias", null, "@region");
-		validateRegion(primaryNS, "SeriesTitleInternalAlias", null, "@region"); 
+		validateLanguage(primaryNS, "Term", primaryNS, "Language");
 	}
 
- 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.movielabs.mddflib.util.CMValidator#validateUsage()
 	 */
 	protected void validateUsage() {
