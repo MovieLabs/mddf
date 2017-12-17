@@ -1,0 +1,326 @@
+{
+	"COMMENT": "refer to Javadoc for com.movielabs.mddflib.util.xml.StructureValidation before editing",
+	"StrucRqmts": 
+	{
+		"POEST": 
+		{
+			"targetPath": ".//{avail}LicenseType[.='POEST']",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "../{avail}Term[@termName='SuppressionLiftDate']",
+					"msg": "One SuppressionLiftDate is required for LicenseType 'POEST'"
+				}
+			]
+		},
+
+		"PreOrderFulfillDate": 
+		{
+			"targetPath": ".//{avail}Term[@termName='PreOrderFulfillDate']",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "../{avail}LicenseType[.='POEST']",
+					"msg": "PreOrderFulfillDate term is only allowed if LicenseType='POEST'"
+				}
+			]
+		},
+
+		"BundledAsset": 
+		{
+			"targetPath": ".//{avail}Asset/{avail}BundledAsset",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "../{avail}WorkType[.='Collection']",
+					"msg": "Invalid Asset: BundledAsset only allowed when WorkType is 'Collection'",
+					"docRef": "AVAIL:struc01"
+				}
+			]
+		},
+
+		"single-AvailType": 
+		{
+			"targetPath": ".//{avail}Avail[./{avail}AvailType[text()='single']]",
+			"constraint": 
+			[
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "1",
+					"max": "1",
+					"xpath": "./{avail}Asset/{avail}WorkType[. = 'Movie' or . = 'Short']",
+					"severity": "Error",
+					"msg": "Avail's type requires exactly one non-episodic Asset"
+				},
+
+				{
+					"docRef": "AVAIL:struc01",
+					"max": "0",
+					"xpath": 
+					[
+						"./{avail}Asset/{avail}WorkType[. = 'Collection' or . = 'Franchise']",
+						"./{avail}Asset/{avail}WorkType[. = 'Series' or . = 'Season']"
+					],
+
+					"severity": "Error",
+					"msg": "Avail's type requires exactly one non-episodic Asset"
+				}
+			]
+		},
+
+		"episode-AvailType": 
+		{
+			"targetPath": ".//{avail}Avail[./{avail}AvailType[text()='episode']]",
+			"constraint": 
+			[
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "1",
+					"max": "1",
+					"xpath": "./{avail}Asset/{avail}WorkType[. = 'Episode']",
+					"severity": "Error",
+					"msg": "Avail's type requires exactly one Episode Asset"
+				}
+			]
+		},
+
+		"season-AvailType": 
+		{
+			"targetPath": ".//{avail}Avail[./{avail}AvailType[text()='season']]",
+			"constraint": 
+			[
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "1",
+					"max": "1",
+					"xpath": "./{avail}Asset/{avail}WorkType[. = 'Season']",
+					"severity": "Error",
+					"msg": "Avail's type requires exactly one Season Asset"
+				}
+			]
+		},
+
+		"series-AvailType": 
+		{
+			"targetPath": ".//{avail}Avail[./{avail}AvailType[text()='series']]",
+			"constraint": 
+			[
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "1",
+					"max": "1",
+					"xpath": "./{avail}Asset/{avail}WorkType[. = 'Series']",
+					"severity": "Error",
+					"msg": "Avail's type requires exactly one Series Asset"
+				}
+			]
+		},
+
+		"miniseries-AvailType": 
+		{
+			"targetPath": ".//{avail}Avail[./{avail}AvailType[text()='miniseries']]",
+			"constraint": 
+			[
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "1",
+					"max": "1",
+					"xpath": "./{avail}Asset/{avail}WorkType[. = 'Series']",
+					"severity": "Error",
+					"msg": "Avail's type requires exactly one Series Asset"
+				}
+			]
+		},
+
+		"collection-AvailType": 
+		{
+			"targetPath": ".//{avail}Avail[./{avail}AvailType[text()='collection']]",
+			"constraint": 
+			[
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "2",
+					"xpath": 
+						[
+							"./{avail}Asset",
+							"./{avail}Asset/{avail}BundledAsset"						
+						],
+					"severity": "Error",
+					"msg": "Avail's type requires two or more Assets"
+				}
+			]
+		},
+
+		"bundle-AvailType": 
+		{
+			"targetPath": ".//{avail}Avail[./{avail}AvailType[text()='bundle']]",
+			"constraint": 
+			[
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "1",
+					"max": "1",
+					"xpath": "./{avail}Asset/{avail}WorkType[. = 'Collection']",
+					"severity": "Error",
+					"msg": "Avail's type  requires exactly one Collection Asset"
+				},
+
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "1",
+					"xpath": "./{avail}Asset/{avail}BundledAsset",
+					"severity": "Error",
+					"msg": "Avail's type requires Asset contain one or more BundledAsset"
+				},
+
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "1",
+					"xpath": "./{avail}Asset/{avail}Metadata",
+					"severity": "Error",
+					"msg": "Avail's type requires Asset to provide Metadata"
+				}
+			]
+		},
+
+		"supplement-AvailType": 
+		{
+			"targetPath": ".//{avail}Avail[./{avail}AvailType[text()='supplement']]",
+			"constraint": 
+			[
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "1",
+					"xpath": "./{avail}Asset/{avail}WorkType[. = 'Supplemental']",
+					"severity": "Error",
+					"msg": "Avail's type  requires at least one Supplemental Asset"
+				},
+
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "1",
+					"xpath": "./{avail}Transaction/{avail}RefALID",
+					"severity": "Error",
+					"msg": "Avail's type requires Transaction/RefALID"
+				}
+			]
+		},
+
+		"promotion-AvailType": 
+		{
+			"targetPath": ".//{avail}Avail[./{avail}AvailType[text()='promotion']]",
+			"constraint": 
+			[
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "1",
+					"xpath": "./{avail}Asset/{avail}WorkType[. = 'Promotion']",
+					"severity": "Error",
+					"msg": "Avail's type  requires at least one Promotion Asset"
+				},
+
+				{
+					"docRef": "AVAIL:struc01",
+					"min": "1",
+					"xpath": "./{avail}Transaction/{avail}RefALID",
+					"severity": "Error",
+					"msg": "Avail's type requires Transaction/RefALID"
+				}
+			]
+		},
+
+		"RefALID": 
+		{
+			"targetPath": ".//{avail}Transaction/{avail}RefALID",
+			"constraint": 
+			[
+				{
+					"docRef": "AVAIL:struc03",
+					"min": "1",
+					"xpath": "../../{avail}AvailType[. = ‘promotion’ or . =‘supplement’]",
+					"severity": "Error",
+					"msg": "RefALID is defined only when AvailType = ‘promotion’ or ‘supplement’"
+				}
+			]
+		},
+
+		"Non-Episodic-WT": 
+		{
+			"targetPath": ".//{avail}Asset[./{avail}WorkType[. = 'Movie' or . = 'Short']]",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"xpath": "./{avail}Metadata",
+					"severity": "Error",
+					"msg": "WorkType requires use of Metadata"
+				}
+			]
+		},
+
+		"Series-WT": 
+		{
+			"targetPath": ".//{avail}Asset[./{avail}WorkType[. = 'Series']]",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"xpath": "./{avail}SeriesMetadata",
+					"severity": "Error",
+					"msg": "WorkType requires use of SeriesMetadata"
+				}
+			]
+		},
+
+		"Season-WT": 
+		{
+			"targetPath": ".//{avail}Asset[./{avail}WorkType[. = 'Season']]",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"xpath": "./{avail}SeasonMetadata",
+					"severity": "Error",
+					"msg": "WorkType requires use of SeasonMetadata"
+				}
+			]
+		},
+
+		"Episode-WT": 
+		{
+			"targetPath": ".//{avail}Asset[./{avail}WorkType[. = 'Episode']]",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"xpath": "./{avail}EpisodeMetadata",
+					"severity": "Error",
+					"msg": "WorkType requires use of EpisodeMetadata"
+				},
+
+				{
+					"docRef": "AVAIL:avail01",
+					"min": "1",
+					"max": "1",
+					"xpath": "../{avail}AvailType[text()='episode']"
+				},
+
+				{
+					"docRef": "AVAIL:avail00n",
+					"min": "1",
+					"max": "1",
+					"xpath": "./{avail}EpisodeMetadata/{avail}EpisodeNumber/{md}Number"
+				}
+			]
+		}
+	}
+}

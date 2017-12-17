@@ -69,7 +69,7 @@ public class MddfContext {
 		String[] CM_VER = { "2.6", "2.5", "2.4" };
 		String[] MANIFEST_VER = { "1.7", "1.6.1", "1.6", "1.5" };
 		String[] MEC_VER = { "2.6", "2.5", "2.4" };
-		String[] AVAILS_X_VER = { "2.2.2", "2.2.1", "2.2", "2.1" };
+		String[] AVAILS_X_VER = { "2.3", "2.2.2", "2.2.1", "2.2", "2.1" };
 		String[] AVAILS_E_VER = { "1.7.2", "1.7", "1.6" };
 		String[] MMM_BP = { "1.0" };
 
@@ -92,14 +92,16 @@ public class MddfContext {
 	public enum FILE_FMT {
 		AVAILS_1_6("Avails", "1.6", "xlsx"), AVAILS_1_7("Avails", "1.7", "xlsx"), AVAILS_1_7_2("Avails", "1.7.2",
 				"xlsx"), AVAILS_2_1("Avails", "2.1", "xml"), AVAILS_2_2("Avails", "2.2", "xml"), AVAILS_2_2_1("Avails",
-						"2.2.1", "xml"), AVAILS_2_2_2("Avails", "2.2.2", "xml"), MANIFEST_1_4("Manifest", "1.4",
-								"xml"), MANIFEST_1_5("Manifest", "1.5", "xml"), MANIFEST_1_6("Manifest", "1.6",
-										"xml"), MANIFEST_1_6_1("Manifest", "1.6.1", "xml"), MANIFEST_1_7("Manifest",
-												"1.7", "xml"), MDMEC_2_4("MEC", "2.4", "xml"), MDMEC_2_5("MEC", "2.5",
-														"xml"), MDMEC_2_6("MEC", "2.6", "xml");
+						"2.2.1", "xml"), AVAILS_2_2_2("Avails", "2.2.2", "xml"), AVAILS_2_3("Avails", "2.3",
+								"xml"), MANIFEST_1_4("Manifest", "1.4", "xml"), MANIFEST_1_5("Manifest", "1.5",
+										"xml"), MANIFEST_1_6("Manifest", "1.6", "xml"), MANIFEST_1_6_1("Manifest",
+												"1.6.1", "xml"), MANIFEST_1_7("Manifest", "1.7",
+														"xml"), MDMEC_2_4("MEC", "2.4", "xml"), MDMEC_2_5("MEC", "2.5",
+																"xml"), MDMEC_2_6("MEC", "2.6", "xml");
 
 		private String standard;
 		private String ver;
+
 		private String encoding;
 		private String label;
 
@@ -131,6 +133,14 @@ public class MddfContext {
 			return ver;
 		}
 
+		/**
+		 * @return the standard
+		 */
+		public String getStandard() {
+			return standard;
+		}
+ 
+ 
 	}
 
 	public static FILE_FMT identifyMddfFormat(Element docRootEl) {
@@ -169,6 +179,8 @@ public class MddfContext {
 			break;
 		case "avails":
 			switch (schemaVer) {
+			case "2.3":
+				return FILE_FMT.AVAILS_2_3;
 			case "2.2.2":
 				return FILE_FMT.AVAILS_2_2_2;
 			case "2.2.1":
@@ -208,6 +220,10 @@ public class MddfContext {
 	public static Map<String, String> getReferencedXsdVersions(FILE_FMT standard) {
 		Map<String, String> uses = new HashMap<String, String>();
 		switch (standard) {
+		case AVAILS_2_3:
+			uses.put("MD", "2.6");
+			uses.put("MDMEC", "2.6");
+			break;
 		case AVAILS_2_2_2:
 		case AVAILS_2_2_1:
 			uses.put("MD", "2.5");

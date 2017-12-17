@@ -1,0 +1,170 @@
+{ 
+	"avail": 
+	{
+		"AvailType": 
+		[
+			"single",
+			"episode",
+			"season",
+			"series",
+			"miniseries",
+			"collection",
+			"bundle",
+			"supplement",
+			"promotion"
+		],
+
+		"EntryType": 
+		[
+			"Full Delete",
+			"Full Extract"
+		],
+
+		"AltIdentifier@scope": 
+		[
+			"Title",
+			"Edit",
+			"Manifestation"
+		],
+
+		"USACaptionsExemptionReason": 
+		[
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6"
+		],
+
+		"LocalizationOffering": 
+		[
+			"sub",
+			"dub",
+			"subdub",
+			"any"
+		],
+
+		"SeasonStatus": 
+		[
+			"Partial"
+		],
+
+		"SeriesStatus": 
+		[
+			"Concluded",
+			"Continuing",
+			"Pending"
+		],
+
+		"LicenseType": 
+		[
+			"EST",
+			"VOD",
+			"SVOD",
+			"POEST",
+			"Pre-Release",
+			"Library"
+		],
+		
+		"Language@asset":
+		[
+			"subtitle",
+			"audio",
+			"subdub"
+		],
+
+		"LicenseRightsDescription": 
+		[
+			
+			"Next Day TV",
+			"POD"
+		],
+
+		"FormatProfile": 
+		[
+			"UHD",
+			"HD",
+			"SD",
+			"3D",
+			"3DUHD",
+			"3DHD",
+			"3DSD"
+		],
+
+		"FormatProfile@HDR": 
+		[
+			"true",
+			"HDR10", 
+			"DV"
+		],
+		
+		"Term@termName": 
+		[
+			"Tier",
+			"SRP",
+			"TPR-SRP",
+			"SRP-PostTax",
+			"WSP",
+			"TPR-WSP",
+			"WSP-PostTax",
+			"EpisodeWSP",
+			"TPR-EpisodeWSP",
+			"EpisodeWSP-PostTax",
+			"SeasonWSP",
+			"TPR-SeasonWSP",
+			"SeasonWSP-PostTax",
+			"DMRP",
+			"TPR-DMRP",
+			"DMRP-PostTax",
+			"SMRP",
+			"TPR-SMRP",
+			"SMRP-PostTax",
+			"LicenseFee",
+			"Category",
+			"Included",
+			"AnnounceDate",
+			"PreorderFulfillDate",
+			"SuppressionLiftDate",
+			"RentalDuration",
+			"WatchDuration",
+			"FixedEndDate",
+			"LocalizationOffering",
+			"ContractStatus",
+			"Download",
+			"Exclusive",
+			"ExclusiveAttributes",
+			"BrandingRights",
+			"BrandingRightsAttributes",			
+			"NA"
+		],
+
+		"SharedEntitlement@ecosystem": 
+		[
+			"MA",
+			"DMA",
+			"UVVU"
+		],
+
+		"ExperienceCondition": 
+		[
+			"Unavailable",
+			"Pre-offer",
+			"Pre-order",
+			"Hold",
+			"For-sale",
+			"Acquired"
+		],
+
+		"DateTimeCondition": 
+		[
+			"Open",
+			"Immediate",
+			"ESTStart",
+			"EST",
+			"Broadcast",
+			"Completed",
+			"Theatrical"
+		]
+	}
+}
