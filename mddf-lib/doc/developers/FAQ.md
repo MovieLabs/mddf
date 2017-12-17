@@ -10,6 +10,8 @@ Step 3:  `MddfContext` also needs to be updated to link the _primary_ mddf stand
 
 Step 4: if the new version is backwards compatible with a previous version's _vocab_ file, the linkage needs to specified in `XmiIngester.getVocabResource()`.
 
+Step 5: if a _structure_ file is used during validation, the version to use will be specified in the Validator's `validateUsgage()` method.
+
 Note that adding support for a new version of the Avails XLSX format requires a different set of steps (see below)
 
 ### 2. How do you add support for a new version of the Avails XLSX template?
