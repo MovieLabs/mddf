@@ -9,6 +9,13 @@ The latest release of the core mddf-lib is v1.3.
 
 ### mddf-lib Changes:
 
+#### mddf-lib v1.3.1
+* Enhancement: support for Avails v2.3 added
+* Enhancement: support for Manifest v1.7 added
+* Enhancement: support for MDMEC v2.6 added
+* Deprecation: support for translation to Avails v2.2.2 has been removed
+* Internal: added functions to support advanced XSD usage
+
 #### mddf-lib v1.3
 * v1.3_rc4 has been released as v1.3
 

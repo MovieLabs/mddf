@@ -23,7 +23,7 @@
 ---
 ## <a name="h_News">What's New</a>
 
-* **mddf-tool v1.3 has been released
+* mddf-tool v1.3.1 has been released.
 
 ## <a name="h_Overview">Overview:</a>
 
@@ -171,6 +171,8 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">Release History:</a>
+
+* **2017-Dec-18**: mddf-tool v1.3.1 released.
 
 * **2017-Nov-13**: mddf-tool v1.3 released.
 

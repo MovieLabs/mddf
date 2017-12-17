@@ -3,7 +3,7 @@
 	xmlns:fx="javafx:com.sun.javafx.tools.ant">
 	<property name="proj.home" value="${basedir}/../.." />
 	<property name="mddf-lib.home" value="${proj.home}/../mddf-lib" />
-	<property name="mddf-lib.version" value="1.3" />
+	<property name="mddf-lib.version" value="1.3.1" />
 	<property name="appPack.dir" value="${proj.home}/packager" />
 	<property name="app.version.cmm" value="${mddf-lib.version}.a" />
 	<property name="app.version.avail" value="${mddf-lib.version}.a" />
