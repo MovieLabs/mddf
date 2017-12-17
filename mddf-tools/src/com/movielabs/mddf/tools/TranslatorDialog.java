@@ -42,6 +42,7 @@ import javax.swing.SwingConstants;
 import java.awt.Color;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
+import com.movielabs.mddflib.util.Translator;
 
 import javax.swing.border.EtchedBorder;
 import javax.swing.JTextField;
@@ -52,21 +53,23 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.awt.event.ActionEvent;
 import java.awt.Label;
 import java.awt.Font;
 import java.awt.Panel;
-import javax.swing.UIManager;
-import java.awt.Checkbox;
 
 public class TranslatorDialog extends JDialog {
 
 	private static TranslatorDialog singleton;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField destTextField;
+
 	private ArrayList<JCheckBox> cBoxList = new ArrayList<JCheckBox>();
 	private HashMap<FILE_FMT, JCheckBox> cBoxMap = new HashMap<FILE_FMT, JCheckBox>();
+	private static Set<JCheckBox> xlateCBoxes = new HashSet<JCheckBox>();
+
 	private JTextField fileNameField;
 	private String ttipFileName = "File names will be prefixed with this name followed by a version ID and a format suffix (e.g., 'xyz_vx.y.xlsx')";
 	private EnumSet<FILE_FMT> selections;
@@ -79,10 +82,9 @@ public class TranslatorDialog extends JDialog {
 	private JButton selExcelFmtBtn;
 	private JPopupMenu excelFmtMenu;
 	private JCheckBox addVersionToNameCBx;
-	private static Set<JCheckBox> supported = new HashSet<JCheckBox>();
 
 	/**
-	 * Launch the application.
+	 * Launch the application. [for TESTING ONLY]
 	 */
 	public static void main(String[] args) {
 		try {
@@ -240,7 +242,9 @@ public class TranslatorDialog extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 					for (int i = 0; i < cBoxList.size(); i++) {
 						JCheckBox cbx = cBoxList.get(i);
-						cbx.setSelected(supported.contains(cbx));
+						if (cbx.isEnabled()) {
+							cbx.setSelected(xlateCBoxes.contains(cbx));
+						}
 					}
 					// then clear the checkBox for the curFmt
 					JCheckBox cBox = cBoxMap.get(curFmt);
@@ -318,13 +322,13 @@ public class TranslatorDialog extends JDialog {
 			excelFmtMenu.add(cbXlsxV1_7);
 			cBoxList.add(cbXlsxV1_7);
 			cBoxMap.put(FILE_FMT.AVAILS_1_7, cbXlsxV1_7);
-			supported.add(cbXlsxV1_7);
+			xlateCBoxes.add(cbXlsxV1_7);
 
 			JCheckBox cbXlsxV1_7_2 = new JCheckBox("XLSX 1.7.2");
 			excelFmtMenu.add(cbXlsxV1_7_2);
 			cBoxList.add(cbXlsxV1_7_2);
 			cBoxMap.put(FILE_FMT.AVAILS_1_7_2, cbXlsxV1_7_2);
-			supported.add(cbXlsxV1_7_2);
+			xlateCBoxes.add(cbXlsxV1_7_2);
 		}
 		return excelFmtMenu;
 	}
@@ -354,23 +358,32 @@ public class TranslatorDialog extends JDialog {
 		if (xmlFmtMenu == null) {
 			xmlFmtMenu = new JPopupMenu();
 
-			JCheckBox cbXmlV2_2_2 = new JCheckBox("XML 2.2.2");
-			xmlFmtMenu.add(cbXmlV2_2_2);
-			cBoxList.add(cbXmlV2_2_2);
-			cBoxMap.put(FILE_FMT.AVAILS_2_2_2, cbXmlV2_2_2);
-			supported.add(cbXmlV2_2_2);
+			JCheckBox cbXmlV2_3 = new JCheckBox("XML 2.3");
+			xmlFmtMenu.add(cbXmlV2_3);
+			cBoxList.add(cbXmlV2_3);
+			cBoxMap.put(FILE_FMT.AVAILS_2_3, cbXmlV2_3);
+			xlateCBoxes.add(cbXmlV2_3);
+
+			/*
+			 * UNCOMENT following code block to enable translation to v2.2.2
+			 */
+			// JCheckBox cbXmlV2_2_2 = new JCheckBox("XML 2.2.2");
+			// xmlFmtMenu.add(cbXmlV2_2_2);
+			// cBoxList.add(cbXmlV2_2_2);
+			// cBoxMap.put(FILE_FMT.AVAILS_2_2_2, cbXmlV2_2_2);
+			// supported.add(cbXmlV2_2_2);
 
 			JCheckBox cbXmlV2_2_1 = new JCheckBox("XML 2.2.1");
 			xmlFmtMenu.add(cbXmlV2_2_1);
 			cBoxList.add(cbXmlV2_2_1);
 			cBoxMap.put(FILE_FMT.AVAILS_2_2_1, cbXmlV2_2_1);
-			supported.add(cbXmlV2_2_1);
+			xlateCBoxes.add(cbXmlV2_2_1);
 
 			JCheckBox cbXmlV2_2 = new JCheckBox("XML 2.2");
 			xmlFmtMenu.add(cbXmlV2_2);
 			cBoxList.add(cbXmlV2_2);
 			cBoxMap.put(FILE_FMT.AVAILS_2_2, cbXmlV2_2);
-			supported.add(cbXmlV2_2);
+			xlateCBoxes.add(cbXmlV2_2);
 
 		}
 		return xmlFmtMenu;
@@ -385,6 +398,10 @@ public class TranslatorDialog extends JDialog {
 
 	}
 
+	/**
+	 * @param curFmt
+	 * @param srcFile
+	 */
 	public void setContext(FILE_FMT curFmt, File srcFile) {
 		this.curFmt = curFmt;
 		String srcFileName = srcFile.getName();
@@ -395,17 +412,28 @@ public class TranslatorDialog extends JDialog {
 			destTextField.setText(srcFile.getParent());
 		}
 		curFmtLabel.setText(curFmtPrefix + curFmt.toString());
-		// first enable all..
-		for (int i = 0; i < cBoxList.size(); i++) {
-			JCheckBox cbx = cBoxList.get(i);
-			cbx.setEnabled(supported.contains(cbx));
-		}
-		// then disable the checkBox for the curFmt
+
+		enableSelectionsFor(curFmt);
+		// then clear and disable the checkBox for the curFmt
 		JCheckBox cBox = cBoxMap.get(curFmt);
 		if (cBox != null) {
 			cBox.setEnabled(false);
+			cBox.setSelected(false);
 		}
 		selections = EnumSet.noneOf(FILE_FMT.class);
+	}
+
+	private void enableSelectionsFor(FILE_FMT srcFmt) {
+		List<FILE_FMT> possible = Translator.supportedTranslations(srcFmt);
+		Iterator<FILE_FMT> typeIt = cBoxMap.keySet().iterator();
+		while (typeIt.hasNext()) {
+			FILE_FMT nextType = typeIt.next();
+			JCheckBox cb = cBoxMap.get(nextType);
+			cb.setEnabled(possible.contains(nextType));
+			if (!cb.isEnabled()) {
+				cb.setSelected(false);
+			}
+		}
 	}
 
 	public EnumSet<FILE_FMT> getSelections() {
