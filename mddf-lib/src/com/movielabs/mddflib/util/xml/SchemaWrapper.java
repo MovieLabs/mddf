@@ -24,8 +24,6 @@ package com.movielabs.mddflib.util.xml;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -495,7 +493,7 @@ public class SchemaWrapper {
 		for (Element nextAt : attElList) {
 			String name = nextAt.getAttributeValue("name");
 			int minVal = 0;
-			String use = nextAt.getAttributeValue("required");
+			String use = nextAt.getAttributeValue("use");
 			if (use != null && use.equals("required")) {
 				minVal = 1;
 			}
@@ -594,6 +592,17 @@ public class SchemaWrapper {
 			String bestName = StringUtils.longestSubstring(optNames, false);
 			baseType = "_ANON_";
 			choiceStruct.put("id", bestName + " Option");
+			
+			/* for ANONYMOUS in-line types we need the min and max */
+			String min = choiceEl.getAttributeValue("minOccurs", "1");
+			int minVal = Integer.parseInt(min);
+			String max = choiceEl.getAttributeValue("maxOccurs", "1");
+			if (max.equals("unbounded")) {
+				max = "-1";
+			}
+			int maxVal = Integer.parseInt(max);
+			choiceStruct.put("min", minVal);
+			choiceStruct.put("max", maxVal);
 		} else {
 			choiceStruct.put("id", baseType);
 		}
@@ -601,6 +610,7 @@ public class SchemaWrapper {
 		choiceStruct.put("nspace", nSpace.getPrefix());
 		choiceStruct.put("isChoice", true);
 		choiceStruct.put("allSimple", allSimple);
+		
 		return choiceStruct;
 	}
 
