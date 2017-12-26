@@ -44,7 +44,6 @@ import javax.swing.table.TableRowSorter;
 
 import com.movielabs.mddf.tools.util.FileChooserDialog;
 import com.movielabs.mddflib.logging.LogEntryComparator;
-import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogEntryNode.Field;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -59,6 +58,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
@@ -94,21 +94,8 @@ public class LogPanel extends JPanel {
 		 */
 		@Override
 		public Comparator<?> getComparator(int column) {
-			switch (column) {
-			case 0:
-				return new LogEntryComparator(Field.Num);
-			case 1:
-				return new LogEntryComparator(Field.Level);
-			case 2:
-				return new LogEntryComparator(Field.Tag);
-			case 3:
-				return new LogEntryComparator(Field.Details);
-			case 4:
-				return new LogEntryComparator(Field.Line);
-			case 5:
-				return new LogEntryComparator(Field.File);
-			case 6:
-				return new LogEntryComparator(Field.Reference);
+			if ((column >= 0) && (column < colList.size())) {
+				return new LogEntryComparator(colList.get(column));
 			}
 			return super.getComparator(column);
 		}
@@ -134,26 +121,56 @@ public class LogPanel extends JPanel {
 		}
 	}
 
+	private static List<Field> defaultColList = new ArrayList<Field>();
+	private static float[] defaultColWidthBASE = { 0.06f, 0.07f, 0.07f, 0.50f, 0.07f, 0.19f, 0.12f };
+
 	private JTable logTable;
 	private DefaultTableModel model;
 	private JScrollPane scPane;
 
-	private final String columnNames[] = {"Num", "Level", "Type", "Details", "Line", "File", "Reference" };
-
-	private float[] colWidthBASE = {0.06f,  0.07f, 0.07f, 0.50f, 0.07f, 0.19f, 0.12f };
-	private float[] colWidthSaved = colWidthBASE;
+	private String columnNames[] = null;
+	private float[] colWidthSaved = null;
 	private boolean firstResize = true;
 	private TableRowSorter<DefaultTableModel> sorter;
-	private AdvLogPanel advLogPanel;
+	private List<Field> colList;
+
+	static {
+		// Default col list
+		defaultColList.add(Field.Num);
+		defaultColList.add(Field.Level);
+		defaultColList.add(Field.Tag);
+		defaultColList.add(Field.Details);
+		defaultColList.add(Field.Line);
+		defaultColList.add(Field.File);
+		defaultColList.add(Field.Reference);
+	}
 
 	/**
-	 * Create the panel.
+	 * Create the panel using the default column list.
 	 * 
 	 * @param advLogPanel
 	 */
 	public LogPanel() {
+		colList = defaultColList;
+		colWidthSaved = defaultColWidthBASE;
+		initialize();
+	}
+
+	public LogPanel(List<Field> colList, float[] colWidths) {
+		this.colList = colList;
+		colWidthSaved = colWidths;
+		initialize();
+	}
+
+	protected void initialize() {
 		setBackground(UIManager.getColor("OptionPane.warningDialog.titlePane.background"));
 		final Object testData[][] = {};
+
+		columnNames = new String[colList.size()];
+		for (int i = 0; i < colList.size(); i++) {
+			columnNames[i] = colList.get(i).toString();
+		}
+
 		model = new DefaultTableModel(testData, columnNames);
 		logTable = new JTable(model);
 		logTable.setRowSelectionAllowed(false);
@@ -206,21 +223,14 @@ public class LogPanel extends JPanel {
 
 	}
 
-	// private void saveColSize() {
-	// for (int i = 0; i < logTable.getColumnModel().getColumnCount(); i++) {
-	// TableColumn column = logTable.getColumnModel().getColumn(i);
-	// colWidthSaved[i] = column.getPreferredWidth();
-	// }
-	// System.out.println("saveColSize: colWidthSaved[2]=" + colWidthSaved[2]);
-	// }
-
 	public void addMouseListener(MouseListener listener) {
 		super.addMouseListener(listener);
 		logTable.addMouseListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Respond to a <tt>setSize()</tt> request by re-adjusting the column
+	 * widths.
 	 * 
 	 * @see com.movielabs.mddf.util.UiLogger#setWidth(int)
 	 */
@@ -391,10 +401,6 @@ public class LogPanel extends JPanel {
 				tTipText = tTipText + " [" + specRef + "]";
 			}
 			// ..............................................................................
-			/*
-			 * columnNames[] = { "Level", "Type", "Details", "Line", "Manifest",
-			 * "Reference" };
-			 */
 			switch (columnNames[column]) {
 			case "Num":
 				celltext = Integer.toString(entry.getEntryNumber());
