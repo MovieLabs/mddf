@@ -26,8 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
-import javax.swing.JTable;
 import javax.swing.border.LineBorder;
+import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
@@ -62,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
+import java.awt.BorderLayout;
 
 /**
  * @author L. Levin, Critical Architectures LLC
@@ -179,11 +180,12 @@ public class LogPanel extends JPanel {
 		logTable.setDefaultRenderer(Object.class, new LogTableRenderer());
 
 		sorter = new LogSorter<DefaultTableModel>(model);
+		setLayout(new BorderLayout(0, 0));
 		logTable.setRowSorter(sorter);
 
 		scPane = new JScrollPane(logTable);
 		scPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		add(scPane);
+		add(scPane, BorderLayout.CENTER);
 
 		/*
 		 * Following is broken code (hence commented out for now). Intent is to
@@ -238,7 +240,7 @@ public class LogPanel extends JPanel {
 		if (width < 1) {
 			width = 1000;
 		}
-		Dimension newPS = new Dimension(width, ht - 2);
+		Dimension newPS = new Dimension(width, ht);
 		scPane.setPreferredSize(newPS);
 		// now apportion the col widths..
 		double total = 0;
