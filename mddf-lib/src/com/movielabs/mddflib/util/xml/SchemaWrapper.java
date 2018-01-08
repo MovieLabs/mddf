@@ -72,6 +72,7 @@ public class SchemaWrapper {
 	public static final String JSON_KEY_PREFIX = "@__";
 	private static Map<String, SchemaWrapper> cache = new HashMap<String, SchemaWrapper>();
 
+	private Map<String, JSONObject> structureCache = new HashMap<String, JSONObject>();
 	private Document schemaXSD;
 
 	private Element rootEl;
@@ -214,6 +215,10 @@ public class SchemaWrapper {
 	 * @return
 	 */
 	public JSONObject getContentStructure(String type) throws SchemaException {
+		JSONObject structDef = structureCache.get(type);
+		if (structDef != null) {
+			return structDef;
+		}
 		Element target = getXmlTarget(type);
 		if (target == null) {
 			// not a complex type
@@ -221,26 +226,36 @@ public class SchemaWrapper {
 		}
 		Element seqEl = target.getChild("sequence", xsNSpace);
 		if (seqEl != null) {
-			return addSequenceToStructure(seqEl);
+			structDef = addSequenceToStructure(seqEl);
+			structureCache.put(type, structDef);
+			return structDef;
 		}
 		Element ccEl = target.getChild("complexContent", xsNSpace);
 		if (ccEl != null) {
-			return addExtensionToStructure(ccEl);
+			structDef = addExtensionToStructure(ccEl);
+			structureCache.put(type, structDef);
+			return structDef;
 		}
 		Element ctEl = target.getChild("complexType", xsNSpace);
 		if (ctEl != null) {
 			ccEl = ctEl.getChild("complexContent", xsNSpace);
 			if (ccEl != null) {
-				return addExtensionToStructure(ccEl);
+				structDef = addExtensionToStructure(ccEl);
+				structureCache.put(type, structDef);
+				return structDef;
 			}
 		}
 		Element choiceEl = target.getChild("choice", xsNSpace);
-		if (choiceEl != null) {
-			return addChoiceToStructure(choiceEl);
+		if (choiceEl != null) { 
+			 structDef = addChoiceToStructure(choiceEl);
+			 structureCache.put(type, structDef);
+			 return structDef; 
 		}
 		Element scEl = target.getChild("simpleContent", xsNSpace);
 		if (scEl != null) {
-			return addExtensionToStructure(scEl);
+			structDef = addExtensionToStructure(scEl);
+			structureCache.put(type, structDef);
+			return structDef;
 		}
 		return null;
 	}
@@ -518,8 +533,13 @@ public class SchemaWrapper {
 	}
 
 	private JSONObject addChoiceToStructure(Element choiceEl) throws SchemaException {
-		boolean allSimple = true;
+		boolean allSimpleTypes = true;
+		boolean allFlat = true;
 		JSONObject choiceStruct = new JSONObject();
+
+		// First add any ATTRIBUTES
+		Element parentEl = choiceEl.getParentElement();
+		
 		List<Element> choiceList = choiceEl.getChildren("element", xsNSpace);
 		for (Element nextEl : choiceList) {
 			String name = nextEl.getAttributeValue("name");
@@ -567,9 +587,24 @@ public class SchemaWrapper {
 			String baseNSpace = parts[0];
 			String baseType = parts[1];
 			SchemaWrapper baseWrapper = getReferencedSchema(baseNSpace);
-			if (baseWrapper != null) {
+			flatTest: if (baseWrapper != null) {
 				if (!baseWrapper.isSimpleType(baseType)) {
-					allSimple = false;
+					allSimpleTypes = false;
+					boolean isChoice = baseWrapper.isChoice(baseType);
+					if (isChoice) {
+						JSONObject innerChoiceDef = baseWrapper.getContentStructure(baseType);
+						if (innerChoiceDef.getBoolean("allFlat")) {
+							/*
+							 * A nested 'flat'choice is OK. Example: The 'Term
+							 * choices' include 'Region' which is a choice of
+							 * 'country' or 'countryRegion'
+							 */
+							break flatTest;
+						}
+					} else if (baseWrapper.isSimpleContent(baseType)) {
+						break flatTest;
+					}
+					allFlat = false;
 				}
 			}
 			JSONObject childObj = new JSONObject();
@@ -582,8 +617,7 @@ public class SchemaWrapper {
 		/*
 		 * Is this an 'anonymous' (i.e. inline) definition or does it have a
 		 * name of it's own?
-		 */
-		Element parentEl = choiceEl.getParentElement();
+		 */ 
 		String baseType = parentEl.getAttributeValue("name");
 		if (baseType == null) {
 			// generate a name using the names of the choices...
@@ -592,7 +626,7 @@ public class SchemaWrapper {
 			String bestName = StringUtils.longestSubstring(optNames, false);
 			baseType = "_ANON_";
 			choiceStruct.put("id", bestName + " Option");
-			
+
 			/* for ANONYMOUS in-line types we need the min and max */
 			String min = choiceEl.getAttributeValue("minOccurs", "1");
 			int minVal = Integer.parseInt(min);
@@ -609,8 +643,10 @@ public class SchemaWrapper {
 		choiceStruct.put("type", baseType);
 		choiceStruct.put("nspace", nSpace.getPrefix());
 		choiceStruct.put("isChoice", true);
-		choiceStruct.put("allSimple", allSimple);
-		
+		choiceStruct.put("allSimpleTypes", allSimpleTypes);
+		choiceStruct.put("allFlat", allFlat);
+
+		addAttributesToStructure(parentEl, choiceStruct);
 		return choiceStruct;
 	}
 
@@ -764,6 +800,30 @@ public class SchemaWrapper {
 	public boolean isSimpleType(String type) {
 		XPathExpression<Element> xpExpression = xpfac.compile("./xs:simpleType[@name= '" + type + "']",
 				Filters.element(), null, xsNSpace);
+		Element target = xpExpression.evaluateFirst(rootEl);
+		return (target != null);
+	}
+
+	/**
+	 * Return true if the specified <tt>type</tt> is structured as a
+	 * <tt>simpleType</tt> that has been extended with one or more attributes.
+	 * For example, a <tt>Title</tt> that is structured as a simple text string
+	 * but with a <tt>language</tt> attribute added.
+	 * <p>
+	 * Note that the 'type' argument should NOT include a namespace prefix (e.g.
+	 * use <tt>Region-type</tt> rather than <tt>md:Region-type</tt>).
+	 * </p>
+	 * <p>
+	 * If the schema does not contain a definition for the requested type a
+	 * value of <tt>false</tt> is returned.
+	 * </p>
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public boolean isSimpleContent(String type) {
+		String xpath = ".//xs:complexType[@name= '" + type + "']/xs:simpleContent/xs:extension";
+		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, xsNSpace);
 		Element target = xpExpression.evaluateFirst(rootEl);
 		return (target != null);
 	}
@@ -1004,7 +1064,6 @@ public class SchemaWrapper {
 			default:
 				SchemaWrapper sw = getReferencedSchema(parts[0]);
 				if (!sw.isSimpleType(parts[1])) {
-					System.out.println("SchemaWrapper " + nSpace.getPrefix() + ": typeUsage: COMPLEX type " + result);
 					if (sw.isChoice(parts[1])) {
 						Element target = sw.getXmlTarget(parts[1]);
 						try {
