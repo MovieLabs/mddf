@@ -34,6 +34,7 @@ import org.jdom2.xpath.XPathFactory;
 
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.FormatConverter;
 import com.movielabs.mddflib.util.xml.RatingSystem;
 
 import net.sf.json.JSONArray;
@@ -473,14 +474,14 @@ public class MetadataBuilder {
 		String value = null;
 		switch (type) {
 		case "xs:boolean":
-			value = xmlBldr.formatBoolean(pg.getRawValue());
+			value = FormatConverter.booleanToXml(pg.getRawValue());
 			break;
 		case "xs:dateTime":
 			boolean rounding = functionArgs.getString("roundOff").equals("true");
-			value = xmlBldr.formatDateTime(pg.getRawValue(), rounding);
+			value = FormatConverter.dateTimeToXml(pg.getRawValue(), rounding);
 			break;
 		case "xs:duration":
-			value = xmlBldr.formatDuration(pg.getRawValue());
+			value = FormatConverter.durationToXml(pg.getRawValue());
 			break;
 		default:
 			throw new UnsupportedOperationException("Invalid JSON: unsupported format type '" + type + "'");

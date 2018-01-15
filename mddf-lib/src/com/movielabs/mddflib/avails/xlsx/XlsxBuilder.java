@@ -42,6 +42,7 @@ import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.MetadataBuilder;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.FormatConverter;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -98,18 +99,13 @@ import net.sf.json.JSONObject;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class XlsxBuilder {
-	private static final String DURATION_REGEX = "P([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\\.[0-9]+)?S)?)?";
-	private static final String DATETIME_REGEX = "[\\d]{4}-[\\d]{2}-[\\d]{2}T[\\d:\\.]+";
+public class XlsxBuilder { 
 	private static final String CONTEXT_DELIM = "#";
-	private static final String FUNCTION_IDENTIFIER = "%FUNCTION";
-	private static DecimalFormat durFieldFmt = new DecimalFormat("00");
-	protected static JSONObject mappings;
-	private static Pattern p_xsDuration;
+	private static final String FUNCTION_IDENTIFIER = "%FUNCTION"; 
+	protected static JSONObject mappings; 
 	private static String warnMsg1 = "XLSX xfer dropping additional XYZ values";
 	private static String warnDetail1 = "The Excel version of Avails only allows 1 value for this field. Additional XML elements will be ignored";
-	private static Pattern p_xsDateTime;
-	protected XPathFactory xpfac = XPathFactory.instance();
+ 	protected XPathFactory xpfac = XPathFactory.instance();
 	private LogMgmt logger;
 	private String rootPrefix = "avails:";
 
@@ -157,8 +153,8 @@ public class XlsxBuilder {
 		 * translation before being added to the spreadsheet.
 		 * 
 		 */
-		p_xsDuration = Pattern.compile(DURATION_REGEX);
-		p_xsDateTime = Pattern.compile(DATETIME_REGEX);
+//		p_xsDuration = Pattern.compile(DURATION_REGEX);
+//		p_xsDateTime = Pattern.compile(DATETIME_REGEX);
 
 	}
 
@@ -568,8 +564,8 @@ public class XlsxBuilder {
 				return convertTermName(input);
 			}
 			// default handling...
-			String interim = convertDuration(input);
-			interim = convertDate(interim);
+			String interim = FormatConverter.durationFromXml(input);
+			interim = FormatConverter.dateFromXml(interim);
 			return interim;
 		}
 		Element xmlEl = (Element) xmlSrc;
@@ -590,9 +586,9 @@ public class XlsxBuilder {
 			String type = sw.getType(name);
 			switch (type) {
 			case "xs:duration":
-				return convertDuration(input);
+				return  FormatConverter.durationFromXml(input);
 			case "xs:dateTime":
-				return convertDate(input);
+				return FormatConverter.dateFromXml(input);
 			default:
 				return convertAltID(input, xmlSrc);
 			}
@@ -647,90 +643,8 @@ public class XlsxBuilder {
 		return parts[1];
 	}
 
-	/**
-	 * @param interim
-	 * @return
-	 */
-	private String convertDate(String input) {
-		Matcher m = p_xsDateTime.matcher(input);
-		if (!m.matches()) {
-			return input;
-		}
-		String[] parts = input.split("T");
-		return parts[0];
-	}
 
-	/**
-	 * Convert any string formatted in compliance with W3C xs:Duration syntax to
-	 * <tt>hh:mm:ss</tt> syntax. Inputs that do not match the xs:duration syntax
-	 * will be returned unchanged. After conversion any trailing fields with a
-	 * zero value will be dropped (i.e., hh:mm:00s becomes hh:mm). The first
-	 * field will always indicate hours, even if it contains a zero value (i.e.,
-	 * 00:mm:00s becomes 00:mm).
-	 * 
-	 * @param input
-	 * @return
-	 */
-	private String convertDuration(String input) {
-		Matcher m = p_xsDuration.matcher(input);
-		if (!m.matches()) {
-			return input;
-		}
-		String temp1 = input.replaceFirst("P", "");
-		String[] parts = temp1.split("T");
-		long totalHrs = 0;
-		long totalMin = 0;
-		long totalSec = 0;
-		if (!parts[0].isEmpty()) {
-			/* ignore Y and M, and only allow D fields */
-			if (parts[0].contains("Y") || parts[0].contains("M")) {
-				logger.log(LogMgmt.LEV_WARN, logMsgDefaultTag,
-						"Conversion of duration '" + input + "' will ignore YEAR and MONTH fields", null, logMsgSrcId);
-			}
-			Pattern dp = Pattern.compile("[0-9]+D");
-			Matcher dm = dp.matcher(parts[0]);
-			if (dm.find()) {
-				String dayPart = dm.group();
-				totalHrs = totalHrs + Integer.parseInt(dayPart.replace("D", ""));
-			}
-			// covert accumulated days to hours
-			totalHrs = totalHrs * 24;
-
-		}
-		if (parts.length > 1 && (!parts[1].isEmpty())) {
-			// handle H, M, and S fields
-			Pattern dp = Pattern.compile("[0-9]+H");
-			Matcher dm = dp.matcher(parts[1]);
-			if (dm.find()) {
-				String hourPart = dm.group();
-				totalHrs = totalHrs + Integer.parseInt(hourPart.replace("H", ""));
-			}
-			dp = Pattern.compile("[0-9]+M");
-			dm = dp.matcher(parts[1]);
-			if (dm.find()) {
-				String mmPart = dm.group();
-				totalMin = Integer.parseInt(mmPart.replace("M", ""));
-			}
-			dp = Pattern.compile("[0-9]+S");
-			dm = dp.matcher(parts[1]);
-			if (dm.find()) {
-				String ssPart = dm.group();
-				totalSec = Integer.parseInt(ssPart.replace("S", ""));
-			}
-
-		}
-		String hh = Integer.toString((int) totalHrs);
-		String mm = Integer.toString((int) totalMin);
-		String ss = Integer.toString((int) totalSec);
-		String output = durFieldFmt.format(totalHrs);
-		if ((totalMin + totalSec) > 0) {
-			output = output + ":" + durFieldFmt.format(totalMin);
-			if (totalSec > 0) {
-				output = output + ":" + durFieldFmt.format(totalSec);
-			}
-		}
-		return output;
-	}
+ 
 
 	/**
 	 * Group, filter, and re-format the XML-to-XSLX mappings to facilitate later

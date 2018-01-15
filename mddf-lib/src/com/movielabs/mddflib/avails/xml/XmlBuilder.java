@@ -42,6 +42,7 @@ import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.FormatConverter;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 
 /**
@@ -195,7 +196,7 @@ public class XmlBuilder {
 				}
 			}
 		} catch (Exception e) {
-			msg = "Exception while ingesting XLSX: "+e.getLocalizedMessage();
+			msg = "Exception while ingesting XLSX: " + e.getLocalizedMessage();
 			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
 			return null;
 		}
@@ -444,15 +445,15 @@ public class XmlBuilder {
 		case "xs:anyURI":
 			break;
 		case "xs:duration":
-			formattedValue = formatDuration(formattedValue);
+			formattedValue = FormatConverter.durationToXml(formattedValue);
 			break;
 		case "xs:boolean":
-			formattedValue = formatBoolean(formattedValue);
+			formattedValue = FormatConverter.booleanToXml(formattedValue);
 			break;
 		case "xs:date":
 			break;
 		case "xs:dateTime":
-			formattedValue = formatDateTime(formattedValue, elementName.startsWith("End"));
+			formattedValue = FormatConverter.dateTimeToXml(formattedValue, elementName.startsWith("End"));
 			break;
 		default:
 			// throw new IllegalArgumentException("Data type '" + type + "' not
@@ -462,53 +463,8 @@ public class XmlBuilder {
 		return formattedValue;
 	}
 
-	/**
-	 * @param rawValue
-	 * @return
-	 */
-	public String formatBoolean(String input) {
-		if (input.equals("Yes")) {
-			return "true";
-		} else if (input.equals("No")) {
-			return "false";
-		}
-		return null;
-	}
 
-	String formatDateTime(String input, boolean roundOff) {
-		String output = "";
-		if (input.matches("[\\d]{4}-[\\d]{2}-[\\d]{2}")) {
-			// if (elementName.startsWith("End")) {
-			if (!roundOff) {
-				output = input + "T23:59:59";
-			} else {
-				output = input + "T00:00:00";
-			}
-		}
-		return output;
-	}
-
-	String formatDuration(String input) {
-		/**
-		 * Input is one of the following:
-		 * <ul>
-		 * <li>hh</li>
-		 * <li>hh:mm</li>
-		 * <li>hh:mm:ss</li>
-		 * </ul>
-		 * The output format is 'PThhHmmMssS'
-		 */
-		String parts[] = input.split(":");
-		String xmlValue = "PT" + parts[0] + "H";
-		if (parts.length > 1) {
-			xmlValue = xmlValue + parts[1] + "M";
-			if (parts.length > 2) {
-				xmlValue = xmlValue + parts[2] + "S";
-			}
-		}
-		return xmlValue;
-
-	}
+ 
 
 	private SchemaWrapper getSchema(String schema) {
 		switch (schema) {
