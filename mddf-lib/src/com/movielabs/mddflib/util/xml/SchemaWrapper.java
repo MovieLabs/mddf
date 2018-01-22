@@ -246,10 +246,10 @@ public class SchemaWrapper {
 			}
 		}
 		Element choiceEl = target.getChild("choice", xsNSpace);
-		if (choiceEl != null) { 
-			 structDef = addChoiceToStructure(choiceEl);
-			 structureCache.put(type, structDef);
-			 return structDef; 
+		if (choiceEl != null) {
+			structDef = addChoiceToStructure(choiceEl);
+			structureCache.put(type, structDef);
+			return structDef;
 		}
 		Element scEl = target.getChild("simpleContent", xsNSpace);
 		if (scEl != null) {
@@ -539,7 +539,7 @@ public class SchemaWrapper {
 
 		// First add any ATTRIBUTES
 		Element parentEl = choiceEl.getParentElement();
-		
+
 		List<Element> choiceList = choiceEl.getChildren("element", xsNSpace);
 		for (Element nextEl : choiceList) {
 			String name = nextEl.getAttributeValue("name");
@@ -617,7 +617,7 @@ public class SchemaWrapper {
 		/*
 		 * Is this an 'anonymous' (i.e. inline) definition or does it have a
 		 * name of it's own?
-		 */ 
+		 */
 		String baseType = parentEl.getAttributeValue("name");
 		if (baseType == null) {
 			// generate a name using the names of the choices...
@@ -867,7 +867,7 @@ public class SchemaWrapper {
 	 * @param nspacePrefix
 	 * @return
 	 */
-	private SchemaWrapper getReferencedSchema(String nspacePrefix) {
+	public SchemaWrapper getReferencedSchema(String nspacePrefix) {
 		SchemaWrapper baseWrapper = null;
 		if (!nspacePrefix.equals("xs")) {
 			if (nSpace.getPrefix().equals(nspacePrefix)) {
@@ -1077,17 +1077,19 @@ public class SchemaWrapper {
 							Iterator<String> keys = struct.keys();
 							while (keys.hasNext()) {
 								String next = keys.next();
-								JSONObject choice = struct.optJSONObject(next);
-								if ((choice != null) && choice.getString("nspace").equals("xs")) {
-									String simpleChoice = choice.getString("prefix") + ":" + choice.getString("name");
-									// adding to set will eliminate redundancy
-									if (!found.add(simpleChoice)) {
-										// multiple usage
-										repeats.add(simpleChoice);
+								if (!next.equals("attributes")) {
+									JSONObject choice = struct.optJSONObject(next);
+									if ((choice != null) && choice.getString("nspace").equals("xs")) {
+										String simpleChoice = choice.getString("prefix") + ":"
+												+ choice.getString("name");
+										// adding to set will eliminate redundancy
+										if (!found.add(simpleChoice)) {
+											// multiple usage
+											repeats.add(simpleChoice);
+										}
 									}
 								}
 							}
-
 							parts[1] = null; // indicate addition to 'founds'
 												// NOT required.
 						} catch (SchemaException e) {
