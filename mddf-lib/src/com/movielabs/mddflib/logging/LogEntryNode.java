@@ -21,6 +21,9 @@
  */
 package com.movielabs.mddflib.logging;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author L. Levin, Critical Architectures LLC
  *
@@ -31,7 +34,7 @@ public class LogEntryNode extends LogEntry {
 		Num, Level, Tag, Details, File, Line, Reference, Module
 	};
 
-	public static final String fieldNames[] = { "Num", "Level", "Tag", "Summary", "File", "Line", "Reference",
+	public static final String DEFAULT_COL_NAMES[] = { "Num", "Level", "Tag", "Summary", "File", "Line", "Reference",
 			"Module" };
 	/**
 	 * Column separator to use when generating CSV file
@@ -40,7 +43,7 @@ public class LogEntryNode extends LogEntry {
 	private static int cCnt;
 
 	static {
-		cCnt = fieldNames.length;
+		cCnt = DEFAULT_COL_NAMES.length;
 	}
 
 	private int level;
@@ -97,9 +100,13 @@ public class LogEntryNode extends LogEntry {
 	}
 
 	public String toCSV() {
+		return toCSV(DEFAULT_COL_NAMES);
+	}
+
+	public String toCSV(String[] selectedCols) {
 		String trimmedRow = "";
-		for (int j = 0; j < cCnt; j++) {
-			switch (fieldNames[j]) {
+		for (int j = 0; j < selectedCols.length; j++) {
+			switch (selectedCols[j]) {
 			case "Num":
 				trimmedRow = trimmedRow + Integer.toString(msgSeqNum) + colSep;
 				break;
@@ -139,9 +146,56 @@ public class LogEntryNode extends LogEntry {
 			trimmedRow = trimmedRow + tooltip + colSep;
 		} else {
 			trimmedRow = trimmedRow + " " + colSep;
-		} 
+		}
 		trimmedRow = trimmedRow + this.locPath;
 		return trimmedRow;
+	}
+
+	public Map<String, String> toMap(String[] selectedCols) {
+		Map<String, String> entryMap = new HashMap<String, String>();
+		for (int j = 0; j < selectedCols.length; j++) {
+			switch (selectedCols[j]) {
+			case "Num":
+				entryMap.put(selectedCols[j], Integer.toString(msgSeqNum));
+				break;
+			case "Level":
+				entryMap.put(selectedCols[j], LogMgmt.logLevels[level]);
+				break;
+			case "Type":
+			case "Tag":
+				entryMap.put(selectedCols[j], getTagAsText());
+				break;
+			case "Summary":
+				entryMap.put(selectedCols[j], summary);
+				break;
+			case "File":
+				entryMap.put(selectedCols[j], locFile);
+				break;
+			case "Line":
+				if (locLine < 0) {
+					entryMap.put(selectedCols[j], " ");
+				} else {
+					entryMap.put(selectedCols[j], Integer.toString(locLine));
+				}
+				break;
+			case "Module":
+				// Skip as not of interest to end-users...
+				// entryMap.put(selectedCols[j],moduleID);
+				break;
+			case "Reference":
+				entryMap.put(selectedCols[j], getReference());
+				break;
+			case "Details":
+				if (tooltip != null && !tooltip.isEmpty() && !tooltip.equalsIgnoreCase(summary)) {
+					entryMap.put(selectedCols[j], tooltip);
+				}
+				break;
+			case "Path":
+				entryMap.put(selectedCols[j], this.locPath);
+				break;
+			}
+		}
+		return entryMap;
 	}
 
 	/**
@@ -260,7 +314,12 @@ public class LogEntryNode extends LogEntry {
 	 * 
 	 */
 	public void print() {
-		String msg = msgSeqNum + ": " + LogMgmt.logLevels[level] + ": " + tag + ": " + summary;
+		String msg;
+		if (locLine < 0) {
+			msg = msgSeqNum + ": " + LogMgmt.logLevels[level] + ": " + tag + ": line N.A : " + summary;
+		} else {
+			msg = msgSeqNum + ": " + LogMgmt.logLevels[level] + ": " + tag + ": line " + locLine + ": " + summary;
+		}
 		System.out.println(msg);
 
 	}

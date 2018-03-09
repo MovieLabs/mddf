@@ -60,7 +60,7 @@ public class XsdValidation {
 		 */
 		defaultRsrcLoc = SchemaWrapper.RSRC_PACKAGE;
 		if (defaultRsrcLoc.startsWith("/")) {
-			defaultRsrcLoc = defaultRsrcLoc.replaceFirst("/", ""); 
+			defaultRsrcLoc = defaultRsrcLoc.replaceFirst("/", "");
 		}
 	}
 
@@ -109,7 +109,8 @@ public class XsdValidation {
 		try {
 			validator = schema.newValidator();
 			validator.setErrorHandler(errHandler);
-			/*
+			/**
+			 * <p>
 			 * This block of code handles a problem associated with supporting
 			 * the validation of XML generated from an Excel spreadsheet.
 			 * Regardless of whether the XML comes from an XML file or is
@@ -122,10 +123,14 @@ public class XsdValidation {
 			 * is to use a StreamSource and process the XML on the file system
 			 * even though we already have the same XML in the form of the JDOM
 			 * document.
-			 * 
+			 * </p>
+			 * <p>
+			 * The PROBLEM is that for server-based execution the srcFile is NOT
+			 * readable hence line numbers are not available in log messages.
+			 * </p>
 			 */
 			Source src;
-			if (srcFile.getName().endsWith(".xml")) {
+			if ((srcFile.canRead()) && (srcFile.getName().endsWith(".xml"))) {
 				src = new StreamSource(srcFile);
 			} else {
 				src = new JDOMSource(docRootEl);

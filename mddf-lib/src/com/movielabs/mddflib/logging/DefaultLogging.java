@@ -244,11 +244,11 @@ public class DefaultLogging implements LogMgmt {
 		}
 		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
 		/* first row has column names */
-		int cCnt = LogEntryNode.fieldNames.length;
+		int cCnt = LogEntryNode.DEFAULT_COL_NAMES.length;
 		String colSep = LogEntryNode.colSep;
-		String headerRow = LogEntryNode.fieldNames[0];
+		String headerRow = LogEntryNode.DEFAULT_COL_NAMES[0];
 		for (int i = 1; i < cCnt; i++) {
-			headerRow = headerRow + colSep + LogEntryNode.fieldNames[i];
+			headerRow = headerRow + colSep + LogEntryNode.DEFAULT_COL_NAMES[i];
 		}
 		/*
 		 * 'Notes' is special case for the tooltip (a.k.a 'added detail' or

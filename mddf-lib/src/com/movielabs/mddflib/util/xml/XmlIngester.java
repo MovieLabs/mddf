@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -81,7 +80,7 @@ public abstract class XmlIngester implements IssueLogger {
 	private static Map<String, JSONObject> rsrcCache = new HashMap<String, JSONObject>();
 
 	protected static File srcFile;
-	protected static File sourceFolder;
+//	protected static File sourceFolder;
 
 	protected File curFile;
 	protected String curFileName;
@@ -229,6 +228,29 @@ public abstract class XmlIngester implements IssueLogger {
 		return xmlDoc;
 	}
 
+	/**
+	 * Reads XML-formatted data from an <tt>InputStream</tt>, converting it to a
+	 * JDOM document that is returned to the caller.
+	 * 
+	 * @param inStream
+	 * @return
+	 * @throws IOException
+	 * @throws SAXParseException
+	 */
+	public static Document getAsXml(InputStream inStream) throws IOException, SAXParseException {
+		InputStreamReader isr = new InputStreamReader(inStream, "UTF-8");
+		SAXBuilder builder = new SAXBuilder();
+		builder.setJDOMFactory(new LocatedJDOMFactory());
+		Document xmlDoc;
+		try {
+			xmlDoc = builder.build(isr);
+		} catch (JDOMException e) {
+			SAXParseException cause = (SAXParseException) e.getCause();
+			throw cause;
+		}
+		return xmlDoc;
+	}
+
 	public static boolean writeXml(File outputLoc, Document xmlDoc) {
 		Format myFormat = Format.getPrettyFormat();
 		XMLOutputter outputter = new XMLOutputter(myFormat);
@@ -252,37 +274,23 @@ public abstract class XmlIngester implements IssueLogger {
 	/**
 	 * @return the sourceFolder
 	 */
-	public static File getSourceFolder() {
-		return sourceFolder;
-	}
+//	public static File getSourceFolder() {
+//		return sourceFolder;
+//	}
 
 	/**
 	 * @param srcPath
 	 *            the srcPath to set
 	 */
 	public static void setSourceDirPath(String srcPath) {
+		if(srcPath != null){
 		srcFile = new File(srcPath);
-		if (srcFile.isFile()) {
-			XmlIngester.sourceFolder = srcFile.getParentFile();
-		} else {
-			XmlIngester.sourceFolder = srcFile;
-		}
+		} else{
+			srcFile = null;
+		} 
 
 	}
-
-	/**
-	 * Generate a relative <tt>Path</tt> from the current <tt>sourceFolder</tt>
-	 * to the <tt>target</tt>.
-	 * 
-	 * @param target
-	 * @return
-	 */
-	protected static Path getRelativePath(File target) {
-		Path srcPath = sourceFolder.toPath();
-		Path relative = srcPath.relativize(target.toPath());
-		return relative;
-	}
-
+ 
 	/**
 	 * Identify the XSD version for the document's <i>primary</i> MDDF namespace
 	 * (i.e., Manifest, Avails, MDMec, etc.). Version is returned as a string
@@ -322,10 +330,10 @@ public abstract class XmlIngester implements IssueLogger {
 	 */
 	public static void setManifestVersion(String manifestSchemaVer) throws IllegalArgumentException {
 		FILE_FMT manifestFmt = MddfContext.identifyMddfFormat("manifest", manifestSchemaVer);
-		if(manifestFmt == null){
+		if (manifestFmt == null) {
 			throw new IllegalArgumentException("Unsupported Manifest Schema version " + manifestSchemaVer);
 		}
-		Map<String, String> uses = MddfContext.getReferencedXsdVersions(manifestFmt); 		 
+		Map<String, String> uses = MddfContext.getReferencedXsdVersions(manifestFmt);
 		MAN_VER = manifestSchemaVer;
 		CM_VER = uses.get("MD");
 		/* Since MDMEC isn't used for Manifest, set to NULL */
@@ -341,10 +349,10 @@ public abstract class XmlIngester implements IssueLogger {
 	 */
 	public static void setMdMecVersion(String mecSchemaVer) throws IllegalArgumentException {
 		FILE_FMT mecFmt = MddfContext.identifyMddfFormat("mdmec", mecSchemaVer);
-		if(mecFmt == null){
+		if (mecFmt == null) {
 			throw new IllegalArgumentException("Unsupported MEC Schema version " + mecSchemaVer);
 		}
-		Map<String, String> uses = MddfContext.getReferencedXsdVersions(mecFmt); 		
+		Map<String, String> uses = MddfContext.getReferencedXsdVersions(mecFmt);
 		MDMEC_VER = mecSchemaVer;
 		CM_VER = uses.get("MD");
 		/* Since Manifest isn't used for MEC, set to NULL */
@@ -365,11 +373,11 @@ public abstract class XmlIngester implements IssueLogger {
 	 */
 	public static void setAvailVersion(String availSchemaVer) throws IllegalArgumentException {
 		FILE_FMT availsFmt = MddfContext.identifyMddfFormat("avails", availSchemaVer);
-		if(availsFmt == null){
+		if (availsFmt == null) {
 			throw new IllegalArgumentException("Unsupported Avails Schema version " + availSchemaVer);
 		}
-		Map<String, String> uses = MddfContext.getReferencedXsdVersions(availsFmt); 
-		AVAIL_VER = availSchemaVer; 
+		Map<String, String> uses = MddfContext.getReferencedXsdVersions(availsFmt);
+		AVAIL_VER = availSchemaVer;
 		CM_VER = uses.get("MD");
 		MDMEC_VER = uses.get("MDMEC");
 		/* Since Manifest isn't used for Avails, set to NULL */
