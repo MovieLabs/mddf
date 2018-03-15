@@ -340,12 +340,12 @@ public class LogPanel extends JPanel {
 		}
 		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
 		/* first row has column names */
-		int cCnt = LogEntryNode.fieldNames.length;
+		int cCnt = LogEntryNode.DEFAULT_COL_NAMES.length;
 		String colSep = LogEntryNode.colSep;
-		String headerRow = LogEntryNode.fieldNames[0];
+		String headerRow = LogEntryNode.DEFAULT_COL_NAMES[0];
 		for (int i = 1; i < cCnt; i++) {
-			if (!LogEntryNode.fieldNames[i].equals("Module")) {
-				headerRow = headerRow + colSep + LogEntryNode.fieldNames[i];
+			if (!LogEntryNode.DEFAULT_COL_NAMES[i].equals("Module")) {
+				headerRow = headerRow + colSep + LogEntryNode.DEFAULT_COL_NAMES[i];
 			}
 		}
 		/*
