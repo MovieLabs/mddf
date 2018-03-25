@@ -453,7 +453,7 @@ public class XmlBuilder {
 		case "xs:date":
 			break;
 		case "xs:dateTime":
-			formattedValue = FormatConverter.dateTimeToXml(formattedValue, elementName.startsWith("End"));
+			formattedValue = FormatConverter.dateTimeToXml(formattedValue, elementName.startsWith("Start"));
 			break;
 		default:
 			// throw new IllegalArgumentException("Data type '" + type + "' not
