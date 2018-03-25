@@ -5,9 +5,16 @@
 
 ## Versioning
 
-The latest release of the core mddf-lib is v1.3. 
+The latest release of the core mddf-lib is v1.3.2
 
 ### mddf-lib Changes:
+
+#### mddf-lib v1.3.2
+* Bug Fix: Conversion of XLSX Avails to XML incorrectly rounded Transaction start and end dates.
+* Enhancement: POM file for Maven builds added.
+* Enhancement: Added APIs to validation functions to support cloud-based services.
+* Enhancement: Additions to logging utilities to support cloud-based services.
+* Internal: refactoring of utilities used to convert dates and times to/from XSD syntax
 
 #### mddf-lib v1.3.1
 * Enhancement: support for Avails v2.3 added
