@@ -29,9 +29,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.apache.logging.log4j.*;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -40,7 +41,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jdom2.Document;
 
+import com.movielabs.mddf.MddfContext.FILE_FMT;
+import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
@@ -61,6 +65,113 @@ public class AvailsWrkBook {
 	private boolean exitOnError;
 	private boolean cleanupData;
 	private XSSFWorkbook wrkBook;
+
+	/**
+	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file.
+	 * If <tt>inStream</tt> is <tt>null</tt> the <tt>xlsxFile</tt> parameter is
+	 * used to read a file accessible via the local system. Otherwise the
+	 * contents of the <tt>inStream</tt> is used.
+	 * <p>
+	 * The result <tt>Map</tt> that is returned will contain:
+	 * <ul>
+	 * <li>
+	 * <tt>xlsx<tt>: the xlsx File that was passed as the input argument</li>
+	 * <li><tt>xml<tt>: the JDOM2 Document that was created from the xlsx</li>
+	 * <li><tt>pedigree<tt>: the <tt>Pedigree</tt> map that was created by the
+	 * <tt>XmlBuilder</tt> during the conversion process.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param xslxFile
+	 * @param inStream
+	 * @param logMgr
+	 * @return
+	 */
+	public static Map<String, Object> convertSpreadsheet(File xslxFile, InputStream inStream, LogMgmt logMgr) {
+		boolean autoCorrect = false;
+		boolean exitOnError = false;
+		AvailsWrkBook ss;
+		try {
+			if (inStream == null) {
+				ss = new AvailsWrkBook(xslxFile, logMgr, exitOnError, autoCorrect);
+			} else {
+				ss = new AvailsWrkBook(inStream, xslxFile, logMgr, exitOnError, autoCorrect);
+			}
+		} catch (FileNotFoundException e1) {
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found", xslxFile, logMsgSrcId);
+			return null;
+		} catch (POIXMLException e1) {
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
+					"Unable to parse XLSX. Check for comments or embedded objects.", xslxFile, logMsgSrcId);
+			return null;
+		} catch (IOException e1) {
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", xslxFile, logMsgSrcId);
+			return null;
+		} catch (InvalidFormatException e) {
+			// POI issue probably due to a missing file
+			String msg = e.getCause().getMessage();
+			e.printStackTrace();
+			return null;
+		}
+		int sheetNum = 0; // KLUDGE for now
+		AvailsSheet as;
+		try {
+			as = ss.ingestSheet(sheetNum);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		Version templateVersion = as.getVersion();
+		FILE_FMT srcMddfFmt = null;
+		XmlBuilder xBuilder = new XmlBuilder(logMgr, templateVersion);
+		switch (templateVersion) {
+		case V1_7_2:
+			srcMddfFmt = FILE_FMT.AVAILS_1_7_2;
+			xBuilder.setVersion("2.2.2");
+			break;
+		case V1_7:
+			srcMddfFmt = FILE_FMT.AVAILS_1_7;
+			xBuilder.setVersion("2.2");
+			break;
+		case V1_6:
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
+					"Version " + templateVersion + " has been deprecated and is no longer supported", xslxFile,
+					logMsgSrcId);
+			return null;
+		case UNK:
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", xslxFile, logMsgSrcId);
+			break;
+		default:
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported template version " + templateVersion,
+					xslxFile, logMsgSrcId);
+			return null;
+		}
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + templateVersion + " format", xslxFile,
+				logMsgSrcId);
+		String inFileName = xslxFile.getName();
+		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
+		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp);
+		try {
+			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(as, shortDesc, xslxFile);
+			if (xmlJDomDoc == null) {
+				// Ingest failed
+				return null;
+			}
+			Map<Object, Pedigree> pedigreeMap = xBuilder.getPedigreeMap();
+			Map<String, Object> results = new HashMap<String, Object>();
+			results.put("xlsx", xslxFile);
+			results.put("xml", xmlJDomDoc);
+			results.put("pedigree", pedigreeMap);
+			results.put("srcFmt", srcMddfFmt);
+
+			return results;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	/**
 	 * Compress an Avails XLSX file by hiding empty columns. Compression
@@ -89,7 +200,34 @@ public class AvailsWrkBook {
 	}
 
 	/**
-	 * Create a Spreadsheet object
+	 * Create a Spreadsheet object from an <tt>InputStream</tt>. The
+	 * <tt>File</tt> parameter is used strictly for logging (i.e., as a source
+	 * of identifying metadata).
+	 * 
+	 * @param inStream
+	 * @param file
+	 *            name of the Excel Spreadsheet file
+	 * @param logger
+	 *            a log4j logger object
+	 * @param exitOnError
+	 *            true if validation errors should cause immediate failure
+	 * @param cleanupData
+	 *            true if minor validation errors should be auto-corrected
+	 * @throws IOException
+	 */
+	public AvailsWrkBook(InputStream inStream, File file, LogMgmt logger, boolean exitOnError, boolean cleanupData)
+			throws IOException {
+		this.file = file;
+		this.logger = logger;
+		this.exitOnError = exitOnError;
+		this.cleanupData = cleanupData;
+		sheets = new ArrayList<AvailsSheet>();
+		wrkBook = new XSSFWorkbook(inStream);
+	}
+
+	/**
+	 * Create a Spreadsheet object from a File accessible via the local file
+	 * system.
 	 * 
 	 * @param file
 	 *            name of the Excel Spreadsheet file
