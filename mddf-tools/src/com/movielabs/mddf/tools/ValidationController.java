@@ -498,91 +498,14 @@ public class ValidationController {
 	 * @return
 	 */
 	private Map<String, Object> convertSpreadsheet(File xslxFile) {
-		boolean autoCorrect = false;
-		boolean exitOnError = false;
-		AvailsWrkBook ss;
-		try {
-			ss = new AvailsWrkBook(xslxFile, logMgr, exitOnError, autoCorrect);
-		} catch (FileNotFoundException e1) {
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found", xslxFile, MODULE_ID);
-			return null;
-		} catch (POIXMLException e1) {
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
-					"Unable to parse XLSX. Check for comments or embedded objects.", xslxFile, MODULE_ID);
-			return null;
-		} catch (IOException e1) {
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", xslxFile, MODULE_ID);
-			return null;
-		} catch (InvalidFormatException e) {
-			// POI issue probably due to a missing file
-			String msg = e.getCause().getMessage();
-			e.printStackTrace();
-			return null;
-		}
-		int sheetNum = 0; // KLUDGE for now
-		AvailsSheet as;
-		try {
-			as = ss.ingestSheet(sheetNum);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-		Version templateVersion = as.getVersion();
-		FILE_FMT srcMddfFmt = null;
-		XmlBuilder xBuilder = new XmlBuilder(logMgr, templateVersion);
-		switch (templateVersion) {
-		case V1_7_2:
-			srcMddfFmt = FILE_FMT.AVAILS_1_7_2;
+		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(xslxFile, null, logMgr);
+		if(results != null){
+			FILE_FMT srcMddfFmt = (FILE_FMT) results.get("srcFmt");
 			if (logNav != null) {
 				logNav.setMddfFormat(xslxFile, srcMddfFmt);
 			}
-			xBuilder.setVersion("2.2.2");
-			break;
-		case V1_7:
-			srcMddfFmt = FILE_FMT.AVAILS_1_7;
-			if (logNav != null) {
-				logNav.setMddfFormat(xslxFile, srcMddfFmt);
-			}
-			xBuilder.setVersion("2.2");
-			break;
-		case V1_6:
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
-					"Version " + templateVersion + " has been deprecated and is no longer supported", xslxFile,
-					MODULE_ID);
-			return null;
-		case UNK:
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", xslxFile, MODULE_ID);
-			break;
-		default:
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported template version " + templateVersion,
-					xslxFile, MODULE_ID);
-			return null;
 		}
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + templateVersion + " format", xslxFile,
-				MODULE_ID);
-		String inFileName = xslxFile.getName();
-		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
-		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp);
-		try {
-			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(as, shortDesc, xslxFile);
-			if (xmlJDomDoc == null) {
-				// Ingest failed
-				return null;
-			}
-			Map<Object, Pedigree> pedigreeMap = xBuilder.getPedigreeMap();
-			Map<String, Object> results = new HashMap<String, Object>();
-			results.put("xlsx", xslxFile);
-			results.put("xml", xmlJDomDoc);
-			results.put("pedigree", pedigreeMap);
-			results.put("srcFmt", srcMddfFmt);
-
-			return results;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
+		return results;
 	}
 
 	/**
