@@ -26,8 +26,6 @@ import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.movielabs.mddflib.logging.LogMgmt;
-
 /**
  * @author L. Levin, Critical Architectures LLC
  *
@@ -62,7 +60,7 @@ public class FormatConverter {
 	 * @return
 	 */
 	public static String durationFromXml(String input) {
-		if(input== null || (input.isEmpty())){
+		if (input == null || (input.isEmpty())) {
 			return input;
 		}
 		Matcher m = p_xsDuration.matcher(input);
@@ -113,9 +111,6 @@ public class FormatConverter {
 			}
 
 		}
-		String hh = Integer.toString((int) totalHrs);
-		String mm = Integer.toString((int) totalMin);
-		String ss = Integer.toString((int) totalSec);
 		String output = durFieldFmt.format(totalHrs);
 		if ((totalMin + totalSec) > 0) {
 			output = output + ":" + durFieldFmt.format(totalMin);
@@ -135,7 +130,7 @@ public class FormatConverter {
 	 * @return
 	 */
 	public static String dateFromXml(String input) {
-		if(input== null || (input.isEmpty())){
+		if (input == null || (input.isEmpty())) {
 			return input;
 		}
 		Matcher m = p_xsDateTime.matcher(input);
@@ -153,7 +148,7 @@ public class FormatConverter {
 	 * <li>hh:mm</li>
 	 * <li>hh:mm:ss</li>
 	 * </ul>
-	 * The output format is 'PThhHmmMssS'
+	 * The output format is '<tt>PThhHmmMssS</tt>'
 	 * 
 	 * @param input
 	 * @return
@@ -171,10 +166,30 @@ public class FormatConverter {
 
 	}
 
-	public static String dateTimeToXml(String input, boolean roundOff) {
+	/**
+	 * Convert a date and (optional) time from the format used in XLSX files to
+	 * that required for XML. Input value may be either <tt>YYYY-MM-DD</tt> or
+	 * ISO 8601 Date+Time.
+	 * <p>
+	 * If a time is not included (i.e., input is in <tt>YYYY-MM-DD</tt> format),
+	 * one will be generated as specified by the <tt>roundDown</tt> parameter:
+	 * <ul>
+	 * <li><tt>roundDown==true</tt>: start of day (i.e., T00:00:00) is assumed.
+	 * </li>
+	 * <li><tt>roundDown==false</tt>: end of day (i.e.,T23:59:59) is assumed.
+	 * </li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param input
+	 *            YYYY-MM-DD or ISO 8601 Date+Time
+	 * @param roundDown
+	 * @return
+	 */
+	public static String dateTimeToXml(String input, boolean roundDown) {
 		String output = "";
 		if (input.matches("[\\d]{4}-[\\d]{2}-[\\d]{2}")) {
-			if (!roundOff) {
+			if (!roundDown) {
 				output = input + "T23:59:59";
 			} else {
 				output = input + "T00:00:00";
@@ -184,7 +199,10 @@ public class FormatConverter {
 	}
 
 	/**
-	 * @param rawValue
+	 * Convert from 'Yes/No' to 'true/false'. If the input is neither 'Yes' nor
+	 * 'No' a <tt>null</tt> value is returned.
+	 * 
+	 * @param input
 	 * @return
 	 */
 	public static String booleanToXml(String input) {
