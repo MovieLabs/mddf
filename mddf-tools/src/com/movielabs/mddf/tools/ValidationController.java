@@ -21,17 +21,13 @@
 package com.movielabs.mddf.tools;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -40,17 +36,13 @@ import org.xml.sax.SAXParseException;
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddf.MddfContext.MDDF_TYPE;
-import com.movielabs.mddf.tools.ValidationController.MddfFileFilter;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
 import com.movielabs.mddf.tools.util.logging.LogNavPanel;
 import com.movielabs.mddflib.Obfuscator;
 import com.movielabs.mddflib.Obfuscator.Target;
 import com.movielabs.mddflib.avails.validation.AvailValidator;
-import com.movielabs.mddflib.avails.xml.AvailsSheet;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xml.Pedigree;
-import com.movielabs.mddflib.avails.xml.XmlBuilder;
-import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.CpeValidator;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator;
