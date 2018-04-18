@@ -57,13 +57,13 @@ public interface LogMgmt extends IssueLogger {
 	public static final int TAG_XLATE = 12;
 
 	/**
-	 * @param levInfo
-	 * @param tagAvail
+	 * @param lev
+	 * @param tag
 	 * @param msg
 	 * @param curFile
 	 * @param moduleId
 	 */
-	void log(int levInfo, int tagAvail, String msg, File curFile, String moduleId);
+	void log(int lev, int tag, String msg, File curFile, String moduleId);
 
 	/**
 	 * @param level
