@@ -21,14 +21,12 @@
  */
 package com.movielabs.mddflib.manifest.validation;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.CMValidator;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XsdValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -54,25 +52,26 @@ public class MecValidator extends CMValidator {
 		logMsgDefaultTag = LogMgmt.TAG_MEC;
 	}
 
-	public boolean process(File xmlFile, Element docRootEl) throws IOException, JDOMException {
+	public boolean process(MddfTarget target) throws IOException, JDOMException {
+		curTarget = target;
 		curRootEl = null;
-		curFile = xmlFile;
-		curFileName = xmlFile.getName();
+		curFile = target.getSrcFile();
+		curFileName = curFile.getName();
 		curFileIsValid = true;
 
-		String schemaVer = identifyXsdVersion(docRootEl);
+		String schemaVer = identifyXsdVersion(target);
 		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, srcFile, logMsgSrcId);
 		setMdMecVersion(schemaVer);
 		rootNS = mdmecNSpace;
 
-		validateXml(xmlFile, docRootEl);
+		validateXml(target);
 		// }
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
 			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curFile, logMsgSrcId);
 			// return false;
 		} else {
-			curRootEl = docRootEl; // getAsXml(xmlFile);
+			curRootEl = target.getXmlDoc().getRootElement();
 			String msg = "Schema validation check PASSED";
 			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curFile, logMsgSrcId);
 			if (validateC) {
@@ -82,18 +81,20 @@ public class MecValidator extends CMValidator {
 		// clean up and go home
 		return curFileIsValid;
 	}
+	
 
 	/**
 	 * Validate everything that is fully specified via the XSD.
 	 * 
 	 * @param xmlFile
 	 */
-	protected boolean validateXml(File srcFile, Element docRootEl) {
+	protected boolean validateXml(MddfTarget target) {
 		String xsdFile = XsdValidation.defaultRsrcLoc + "mdmec-v" + XmlIngester.MDMEC_VER + ".xsd";
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		curFileIsValid = xsdHelper.validateXml(srcFile, docRootEl, xsdFile, logMsgSrcId);
+		curFileIsValid = xsdHelper.validateXml(target, xsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
+
 
 	/**
 	 * Validate everything that is not fully specified via the XSD.

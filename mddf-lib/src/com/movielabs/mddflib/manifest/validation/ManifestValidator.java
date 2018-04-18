@@ -23,6 +23,7 @@ package com.movielabs.mddflib.manifest.validation;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,6 +41,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.CMValidator;
 import com.movielabs.mddflib.util.PathUtilities;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 import com.movielabs.mddflib.util.xml.XsdValidation;
@@ -113,6 +115,8 @@ public class ManifestValidator extends CMValidator {
 		id2typeMap.put("ContentID", "cid");
 	}
 
+	private ArrayList<File> supportingMecFiles;
+
 	/**
 	 * @param validateC
 	 */
@@ -125,26 +129,35 @@ public class ManifestValidator extends CMValidator {
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_MANIFEST;
 	}
+	
 
-	public boolean process(Element docRootEl, File xmlManifestFile) throws IOException, JDOMException {
-		curFile = xmlManifestFile;
-		curFileName = xmlManifestFile.getName();
+	/**
+	 * @param target
+	 * @return
+	 * @throws IOException
+	 * @throws JDOMException
+	 */
+	public boolean process(MddfTarget target) throws IOException, JDOMException {
+		curTarget = target;
+		curFile = target.getSrcFile();
+		curFileName = curFile.getName();
 		curFileIsValid = true;
 		curRootEl = null;
+		supportingMecFiles = new ArrayList<File>();
 
-		String schemaVer = identifyXsdVersion(docRootEl);
+		String schemaVer = identifyXsdVersion(target);
 		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Schema Version " + schemaVer, srcFile,
 				logMsgSrcId);
 		setManifestVersion(schemaVer);
 		rootNS = manifestNSpace;
 
-		validateXml(xmlManifestFile, docRootEl);
+		validateXml(target);
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 			return false;
 		}
-		curRootEl = docRootEl;
+		curRootEl = target.getXmlDoc().getRootElement();
 		String msg = "Schema validation check PASSED";
 		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 		if (validateC) {
@@ -153,14 +166,15 @@ public class ManifestValidator extends CMValidator {
 		return curFileIsValid;
 	}
 
+
 	/**
 	 * Validate everything that is fully specified via the XSD.
 	 * 
 	 * @param manifestFile
 	 */
-	protected boolean validateXml(File srcFile, Element docRootEl) {
+	protected boolean validateXml(MddfTarget target) {
 		String manifestXsdFile = XsdValidation.defaultRsrcLoc + "manifest-v" + XmlIngester.MAN_VER + ".xsd";
-		curFileIsValid = xsdHelper.validateXml(srcFile, docRootEl, manifestXsdFile, logMsgSrcId);
+		curFileIsValid = xsdHelper.validateXml(target, manifestXsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
 
@@ -463,11 +477,12 @@ public class ManifestValidator extends CMValidator {
 			try {
 				String targetLoc = PathUtilities.convertToAbsolute(baseLoc, containerPath);
 				File target = new File(targetLoc);
+				System.out.println("DEBUG-1: Found MEC to validate at "+targetLoc);
+				supportingMecFiles.add(target);
 				if (!target.exists()) {
 					String errMsg = "Referenced container not found";
 					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, clocEl, errMsg, null, null, logMsgSrcId);
 					continue outterLoop;
-
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -577,4 +592,12 @@ public class ManifestValidator extends CMValidator {
 
 		return;
 	}
+
+	/**
+	 * @return the supportingMecFiles
+	 */
+	public ArrayList<File> getSupportingMecFiles() {
+		return supportingMecFiles;
+	}
+ 
 }

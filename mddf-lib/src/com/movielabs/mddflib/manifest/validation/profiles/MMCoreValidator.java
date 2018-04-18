@@ -21,7 +21,6 @@
  */
 package com.movielabs.mddflib.manifest.validation.profiles;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.jdom2.xpath.XPathExpression;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * Validates conformance of a Manifest to the requirements of the Media Manifest
@@ -112,9 +112,9 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		return pucList;
 	}
 
-	public boolean process(Element docRootEl, File xmlManifestFile, String profileId, List<String> useCases)
+	public boolean process(MddfTarget target,  String profileId, List<String> useCases)
 			throws JDOMException, IOException {
-		super.process(docRootEl, xmlManifestFile);
+		super.process(target);
 		if (curFileIsValid) {
 			validateProfileConstraints();
 		}

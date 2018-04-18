@@ -80,8 +80,9 @@ public abstract class XmlIngester implements IssueLogger {
 	private static Map<String, JSONObject> rsrcCache = new HashMap<String, JSONObject>();
 
 	protected static File srcFile;
-//	protected static File sourceFolder;
+	// protected static File sourceFolder;
 
+	protected MddfTarget curTarget;
 	protected File curFile;
 	protected String curFileName;
 
@@ -272,25 +273,32 @@ public abstract class XmlIngester implements IssueLogger {
 	}
 
 	/**
-	 * @return the sourceFolder
-	 */
-//	public static File getSourceFolder() {
-//		return sourceFolder;
-//	}
-
-	/**
 	 * @param srcPath
 	 *            the srcPath to set
 	 */
 	public static void setSourceDirPath(String srcPath) {
-		if(srcPath != null){
-		srcFile = new File(srcPath);
-		} else{
+		if (srcPath != null) {
+			srcFile = new File(srcPath);
+		} else {
 			srcFile = null;
-		} 
+		}
 
 	}
- 
+
+	/**
+	 * Identify the XSD version for the document's <i>primary</i> MDDF namespace
+	 * (i.e., Manifest, Avails, MDMec, etc.). Version is returned as a string
+	 * that <i>may</i> contain major and minor version identification (e.g.
+	 * '2.1', '1.7.3_rc1')
+	 * 
+	 * @param target
+	 * @return
+	 */
+	public static String identifyXsdVersion(MddfTarget target) {
+		Element docRootEl = target.getXmlDoc().getRootElement();
+		return identifyXsdVersion(docRootEl);
+	}
+
 	/**
 	 * Identify the XSD version for the document's <i>primary</i> MDDF namespace
 	 * (i.e., Manifest, Avails, MDMec, etc.). Version is returned as a string

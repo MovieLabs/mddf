@@ -29,6 +29,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * @author L. Levin, Critical Architectures LLC
@@ -36,7 +37,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
  */
 public interface ProfileValidator {
 
-	boolean process(Element docRootEl, File srcFile, String profileId, List<String> useCases)
+	boolean process(MddfTarget target, String profileId, List<String> useCases)
 			throws JDOMException, IOException;
 
 	/**

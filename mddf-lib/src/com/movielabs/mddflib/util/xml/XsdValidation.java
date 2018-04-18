@@ -74,20 +74,17 @@ public class XsdValidation {
 
 	/**
 	 * Validate everything that is fully specified via the identified XSD.
-	 * 
-	 * @param srcFile
-	 *            source from which XML was obtained (used for logging only; not
-	 *            required to be an XML file)
-	 * @param xsdLocation
-	 * @param moduleId
-	 *            identifier used in log messages
+	 * @param target
+	 * @param xsdFile
+	 * @param logMsgSrcId
 	 * @return
 	 */
-	public boolean validateXml(File srcFile, Element docRootEl, String xsdLocation, String moduleId) {
+	public boolean validateXml(MddfTarget target, String xsdLocation, String moduleId) {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		URL xsdUrl = getClass().getClassLoader().getResource(xsdLocation);
 		String genericTooltip = "XML does not conform to schema as defined in " + xsdLocation;
+		File srcFile = target.getSrcFile(); // used for logging
 		Schema schema;
 		try {
 			schema = schemaFactory.newSchema(xsdUrl);
@@ -119,21 +116,24 @@ public class XsdValidation {
 			 * theory the obvious approach is to use a JDOMSource in all cases.
 			 * In practice, however, using a JDOMSource will result in
 			 * SaxParseException messages that lack line numbers. This greatly
-			 * reduces the value of the error messages. The work-around solution
-			 * is to use a StreamSource and process the XML on the file system
-			 * even though we already have the same XML in the form of the JDOM
-			 * document.
+			 * reduces the value of the error messages. On the other hand, if
+			 * the MDDF file started out in a non-XML syntax and then was
+			 * converted to XML, linking an error to a specific line in the XML
+			 * has little, if any, value.
 			 * </p>
 			 * <p>
-			 * The PROBLEM is that for server-based execution the srcFile is NOT
-			 * readable hence line numbers are not available in log messages.
+			 * The solution is to use a StreamSource when processing something
+			 * that started as XML on the file system even though we already
+			 * have the same XML in the form of the JDOM document. The
+			 * JDOMSource is used only if the original MDDF file was not
+			 * formatted as XML (i.e., it is an XLSX formatted Avails).
 			 * </p>
 			 */
 			Source src;
-			if ((srcFile.canRead()) && (srcFile.getName().endsWith(".xml"))) {
-				src = new StreamSource(srcFile);
+			if (srcFile.getName().endsWith(".xml")) {
+				src = new StreamSource(target.getXmlStreamSrc()); 
 			} else {
-				src = new JDOMSource(docRootEl);
+				src = new JDOMSource(target.getXmlDoc().getRootElement());
 			}
 			validator.validate(src);
 		} catch (IOException e) {
@@ -154,7 +154,7 @@ public class XsdValidation {
 			return (false);
 		}
 	}
-
+ 
 	protected static String getExceptionCause(Exception e) {
 		String description = e.getMessage();
 		Throwable cause = e.getCause();

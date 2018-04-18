@@ -21,8 +21,6 @@
  */
 package com.movielabs.mddflib.avails.validation;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -30,21 +28,21 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.jdom2.Element;
-import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.CMValidator;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XsdValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
  * Validates an Avails file as conforming to EMA Content Availability Data
- * (Avails) as specified in <tt>TR-META-AVAIL</tt>. Validation also
- * includes testing for conformance with the appropriate version of the
+ * (Avails) as specified in <tt>TR-META-AVAIL</tt>. Validation also includes
+ * testing for conformance with the appropriate version of the
  * <tt>Common Metadata (md)</tt> specification.
  * 
  * @see <a href= "http://www.movielabs.com/md/avails/v2.1/Avails_v2.1.pdf"> TR-
@@ -128,7 +126,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		XrefCounter(String elType, String elId) {
 			super();
 			this.elType = elType;
-			this.elId = elId; 
+			this.elId = elId;
 		}
 
 		int increment() {
@@ -136,7 +134,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			return count;
 		}
 
-		void validate() { 
+		void validate() {
 			if (count > 0) {
 				return;
 			} else {
@@ -153,7 +151,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	public static final String LOGMSG_ID = "AvailValidator";
 
 	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL", "avail01");
-  
+
 	private Map<Object, Pedigree> pedigreeMap;
 
 	private String availSchemaVer;
@@ -185,39 +183,33 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * element in the XML being processed back to its original source (i.e.,
 	 * either a row and cell in an Excel spreadsheet or a line in an XML file).
 	 * 
-	 * @param docRootEl
-	 *            root of the Avail
+	 * @param target
 	 * @param pedigreeMap
-	 *            links XML Elements to their original source (used for logging
-	 *            only)
-	 * @param srcFile
-	 *            is source from which XML was obtained (used for logging only)
 	 * @return
-	 * @throws IOException
-	 * @throws JDOMException
 	 */
-	public boolean process(Element docRootEl, Map<Object, Pedigree> pedigreeMap, File xmlFile)
-			throws IOException, JDOMException {
+	public boolean process(MddfTarget target, Map<Object, Pedigree> pedigreeMap) {
 		String msg = "Begining validation of Avails...";
-		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, msg, target.getSrcFile(), logMsgSrcId);
+
+		curTarget = target;
 		curRootEl = null;
-		curFile = xmlFile;
-		curFileName = xmlFile.getName();
+		curFile = target.getSrcFile();
+		curFileName = curFile.getName();
 		this.pedigreeMap = pedigreeMap;
 		curFileIsValid = true;
 
-		availSchemaVer = identifyXsdVersion(docRootEl);
+		availSchemaVer = identifyXsdVersion(target);
 		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Avails Schema Version " + availSchemaVer,
 				srcFile, logMsgSrcId);
 		setAvailVersion(availSchemaVer);
 		rootNS = availsNSpace;
 
-		validateXml(xmlFile, docRootEl);
+		validateXml(target);
 		if (!curFileIsValid) {
 			msg = "Schema validation check FAILED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
 		} else {
-			curRootEl = docRootEl; // getAsXml(xmlFile);
+			curRootEl = target.getXmlDoc().getRootElement();
 			msg = "Schema validation check PASSED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
 			if (validateC) {
@@ -234,12 +226,13 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * 
 	 * @param xmlFile
 	 */
-	protected boolean validateXml(File srcFile, Element docRootEl) {
+	protected boolean validateXml(MddfTarget target) {
 		String xsdFile = XsdValidation.defaultRsrcLoc + "avails-v" + availSchemaVer + ".xsd";
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		curFileIsValid = xsdHelper.validateXml(srcFile, docRootEl, xsdFile, logMsgSrcId);
+		curFileIsValid = xsdHelper.validateXml(target, xsdFile, logMsgSrcId);
 		return curFileIsValid;
 	}
+
 
 	/**
 	 * Validate everything that is not fully specified via the XSD.

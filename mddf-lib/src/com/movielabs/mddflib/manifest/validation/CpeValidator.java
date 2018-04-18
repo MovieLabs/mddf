@@ -44,6 +44,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.manifest.validation.profiles.CpeIP1Validator;
 import com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * Handles validation of a CPE-Manifest as specified in TR-CPE-M1. As a
@@ -135,9 +136,9 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		profileIP1Val = new CpeIP1Validator(this, loggingMgr);
 	}
 
-	public boolean process(Element docRootEl, File xmlManifestFile, String profileId, List<String> useCases)
+	public boolean process(MddfTarget target,  String profileId, List<String> useCases)
 			throws JDOMException, IOException {
-		super.process(docRootEl, xmlManifestFile);
+		super.process( target );
 		if (!curFileIsValid) {
 			String msg = "CPE validation terminated.. file is not a valid Media Manifest";
 			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curFile, logMsgSrcId);
