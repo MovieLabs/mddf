@@ -146,7 +146,7 @@ public class ManifestValidator extends CMValidator {
 		supportingMecFiles = new ArrayList<File>();
 
 		String schemaVer = identifyXsdVersion(target);
-		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Schema Version " + schemaVer, srcFile,
+		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Schema Version " + schemaVer, curFile,
 				logMsgSrcId);
 		setManifestVersion(schemaVer);
 		rootNS = manifestNSpace;
