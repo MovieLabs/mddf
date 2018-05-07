@@ -200,7 +200,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 		availSchemaVer = identifyXsdVersion(target);
 		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Avails Schema Version " + availSchemaVer,
-				srcFile, logMsgSrcId);
+				curFile, logMsgSrcId);
 		setAvailVersion(availSchemaVer);
 		rootNS = availsNSpace;
 
