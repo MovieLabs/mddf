@@ -174,8 +174,17 @@ public class AvailsWrkBook {
 	}
 
 	/**
-	 * Compress an Avails XLSX file by hiding empty columns. Compression
-	 * mechanism does not require the file to be validated first.
+	 * Compress an Avails XLSX file by hiding empty columns, then save the
+	 * resulting file in the designated location. Compression mechanism does not
+	 * require the file to be validated first.
+	 * <p>
+	 * <b>NOTE:</b> This method is only usable when the Avails file is readable
+	 * from, and writable to, the local file system.
+	 * </p>
+	 * <p>
+	 * <b>NOTE:</b> This method is intended for use with an MDDF Avails file and
+	 * therefore assumes the workbook contains only a single sheet.
+	 * </p>
 	 * 
 	 * @param srcFile
 	 * @param outputDir
@@ -184,9 +193,14 @@ public class AvailsWrkBook {
 	 */
 	public static boolean compress(File srcFile, String outputDir, String outFileName) {
 		try {
-			XSSFWorkbook srcWrkBook = new XSSFWorkbook(new FileInputStream(srcFile));
-			XSSFSheet excelSheet = srcWrkBook.getSheetAt(0);
-			AvailsSheet.compress(excelSheet);
+			// XSSFWorkbook srcWrkBook = new XSSFWorkbook(new
+			// FileInputStream(srcFile));
+			// XSSFSheet excelSheet = srcWrkBook.getSheetAt(0);
+			// AvailsSheet.compress(excelSheet);
+			XSSFWorkbook srcWrkBook = compress(new FileInputStream(srcFile));
+			if (srcWrkBook == null) {
+				return false;
+			}
 			File outFile = new File(outputDir, outFileName);
 			FileOutputStream outputStream = new FileOutputStream(outFile);
 			srcWrkBook.write(outputStream);
@@ -197,6 +211,26 @@ public class AvailsWrkBook {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Read an XLSX file from the designated input stream, then return a
+	 * compressed version hiding empty columns.
+	 * <p>
+	 * <b>NOTE:</b> This method is intended for use with an MDDF Avails file and
+	 * therefore assumes the workbook contains only a single sheet.
+	 * </p>
+	 * 
+	 * @param inStream
+	 * @return
+	 * @throws IOException
+	 */
+	public static XSSFWorkbook compress(InputStream inStream) throws IOException {
+		XSSFWorkbook srcWrkBook;
+		srcWrkBook = new XSSFWorkbook(inStream);
+		XSSFSheet excelSheet = srcWrkBook.getSheetAt(0);
+		AvailsSheet.compress(excelSheet);
+		return srcWrkBook;
 	}
 
 	/**
