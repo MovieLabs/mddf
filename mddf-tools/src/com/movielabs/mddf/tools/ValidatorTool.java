@@ -97,6 +97,7 @@ import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.Translator;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
 import com.movielabs.mddf.tools.util.HeaderPanel;
@@ -175,15 +176,16 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 	public class TranslationWorker extends SwingWorker<Void, StatusMsg> {
 
-		private Document xmlDoc;
+//		private Document xmlDoc;
 		private EnumSet<FILE_FMT> selections;
 		private String dirPath;
 		private String outFileName;
 		private boolean appendVersion;
+		private MddfTarget target;
 
-		public TranslationWorker(Document xmlDoc, EnumSet<FILE_FMT> selections, String dirPath, String outFileName,
+		public TranslationWorker(MddfTarget target, EnumSet<FILE_FMT> selections, String dirPath, String outFileName,
 				boolean appendVersion) {
-			this.xmlDoc = xmlDoc;
+			this.target = target;
 			this.selections = selections;
 			this.dirPath = dirPath;
 			this.outFileName = outFileName;
@@ -195,9 +197,9 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			setRunningState(true);
 			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			getTxtStatus().setText("Starting translation.....");
-			Translator.translateAvails(xmlDoc, selections, dirPath, outFileName, appendVersion, consoleLogger);
+			Translator.translateAvails(target, selections, dirPath, outFileName, appendVersion, consoleLogger);
 			frame.setCursor(null); // turn off the wait cursor
-			setRunningState(false);
+			setRunningState(false); 
 			return null;
 		}
 
@@ -1212,9 +1214,9 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 	}
 
-	public void runTranslation(Document doc, EnumSet<FILE_FMT> selections, String outputDir, String outputFilePrefix,
+	public void runTranslation(MddfTarget target, EnumSet<FILE_FMT> selections, String outputDir, String outputFilePrefix,
 			boolean addVersion) {
-		SwingWorker<Void, StatusMsg> worker = new ValidatorTool.TranslationWorker(doc, selections, outputDir,
+		SwingWorker<Void, StatusMsg> worker = new ValidatorTool.TranslationWorker(target, selections, outputDir,
 				outputFilePrefix, addVersion);
 		worker.execute();
 	}

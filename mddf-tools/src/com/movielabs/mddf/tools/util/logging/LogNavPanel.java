@@ -67,6 +67,7 @@ import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * A <tt>JPanel</tt> that displays a <tt>JTree</tt> containing all log entries
@@ -162,15 +163,16 @@ public class LogNavPanel extends JPanel {
 					public void actionPerformed(ActionEvent e) {
 						TranslatorDialog xlateDialog = TranslatorDialog.getDialog();
 						Document doc = fileFolder.getXml();
-						FILE_FMT curFmt = fileFolder.getMddfFormat();
 						File srcFile = fileFolder.getFile();
+						FILE_FMT curFmt = fileFolder.getMddfFormat();
 						xlateDialog.setContext(curFmt, srcFile);
 						Point p = tree.getLocationOnScreen();
 						xlateDialog.setLocation((int) p.getX(), (int) p.getY());
 						xlateDialog.setVisible(true);
 						EnumSet<FILE_FMT> selections = xlateDialog.getSelections();
 						if (!selections.isEmpty()) {
-							ValidatorTool.getTool().runTranslation(doc, selections, xlateDialog.getOutputDir(),
+							MddfTarget target = new MddfTarget(srcFile, doc, parentLogger);
+							ValidatorTool.getTool().runTranslation(target, selections, xlateDialog.getOutputDir(),
 									xlateDialog.getOutputFilePrefix(), xlateDialog.addVersion());
 						}
 					}

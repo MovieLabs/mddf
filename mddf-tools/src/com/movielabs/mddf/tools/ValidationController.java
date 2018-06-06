@@ -421,7 +421,7 @@ public class ValidationController {
 				if ((exportDir != null) && (xportFmts != null)) {
 					String baseFileName = trimFileName(srcFile.getName());
 					xportFmts.remove(srcMddfFmt);
-					int cnt = Translator.translateAvails(xmlDoc, xportFmts, exportDir, baseFileName, true, logMgr);
+					int cnt = Translator.translateAvails(target, xportFmts, exportDir, baseFileName, true, logMgr);
 					logMgr.log(LogMgmt.LEV_INFO, logTag, "Exported in " + cnt + " format(s)", srcFile, MODULE_ID);
 				}
 			}
