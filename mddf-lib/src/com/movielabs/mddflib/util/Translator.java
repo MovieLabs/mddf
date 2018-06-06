@@ -46,14 +46,16 @@ import org.jdom2.xpath.XPathFactory;
 
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
+import com.movielabs.mddflib.avails.xlsx.TemplateWorkBook;
 import com.movielabs.mddflib.avails.xlsx.XlsxBuilder;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
- * Performs translation of an Avails file from one format or version to another and then
- * exports (i.e., saves) the translated file(s).
+ * Performs translation of an Avails file from one format or version to another
+ * and then exports (i.e., saves) the translated file(s).
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -128,6 +130,9 @@ public class Translator {
 	}
 
 	/**
+	 * Convert an Avails file to other formats and save the translations to the
+	 * local file system.
+	 * 
 	 * @param xmlDoc
 	 * @param xportFmts
 	 * @param exportDir
@@ -136,14 +141,17 @@ public class Translator {
 	 * @return
 	 * @throws UnsupportedOperationException
 	 */
-	public static int translateAvails(Document xmlDoc, EnumSet<FILE_FMT> xportFmts, File exportDir, String filePrefix,
+	public static int translateAvails(MddfTarget input, EnumSet<FILE_FMT> xportFmts, File exportDir, String filePrefix,
 			boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
 		String dirPath = exportDir.getAbsolutePath();
-		return translateAvails(xmlDoc, xportFmts, dirPath, filePrefix, appendVersion, logMgr);
+		return translateAvails(input, xportFmts, dirPath, filePrefix, appendVersion, logMgr);
 	}
 
 	/**
-	 * @param xmlDoc
+	 * Convert an Avails file to other formats and save the translations to the
+	 * local file system.
+	 * 
+	 * @param input
 	 * @param selections
 	 * @param dirPath
 	 * @param outFileName
@@ -152,18 +160,34 @@ public class Translator {
 	 * @return
 	 * @throws UnsupportedOperationException
 	 */
-	public static int translateAvails(Document xmlDoc, EnumSet<FILE_FMT> selections, String dirPath, String outFileName,
+	public static int translateAvails(MddfTarget input, EnumSet<FILE_FMT> selections, String dirPath, String outFileName,
 			boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
 		Iterator<FILE_FMT> selIt = selections.iterator();
 		int outputCnt = 0;
 		while (selIt.hasNext()) {
 			FILE_FMT targetFmt = selIt.next();
 			if (targetFmt.getEncoding().equalsIgnoreCase("xlsx")) {
-				if (convertToExcel(xmlDoc, targetFmt, dirPath, outFileName, appendVersion, logMgr)) {
-					outputCnt++;
+				TemplateWorkBook wrkBook = convertToExcel(input, targetFmt, null, null, false, logMgr);
+				if (wrkBook != null) {
+					String fileName = outFileName;
+					fileName = fileName.replaceFirst("(?i)\\.xlsx$", "");
+					if (appendVersion) {
+						fileName = fileName + "_v" + targetFmt.getVersion() + ".xlsx";
+					} else {
+						fileName = fileName + ".xlsx";
+					}
+					File exported = new File(dirPath, fileName);
+					try {
+						wrkBook.export(exported.getPath());
+						logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
+								"Saved translated file as " + exported.getPath(), input.getSrcFile(), moduleId);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
+				outputCnt++;
 			} else {
-				Document targetDoc = convertToXml(xmlDoc, targetFmt, logMgr);
+				Document targetDoc = convertToXml(input, targetFmt, logMgr);
 				if (targetDoc != null) {
 					// did it work? if so, write to file system.
 					if (targetDoc != null) {
@@ -178,7 +202,7 @@ public class Translator {
 						// Save as XML
 						if (XmlIngester.writeXml(exported, targetDoc)) {
 							logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
-									"Saved translated file as " + exported.getPath(), null, moduleId);
+									"Saved translated file as " + exported.getPath(), input.getSrcFile(), moduleId);
 							outputCnt++;
 						}
 					}
@@ -186,6 +210,32 @@ public class Translator {
 			}
 		}
 		return outputCnt;
+	}
+
+	/**
+	 * Convert an Avails file to other formats
+	 * 
+	 * @param xmlDoc
+	 * @param selections
+	 * @param logMgr
+	 * @return
+	 */
+	public static Map<FILE_FMT, Object> translateAvails(MddfTarget input, EnumSet<FILE_FMT> selections, LogMgmt logMgr) {
+		HashMap<FILE_FMT, Object> resultMap = new HashMap<FILE_FMT, Object>();
+		Iterator<FILE_FMT> selIt = selections.iterator();
+		while (selIt.hasNext()) {
+			FILE_FMT targetFmt = selIt.next();
+			if (targetFmt.getEncoding().equalsIgnoreCase("xlsx")) {
+				// convert but don't save
+				TemplateWorkBook wrkBook = convertToExcel(input, targetFmt, null, null, false, logMgr);
+				resultMap.put(targetFmt, wrkBook);
+
+			} else {
+				Document targetDoc = convertToXml(input, targetFmt, logMgr);
+				resultMap.put(targetFmt, targetDoc);
+			}
+		}
+		return resultMap;
 	}
 
 	/**
@@ -198,20 +248,21 @@ public class Translator {
 	 * @param logMgr
 	 * @return
 	 */
-	private static Document convertToXml(Document srcDoc, FILE_FMT targetFmt, LogMgmt logMgr)
+	private static Document convertToXml(MddfTarget input, FILE_FMT targetFmt, LogMgmt logMgr)
 			throws UnsupportedOperationException {
-		Document targetDoc = null;
+		Document inputDoc = input.getXmlDoc();
+		Document outputDoc = null;
 		/*
 		 * what's the schema used for the existing XML representation? It may
 		 * already be a match for the desired format.
 		 */
-		String curVersion = XmlIngester.identifyXsdVersion(srcDoc.getRootElement());
+		String curVersion = XmlIngester.identifyXsdVersion(inputDoc.getRootElement());
 		FILE_FMT curFmt = MddfContext.identifyMddfFormat("avails", curVersion);
 		String targetVersion = targetFmt.getVersion();
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
-				"Translating to XML v" + targetFmt.getVersion() + " from XML v" + curVersion, null, moduleId);
+				"Translating to XML v" + targetFmt.getVersion() + " from XML v" + curVersion, input.getSrcFile(), moduleId);
 		if (curVersion.equals(targetVersion)) {
-			return srcDoc;
+			return inputDoc;
 		} else {
 			switch (targetFmt) {
 			case AVAILS_2_1:
@@ -220,11 +271,11 @@ public class Translator {
 			case AVAILS_2_2:
 				switch (curVersion) {
 				case "2.1":
-					targetDoc = avail2_1_to_2_2(srcDoc);
-					return targetDoc;
+					outputDoc = avail2_1_to_2_2(inputDoc);
+					return outputDoc;
 				case "2.2.1":
-					targetDoc = avail2_2_1_to_2_2(srcDoc);
-					return targetDoc;
+					outputDoc = avail2_2_1_to_2_2(inputDoc);
+					return outputDoc;
 				case "2.2.2":
 				default:
 					// Unsupported request
@@ -233,15 +284,15 @@ public class Translator {
 			case AVAILS_2_2_1:
 				switch (curVersion) {
 				case "2.1":
-					targetDoc = avail2_1_to_2_2(srcDoc);
-					targetDoc = simpleConversion(targetDoc, curFmt, targetFmt);
-					return targetDoc;
+					outputDoc = avail2_1_to_2_2(inputDoc);
+					outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
+					return outputDoc;
 				case "2.2":
-					targetDoc = simpleConversion(srcDoc, curFmt, targetFmt);
-					return targetDoc;
+					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
+					return outputDoc;
 				case "2.2.2":
-					targetDoc = avail2_2_2_to_2_2_1(srcDoc);
-					return targetDoc;
+					outputDoc = avail2_2_2_to_2_2_1(inputDoc);
+					return outputDoc;
 				default:
 					// Unsupported request
 					break;
@@ -249,12 +300,12 @@ public class Translator {
 			case AVAILS_2_2_2:
 				switch (curVersion) {
 				case "2.1":
-					targetDoc = avail2_1_to_2_2(srcDoc);
-					targetDoc = simpleConversion(targetDoc, curFmt, targetFmt);
-					return targetDoc;
+					outputDoc = avail2_1_to_2_2(inputDoc);
+					outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
+					return outputDoc;
 				case "2.2":
-					targetDoc = simpleConversion(srcDoc, curFmt, targetFmt);
-					return targetDoc;
+					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
+					return outputDoc;
 				default:
 					// Unsupported request
 					break;
@@ -262,15 +313,15 @@ public class Translator {
 			case AVAILS_2_3:
 				switch (curVersion) {
 				case "2.1":
-					targetDoc = avail2_1_to_2_2(srcDoc);
-					targetDoc = simpleConversion(targetDoc, curFmt, targetFmt);
-					return targetDoc;
+					outputDoc = avail2_1_to_2_2(inputDoc);
+					outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
+					return outputDoc;
 				case "2.2":
-					targetDoc = simpleConversion(srcDoc, curFmt, targetFmt);
-					return targetDoc;
+					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
+					return outputDoc;
 				case "2.2.2":
-					targetDoc = simpleConversion(srcDoc, curFmt, targetFmt);
-					return targetDoc;
+					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
+					return outputDoc;
 				default:
 					// Unsupported request
 					break;
@@ -293,14 +344,15 @@ public class Translator {
 	 * @return
 	 * @throws UnsupportedOperationException
 	 */
-	private static boolean convertToExcel(Document xmlSrcDoc, FILE_FMT targetFormat, String dirPath, String outFileName,
-			boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
+	private static TemplateWorkBook convertToExcel(MddfTarget input, FILE_FMT targetFormat, String dirPath,
+			String outFileName, boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
 		Document xmlDoc = null;
+		Document xmlSrcDoc = input.getXmlDoc();
 		String curVersion = XmlIngester.identifyXsdVersion(xmlSrcDoc.getRootElement());
 		FILE_FMT curFmt = MddfContext.identifyMddfFormat("avails", curVersion);
 		Version excelVer = null;
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
-				"Translating to Excel v" + targetFormat.getVersion() + " from XML v" + curVersion, null, moduleId);
+				"Translating to Excel v" + targetFormat.getVersion() + " from XML v" + curVersion, input.getSrcFile(), moduleId);
 		switch (targetFormat) {
 		case AVAILS_1_6:
 			// not yet implemented. May never be.
@@ -355,29 +407,13 @@ public class Translator {
 			}
 			break;
 		}
-		if (xmlDoc != null) {
-			XlsxBuilder converter = new XlsxBuilder(xmlDoc.getRootElement(), excelVer, logMgr);
-			String fileName = outFileName;
-			fileName = fileName.replaceFirst("(?i)\\.xlsx$", "");
-			if (appendVersion) {
-				fileName = fileName + "_v" + targetFormat.getVersion() + ".xlsx";
-			} else {
-				fileName = fileName + ".xlsx";
-			}
-			File exported = new File(dirPath, fileName);
-			try {
-				converter.getWorkbook().export(exported.getPath());
-				logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, "Saved translated file as " + exported.getPath(), null,
-						moduleId);
-				return true;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} else {
+		if (xmlDoc == null) {
 			throw new UnsupportedOperationException(
 					"Conversion to Avails xlsx " + targetFormat.name() + " from XML v" + curVersion + " not supported");
 		}
-		return false;
+		XlsxBuilder converter = new XlsxBuilder(xmlDoc.getRootElement(), excelVer, logMgr);
+		TemplateWorkBook wrkBook = converter.getWorkbook();
+		return wrkBook;
 	}
 
 	/**
@@ -478,8 +514,7 @@ public class Translator {
 	 * @param targetFmt
 	 * @return
 	 */
-	private static Document simpleConversion(Document xmlDocIn, FILE_FMT srcFmt, FILE_FMT targetFmt) {
-		XmlIngester.writeXml(new File("./tmp/Conversion-TEST.xml"), xmlDocIn);
+	private static Document simpleConversion(Document xmlDocIn, FILE_FMT srcFmt, FILE_FMT targetFmt) { 
 		XMLOutputter outputter = new XMLOutputter();
 		String inDoc = outputter.outputString(xmlDocIn);
 		Map<String, String> srcVers = MddfContext.getReferencedXsdVersions(srcFmt);
