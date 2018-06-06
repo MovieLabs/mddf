@@ -333,7 +333,7 @@ public class TemplateWorkBook {
 		}
 		try (FileOutputStream outputStream = new FileOutputStream(destPath)) {
 			workbook.write(outputStream);
-			logger.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "XLSX saved to " + destPath, null, logMsgSrcId);
+			logger.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "XLSX saved to " + destPath, null, logMsgSrcId);
 
 		}
 	}
