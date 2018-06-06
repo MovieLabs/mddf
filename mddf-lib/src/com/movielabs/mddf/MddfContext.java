@@ -22,10 +22,13 @@
  */
 package com.movielabs.mddf;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jdom2.Element;
+
+import com.movielabs.mddf.MddfContext.FILE_FMT;
 
 /**
  * Defines constants and Enum types used to indicate the context of various MDDF
@@ -64,6 +67,8 @@ public class MddfContext {
 
 	private static Map<String, String[]> stdsVersions;
 
+	private static Map<String, FILE_FMT> map2FmtEnums = new HashMap<String, FILE_FMT>();
+
 	static {
 		// --- Supported versions of standards (in order) ---
 		String[] CM_VER = { "2.6", "2.5", "2.4" };
@@ -83,6 +88,7 @@ public class MddfContext {
 		 * Special case: for documentation we need version of 'Best Practices'
 		 */
 		stdsVersions.put("MMM-BP", MMM_BP);
+
 	}
 
 	public enum MDDF_TYPE {
@@ -115,6 +121,7 @@ public class MddfContext {
 			this.ver = ver;
 			this.encoding = encoding;
 			label = standard + " v" + ver + " (" + encoding + ")";
+			map2FmtEnums.put(label, this);
 		}
 
 		@Override
@@ -139,8 +146,7 @@ public class MddfContext {
 		public String getStandard() {
 			return standard;
 		}
- 
- 
+
 	}
 
 	public static FILE_FMT identifyMddfFormat(Element docRootEl) {
@@ -161,6 +167,10 @@ public class MddfContext {
 		return identifyMddfFormat(schemaType, schemaVer);
 	}
 
+	public static FILE_FMT getMddfFormat(String label) {
+		return map2FmtEnums.get(label);
+	}
+
 	public static FILE_FMT identifyMddfFormat(String standard, String schemaVer) {
 		switch (standard) {
 		case "manifest":
@@ -179,6 +189,12 @@ public class MddfContext {
 			break;
 		case "avails":
 			switch (schemaVer) {
+			case "1.6":
+				return FILE_FMT.AVAILS_1_6;
+			case "1.7":
+				return FILE_FMT.AVAILS_1_7;
+			case "1.7.2":
+				return FILE_FMT.AVAILS_1_7_2;
 			case "2.3":
 				return FILE_FMT.AVAILS_2_3;
 			case "2.2.2":
