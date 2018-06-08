@@ -199,16 +199,25 @@ public class FormatConverter {
 	}
 
 	/**
-	 * Convert from 'Yes/No' to 'true/false'. If the input is neither 'Yes' nor
-	 * 'No' a <tt>null</tt> value is returned.
+	 * Convert from 'Yes/No', Y/N, or T/F to 'true/false'. If the input is none
+	 * of those, a <tt>null</tt> value is returned. Matching is
+	 * case-insensitive.
 	 * 
 	 * @param input
 	 * @return
 	 */
 	public static String booleanToXml(String input) {
-		if (input.equals("Yes")) {
+		String test = input.toLowerCase();
+		switch (test) {
+		case "yes":
+		case "y":
+		case "true":
+		case "t":
 			return "true";
-		} else if (input.equals("No")) {
+		case "no":
+		case "n":
+		case "false":
+		case "f":
 			return "false";
 		}
 		return null;
