@@ -43,10 +43,11 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 	static final String MISSING = "--FUBAR (missing)";
 
 	/**
+	 * @param logger 
 	 * @param fields
 	 */
-	RowToXmlHelperV1_7(AvailsSheet sheet, Row row) {
-		super(sheet, row);
+	RowToXmlHelperV1_7(AvailsSheet sheet, Row row, LogMgmt logger) {
+		super(sheet, row, logger);
 	}
 
 	protected void makeAvail(XmlBuilder xb) {
@@ -304,7 +305,8 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		switch (value) {
 		case "SRP":
 			String errMsg = "The value '" + value + "' is not a valid PriceType for v1.7 Excel";
-			xb.appendToLog(errMsg, LogMgmt.LEV_ERR, (Cell) pg.getSource());
+			Cell target =(Cell) pg.getSource(); 
+			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, target, errMsg, null, null, XmlBuilder.moduleId);
 			return null;
 		}
 		return pg;
@@ -351,46 +353,6 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		}
 	}
 
-	/**
-	 * Add zero or more child elements with the specified name and namespace.
-	 * The number of child elements created will be determined by the contents
-	 * of the indicated cell. If <tt>separator</tt> is not <tt>null</tt>, then
-	 * it will be used to split the string value in the cell with each resulting
-	 * sub-string being used to create a distinct child element.
-	 * 
-	 * @param parentEl
-	 * @param childName
-	 * @param ns
-	 * @param cellKey
-	 * @param separator
-	 * @return an array of child <tt>Element</tt> instances
-	 */
-	protected Element[] process(Element parentEl, String childName, Namespace ns, String cellKey, String separator) {
-		Pedigree pg = getPedigreedData(cellKey);
-		if (pg == null) {
-			return null;
-		}
-		String value = pg.getRawValue();
-		if (isSpecified(value) || xb.isRequired(childName, ns.getPrefix())) {
-			String[] valueSet;
-			if (separator == null) {
-				valueSet = new String[1];
-				valueSet[0] = value;
-			} else {
-				valueSet = value.split(separator);
-			}
-			Element[] elementList = new Element[valueSet.length];
-			for (int i = 0; i < valueSet.length; i++) {
-				Element childEl = mGenericElement(childName, valueSet[i], ns);
-				parentEl.addContent(childEl);
-				xb.addToPedigree(childEl, pg);
-				elementList[i] = childEl;
-			}
-			return elementList;
-		} else {
-			return null;
-		}
-	}
 
 	protected void addRegion(Element parentEl, String regionType, Namespace ns, String cellKey) {
 		Element regionEl = new Element(regionType, ns);
@@ -454,6 +416,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 			return null;
 		} else {
 			Cell cell = row.getCell(cellIdx);
+			usesFormula(cell);
 			String value = dataF.formatCellValue(cell);
 			if (value == null) {
 				value = "";

@@ -48,24 +48,28 @@ public abstract class AbstractRowHelper {
 	protected String workType = "";
 	protected DataFormatter dataF = new DataFormatter();
 	protected Pedigree workTypePedigree;
+	protected LogMgmt logger;
 
-	public static AbstractRowHelper createHelper(AvailsSheet aSheet, Row row) {
+	public static AbstractRowHelper createHelper(AvailsSheet aSheet, Row row, LogMgmt logger) {
 		Version ver = aSheet.getVersion();
 		switch (ver) {
+//		case V1_7_3:
+//			return new RowToXmlHelperV1_7_3(aSheet, row, logger);
 		case V1_7_2:
 		case V1_7:
-			RowToXmlHelperV1_7 helper = new RowToXmlHelperV1_7(aSheet, row);
-			return helper;
+			return new RowToXmlHelperV1_7(aSheet, row, logger);
 		default:
 			return null;
 		}
 	}
 
 	/**
+	 * @param logger
 	 * @param fields
 	 */
-	AbstractRowHelper(AvailsSheet sheet, Row row) {
+	AbstractRowHelper(AvailsSheet sheet, Row row, LogMgmt logger) {
 		super();
+		this.logger = logger;
 		this.sheet = sheet;
 		this.row = row;
 		/*
@@ -150,8 +154,32 @@ public abstract class AbstractRowHelper {
 	 * @param separator
 	 * @return an array of child <tt>Element</tt> instances
 	 */
-	abstract protected Element[] process(Element parentEl, String childName, Namespace ns, String cellKey,
-			String separator);
+	protected Element[] process(Element parentEl, String childName, Namespace ns, String cellKey, String separator) {
+		Pedigree pg = getPedigreedData(cellKey);
+		if (pg == null) {
+			return null;
+		}
+		String value = pg.getRawValue();
+		if (isSpecified(value) || xb.isRequired(childName, ns.getPrefix())) {
+			String[] valueSet;
+			if (separator == null) {
+				valueSet = new String[1];
+				valueSet[0] = value;
+			} else {
+				valueSet = value.split(separator);
+			}
+			Element[] elementList = new Element[valueSet.length];
+			for (int i = 0; i < valueSet.length; i++) {
+				Element childEl = mGenericElement(childName, valueSet[i], ns);
+				parentEl.addContent(childEl);
+				xb.addToPedigree(childEl, pg);
+				elementList[i] = childEl;
+			}
+			return elementList;
+		} else {
+			return null;
+		}
+	}
 
 	abstract protected void addRegion(Element parentEl, String regionType, Namespace ns, String cellKey);
 
@@ -171,12 +199,29 @@ public abstract class AbstractRowHelper {
 		if (value == null) {
 			value = "";
 		}
-		if (sourceCell != null && (sourceCell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
-			xb.appendToLog("Use of Excel Formulas not supported", LogMgmt.LEV_ERR, sourceCell);
-		}
+		usesFormula(sourceCell);
 		Pedigree ped = new Pedigree(sourceCell, value);
 
 		return ped;
+	}
+
+	/**
+	 * Return <tt>true</tt> if the cell value is the result of an Excel formula.
+	 * Use of formulas may prevent the use of automated workflows for ingesting
+	 * and processing the Avails.
+	 * 
+	 * @param sourceCell
+	 * @return
+	 */
+	protected boolean usesFormula(Cell sourceCell) {
+		if (sourceCell != null && (sourceCell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
+			String errMsg = "Use of Excel Formulas not supported";
+			String details = "Use of formulas may prevent the use of automated workflows for ingesting and processing the Avails.";
+			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null, XmlBuilder.moduleId);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**

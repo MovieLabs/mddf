@@ -25,6 +25,8 @@ package com.movielabs.mddflib.avails.xml;
 import org.apache.poi.ss.usermodel.Row;
 import org.jdom2.Element;
 
+import com.movielabs.mddflib.logging.LogMgmt;
+
 /**
  * * Create XML document from a v1.6 Excel spreadsheet. The XML generated will
  * be based on v2.1 of the Avails XSD and reflects a "best effort" in that there
@@ -40,8 +42,8 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelperV1_7 {
 	 * @param sheet
 	 * @param row
 	 */
-	RowToXmlHelperV1_6(AvailsSheet sheet, Row row) {
-		super(sheet, row);
+	RowToXmlHelperV1_6(AvailsSheet sheet, Row row, LogMgmt logger) {
+		super(sheet, row, logger);
 		// TODO Auto-generated constructor stub
 	}
 
