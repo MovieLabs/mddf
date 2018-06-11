@@ -214,7 +214,7 @@ public class XsdValidation {
 			System.out.println("Invalid element: " + invalidElement);
 			String message = parseSaxMessage(exception);
 			String explanation = "XML at line: " + lineNumber + " does not comply with schema :: " + message;
-			loggingMgr.log(level, LogMgmt.TAG_XSD, message, srcFile, lineNumber, "XmlIngester", explanation, null);
+			loggingMgr.log(level, LogMgmt.TAG_XSD, message, srcFile, lineNumber, "XsdValidation", explanation, null);
 			if (level == LogMgmt.LEV_FATAL) {
 				throw new SAXException(explanation);
 			}
