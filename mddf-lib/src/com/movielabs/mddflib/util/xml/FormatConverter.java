@@ -154,6 +154,10 @@ public class FormatConverter {
 	 * @return
 	 */
 	public static String durationToXml(String input) {
+		if(input.matches(	"-?P((\\d+D)|T).*")){
+			// already in XSD fmt
+			return input;
+		}
 		String parts[] = input.split(":");
 		String xmlValue = "PT" + parts[0] + "H";
 		if (parts.length > 1) {
