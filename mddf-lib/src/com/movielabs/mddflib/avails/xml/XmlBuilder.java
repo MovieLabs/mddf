@@ -55,7 +55,7 @@ import com.movielabs.mddflib.util.xml.SchemaWrapper;
  */
 public class XmlBuilder {
 
-	private static final String moduleId = "XmlBuilder";
+	public static final String moduleId = "XmlBuilder";
 	private String xsdVersion;
 	private String mdMecVer;
 	private String mdVer;
@@ -187,7 +187,7 @@ public class XmlBuilder {
 			rowLoop: for (Row row : aSheet.getRows()) {
 				msg = "Converting row " + row.getRowNum();
 				logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, null, moduleId);
-				AbstractRowHelper rowHelper = AbstractRowHelper.createHelper(aSheet, row);
+				AbstractRowHelper rowHelper = AbstractRowHelper.createHelper(aSheet, row, logger);
 				if (rowHelper != null) {
 					rowHelper.makeAvail(this);
 				} else {
@@ -198,6 +198,7 @@ public class XmlBuilder {
 		} catch (Exception e) {
 			msg = "Exception while ingesting XLSX: " + e.getLocalizedMessage();
 			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
+			e.printStackTrace();
 			return null;
 		}
 
@@ -648,7 +649,7 @@ public class XmlBuilder {
 		}
 	}
 
-	void appendToLog(String msg, int logLevel, Cell target) {
-		logger.logIssue(LogMgmt.TAG_XLATE, logLevel, target, msg, null, null, moduleId);
-	}
+//	void appendToLog(String msg, int logLevel, Cell target) {
+//		logger.logIssue(LogMgmt.TAG_XLATE, logLevel, target, msg, null, null, moduleId);
+//	}
 }
