@@ -921,11 +921,11 @@ public class CMValidator extends XmlIngester {
 		curFileIsValid = false;
 	}
 
-	protected boolean validateRegion(Namespace primaryNS, String primaryEl, Namespace childNS, String child) { 
+	protected boolean validateRegion(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
 		LogReference srcRef = LogReference.getRef("CM", "cm_regions");
 		return validateCode(primaryNS, primaryEl, childNS, child, iso3166_1_codes, srcRef, false);
 	}
-	
+
 	/**
 	 * Validate country codes specified in any <tt>@region</tt> attribute
 	 * conform to ISO 3166-1
@@ -936,7 +936,7 @@ public class CMValidator extends XmlIngester {
 	protected boolean validateRegion(Namespace primaryNS) {
 		boolean allOK = true;
 		String errMsg = "Unrecognized value for @region attribute";
-		LogReference srcRef = LogReference.getRef("CM",   "cm_regions");
+		LogReference srcRef = LogReference.getRef("CM", "cm_regions");
 		XPathExpression<Attribute> xpExpression = xpfac.compile("//@region", Filters.attribute(), null, primaryNS);
 		List<Attribute> attList = xpExpression.evaluate(curRootEl);
 		int tag4log = getLogTag(primaryNS, null);
@@ -1008,6 +1008,39 @@ public class CMValidator extends XmlIngester {
 	 */
 	protected void validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
 			JSONArray expected, LogReference srcRef, boolean caseSensitive, boolean strict) {
+		int tag4log = getLogTag(primaryNS, childNS);
+		String logLabel;
+		String xpathString;
+		if(childNS != null){
+			xpathString = ".//" + primaryNS.getPrefix() + ":" + primaryEl + "/"+childNS.getPrefix()+ ":" + child;
+		}else{
+			xpathString = ".//" + primaryNS.getPrefix() + ":" + primaryEl + "/"+  child;
+		}
+		boolean isAttribute;
+		if (!child.startsWith("@")) { 
+				logLabel =   primaryEl + "/" + child;
+				isAttribute = false;
+		} else {  
+			logLabel =   primaryEl +child;
+			isAttribute = true;
+		} 
+		validateVocab(  primaryNS,   xpathString,   isAttribute,   expected,
+				  srcRef,   caseSensitive,   strict,   tag4log,   logLabel); 
+	}
+ 
+	/**
+	 * @param primaryNS
+	 * @param xpath
+	 * @param isAttribute
+	 * @param expected
+	 * @param srcRef
+	 * @param caseSensitive
+	 * @param strict
+	 * @param logTag
+	 * @param logLabel
+	 */
+	protected void validateVocab(Namespace primaryNS, String xpath, boolean isAttribute, JSONArray expected,
+			LogReference srcRef, boolean caseSensitive, boolean strict, int logTag, String logLabel) {
 		if (expected == null || expected.isEmpty()) {
 			/*
 			 * The version of the schema being used does not define an
@@ -1015,30 +1048,32 @@ public class CMValidator extends XmlIngester {
 			 * 
 			 */
 			return;
+		} 
+		
+		XPathExpression xpExpression;
+		if (isAttribute) {
+			xpExpression = xpfac.compile(xpath, Filters.attribute(), null, primaryNS);
+		} else {
+			xpExpression = xpfac.compile(xpath, Filters.element(), null, primaryNS);
 		}
-		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
-				Filters.element(), null, primaryNS);
-		List<Element> elementList = xpExpression.evaluate(curRootEl);
-		int tag4log = getLogTag(primaryNS, childNS);
+		List targetList = xpExpression.evaluate(curRootEl); 
 		String optionsString = expected.toString().toLowerCase();
-		for (int i = 0; i < elementList.size(); i++) {
+		
+		for (Object next : targetList) {
 			String text = null;
 			String errMsg = null;
 			Element logMsgEl = null;
-			Element targetEl = (Element) elementList.get(i);
-			if (!child.startsWith("@")) {
-				Element subElement = targetEl.getChild(child, childNS);
-				logMsgEl = subElement;
-				if (subElement != null) {
-					text = subElement.getTextNormalize();
-					errMsg = "Unrecognized value '" + text + "' for " + primaryEl + "/" + child;
-				}
-			} else {
-				String targetAttb = child.replaceFirst("@", "");
-				text = targetEl.getAttributeValue(targetAttb);
-				logMsgEl = targetEl;
-				errMsg = "Unrecognized value '" + text + "' for attribute " + child;
-			}
+
+			if (isAttribute) { 
+				Attribute targetAt = (Attribute)next;
+				text = targetAt.getValue().trim();
+				errMsg = "Unrecognized value '" + text + "' for attribute " + logLabel;
+				
+			} else { 
+				Element targetEl = (Element) next;
+				text = targetEl.getTextNormalize();
+				errMsg = "Unrecognized value '" + text + "' for " + logLabel; 
+			} 
 			if (text != null) {
 				int logLevel;
 				String explanation;
@@ -1055,14 +1090,14 @@ public class CMValidator extends XmlIngester {
 				boolean matched = true;
 				if (caseSensitive) {
 					if (!expected.contains(text)) {
-						logIssue(tag4log, logLevel, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
+						logIssue(logTag, logLevel, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
 						matched = false;
 
 					}
 				} else {
 					String checkString = "\"" + text.toLowerCase() + "\"";
 					if (!optionsString.contains(checkString)) {
-						logIssue(tag4log, logLevel, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
+						logIssue(logTag, logLevel, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
 						matched = false;
 					}
 				}
@@ -1072,13 +1107,14 @@ public class CMValidator extends XmlIngester {
 			}
 		}
 	}
+	// .=============================================
 
 	/**
 	 * @param primaryNS
 	 * @param childNS
 	 * @return
 	 */
-	private int getLogTag(Namespace primaryNS, Namespace childNS) {
+	public static int getLogTag(Namespace primaryNS, Namespace childNS) {
 		int tag4log = LogMgmt.TAG_N_A;
 		Namespace tagNS;
 		if (childNS != null) {
