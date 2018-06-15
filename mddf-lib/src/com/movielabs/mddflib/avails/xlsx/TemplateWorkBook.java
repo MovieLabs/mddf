@@ -136,7 +136,7 @@ public class TemplateWorkBook {
 			// now we can copy the rows.
 
 			rowLoop: for (Row row : srcSheet.getRows()) {
-				AbstractRowHelper rowHelper = AbstractRowHelper.createHelper(srcSheet, row);
+				AbstractRowHelper rowHelper = AbstractRowHelper.createHelper(srcSheet, row, log);
 				if (rowHelper != null) {
 					clone.addDataRow(rowHelper, clonedSheet);
 				} else {
