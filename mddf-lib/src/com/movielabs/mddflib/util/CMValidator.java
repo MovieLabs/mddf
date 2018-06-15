@@ -1066,11 +1066,13 @@ public class CMValidator extends XmlIngester {
 
 			if (isAttribute) { 
 				Attribute targetAt = (Attribute)next;
+				logMsgEl = targetAt.getParent();
 				text = targetAt.getValue().trim();
 				errMsg = "Unrecognized value '" + text + "' for attribute " + logLabel;
 				
 			} else { 
 				Element targetEl = (Element) next;
+				logMsgEl = targetEl;
 				text = targetEl.getTextNormalize();
 				errMsg = "Unrecognized value '" + text + "' for " + logLabel; 
 			} 
