@@ -17,7 +17,8 @@
 		"EntryType": 
 		[
 			"Full Delete",
-			"Full Extract"
+			"Full Extract",
+			"Master Avail"
 		],
 
 		"AltIdentifier@scope": 
