@@ -53,8 +53,8 @@ public abstract class AbstractRowHelper {
 	public static AbstractRowHelper createHelper(AvailsSheet aSheet, Row row, LogMgmt logger) {
 		Version ver = aSheet.getVersion();
 		switch (ver) {
-//		case V1_7_3:
-//			return new RowToXmlHelperV1_7_3(aSheet, row, logger);
+		case V1_7_3:
+			return new RowToXmlHelperV1_7_3(aSheet, row, logger);
 		case V1_7_2:
 		case V1_7:
 			return new RowToXmlHelperV1_7(aSheet, row, logger);

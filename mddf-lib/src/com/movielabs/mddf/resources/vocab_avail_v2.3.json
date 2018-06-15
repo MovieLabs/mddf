@@ -139,6 +139,11 @@
 			"TitleStatus",		
 			"NA"
 		],
+		"@termName='TitleStatus'":
+		[
+			"Pending",
+			"Approved"
+		],
 
 		"SharedEntitlement@ecosystem": 
 		[

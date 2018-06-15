@@ -288,45 +288,45 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		}
 
 		JSONArray allowed = availVocab.optJSONArray("AvailType");
-		LogReference srcRef = LogReference.getRef(doc, "avail01");
-		validateVocab(primaryNS, "Avail", primaryNS, "AvailType", allowed, srcRef, true);
+		LogReference docRef = LogReference.getRef(doc, "avail01");
+		validateVocab(primaryNS, "Avail", primaryNS, "AvailType", allowed, docRef, true);
 
 		allowed = availVocab.optJSONArray("EntryType");
-		srcRef = LogReference.getRef(doc, "avail02");
-		validateVocab(primaryNS, "Disposition", primaryNS, "EntryType", allowed, srcRef, true);
+		docRef = LogReference.getRef(doc, "avail02");
+		validateVocab(primaryNS, "Disposition", primaryNS, "EntryType", allowed, docRef, true);
 
 		allowed = availVocab.optJSONArray("AltIdentifier@scope");
-		srcRef = LogReference.getRef(doc, "avail03");
-		validateVocab(primaryNS, "AltIdentifier", primaryNS, "@scope", allowed, srcRef, true);
+		docRef = LogReference.getRef(doc, "avail03");
+		validateVocab(primaryNS, "AltIdentifier", null, "@scope", allowed, docRef, true);
 
 		allowed = availVocab.optJSONArray("LocalizationOffering");
-		srcRef = LogReference.getRef(doc, "avail03");
-		validateVocab(primaryNS, "Metadata", primaryNS, "LocalizationOffering", allowed, srcRef, true);
-		validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "LocalizationOffering", allowed, srcRef, true);
+		docRef = LogReference.getRef(doc, "avail03");
+		validateVocab(primaryNS, "Metadata", primaryNS, "LocalizationOffering", allowed, docRef, true);
+		validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "LocalizationOffering", allowed, docRef, true);
 
 		allowed = availVocab.optJSONArray("SeasonStatus");
-		srcRef = LogReference.getRef(doc, "avail04");
-		validateVocab(primaryNS, "SeasonMetadata", primaryNS, "SeasonStatus", allowed, srcRef, true);
+		docRef = LogReference.getRef(doc, "avail04");
+		validateVocab(primaryNS, "SeasonMetadata", primaryNS, "SeasonStatus", allowed, docRef, true);
 
 		allowed = availVocab.optJSONArray("SeriesStatus");
-		srcRef = LogReference.getRef(doc, "avail05");
-		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "SeriesStatus", allowed, srcRef, true);
+		docRef = LogReference.getRef(doc, "avail05");
+		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "SeriesStatus", allowed, docRef, true);
 
 		allowed = availVocab.optJSONArray("DateTimeCondition");
-		srcRef = LogReference.getRef(doc, "avail06");
-		validateVocab(primaryNS, "Transaction", primaryNS, "StartCondition", allowed, srcRef, true, false);
-		validateVocab(primaryNS, "Transaction", primaryNS, "EndCondition", allowed, srcRef, true, false);
+		docRef = LogReference.getRef(doc, "avail06");
+		validateVocab(primaryNS, "Transaction", primaryNS, "StartCondition", allowed, docRef, true, false);
+		validateVocab(primaryNS, "Transaction", primaryNS, "EndCondition", allowed, docRef, true, false);
 
 		allowed = availVocab.optJSONArray("LicenseType");
-		srcRef = LogReference.getRef(doc, "avail07");
-		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseType", allowed, srcRef, true, false);
+		docRef = LogReference.getRef(doc, "avail07");
+		validateVocab(primaryNS, "Transaction", primaryNS, "LicenseType", allowed, docRef, true, false);
 
 		allowed = availVocab.optJSONArray("Language@asset");
-		srcRef = LogReference.getRef(doc, "avail07");
-		validateVocab(primaryNS, "AllowedLanguage", null, "@asset", allowed, srcRef, true);
-		validateVocab(primaryNS, "AssetLanguage", null, "@asset", allowed, srcRef, true);
-		validateVocab(primaryNS, "AssetLanguage", null, "@assetProvided", allowed, srcRef, true);
-		validateVocab(primaryNS, "HoldbackLanguage", null, "@asset", allowed, srcRef, true);
+		docRef = LogReference.getRef(doc, "avail07");
+		validateVocab(primaryNS, "AllowedLanguage", null, "@asset", allowed, docRef, true);
+		validateVocab(primaryNS, "AssetLanguage", null, "@asset", allowed, docRef, true);
+		validateVocab(primaryNS, "AssetLanguage", null, "@assetProvided", allowed, docRef, true);
+		validateVocab(primaryNS, "HoldbackLanguage", null, "@asset", allowed, docRef, true);
 
 		// allowed = availVocab.optJSONArray("LicenseRightsDescription");
 		// srcRef = LogReference.getRef(doc, "avail07");
@@ -334,29 +334,36 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		// "LicenseRightsDescription", allowed, srcRef, true, false);
 
 		allowed = availVocab.optJSONArray("FormatProfile");
-		srcRef = LogReference.getRef(doc, "avail07");
-		validateVocab(primaryNS, "Transaction", primaryNS, "FormatProfile", allowed, srcRef, true);
+		docRef = LogReference.getRef(doc, "avail07");
+		validateVocab(primaryNS, "Transaction", primaryNS, "FormatProfile", allowed, docRef, true);
 
 		allowed = availVocab.optJSONArray("ExperienceCondition");
-		srcRef = LogReference.getRef(doc, "avail07");
-		validateVocab(primaryNS, "Transaction", primaryNS, "ExperienceCondition", allowed, srcRef, true);
+		docRef = LogReference.getRef(doc, "avail07");
+		validateVocab(primaryNS, "Transaction", primaryNS, "ExperienceCondition", allowed, docRef, true);
 
 		allowed = availVocab.optJSONArray("Term@termName");
-		srcRef = LogReference.getRef(doc, "avail08");
-		validateVocab(primaryNS, "Term", primaryNS, "@termName", allowed, srcRef, false);
+		docRef = LogReference.getRef(doc, "avail08");
+		validateVocab(primaryNS, "Term", null, "@termName", allowed, docRef, false);
 
 		allowed = availVocab.optJSONArray("SharedEntitlement@ecosystem");
-		srcRef = LogReference.getRef(doc, "avail09");
-		validateVocab(primaryNS, "SharedEntitlement", primaryNS, "@ecosystem", allowed, srcRef, true);
+		docRef = LogReference.getRef(doc, "avail09");
+		validateVocab(primaryNS, "SharedEntitlement", null, "@ecosystem", allowed, docRef, true);
 
 		// ===========================================================
 		/* For Transactions in US, check USACaptionsExemptionReason */
 		allowed = availVocab.optJSONArray("USACaptionsExemptionReason");
-		srcRef = LogReference.getRef(doc, "avail03");
-		validateVocab(primaryNS, "Asset", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true);
-		validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true);
-		validateVocab(primaryNS, "SeasonMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true);
-		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "USACaptionsExemptionReason", allowed, srcRef, true);
+		docRef = LogReference.getRef(doc, "avail03");
+		validateVocab(primaryNS, "Asset", primaryNS, "USACaptionsExemptionReason", allowed, docRef, true);
+		validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "USACaptionsExemptionReason", allowed, docRef, true);
+		validateVocab(primaryNS, "SeasonMetadata", primaryNS, "USACaptionsExemptionReason", allowed, docRef, true);
+		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "USACaptionsExemptionReason", allowed, docRef, true);
+		
+		
+		//added for v2.3
+		int tag4log = getLogTag(primaryNS, null);
+		allowed = availVocab.optJSONArray("@termName='TitleStatus'");
+		validateVocab(primaryNS, "//avails:Term/avails:Text[../@termName='TitleStatus']", false, allowed, docRef, true, true, tag4log, "@termName='TitleStatus'");
+		
 	}
 
 	/**

@@ -297,8 +297,14 @@ public class MetadataBuilder {
 		case "formatType":
 			func_format(functionDef, curKey, parentEl);
 			break;
+		case "people":
+			func_people(functionDef, curKey, parentEl);
+			break;
 		case "releaseHistory":
 			func_releaseHistory(functionDef, curKey, parentEl);
+			break;
+		case "channelGrouping":
+			func_channelGrouping(functionDef, curKey, parentEl);
 			break;
 		default:
 			throw new UnsupportedOperationException("Invalid JSON: unsupported function '" + funcName + "'");
@@ -337,6 +343,41 @@ public class MetadataBuilder {
 		Element idEl = row.mGenericElement("Identifier", idValue, xmlBldr.getMdNSpace());
 		altIdEl.addContent(idEl);
 		xmlBldr.addToPedigree(idEl, pg);
+	}
+
+	/**
+	 * @param functionDef
+	 * @param curKey
+	 * @param parentEl
+	 */
+	private void func_channelGrouping(JSONObject functionDef, String curKey, Element parentEl) {
+		JSONObject functionArgs = functionDef.getJSONObject("args");
+		Pedigree pg = row.getPedigreedData(functionArgs.getString("col"));
+		if (pg.isEmpty() && !isRequired(curKey)) {
+			return;
+		}
+		String grpId = pg.getRawValue();
+		String grpName = grpId;
+		String grpType = functionArgs.getString("type");
+
+		Element grpEl = buildElement(curKey);
+		parentEl.addContent(grpEl);
+
+		Element typeEl = buildElement("{md}Type");
+		grpEl.addContent(typeEl);
+		typeEl.setText(grpType);
+		
+		Element idEl = buildElement("{md}GroupIdentity");
+		grpEl.addContent(idEl);
+		idEl.setText(grpId);
+		
+		Element nameEl = buildElement("{md}DisplayName");
+		grpEl.addContent(nameEl);
+		nameEl.setText(grpName);		
+		
+		xmlBldr.addToPedigree(grpEl, pg);
+		xmlBldr.addToPedigree(idEl, pg);
+		xmlBldr.addToPedigree(nameEl, pg);		
 	}
 
 	/**
@@ -487,6 +528,34 @@ public class MetadataBuilder {
 			throw new UnsupportedOperationException("Invalid JSON: unsupported format type '" + type + "'");
 		}
 		targetEl.setText(value);
+	}
+
+	/**
+	 * @param functionDef
+	 * @param rHistoryEl
+	 */
+	private void func_people(JSONObject functionDef, String curKey, Element parentEl) {
+		JSONObject functionArgs = functionDef.getJSONObject("args");
+		Pedigree pg = row.getPedigreedData(functionArgs.getString("col"));
+		if (pg.isEmpty() && !isRequired(curKey)) {
+			return;
+		}
+		Element peopleEl = buildElement(curKey);
+		parentEl.addContent(peopleEl);
+
+		Element jobEl = buildElement("{md}Job");
+		peopleEl.addContent(jobEl);
+		Element jobFEl = buildElement("{md}JobFunction");
+		jobEl.addContent(jobFEl);
+		String type = functionArgs.getString("job");
+		jobFEl.setText(type);
+
+		Element nameEl = buildElement("{md}Name");
+		peopleEl.addContent(nameEl);
+		Element dNameEl = buildElement("{md}DisplayName");
+		nameEl.addContent(dNameEl);
+		dNameEl.setText(pg.getRawValue());
+		xmlBldr.addToPedigree(dNameEl, pg);
 	}
 
 	/**

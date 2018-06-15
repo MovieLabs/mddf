@@ -126,6 +126,10 @@ public class AvailsWrkBook {
 		FILE_FMT srcMddfFmt = null;
 		XmlBuilder xBuilder = new XmlBuilder(logMgr, templateVersion);
 		switch (templateVersion) {
+		case V1_7_3:
+			srcMddfFmt = FILE_FMT.AVAILS_1_7_3;
+			xBuilder.setVersion("2.3");
+			break;
 		case V1_7_2:
 			srcMddfFmt = FILE_FMT.AVAILS_1_7_2;
 			xBuilder.setVersion("2.2.2");
@@ -192,11 +196,7 @@ public class AvailsWrkBook {
 	 * @return
 	 */
 	public static boolean compress(File srcFile, String outputDir, String outFileName) {
-		try {
-			// XSSFWorkbook srcWrkBook = new XSSFWorkbook(new
-			// FileInputStream(srcFile));
-			// XSSFSheet excelSheet = srcWrkBook.getSheetAt(0);
-			// AvailsSheet.compress(excelSheet);
+		try { 
 			XSSFWorkbook srcWrkBook = compress(new FileInputStream(srcFile));
 			if (srcWrkBook == null) {
 				return false;

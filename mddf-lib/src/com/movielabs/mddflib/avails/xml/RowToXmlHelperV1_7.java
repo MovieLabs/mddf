@@ -43,7 +43,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 	static final String MISSING = "--FUBAR (missing)";
 
 	/**
-	 * @param logger 
+	 * @param logger
 	 * @param fields
 	 */
 	RowToXmlHelperV1_7(AvailsSheet sheet, Row row, LogMgmt logger) {
@@ -248,7 +248,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 			case "LicenseFee":
 			case "NA":
 				process(termEl, "Text", xb.getAvailsNSpace(), prefix + "PriceValue");
-				break; 
+				break;
 			case "WSP":
 				if (workType.equals("Episode")) {
 					tName = "EpisodeWSP";
@@ -275,6 +275,13 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 				}
 				break;
 			case "Season Only":
+				break;
+			default:
+				String errMsg = "Unrecognized PriceType '"+tName+"'";
+				Cell target = (Cell) pg.getSource();
+				logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, target, errMsg, null, null, XmlBuilder.moduleId);
+				return;
+
 			}
 			termEl.setAttribute("termName", tName);
 			xb.addToPedigree(termEl, pg);
@@ -305,7 +312,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		switch (value) {
 		case "SRP":
 			String errMsg = "The value '" + value + "' is not a valid PriceType for v1.7 Excel";
-			Cell target =(Cell) pg.getSource(); 
+			Cell target = (Cell) pg.getSource();
 			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, target, errMsg, null, null, XmlBuilder.moduleId);
 			return null;
 		}
@@ -353,21 +360,40 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		}
 	}
 
-
 	protected void addRegion(Element parentEl, String regionType, Namespace ns, String cellKey) {
-		Element regionEl = new Element(regionType, ns);
+		addRegion(parentEl, regionType, ns, cellKey, null);
+	}
+
+	protected void addRegion(Element parentEl, String regionType, Namespace ns, String cellKey, String separator) {
 		Pedigree pg = getPedigreedData(cellKey);
-		String value = pg.getRawValue();
+		String rawValue = pg.getRawValue();
 		Element countryEl = null;
-		if (isSpecified(value)) {
-			if (value.length() > 2) {
-				countryEl = process(regionEl, "countryRegion", xb.getMdNSpace(), cellKey);
+		if (isSpecified(rawValue)) {
+			String[] valueSet;
+			if (separator == null) {
+				valueSet = new String[1];
+				valueSet[0] = rawValue;
 			} else {
-				countryEl = process(regionEl, "country", xb.getMdNSpace(), cellKey);
+				valueSet = rawValue.split(separator);
 			}
-		}
-		if (countryEl != null) {
-			parentEl.addContent(regionEl);
+			for (int i = 0; i < valueSet.length; i++) {
+				Element regionEl = new Element(regionType, ns);
+				String code = valueSet[i].trim();
+				if (code.length() > 2) {
+					countryEl = mGenericElement("countryRegion", code, xb.getMdNSpace());
+					// process(regionEl, "countryRegion", xb.getMdNSpace(),
+					// cellKey);
+				} else {
+					countryEl = mGenericElement("country", code, xb.getMdNSpace());
+					// countryEl = process(regionEl, "country",
+					// xb.getMdNSpace(), cellKey);
+				}
+				if (countryEl != null) {
+					regionEl.addContent(countryEl);
+					parentEl.addContent(regionEl);
+					xb.addToPedigree(countryEl, pg);
+				}
+			}
 		}
 	}
 
@@ -387,7 +413,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 	 * @param row
 	 * @return
 	 */
-	protected boolean processCondition(Element parentEl, String childName, Namespace ns, String cellKey) {
+	protected Element processCondition(Element parentEl, String childName, Namespace ns, String cellKey) {
 		Pedigree pg = getPedigreedData(cellKey);
 		String value = pg.getRawValue();
 		if (isSpecified(value)) {
@@ -400,9 +426,9 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 			}
 			parentEl.addContent(condEl);
 			xb.addToPedigree(condEl, pg);
-			return true;
+			return condEl;
 		} else {
-			return false;
+			return null;
 		}
 	}
 

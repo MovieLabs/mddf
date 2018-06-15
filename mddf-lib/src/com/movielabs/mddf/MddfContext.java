@@ -22,13 +22,10 @@
  */
 package com.movielabs.mddf;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jdom2.Element;
-
-import com.movielabs.mddf.MddfContext.FILE_FMT;
 
 /**
  * Defines constants and Enum types used to indicate the context of various MDDF
@@ -75,7 +72,7 @@ public class MddfContext {
 		String[] MANIFEST_VER = { "1.7", "1.6.1", "1.6", "1.5" };
 		String[] MEC_VER = { "2.6", "2.5", "2.4" };
 		String[] AVAILS_X_VER = { "2.3", "2.2.2", "2.2.1", "2.2", "2.1" };
-		String[] AVAILS_E_VER = { "1.7.2", "1.7", "1.6" };
+		String[] AVAILS_E_VER = { "1.7.3",  "1.7.2", "1.7", "1.6" };
 		String[] MMM_BP = { "1.0" };
 
 		stdsVersions = new HashMap<String, String[]>();
@@ -96,12 +93,13 @@ public class MddfContext {
 	};
 
 	public enum FILE_FMT {
-		AVAILS_1_6("Avails", "1.6", "xlsx"), AVAILS_1_7("Avails", "1.7", "xlsx"), AVAILS_1_7_2("Avails", "1.7.2",
-				"xlsx"), AVAILS_2_1("Avails", "2.1", "xml"), AVAILS_2_2("Avails", "2.2", "xml"), AVAILS_2_2_1("Avails",
-						"2.2.1", "xml"), AVAILS_2_2_2("Avails", "2.2.2", "xml"), AVAILS_2_3("Avails", "2.3",
-								"xml"), MANIFEST_1_4("Manifest", "1.4", "xml"), MANIFEST_1_5("Manifest", "1.5",
-										"xml"), MANIFEST_1_6("Manifest", "1.6", "xml"), MANIFEST_1_6_1("Manifest",
-												"1.6.1", "xml"), MANIFEST_1_7("Manifest", "1.7",
+		AVAILS_1_6("Avails", "1.6", "xlsx"), AVAILS_1_7("Avails", "1.7", "xlsx"), AVAILS_1_7_3("Avails", "1.7.3",
+				"xlsx"), AVAILS_1_7_2("Avails", "1.7.2", "xlsx"), AVAILS_2_1("Avails", "2.1", "xml"), AVAILS_2_2(
+						"Avails", "2.2", "xml"), AVAILS_2_2_1("Avails", "2.2.1", "xml"), AVAILS_2_2_2("Avails", "2.2.2",
+								"xml"), AVAILS_2_3("Avails", "2.3", "xml"), MANIFEST_1_4("Manifest", "1.4",
+										"xml"), MANIFEST_1_5("Manifest", "1.5", "xml"), MANIFEST_1_6("Manifest", "1.6",
+												"xml"), MANIFEST_1_6_1("Manifest", "1.6.1", "xml"), MANIFEST_1_7(
+														"Manifest", "1.7",
 														"xml"), MDMEC_2_4("MEC", "2.4", "xml"), MDMEC_2_5("MEC", "2.5",
 																"xml"), MDMEC_2_6("MEC", "2.6", "xml");
 
@@ -195,6 +193,8 @@ public class MddfContext {
 				return FILE_FMT.AVAILS_1_7;
 			case "1.7.2":
 				return FILE_FMT.AVAILS_1_7_2;
+			case "1.7.3":
+				return FILE_FMT.AVAILS_1_7_3;
 			case "2.3":
 				return FILE_FMT.AVAILS_2_3;
 			case "2.2.2":

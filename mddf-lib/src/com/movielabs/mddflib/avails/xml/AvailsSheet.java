@@ -41,7 +41,7 @@ public class AvailsSheet {
 	protected static String logMsgSrcId = "AvailsSheet";
 
 	public static enum Version {
-		V1_7_2, V1_7, V1_6, UNK
+		V1_7_3, V1_7_2, V1_7, V1_6, UNK
 	};
 
 	private ArrayList<Row> rows;
@@ -110,6 +110,7 @@ public class AvailsSheet {
 					prefix = dataF.formatCellValue(headerRow1.getCell(idx)) + "/";
 				}
 				String key = prefix + value;
+				key = key.trim(); // make sure no whitespace in headers
 				headerList.add(key);
 				headerMap.put(key, new Integer(idx));
 			}
@@ -163,6 +164,11 @@ public class AvailsSheet {
 		 * headers are.
 		 * 
 		 */
+		boolean hasDirector = (this.getColumnIdx("AvailMetadata/Director") >= 0);
+		if(hasDirector){
+			version = Version.V1_7_3;
+			return;
+		}
 		boolean hasAltID = (this.getColumnIdx("AvailAsset/AltID") >= 0)
 				|| (this.getColumnIdx("AvailMetadata/EpisodeAltID") >= 0);
 		boolean hasALID = (this.getColumnIdx("Avail/ALID") >= 0);
