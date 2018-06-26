@@ -22,6 +22,7 @@
 package com.movielabs.mddflib.util;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1011,25 +1012,28 @@ public class CMValidator extends XmlIngester {
 		int tag4log = getLogTag(primaryNS, childNS);
 		String logLabel;
 		String xpathString;
-		if(childNS != null){
-			xpathString = ".//" + primaryNS.getPrefix() + ":" + primaryEl + "/"+childNS.getPrefix()+ ":" + child;
-		}else{
-			xpathString = ".//" + primaryNS.getPrefix() + ":" + primaryEl + "/"+  child;
+		Collection<Namespace> nSpaces = new HashSet<Namespace>();
+		nSpaces.add(primaryNS);
+		if (childNS != null) {
+			xpathString = ".//" + primaryNS.getPrefix() + ":" + primaryEl + "/" + childNS.getPrefix() + ":" + child;
+			nSpaces.add(childNS);
+		} else {
+			xpathString = ".//" + primaryNS.getPrefix() + ":" + primaryEl + "/" + child;
 		}
 		boolean isAttribute;
-		if (!child.startsWith("@")) { 
-				logLabel =   primaryEl + "/" + child;
-				isAttribute = false;
-		} else {  
-			logLabel =   primaryEl +child;
+		if (!child.startsWith("@")) {
+			logLabel = primaryEl + "/" + child;
+			isAttribute = false;
+		} else {
+			logLabel = primaryEl + child;
 			isAttribute = true;
-		} 
-		validateVocab(  primaryNS,   xpathString,   isAttribute,   expected,
-				  srcRef,   caseSensitive,   strict,   tag4log,   logLabel); 
+		}
+
+		validateVocab(nSpaces, xpathString, isAttribute, expected, srcRef, caseSensitive, strict, tag4log, logLabel);
 	}
- 
+
 	/**
-	 * @param primaryNS
+	 * @param nSpaces
 	 * @param xpath
 	 * @param isAttribute
 	 * @param expected
@@ -1039,7 +1043,7 @@ public class CMValidator extends XmlIngester {
 	 * @param logTag
 	 * @param logLabel
 	 */
-	protected void validateVocab(Namespace primaryNS, String xpath, boolean isAttribute, JSONArray expected,
+	protected void validateVocab(Collection<Namespace> nSpaces, String xpath, boolean isAttribute, JSONArray expected,
 			LogReference srcRef, boolean caseSensitive, boolean strict, int logTag, String logLabel) {
 		if (expected == null || expected.isEmpty()) {
 			/*
@@ -1048,34 +1052,34 @@ public class CMValidator extends XmlIngester {
 			 * 
 			 */
 			return;
-		} 
-		
+		}
+
 		XPathExpression xpExpression;
 		if (isAttribute) {
-			xpExpression = xpfac.compile(xpath, Filters.attribute(), null, primaryNS);
+			xpExpression = xpfac.compile(xpath, Filters.attribute(), null, nSpaces);
 		} else {
-			xpExpression = xpfac.compile(xpath, Filters.element(), null, primaryNS);
+			xpExpression = xpfac.compile(xpath, Filters.element(), null, nSpaces);
 		}
-		List targetList = xpExpression.evaluate(curRootEl); 
+		List targetList = xpExpression.evaluate(curRootEl);
 		String optionsString = expected.toString().toLowerCase();
-		
+
 		for (Object next : targetList) {
 			String text = null;
 			String errMsg = null;
 			Element logMsgEl = null;
 
-			if (isAttribute) { 
-				Attribute targetAt = (Attribute)next;
+			if (isAttribute) {
+				Attribute targetAt = (Attribute) next;
 				logMsgEl = targetAt.getParent();
 				text = targetAt.getValue().trim();
 				errMsg = "Unrecognized value '" + text + "' for attribute " + logLabel;
-				
-			} else { 
+
+			} else {
 				Element targetEl = (Element) next;
 				logMsgEl = targetEl;
 				text = targetEl.getTextNormalize();
-				errMsg = "Unrecognized value '" + text + "' for " + logLabel; 
-			} 
+				errMsg = "Unrecognized value '" + text + "' for " + logLabel;
+			}
 			if (text != null) {
 				int logLevel;
 				String explanation;

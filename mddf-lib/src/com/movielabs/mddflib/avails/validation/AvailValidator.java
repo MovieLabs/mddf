@@ -21,7 +21,9 @@
  */
 package com.movielabs.mddflib.avails.validation;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import net.sf.json.JSONArray;
@@ -362,7 +364,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		//added for v2.3
 		int tag4log = getLogTag(primaryNS, null);
 		allowed = availVocab.optJSONArray("@termName='TitleStatus'");
-		validateVocab(primaryNS, "//avails:Term/avails:Text[../@termName='TitleStatus']", false, allowed, docRef, true, true, tag4log, "@termName='TitleStatus'");
+		Collection<Namespace> nSpaces = new HashSet<Namespace>();
+		nSpaces.add(primaryNS);
+		validateVocab(nSpaces, "//avails:Term/avails:Text[../@termName='TitleStatus']", false, allowed, docRef, true, true, tag4log, "@termName='TitleStatus'");
 		
 	}
 
@@ -410,7 +414,6 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * @see com.movielabs.mddflib.util.CMValidator#validateUsage()
 	 */
 	protected void validateUsage() {
-		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.LEV_INFO, "Validating structure...", curFile, LOGMSG_ID);
 
 		/*
 		 * Load JSON that defines various constraints on structure of an Avails.
@@ -420,6 +423,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 */
 		String structVer = null;
 		switch (availSchemaVer) {
+		case "2.3":
+			structVer = "2.3";
+			break;
 		case "2.2.2":
 			structVer = "2.2.2";
 			break;
@@ -430,6 +436,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			structVer = "2.2";
 		}
 
+		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.LEV_INFO, "Validating structure using v"+structVer+" requirements", curFile, LOGMSG_ID);
+		
 		JSONObject availStructDefs = XmlIngester.getMddfResource("structure_avail", structVer);
 		if (availStructDefs == null) {
 			// LOG a FATAL problem.
