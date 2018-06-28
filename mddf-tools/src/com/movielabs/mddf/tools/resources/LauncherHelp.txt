@@ -36,7 +36,7 @@ Example Usage:
       does not save the log output in a CVS file. Log filtering is not 
       specified so the default level of WARNING or higher is used.
       
-  (b) java -jar mddf-tool.jar -f ../sample  logLevel error -l myLogFile
+  (b) java -jar mddf-tool.jar -d ../sample  logLevel error -l myLogFile
   
      Validates all MDDF files in a directory and filters the log entries
      to only include those with severity ERROR or higher. processing will
