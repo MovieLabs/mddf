@@ -92,6 +92,7 @@ public class ValidationController {
 	}
 
 	public static final String MODULE_ID = "Validator";
+	private static final boolean DBG_XLSX = true;
 	private static File tempDir = new File("./tmp");
 	private static String[] supportedProfiles = { "none", "IP-0", "IP-1", "MMC-1" };
 	private static HashSet<String> supportedProfileKeys;
@@ -156,7 +157,7 @@ public class ValidationController {
 	}
 
 	public void runScript(File scriptFile) throws IOException {
-		if (!scriptFile.isFile()) {
+		if ((scriptFile==null) || !scriptFile.isFile()) {
 			return;
 		}
 		JSONObject script = XmlIngester.getAsJson(scriptFile);
@@ -412,7 +413,7 @@ public class ValidationController {
 			break;
 		case AVAILS:
 			isValid = validateAvail(target, pedigreeMap);
-			if (!isValid && (fileType.equals("xlsx"))) {
+			if ((!isValid || DBG_XLSX) && (fileType.equals("xlsx"))) {
 				File outputLoc = new File(tempDir, "TRACE_" + srcFile.getName().replace("xlsx", "xml"));
 				XmlIngester.writeXml(outputLoc, xmlDoc);
 			}
