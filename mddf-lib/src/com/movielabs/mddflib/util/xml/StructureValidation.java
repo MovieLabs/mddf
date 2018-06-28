@@ -80,21 +80,30 @@ import net.sf.json.JSONObject;
  * <ul>
  * <li><i>USAGE</i> is a string defining the key used by a validator to retrieve
  * the requirements appropriate to a use case.</li>
- * <li>"targetPath" indicates the element(s) that provide the evaluation context
- * for the constraint xpath when invoking the <tt>validateDocStructure()</tt>
- * method. If not specified, a target element must be provided when invoking the
- * <tt>validateConstraint()</tt> method on a target element that has been
- * identified by other means.</li>
- * <li>"xpath" defines one or more xpaths relative to the target element that,
- * when evaluated, the number of matching elements satisfy the min/max
+ * <li><tt>targetPath</tt>: indicates the element(s) that provide the evaluation
+ * context for the constraint xpath when invoking the
+ * <tt>validateDocStructure()</tt> method. If not specified, a target element
+ * must be provided when invoking the <tt>validateConstraint()</tt> method on a
+ * target element that has been identified by other means.</li>
+ * <li><tt>constraint</tt>: one or more structural requirements associated with
+ * the targeted element.
+ * <ul>
+ * <li><tt>xpath</tt>: defines one or more xpaths relative to the target element
+ * that, when evaluated, the number of matching elements satisfy the min/max
  * cardinality constraints. If multiple xpaths are listed, the total number of
- * elements returned when each is separately evaluated must satisfy the
- * constraint.</li>
- * <li>"severity" must match one of the <tt>LogMgmt.level</tt> values</li>
- * <li>"msg" is the text to use for a log entry if the constraint is not met. If
- * not provided, a generic message is used.</li>
- * <li>"docRef" is a value usable by <tt>LogReference</tt> that will indicate
- * any reference material documenting the requirement.</li>
+ * elements (or attributes) returned when each is separately evaluated must
+ * satisfy the constraint.</li>
+ * <li>
+ * <tt>min</tt>: minimum number of matching objects that should be found when evaluating the xpath(s). [OPTIONAL, default is 0]</li> 
+ * <li><tt>max</tt>: maximum number of matching objects that should be found when evaluating the xpath(s). [OPTIONAL, default is unlimited]</li> 
+ * <li><tt>severity</tt>: must match one of the <tt>LogMgmt.level</tt> values
+ * </li>
+ * <li><tt>msg</tt>: text to use for a log entry if the constraint is not met.
+ * If not provided, a generic message is used.</li>
+ * <li><tt>docRef</tt>: is a value usable by <tt>LogReference</tt> that will
+ * indicate any reference material documenting the requirement.</li>
+ * </ul>
+ * </li>
  * </ul>
  * </p>
  * 
