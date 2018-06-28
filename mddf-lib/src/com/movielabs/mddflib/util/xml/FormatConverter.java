@@ -154,7 +154,7 @@ public class FormatConverter {
 	 * @return
 	 */
 	public static String durationToXml(String input) {
-		if(input.matches(	"-?P((\\d+D)|T).*")){
+		if (input.matches("-?P((\\d+D)|T).*")) {
 			// already in XSD fmt
 			return input;
 		}
@@ -184,6 +184,14 @@ public class FormatConverter {
 	 * </li>
 	 * </ul>
 	 * </p>
+	 * <h3>ISSUE:</h3>
+	 * <p>
+	 * All of the MDDF documentation refers to ISO 8601. The schemas, however,
+	 * are specifying conformance with <tt>xsd:dateTime</tt> which is a
+	 * restricted form of ISO-8601 (e.g., requires some optional fields to be
+	 * present, mandates use of the extended format). This discrepancy is not
+	 * yet resolved and some code may require changes.
+	 * </p>
 	 * 
 	 * @param input
 	 *            YYYY-MM-DD or ISO 8601 Date+Time
@@ -192,6 +200,10 @@ public class FormatConverter {
 	 */
 	public static String dateTimeToXml(String input, boolean roundDown) {
 		String output = "";
+		if (input.matches("[\\d]{4}-[\\d]{2}-[\\d]{2}T[\\d]{2}.*")) {
+			// Time already present so return input as-is
+			return input;
+		}
 		if (input.matches("[\\d]{4}-[\\d]{2}-[\\d]{2}")) {
 			if (!roundDown) {
 				output = input + "T23:59:59";
