@@ -37,6 +37,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.logging.DefaultLogging;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -49,9 +50,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Implements a framework for accessing the various MDDF <i>tools</i>. Depending
@@ -90,7 +93,7 @@ public class ToolLauncher {
 				"Launch in interactive mode with full UI. When used, this argument will result in all other arguments being ignored.");
 		options.addOption("f", "file", true, "Process a single MDDF file.");
 		options.addOption("d", "dir", true, "Process all MDDF files in a directory.");
-		options.addOption("s", "script", true, "Run a script file.");
+		 options.addOption("s", "script", true, "Run a script file.");
 		options.addOption("l", "logFile", true, "Output file for logging.");
 		options.addOption("logLevel", true,
 				"Filter for logging; valid values are: " + "\n'verbose'\n 'warn' (DEFAULT)\n 'error'\n 'info'");
@@ -99,6 +102,7 @@ public class ToolLauncher {
 		options.addOption("v", "verbose", false, "Display log-file entries in terminal window during execution.");
 		options.addOption("V", "version", false, "Display software version and build date.");
 
+		/* Translation-related arguments: */
 		options.addOption("X", "exportAll", false, "export valid files in all applicable formats.");
 		Option xOption = new Option("x",
 				"export valid files in specified format(s). Multiple formats may be specified separated by commas"
@@ -152,7 +156,7 @@ public class ToolLauncher {
 	private static void runNonInteractive(CommandLine cmdLine, LogMgmt logger) {
 		configureLogOptions(cmdLine, logger);
 		if (cmdLine.hasOption("s")) {
-
+			throw new UnsupportedOperationException();
 		} else {
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			/*
@@ -162,19 +166,17 @@ public class ToolLauncher {
 			ValidationController vCtrl = new ValidationController(logger);
 			EnumSet<FILE_FMT> selections = EnumSet.noneOf(FILE_FMT.class);
 			String[] xlatFmts = cmdLine.getOptionValues("x");
-			if (xlatFmts == null || (xlatFmts.length == 0)) { 
+			if (xlatFmts == null || (xlatFmts.length == 0)) {
 				vCtrl.setTranslations(null, null);
 			} else {
+				Set<String> allowed = new HashSet<String>();
+				allowed.addAll(Arrays.asList(MddfContext.getSupportedVersions("AVAIL")));
+				allowed.addAll(Arrays.asList(MddfContext.getSupportedVersions("AVAIL-E")));
 				for (String fmt : xlatFmts) {
 					fmt = fmt.replaceAll(",", "");
-					switch (fmt) {
-					case "AVAILS_1_7":
-						selections.add(FILE_FMT.AVAILS_1_7);
-						break;
-					case "AVAILS_2_2":
-						selections.add(FILE_FMT.AVAILS_2_2);
-						break;
-					default:
+					if (allowed.contains(fmt)) {
+						selections.add(MddfContext.identifyMddfFormat("avails", fmt));
+					} else {
 						String hdrMsg = "Unrecognized Translation format '" + fmt;
 						printUsage(hdrMsg);
 						System.exit(0);
@@ -198,10 +200,16 @@ public class ToolLauncher {
 					e.printStackTrace();
 				}
 			}
-			String file = cmdLine.getOptionValue("f");
-			if (file != null) {
+			String filePath = cmdLine.getOptionValue("f");
+			if (filePath != null) {
+				File srcFile = new File(filePath);
+				if (srcFile.isDirectory()) {
+					String hdrMsg = "Use the '-d' argument to specify directories";
+					printUsage(hdrMsg);
+					System.exit(0);
+				}
 				try {
-					vCtrl.validate(file, null, null);
+					vCtrl.validate(filePath, null, null);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
