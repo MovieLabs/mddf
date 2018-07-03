@@ -178,9 +178,9 @@ public class XmlBuilder {
 		root.addNamespaceDeclaration(SchemaWrapper.xsiNSpace);
 		doc.setRootElement(root);
 		String msg = "Converting Excel Avails to XML v" + xsdVersion;
-		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
+		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
 		msg = "Processing spreadsheet '" + aSheet.getName() + "'; RowCount=" + aSheet.getRowCount();
-		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
+		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
 
 		// build document components row by row.
 		try {
@@ -219,7 +219,7 @@ public class XmlBuilder {
 			root.addContent(nextAvailEl);
 		}
 		msg = "Completed ingesting XLSX file";
-		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
+		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
 		return doc;
 	}
 
