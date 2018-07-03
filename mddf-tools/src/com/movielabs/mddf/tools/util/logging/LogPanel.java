@@ -438,6 +438,9 @@ public class LogPanel extends JPanel {
 			case "Module":
 				celltext = entry.getModuleID();
 				break;
+			case "Tag":
+				celltext = entry.getTagAsText();
+				break;
 			default:
 				break;
 			}
