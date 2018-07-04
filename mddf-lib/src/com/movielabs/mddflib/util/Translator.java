@@ -63,42 +63,49 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 public class Translator {
 
 	private static String moduleId = "Translator";
+	/**
+	 * Identifies what a given Avail format may be translated <b>to</b>.
+	 */
 	private static Map<FILE_FMT, List<FILE_FMT>> supported = new HashMap<FILE_FMT, List<FILE_FMT>>();
 
 	static {
 		/* identify what a given format may be translated to */
 		List<FILE_FMT> for_AVAILS_2_1 = new ArrayList<FILE_FMT>();
-		for_AVAILS_2_1.add(FILE_FMT.AVAILS_2_2);
-		for_AVAILS_2_1.add(FILE_FMT.AVAILS_2_2_1);
-		for_AVAILS_2_1.add(FILE_FMT.AVAILS_2_2_2);
-		for_AVAILS_2_1.add(FILE_FMT.AVAILS_2_3);
-		for_AVAILS_2_1.add(FILE_FMT.AVAILS_1_7);
-		for_AVAILS_2_1.add(FILE_FMT.AVAILS_1_7_2);
+		/*
+		 * Obsolete and deprecated version. Translation of this format to
+		 * another is NOT supported.
+		 */
 		supported.put(FILE_FMT.AVAILS_2_1, for_AVAILS_2_1);
 
 		List<FILE_FMT> for_AVAILS_2_2 = new ArrayList<FILE_FMT>();
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_2_1);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_2_2);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_3);
-		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7);
+		// for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7_2);
 		supported.put(FILE_FMT.AVAILS_2_2, for_AVAILS_2_2);
 
 		List<FILE_FMT> for_AVAILS_2_2_1 = new ArrayList<FILE_FMT>();
 		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_2_2);
 		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_2_2_2);
-		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7);
+		// for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7_2);
 		supported.put(FILE_FMT.AVAILS_2_2_1, for_AVAILS_2_2_1);
 
 		List<FILE_FMT> for_AVAILS_2_2_2 = new ArrayList<FILE_FMT>();
 		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_2_1);
 		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_3);
-		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7);
+		// for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7_2);
 		supported.put(FILE_FMT.AVAILS_2_2_2, for_AVAILS_2_2_2);
 
 		List<FILE_FMT> for_AVAILS_2_3 = new ArrayList<FILE_FMT>();
+		// formats that a v2.3 file may xlated TO...
+		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2_2);
+		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2_1);
+		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2);
+		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_7_2);
+		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_7_3);
 		supported.put(FILE_FMT.AVAILS_2_3, for_AVAILS_2_3);
 
 		List<FILE_FMT> for_AVAILS_1_7 = new ArrayList<FILE_FMT>();
@@ -114,7 +121,7 @@ public class Translator {
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_2_1);
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_2_2);
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_3);
-		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_7);
+		// for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_7);
 		supported.put(FILE_FMT.AVAILS_1_7_2, for_AVAILS_1_7_2);
 	}
 
@@ -160,8 +167,8 @@ public class Translator {
 	 * @return
 	 * @throws UnsupportedOperationException
 	 */
-	public static int translateAvails(MddfTarget input, EnumSet<FILE_FMT> selections, String dirPath, String outFileName,
-			boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
+	public static int translateAvails(MddfTarget input, EnumSet<FILE_FMT> selections, String dirPath,
+			String outFileName, boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
 		Iterator<FILE_FMT> selIt = selections.iterator();
 		int outputCnt = 0;
 		while (selIt.hasNext()) {
@@ -220,7 +227,8 @@ public class Translator {
 	 * @param logMgr
 	 * @return
 	 */
-	public static Map<FILE_FMT, Object> translateAvails(MddfTarget input, EnumSet<FILE_FMT> selections, LogMgmt logMgr) {
+	public static Map<FILE_FMT, Object> translateAvails(MddfTarget input, EnumSet<FILE_FMT> selections,
+			LogMgmt logMgr) {
 		HashMap<FILE_FMT, Object> resultMap = new HashMap<FILE_FMT, Object>();
 		Iterator<FILE_FMT> selIt = selections.iterator();
 		while (selIt.hasNext()) {
@@ -260,7 +268,8 @@ public class Translator {
 		FILE_FMT curFmt = MddfContext.identifyMddfFormat("avails", curVersion);
 		String targetVersion = targetFmt.getVersion();
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
-				"Translating to XML v" + targetFmt.getVersion() + " from XML v" + curVersion, input.getSrcFile(), moduleId);
+				"Translating to XML v" + targetFmt.getVersion() + " from XML v" + curVersion, input.getSrcFile(),
+				moduleId);
 		if (curVersion.equals(targetVersion)) {
 			return inputDoc;
 		} else {
@@ -271,10 +280,15 @@ public class Translator {
 			case AVAILS_2_2:
 				switch (curVersion) {
 				case "2.1":
-					outputDoc = avail2_1_to_2_2(inputDoc);
+					outputDoc = avail2_1_to_2_2(inputDoc, logMgr);
 					return outputDoc;
 				case "2.2.1":
-					outputDoc = avail2_2_1_to_2_2(inputDoc);
+					outputDoc = avail2_2_1_to_2_2(inputDoc, logMgr);
+					return outputDoc;
+				case "2.3":
+					outputDoc = avail2_3_to_2_2_2(inputDoc, logMgr);
+					outputDoc = avail2_2_2_to_2_2_1(outputDoc, logMgr);
+					outputDoc = avail2_2_1_to_2_2(inputDoc, logMgr);
 					return outputDoc;
 				case "2.2.2":
 				default:
@@ -284,14 +298,18 @@ public class Translator {
 			case AVAILS_2_2_1:
 				switch (curVersion) {
 				case "2.1":
-					outputDoc = avail2_1_to_2_2(inputDoc);
+					outputDoc = avail2_1_to_2_2(inputDoc, logMgr);
 					outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
 					return outputDoc;
 				case "2.2":
 					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
 					return outputDoc;
 				case "2.2.2":
-					outputDoc = avail2_2_2_to_2_2_1(inputDoc);
+					outputDoc = avail2_2_2_to_2_2_1(inputDoc, logMgr);
+					return outputDoc;
+				case "2.3":
+					outputDoc = avail2_3_to_2_2_2(inputDoc, logMgr);
+					outputDoc = avail2_2_2_to_2_2_1(outputDoc, logMgr);
 					return outputDoc;
 				default:
 					// Unsupported request
@@ -300,11 +318,14 @@ public class Translator {
 			case AVAILS_2_2_2:
 				switch (curVersion) {
 				case "2.1":
-					outputDoc = avail2_1_to_2_2(inputDoc);
+					outputDoc = avail2_1_to_2_2(inputDoc, logMgr);
 					outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
 					return outputDoc;
 				case "2.2":
 					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
+					return outputDoc;
+				case "2.3":
+					outputDoc = avail2_3_to_2_2_2(inputDoc, logMgr);
 					return outputDoc;
 				default:
 					// Unsupported request
@@ -313,7 +334,7 @@ public class Translator {
 			case AVAILS_2_3:
 				switch (curVersion) {
 				case "2.1":
-					outputDoc = avail2_1_to_2_2(inputDoc);
+					outputDoc = avail2_1_to_2_2(inputDoc, logMgr);
 					outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
 					return outputDoc;
 				case "2.2":
@@ -352,34 +373,16 @@ public class Translator {
 		FILE_FMT curFmt = MddfContext.identifyMddfFormat("avails", curVersion);
 		Version excelVer = null;
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
-				"Translating to Excel v" + targetFormat.getVersion() + " from XML v" + curVersion, input.getSrcFile(), moduleId);
+				"Translating to Excel v" + targetFormat.getVersion() + " from XML v" + curVersion, input.getSrcFile(),
+				moduleId);
 		switch (targetFormat) {
 		case AVAILS_1_6:
 			// not yet implemented. May never be.
 			break;
 		case AVAILS_1_7:
-			excelVer = Version.V1_7;
 			/*
-			 * A v1.7 spreadsheet should be generated from v2.2 XML.
+			 * Dead version that was never implemented or used by the community
 			 */
-			switch (curVersion) {
-			case "2.1":
-				xmlDoc = avail2_1_to_2_2(xmlSrcDoc);
-				break;
-			case "2.2":
-				xmlDoc = xmlSrcDoc;
-				break;
-			case "2.2.1":
-				xmlDoc = avail2_2_1_to_2_2(xmlSrcDoc);
-				break;
-			case "2.2.2":
-				xmlDoc = avail2_2_2_to_2_2_1(xmlSrcDoc);
-				xmlDoc = avail2_2_1_to_2_2(xmlDoc);
-				break;
-			default:
-				// Unsupported request
-				break;
-			}
 			break;
 		case AVAILS_1_7_2:
 			excelVer = Version.V1_7_2;
@@ -388,17 +391,51 @@ public class Translator {
 			 */
 			switch (curVersion) {
 			case "2.1":
-				xmlDoc = avail2_1_to_2_2(xmlSrcDoc);
+				xmlDoc = avail2_1_to_2_2(xmlSrcDoc, logMgr);
 				xmlDoc = simpleConversion(xmlDoc, curFmt, targetFormat);
 				break;
 			case "2.2":
 				xmlDoc = simpleConversion(xmlSrcDoc, curFmt, targetFormat);
 				break;
 			case "2.2.1":
-				xmlDoc = avail2_2_1_to_2_2(xmlSrcDoc);
+				xmlDoc = avail2_2_1_to_2_2(xmlSrcDoc, logMgr);
 				xmlDoc = simpleConversion(xmlDoc, curFmt, targetFormat);
 				break;
 			case "2.2.2":
+				xmlDoc = xmlSrcDoc;
+				break;
+			case "2.3":
+				xmlDoc = avail2_3_to_2_2_2(xmlSrcDoc, logMgr);
+				break;
+			default:
+				// Unsupported request
+				break;
+			}
+			break;
+
+		case AVAILS_1_7_3:
+			excelVer = Version.V1_7_3;
+			/*
+			 * A v1.7.3 spreadsheet should be generated from v2.3 XML.
+			 */
+			switch (curVersion) {
+			case "2.1":
+				xmlDoc = avail2_1_to_2_2(xmlSrcDoc, logMgr);
+				xmlDoc = simpleConversion(xmlDoc, curFmt, targetFormat);
+				break;
+			case "2.2":
+				xmlDoc = simpleConversion(xmlSrcDoc, curFmt, targetFormat);
+				break;
+			case "2.2.1":
+				xmlDoc = avail2_2_1_to_2_2(xmlSrcDoc, logMgr);
+				xmlDoc = simpleConversion(xmlDoc, curFmt, targetFormat);
+				break;
+			case "2.2.2":
+				xmlDoc = avail2_2_2_to_2_2_1(xmlSrcDoc, logMgr);
+				xmlDoc = avail2_2_1_to_2_2(xmlDoc, logMgr);
+				xmlDoc = simpleConversion(xmlDoc, curFmt, targetFormat);
+				break;
+			case "2.3":
 				xmlDoc = xmlSrcDoc;
 				break;
 			default:
@@ -419,9 +456,10 @@ public class Translator {
 	/**
 	 * 
 	 * @param xmlDocIn
+	 * @param logMgr
 	 * @return
 	 */
-	private static Document avail2_1_to_2_2(Document xmlDocIn) {
+	private static Document avail2_1_to_2_2(Document xmlDocIn, LogMgmt logMgr) {
 		/*
 		 * STAGE ONE: some changes are easiest to do by converting the Doc to a
 		 * string and then doing string replacements prior to converting back to
@@ -476,9 +514,10 @@ public class Translator {
 	 * 
 	 * 
 	 * @param xmlDocIn
+	 * @param logMgr
 	 * @return
 	 */
-	private static Document avail2_2_1_to_2_2(Document xmlDocIn) {
+	private static Document avail2_2_1_to_2_2(Document xmlDocIn, LogMgmt logMgr) {
 		/*
 		 * STAGE ONE: some changes are easiest to do by converting the Doc to a
 		 * string and then doing string replacements prior to converting back to
@@ -496,12 +535,201 @@ public class Translator {
 		 */
 		Element rootEl = xmlDocOut.getRootElement();
 		String targetPath = "/avails:AvailList/avails:Avail/avails:Transaction/avails:AssetLanguage[@asset]";
-		removeAttribute(targetPath, "asset", rootEl);
+		removeAttribute(targetPath, "asset", rootEl, logMgr, "AssetLanguage");
 		targetPath = "/avails:AvailList/avails:Avail/avails:Transaction/avails:AssetLanguage[@descriptive]";
-		removeAttribute(targetPath, "descriptive", rootEl);
+		removeAttribute(targetPath, "descriptive", rootEl, logMgr, "AssetLanguage");
 		targetPath = "/avails:AvailList/avails:Avail/avails:Transaction/avails:AllowedLanguage[@asset]";
-		removeAttribute(targetPath, "asset", rootEl);
+		removeAttribute(targetPath, "asset", rootEl, logMgr, "AllowedLanguage");
 
+		return xmlDocOut;
+	}
+
+	/**
+	 * @param logMgr
+	 * @param srcDoc
+	 * @return
+	 */
+	private static Document avail2_2_2_to_2_2_1(Document xmlDocIn, LogMgmt logMgr) {
+		XMLOutputter outputter = new XMLOutputter();
+		String inDoc = outputter.outputString(xmlDocIn);
+		// Change Namespace declaration
+		String t1 = inDoc.replaceFirst("/avails/v2.2.2/avails", "/avails/v2.2.1/avails");
+		/*
+		 * v2.2.2 adds several elements and attributes missing in v2.2.1. These
+		 * need to be removed
+		 */
+		Document xmlDocOut = regenXml(t1);
+		Element rootEl = xmlDocOut.getRootElement();
+		Namespace availsNSpace = rootEl.getNamespace("avails");
+		XPathFactory xpfac = XPathFactory.instance();
+
+		String targetPath = "//avails:People";
+		XPathExpression<Element> pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
+		List<Element> removalList = pathExp.evaluate(rootEl);
+		for (Element targetEl : removalList) {
+			targetEl.detach();
+		}
+		if (!removalList.isEmpty()) {
+			String msg = "Removing " + removalList.size() + " People elements";
+			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, null, null, "Translator");
+		}
+
+		targetPath = "//avails:GroupingEntity";
+		pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
+		removalList = pathExp.evaluate(rootEl);
+		for (Element targetEl : removalList) {
+			targetEl.detach();
+		}
+		if (!removalList.isEmpty()) {
+			String msg = "Removing " + removalList.size() + " GroupingEntity elements";
+			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, null, null, "Translator");
+		}
+
+		targetPath = "//avails:Transaction/avails:Duration";
+		pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
+		removalList = pathExp.evaluate(rootEl);
+		for (Element targetEl : removalList) {
+			targetEl.detach();
+		}
+		if (!removalList.isEmpty()) {
+			String msg = "Removing " + removalList.size() + " Transaction/Duration elements";
+			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, null, null, "Translator");
+		}
+
+		targetPath = "/avails:AvailList/avails:Avail[@updateNum]";
+		removeAttribute(targetPath, "updateNum", rootEl, logMgr, "Avail");
+		targetPath = "/avails:AvailList/avails:Avail[@updateDeliveryFlow]";
+		removeAttribute(targetPath, "updateDeliveryFlow", rootEl, logMgr, "Avail");
+		targetPath = "/avails:AvailList/avails:Avail[@workflow]";
+		removeAttribute(targetPath, "workflow", rootEl, logMgr, "Avail");
+
+		targetPath = "/avails:AvailList/avails:Avail/avails:Transaction/*[@lag]";
+		removeAttribute(targetPath, "lag", rootEl, logMgr, "StartCondition and EndCondition");
+
+		targetPath = "/avails:AvailList/avails:Avail/avails:Transaction/avails:AssetLanguage[@assetProvided]";
+		removeAttribute(targetPath, "assetProvided", rootEl, logMgr, "AssetLanguage");
+
+		targetPath = "/avails:AvailList/avails:Avail/avails:Transaction/avails:AssetLanguage[@metadataProvided]";
+		removeAttribute(targetPath, "metadataProvided", rootEl, logMgr, "AssetLanguage");
+		/*
+		 * v2.2.2 allows multiple instances of TitleInternalAlias for different
+		 * regions as well as multiple instances of TitleDisplayUnlimited for
+		 * different languages (also for Season and Series). If multiple
+		 * instances are present, all but 1st is removed and a WARNING is
+		 * issued. This is also true for Season and Series metadata
+		 */
+		scrubTitles(rootEl, "", logMgr);
+		scrubTitles(rootEl, "Season", logMgr);
+		scrubTitles(rootEl, "Series", logMgr);
+
+		return xmlDocOut;
+	}
+
+	private static void scrubTitles(Element rootEl, String prefix, LogMgmt logMgr) {
+		/*
+		 * v2.2.2 allows multiple instances of TitleInternalAlias for different
+		 * regions as well as multiple instances of TitleDisplayUnlimited for
+		 * different languages (also for Season and Series). If multiple
+		 * instances are present, all but 1st is removed and a WARNING is
+		 * issued. This is also true for Season and Series metadata
+		 */
+		Namespace availsNSpace = rootEl.getNamespace("avails");
+		XPathFactory xpfac = XPathFactory.instance();
+		String thing1 = prefix + "TitleInternalAlias";
+		String thing2 = prefix + "TitleDisplayUnlimited";
+		String targetPath = "/avails:AvailList/avails:Avail/avails:Asset//*[count(avails:" + thing1 + ") > 1 ]";
+		XPathExpression<Element> pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
+		List<Element> removalList = pathExp.evaluate(rootEl);
+		int removedCnt = 0;
+		for (Element targetEl : removalList) {
+			List<Element> extrasList = targetEl.getChildren(thing1, availsNSpace);
+			// keep the 1st but detach the rest
+			for (int i = 1; i < extrasList.size(); i++) {
+				Element extra = extrasList.get(i);
+				extra.detach();
+				removedCnt++;
+			}
+		}
+		if (removedCnt > 0) {
+			String msg = "Removing " + removedCnt + " "+thing1+" elements (max allowed exceeded)";
+			String details = "Only 1 "+thing1+" allowed per Asset";
+			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, details, null, "Translator");
+		}
+		
+		removedCnt = 0;
+		targetPath = "/avails:AvailList/avails:Avail/avails:Asset//*[count(avails:" + thing2 + ") > 1 ]";
+		pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
+		removalList = pathExp.evaluate(rootEl);
+		for (Element targetEl : removalList) {
+			List<Element> extrasList = targetEl.getChildren(thing2, availsNSpace);
+			// keep the 1st but detach the rest
+			for (int i = 1; i < extrasList.size(); i++) {
+				Element extra = extrasList.get(i);
+				extra.detach();
+				removedCnt++;
+			}
+		}
+		if (removedCnt > 0) {
+			String msg = "Removing " + removedCnt + " "+thing2+" elements (max allowed exceeded)";
+			String details = "Only 1 "+thing2+" allowed per Asset";
+			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, details, null, "Translator");
+		}
+		// now remove @language and @region from any remaining
+		targetPath = "//avails:" + thing1 + "[@region]";
+		removeAttribute(targetPath, "region", rootEl, logMgr, thing1);
+		targetPath = "//avails:" + thing2 + "[@language]";
+		removeAttribute(targetPath, "language", rootEl, logMgr, thing2);
+	}
+
+	/**
+	 * @param logMgr
+	 * @param inputDoc
+	 * @return
+	 */
+	private static Document avail2_3_to_2_2_2(Document xmlDocIn, LogMgmt logMgr) {
+		XMLOutputter outputter = new XMLOutputter();
+		// start with namespace conversion
+		Document xmlDocOut = simpleConversion(xmlDocIn, MddfContext.identifyMddfFormat("Avails", "2.3"),
+				MddfContext.identifyMddfFormat("avails", "2.2.2"));
+
+		Element rootEl = xmlDocOut.getRootElement();
+		Namespace availsNSpace = rootEl.getNamespace("avails");
+		XPathFactory xpfac = XPathFactory.instance();
+
+		String targetPath = "//avails:Licensee";
+		XPathExpression<Element> pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
+		List<Element> removalList = pathExp.evaluate(rootEl);
+		for (Element targetEl : removalList) {
+			targetEl.detach();
+		}
+		if (!removalList.isEmpty()) {
+			String msg = "Removing " + removalList.size() + " Licensee elements";
+			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, null, null, "Translator");
+		}
+
+		/*
+		 * 'Transaction/WindowDuration'in v2.3 is same as 'Transaction/Duration'
+		 * in v2.2.2
+		 * 
+		 */
+		targetPath = "//avails:Transaction/avails:WindowDuration";
+		pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
+		removalList = pathExp.evaluate(rootEl);
+		for (Element targetEl : removalList) {
+			targetEl.setName("Duration");
+		}
+
+		// remove all unsupported Terms
+		targetPath = "//avails:Term[@termName[.='ContractStatus' or .='TitleStatus' or .='Download' or .='Exclusive' or .='ExclusiveAttributes' or .='BrandingRights' or .='BrandingRightsAttributes']]";
+		pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
+		removalList = pathExp.evaluate(rootEl);
+		for (Element targetEl : removalList) {
+			targetEl.detach();
+		}
+		if (!removalList.isEmpty()) {
+			String msg = "Removing " + removalList.size() + " unsupported Terms";
+			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, null, null, "Translator");
+		}
 		return xmlDocOut;
 	}
 
@@ -514,7 +742,7 @@ public class Translator {
 	 * @param targetFmt
 	 * @return
 	 */
-	private static Document simpleConversion(Document xmlDocIn, FILE_FMT srcFmt, FILE_FMT targetFmt) { 
+	private static Document simpleConversion(Document xmlDocIn, FILE_FMT srcFmt, FILE_FMT targetFmt) {
 		XMLOutputter outputter = new XMLOutputter();
 		String inDoc = outputter.outputString(xmlDocIn);
 		Map<String, String> srcVers = MddfContext.getReferencedXsdVersions(srcFmt);
@@ -537,74 +765,6 @@ public class Translator {
 	}
 
 	/**
-	 * @param srcDoc
-	 * @return
-	 */
-	private static Document avail2_2_2_to_2_2_1(Document xmlDocIn) {
-		XMLOutputter outputter = new XMLOutputter();
-		String inDoc = outputter.outputString(xmlDocIn);
-		// Change Namespace declaration
-		String t1 = inDoc.replaceFirst("/avails/v2.2.2/avails", "/avails/v2.2.1/avails");
-		/*
-		 * v2.2.2 adds several elements and attributes missing in v2.2.1. These
-		 * need to be removed
-		 */
-		Document xmlDocOut = regenXml(t1);
-		Element rootEl = xmlDocOut.getRootElement();
-		Namespace availsNSpace = rootEl.getNamespace("avails");
-		XPathFactory xpfac = XPathFactory.instance();
-		String targetPath = "//avails:People";
-		XPathExpression<Element> pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
-		List<Element> removalList = pathExp.evaluate(rootEl);
-		for (Element targetEl : removalList) {
-			targetEl.detach();
-		}
-		targetPath = "//avails:GroupingEntity";
-		pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
-		removalList = pathExp.evaluate(rootEl);
-		for (Element targetEl : removalList) {
-			targetEl.detach();
-		}
-		targetPath = "/avails:AvailList/avails:Avail/avails:Transaction/*[@lag]";
-		removeAttribute(targetPath, "lag", rootEl);
-		targetPath = "/avails:AvailList/avails:Avail/avails:Transaction/avails:AssetLanguage[@assetProvided]";
-		removeAttribute(targetPath, "assetProvided", rootEl);
-		targetPath = "/avails:AvailList/avails:Avail/avails:Transaction/avails:AssetLanguage[@metadataProvided]";
-		removeAttribute(targetPath, "metadataProvided", rootEl);
-		/*
-		 * v2.2.2 allows multiple instances of TitleInternalAlias for different
-		 * regions as well as multiple instances of TitleDisplayUnlimited for
-		 * different languages (also for Season and Series). If multiple
-		 * instances are present, all but 1st is removed and a WARNING is
-		 * issues.
-		 */
-		targetPath = "/avails:AvailList/avails:Avail/avails:Asset//*[count(avails:TitleInternalAlias) > 1 ]";
-		pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
-		removalList = pathExp.evaluate(rootEl);
-		for (Element targetEl : removalList) {
-			List<Element> extrasList = targetEl.getChildren("TitleInternalAlias", availsNSpace);
-			// keep the 1st and detach the rest
-			for (int i = 1; i < extrasList.size(); i++) {
-				Element extra = extrasList.get(i);
-				extra.detach();
-			}
-		}
-		targetPath = "/avails:AvailList/avails:Avail/avails:Asset//*[count(avails:TitleDisplayUnlimited) > 1 ]";
-		pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
-		removalList = pathExp.evaluate(rootEl);
-		for (Element targetEl : removalList) {
-			List<Element> extrasList = targetEl.getChildren("TitleDisplayUnlimited", availsNSpace);
-			// keep the 1st and detach the rest
-			for (int i = 1; i < extrasList.size(); i++) {
-				Element extra = extrasList.get(i);
-				extra.detach();
-			}
-
-		}
-		return xmlDocOut;
-	}
-
-	/**
 	 * Identify all elements matching the specified xpath and then detach the
 	 * identified attribute if it exists. If <tt>attName == '*'</tt> all
 	 * attributes are removed.
@@ -612,23 +772,47 @@ public class Translator {
 	 * @param targetPath
 	 * @param attName
 	 * @param rootEl
+	 * @param targetDesc
+	 *            used to describe targeted elements when constructing log
+	 *            message
 	 */
-	private static void removeAttribute(String targetPath, String attName, Element rootEl) {
+	private static int removeAttribute(String targetPath, String attName, Element rootEl, LogMgmt logMgr,
+			String targetDesc) {
 		XPathFactory xpfac = XPathFactory.instance();
 		Namespace availsNSpace = rootEl.getNamespace("avails");
 		XPathExpression<Element> pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
 		List<Element> removalList = pathExp.evaluate(rootEl);
+		int hitCnt = 0;
 		for (Element targetEl : removalList) {
 			if (attName.equals("*")) {
 				List<Attribute> attList = targetEl.getAttributes();
 				for (Attribute att : attList) {
 					att.detach();
+					hitCnt++;
 				}
 			} else {
-				targetEl.removeAttribute(attName);
+				if (targetEl.removeAttribute(attName)) {
+					hitCnt++;
+				}
 			}
 		}
 
+		if (hitCnt > 0) {
+			String msg = null;
+			String attDesc = null;
+			if (attName.equals("*")) {
+				attDesc = "all attributes";
+			} else {
+				attDesc = "@" + attName + " attribute";
+			}
+			if (targetDesc == null) {
+				msg = "Removing " + attDesc + " from " + hitCnt + " elements.";
+			} else {
+				msg = "Removing " + attDesc + " from " + hitCnt + " " + targetDesc + " elements.";
+			}
+			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, null, null, "Translator");
+		}
+		return hitCnt;
 	}
 
 	/**
