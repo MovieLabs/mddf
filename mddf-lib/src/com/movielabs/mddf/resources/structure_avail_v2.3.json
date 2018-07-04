@@ -150,10 +150,11 @@
 					"docRef": "AVAIL:struc01",
 					"min": "2",
 					"xpath": 
-						[
-							"./{avail}Asset",
-							"./{avail}Asset/{avail}BundledAsset"						
-						],
+					[
+						"./{avail}Asset",
+						"./{avail}Asset/{avail}BundledAsset"
+					],
+
 					"severity": "Error",
 					"msg": "Avail's type requires two or more Assets"
 				}
@@ -321,6 +322,38 @@
 					"xpath": "./{avail}EpisodeMetadata/{avail}EpisodeNumber/{md}Number"
 				}
 			]
+		}, 
+
+		"Trans-Price": 
+		{
+			"targetPath": ".//{avail}Transaction/{avail}LicenseType[not(. = 'SVOD')]",
+			"constraint": 
+			[
+				{
+					"xpath": 
+					[
+						"../{avail}Term[@termName[.='Tier' or .='Category' ]]",
+						"../{avail}Term/{avail}Money"
+					],
+
+					"min": "1",
+					"severity": "Error",
+					"msg": "A TVOD License requires at least one term indicating pricing"
+				}
+			]
+		},
+		"SVOD-AssetLanguage":{		
+			"targetPath": ".//{avail}Transaction/{avail}LicenseType[not(. = 'SVOD')]",
+			"constraint": 
+			[
+				{
+					"xpath":  "../{avail}AssetLanguage",
+					"max": "1",
+					"severity": "Error",
+					"msg": "A TVOD License limits Transaction to 1 AssetLanguage"
+				}
+			]
+		
 		}
 	}
 }
