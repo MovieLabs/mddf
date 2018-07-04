@@ -329,6 +329,12 @@ public class TranslatorDialog extends JDialog {
 			cBoxList.add(cbXlsxV1_7_2);
 			cBoxMap.put(FILE_FMT.AVAILS_1_7_2, cbXlsxV1_7_2);
 			xlateCBoxes.add(cbXlsxV1_7_2);
+
+			JCheckBox cbXlsxV1_7_3 = new JCheckBox("XLSX 1.7.3");
+			excelFmtMenu.add(cbXlsxV1_7_3);
+			cBoxList.add(cbXlsxV1_7_3);
+			cBoxMap.put(FILE_FMT.AVAILS_1_7_3, cbXlsxV1_7_3);
+			xlateCBoxes.add(cbXlsxV1_7_3);
 		}
 		return excelFmtMenu;
 	}
@@ -364,14 +370,11 @@ public class TranslatorDialog extends JDialog {
 			cBoxMap.put(FILE_FMT.AVAILS_2_3, cbXmlV2_3);
 			xlateCBoxes.add(cbXmlV2_3);
 
-			/*
-			 * UNCOMENT following code block to enable translation to v2.2.2
-			 */
-			// JCheckBox cbXmlV2_2_2 = new JCheckBox("XML 2.2.2");
-			// xmlFmtMenu.add(cbXmlV2_2_2);
-			// cBoxList.add(cbXmlV2_2_2);
-			// cBoxMap.put(FILE_FMT.AVAILS_2_2_2, cbXmlV2_2_2);
-			// supported.add(cbXmlV2_2_2);
+			JCheckBox cbXmlV2_2_2 = new JCheckBox("XML 2.2.2");
+			xmlFmtMenu.add(cbXmlV2_2_2);
+			cBoxList.add(cbXmlV2_2_2);
+			cBoxMap.put(FILE_FMT.AVAILS_2_2_2, cbXmlV2_2_2);
+			xlateCBoxes.add(cbXmlV2_2_2);
 
 			JCheckBox cbXmlV2_2_1 = new JCheckBox("XML 2.2.1");
 			xmlFmtMenu.add(cbXmlV2_2_1);
@@ -423,8 +426,17 @@ public class TranslatorDialog extends JDialog {
 		selections = EnumSet.noneOf(FILE_FMT.class);
 	}
 
+	/**
+	 * Enable checkboxes for formats that are supported for the current format.
+	 * 
+	 * @param srcFmt
+	 */
 	private void enableSelectionsFor(FILE_FMT srcFmt) {
 		List<FILE_FMT> possible = Translator.supportedTranslations(srcFmt);
+		if (possible == null || possible.isEmpty()) {
+			// TODO: add alert?
+			return;
+		}
 		Iterator<FILE_FMT> typeIt = cBoxMap.keySet().iterator();
 		while (typeIt.hasNext()) {
 			FILE_FMT nextType = typeIt.next();
