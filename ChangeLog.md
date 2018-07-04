@@ -5,9 +5,19 @@
 
 ## Versioning
 
-The latest release of the core mddf-lib is v1.3.2
+The latest release of the core mddf-lib is v1.3.3
 
-### mddf-lib Changes:
+### mddf-lib v1.3.3:
+* Bug Fix: Conversion of XLSX Avails to XML dropped FormatProfile attributes
+* Bug Fix: Validation of controlled vocabulary did not check attributes (e.g., Avails termNames)
+* Bug Fix: Processing of XLSX Avails dropped Start or End values that included time values.
+* Bug Fix: Processing of XLSX Avails for Movies dropped CompanyDisplayCredit.
+* Bug Fix: Conversion to XLSX Avails from either XML or another version of XLSX incorrectly processed ReportingID
+* Bug Fix: Manifest validation incorrectly flagged AppGroup and Interactive  elements as unreferenced.
+* Enhancement: any information removed when translating between versions gets logged (severity level = 'Notice')
+* Enhancement: allow, in addition to Yes/No, either Y/N, T/F, or True/False as boolean values 
+* Enhancement: support for Avails v1.7.3 added
+* Enhancement: support for translating to/from Avails v2.3 added
 
 #### mddf-lib v1.3.2
 * Bug Fix: Conversion of XLSX Avails to XML incorrectly rounded Transaction start and end dates.
