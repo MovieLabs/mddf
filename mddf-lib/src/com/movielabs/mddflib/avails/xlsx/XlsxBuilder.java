@@ -25,11 +25,7 @@ package com.movielabs.mddflib.avails.xlsx;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.DecimalFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -99,13 +95,13 @@ import net.sf.json.JSONObject;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class XlsxBuilder { 
+public class XlsxBuilder {
 	private static final String CONTEXT_DELIM = "#";
-	private static final String FUNCTION_IDENTIFIER = "%FUNCTION"; 
-	protected static JSONObject mappings; 
+	private static final String FUNCTION_IDENTIFIER = "%FUNCTION";
+	protected static JSONObject mappings;
 	private static String warnMsg1 = "XLSX xfer dropping additional XYZ values";
 	private static String warnDetail1 = "The Excel version of Avails only allows 1 value for this field. Additional XML elements will be ignored";
- 	protected XPathFactory xpfac = XPathFactory.instance();
+	protected XPathFactory xpfac = XPathFactory.instance();
 	private LogMgmt logger;
 	private String rootPrefix = "avails:";
 
@@ -125,7 +121,7 @@ public class XlsxBuilder {
 	private TemplateWorkBook workbook;
 	private JSONObject mappingVersion;
 	private String availPrefix;
-	private String mdPrefix; 
+	private String mdPrefix;
 	private HashMap<String, JSONObject> functionList;
 	private JSONObject mappingDefs;
 
@@ -153,8 +149,8 @@ public class XlsxBuilder {
 		 * translation before being added to the spreadsheet.
 		 * 
 		 */
-//		p_xsDuration = Pattern.compile(DURATION_REGEX);
-//		p_xsDateTime = Pattern.compile(DATETIME_REGEX);
+		// p_xsDuration = Pattern.compile(DURATION_REGEX);
+		// p_xsDateTime = Pattern.compile(DATETIME_REGEX);
 
 	}
 
@@ -267,15 +263,7 @@ public class XlsxBuilder {
 				Map<String, String> assetData = perAssetData.get(aIdx);
 				for (int tIdx = 0; tIdx < perTransData.size(); tIdx++) {
 					Map<String, String> rowData = perTransData.get(tIdx);
-					rowData.putAll(assetData);
-					/*
-					 * Special Case: AvailID is unique per row and comes from
-					 * the TransactionID. The problem is the way the syntax of
-					 * the Mappings.json and the way this code groups xpaths by
-					 * the Excel row-1 column header. So...
-					 */
-					String trueAvailID = rowData.get("AvailTrans:Avail/AvailID");
-					rowData.put("Avail:AvailID", trueAvailID);
+					rowData.putAll(assetData); 
 					workbook.addDataRow(rowData, sheet);
 				}
 			}
@@ -586,7 +574,7 @@ public class XlsxBuilder {
 			String type = sw.getType(name);
 			switch (type) {
 			case "xs:duration":
-				return  FormatConverter.durationFromXml(input);
+				return FormatConverter.durationFromXml(input);
 			case "xs:dateTime":
 				return FormatConverter.dateFromXml(input);
 			default:
@@ -643,9 +631,6 @@ public class XlsxBuilder {
 		return parts[1];
 	}
 
-
- 
-
 	/**
 	 * Group, filter, and re-format the XML-to-XSLX mappings to facilitate later
 	 * usage.
@@ -662,7 +647,7 @@ public class XlsxBuilder {
 		/* AVAIL-related mappings.... */
 		Map<String, List<XPathExpression>> availMappings = initCategoryMappings(mappingDefs, "Avail");
 		/*
-		 * Special Case: an Avail-related column that doesn't start with
+		 * Special Case #1: an Avail-related column that doesn't start with
 		 * 'Avail:'
 		 */
 		String colKey = "Disposition:EntryType";
@@ -670,6 +655,13 @@ public class XlsxBuilder {
 		List<XPathExpression> xpeList = new ArrayList<XPathExpression>();
 		xpeList.add(createXPath(mapping));
 		availMappings.put(colKey, xpeList);
+		/*
+		 * Special Case #2 (part 1): Avail-prefixed col is actually
+		 * transaction-scoped data
+		 */
+		List<XPathExpression> availIdXpe = availMappings.remove("Avail:AvailID");
+		List<XPathExpression> reportIdXpe = availMappings.remove("Avail:ReportingID");
+
 		organizedMappings.put("Avail", availMappings);
 		// ..........................................
 		Map<String, List<XPathExpression>> assetMappings = initCategoryMappings(mappingDefs, "AvailAsset");
@@ -679,6 +671,9 @@ public class XlsxBuilder {
 		organizedMappings.put("AvailMetadata", metadataMappings);
 		// .....................................
 		Map<String, List<XPathExpression>> transMappings = initCategoryMappings(mappingDefs, "AvailTrans");
+		/* Part 2 of Special Case #2.. */
+		transMappings.put("Avail:AvailID", availIdXpe);
+		transMappings.put("Avail:ReportingID", reportIdXpe);
 		organizedMappings.put("AvailTrans", transMappings);
 		return organizedMappings;
 	}
@@ -842,6 +837,10 @@ public class XlsxBuilder {
 	 */
 	private void setXmlVersion(String availSchemaVer) throws IllegalArgumentException {
 		switch (availSchemaVer) {
+		case "2.3":
+			MD_VER = "2.6";
+			MDMEC_VER = "2.6";
+			break;
 		case "2.2.2":
 		case "2.2.1":
 			MD_VER = "2.5";
