@@ -5,9 +5,9 @@
 
 ## Versioning
 
-The latest release of the core mddf-lib is v1.3.3
+The latest release of the core mddf-lib is v1.4_rc1
 
-### mddf-lib v1.3.3:
+### mddf-lib v1.4_rc1:
 * Bug Fix: Conversion of XLSX Avails to XML dropped FormatProfile attributes
 * Bug Fix: Validation of controlled vocabulary did not check attributes (e.g., Avails termNames)
 * Bug Fix: Processing of XLSX Avails dropped Start or End values that included time values.
