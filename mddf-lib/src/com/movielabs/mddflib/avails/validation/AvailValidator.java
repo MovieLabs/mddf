@@ -327,7 +327,6 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		docRef = LogReference.getRef(doc, "avail07");
 		validateVocab(primaryNS, "AllowedLanguage", null, "@asset", allowed, docRef, true);
 		validateVocab(primaryNS, "AssetLanguage", null, "@asset", allowed, docRef, true);
-		validateVocab(primaryNS, "AssetLanguage", null, "@assetProvided", allowed, docRef, true);
 		validateVocab(primaryNS, "HoldbackLanguage", null, "@asset", allowed, docRef, true);
 
 		// allowed = availVocab.optJSONArray("LicenseRightsDescription");
@@ -345,7 +344,11 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 		allowed = availVocab.optJSONArray("Term@termName");
 		docRef = LogReference.getRef(doc, "avail08");
-		validateVocab(primaryNS, "Term", null, "@termName", allowed, docRef, false);
+		Collection<Namespace> nSpaces = new HashSet<Namespace>();
+		nSpaces.add(primaryNS);
+		int tag4log = getLogTag(primaryNS, null);
+		boolean strict = false;  // allows for contract-specific terminology
+		validateVocab(nSpaces, "//avails:Term/@termName", true, allowed, docRef, true, strict, tag4log, "@termName"); 
 
 		allowed = availVocab.optJSONArray("SharedEntitlement@ecosystem");
 		docRef = LogReference.getRef(doc, "avail09");
@@ -362,9 +365,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		
 		
 		//added for v2.3
-		int tag4log = getLogTag(primaryNS, null);
+		tag4log = getLogTag(primaryNS, null);
 		allowed = availVocab.optJSONArray("@termName='TitleStatus'");
-		Collection<Namespace> nSpaces = new HashSet<Namespace>();
+		nSpaces = new HashSet<Namespace>();
 		nSpaces.add(primaryNS);
 		validateVocab(nSpaces, "//avails:Term/avails:Text[../@termName='TitleStatus']", false, allowed, docRef, true, true, tag4log, "@termName='TitleStatus'");
 		
@@ -374,7 +377,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * @return
 	 */
 	protected void validateCMVocab() {
-		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.LEV_INFO, "Validating use of controlled vocabulary...", curFile,
+		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Validating use of controlled vocabulary...", curFile,
 				LOGMSG_ID);
 		Namespace primaryNS = availsNSpace;
 		/*
@@ -436,7 +439,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			structVer = "2.2";
 		}
 
-		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.LEV_INFO, "Validating structure using v"+structVer+" requirements", curFile, LOGMSG_ID);
+		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Validating structure using v"+structVer+" requirements", curFile, LOGMSG_ID);
 		
 		JSONObject availStructDefs = XmlIngester.getMddfResource("structure_avail", structVer);
 		if (availStructDefs == null) {
