@@ -170,7 +170,7 @@ public class MddfContext {
 	}
 
 	public static FILE_FMT identifyMddfFormat(String standard, String schemaVer) {
-		switch (standard) {
+		switch (standard.toLowerCase()) {
 		case "manifest":
 			switch (schemaVer) {
 			case "1.4":
@@ -221,6 +221,18 @@ public class MddfContext {
 		return null;
 	}
 
+	/**
+	 * Return a list of all know versions of the specified MDDF standard. The valid standards are:
+	 * <ul>
+	 * <li>CM</li>
+	 * <li>MANIFEST</li>
+	 * <li>MEC</li>
+	 * <li>AVAIL (for XML-only)</li>
+	 * <li>AVAIL-E (for XLSX only)</li> 
+	 * </ul>
+	 * @param standard
+	 * @return
+	 */
 	public static String[] getSupportedVersions(String standard) {
 		return stdsVersions.get(standard);
 	}
