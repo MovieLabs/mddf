@@ -22,8 +22,14 @@
  */
 package com.movielabs.mddflib.avails.xml;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
@@ -71,8 +77,12 @@ public class RowToXmlHelperV1_7_3 extends RowToXmlHelperV1_7_2 {
 		process(transactionEl, "WindowDuration", xb.getAvailsNSpace(), "AvailTrans/WindowDuration");
 
 		processLanguage(transactionEl, "AllowedLanguage", xb.getAvailsNSpace(), prefix + "AllowedLanguages", ",", true);
-		processLanguage(transactionEl, "AssetLanguage", xb.getAvailsNSpace(), prefix + "AssetLanguage", null, true);
-		process(transactionEl, "HoldbackLanguage", xb.getAvailsNSpace(), prefix + "HoldbackLanguage", ",");
+		processLanguage(transactionEl, "HoldbackLanguage", xb.getAvailsNSpace(), prefix + "HoldbackLanguage", ",",
+				true);
+		Element[] assetLangEls = processLanguage(transactionEl, "AssetLanguage", xb.getAvailsNSpace(),
+				prefix + "AssetLanguage", ",", true);
+		processReqLanguages(assetLangEls);
+
 		process(transactionEl, "LicenseRightsDescription", xb.getAvailsNSpace(), prefix + "LicenseRightsDescription");
 		process(transactionEl, "FormatProfile", xb.getAvailsNSpace(), prefix + "FormatProfile");
 		process(transactionEl, "ContractID", xb.getAvailsNSpace(), prefix + "ContractID");
@@ -82,6 +92,53 @@ public class RowToXmlHelperV1_7_3 extends RowToXmlHelperV1_7_2 {
 
 		process(transactionEl, "OtherInstructions", xb.getAvailsNSpace(), prefix + "OtherInstructions");
 
+	}
+
+	/**
+	 * Handles the special case of the <tt>RequiredFulfillmentLanguages</tt>. If
+	 * an AssetLanguage is also listed as a RequiredFulfillmentLanguage then
+	 * <tt>AssetLanguage@assetProvided</tt> is set to <tt>true</tt>.
+	 * 
+	 * @param assetLangEls
+	 */
+	private void processReqLanguages(Element[] assetLangEls) {
+		// 1st get the list of required fulfillment language:
+		Pedigree pg = getPedigreedData("AvailTrans/RequiredFulfillmentLanguages");
+		if (pg == null) {
+			return;
+		}
+		String value = pg.getRawValue();
+		String[] valueArray;
+		String separator = ",";
+		valueArray = value.split(separator);
+		Collection<String> reqLanguages = new HashSet<String>(Arrays.asList(valueArray));
+		Collection<String> providedLanguages = new HashSet<String>();
+		for (int i = 0; i < assetLangEls.length; i++) {
+			Element aEl = assetLangEls[i];
+			String langCode = aEl.getValue(); 
+			Attribute aa = aEl.getAttribute("asset");
+			if(aa != null){
+				langCode = langCode +":"+aa.getValue();
+			}
+			if (reqLanguages.contains(langCode)) {
+				aEl.setAttribute("assetProvided", "true");
+			}
+			providedLanguages.add(langCode);
+		}
+		// Now check for a REQUIRED language that IS NOT included in the set of
+		// Asset Languages
+		reqLanguages.removeAll(providedLanguages);
+		reqLanguages.remove("");  // not the same as null
+		// Anything left is probably an error
+		if (!reqLanguages.isEmpty()) {
+			Cell sourceCell = (Cell) pg.getSource();
+			String details = "A RequiredFulfillmentLanguage should also be identified as an AssetLanguage that the content owner intends to provide. ";
+			for (String reqLangCode : reqLanguages) {
+				String errMsg = "Required fulfillment language '" + reqLangCode + "' is not an AssetLanguage";
+				logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null,
+						XmlBuilder.moduleId);
+			}
+		}
 	}
 
 	/**
@@ -118,10 +175,10 @@ public class RowToXmlHelperV1_7_3 extends RowToXmlHelperV1_7_2 {
 		 * value and converted to an attribute.
 		 * 
 		 */
-		for(Element next : elementList){
+		for (Element next : elementList) {
 			String curValue = next.getText();
 			String[] parts = curValue.split(":");
-			if(parts.length == 2){
+			if (parts.length == 2) {
 				next.setText(parts[0]);
 				next.setAttribute("asset", parts[1]);
 			}
