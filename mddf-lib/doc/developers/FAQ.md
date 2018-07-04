@@ -20,20 +20,26 @@ Step 1: update the enum `AvailsSheet.Version`
 
 Step 2: add any required code to `AvailsSheet.identifyVersion()`
 
-Step 3: the code in `ValidationController.convertSpreadsheet()` determines which XML version is matched with an XLSX version when validating. This will also need to be updated.
+Step 3: the code in `AvailsWrkBook.convertSpreadsheet()` determines which XML version is matched with an XLSX version when validating. This will also need to be updated.
 
 Step 4: `XmlBuilder.makeXmlAsJDom()` must be updated to match the XLSX version to the correct
 class of `AbstractRowHelper`. It may also be necessary to create a new subclass of `AbstractRowHelper`.
 
 
 ### 3. How do you add support for converting an Avails file to/from a new version of Avails?
-If the user is to have the option of converting an Avails **to** the new version, support must also be added in the translator modules:
+If the user is to have the option of converting an Avails to or from the new version, support must also be added in the translator modules:
 
-* `TranslatorDialog.addVersionSelectors()` to provide UI support
-* `Translator.translateAvails()` to manage the conversion
+* `TranslatorDialog.getExcelFormatMenu()` to provide UI support
+* the static data structure `Translator.supported` specifies which translations are supported and will therefore need to be updated.
+* `Translator.convertToExcel()` manages the actual conversion
 * when adding a new XLSX version, resource file `Mappings.json` in package `com.movielabs.mddflib.avails.xlsx` specifies the rules for generating XLSX from XML.
 * when adding a new XML version, conversion is handled by Java code in the 'Translator' class. 
 Refer to `Translator.avails2_1_to_2_2()` for an example implementation.
+
+While the above changes will implement the necessary functionality, UI support is still required.
+
+* for the installed desktop version, update `TranslatorDialog.getExcelFormatMenu()` in the `mddf-tool` sub-project.
+* for the browser-based version, the changes are to the `mddf-cloud` project's `ToolPage.html` file.
 
 ### 4. How do you update the global ratings DB?
 
