@@ -243,6 +243,10 @@ public class ManifestValidator extends CMValidator {
 		validateXRef(".//manifest:AncillaryTrackReference/manifest:AncillaryTrackID", "Ancillary");
 		validateXRef(".//manifest:SubtitleTrackReference/manifest:SubtitleTrackID", "Subtitle");
 
+		validateXRef(".//manifest:InteractiveTrackReference/manifest:InteractiveTrackID", "Interactive");
+		
+		validateXRef(".//manifest:Experience/manifest:App/manifest:AppGroupID", "AppGroup");
+		
 		validateXRef(".//manifest:TimedEventSequence/manifest:PresentationID", "Presentation");
 		validateXRef(".//manifest:TimedEventSequence/manifest:PlayableSequenceID", "PlayableSequence");
 
