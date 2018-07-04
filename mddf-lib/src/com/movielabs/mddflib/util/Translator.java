@@ -83,6 +83,7 @@ public class Translator {
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_3);
 		// for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7_2);
+		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7_3);
 		supported.put(FILE_FMT.AVAILS_2_2, for_AVAILS_2_2);
 
 		List<FILE_FMT> for_AVAILS_2_2_1 = new ArrayList<FILE_FMT>();
@@ -90,6 +91,7 @@ public class Translator {
 		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_2_2_2);
 		// for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7_2);
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7_3);
 		supported.put(FILE_FMT.AVAILS_2_2_1, for_AVAILS_2_2_1);
 
 		List<FILE_FMT> for_AVAILS_2_2_2 = new ArrayList<FILE_FMT>();
@@ -97,6 +99,7 @@ public class Translator {
 		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_3);
 		// for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7_2);
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7_3);
 		supported.put(FILE_FMT.AVAILS_2_2_2, for_AVAILS_2_2_2);
 
 		List<FILE_FMT> for_AVAILS_2_3 = new ArrayList<FILE_FMT>();
@@ -114,6 +117,7 @@ public class Translator {
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_2_2);
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_3);
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_1_7_2);
+		for_AVAILS_1_7.add(FILE_FMT.AVAILS_1_7_3);
 		supported.put(FILE_FMT.AVAILS_1_7, for_AVAILS_1_7);
 
 		List<FILE_FMT> for_AVAILS_1_7_2 = new ArrayList<FILE_FMT>();
@@ -122,6 +126,7 @@ public class Translator {
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_2_2);
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_3);
 		// for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_7);
+		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_7_3);
 		supported.put(FILE_FMT.AVAILS_1_7_2, for_AVAILS_1_7_2);
 	}
 
