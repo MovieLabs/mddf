@@ -58,7 +58,7 @@ public class MetadataBuilder {
 	private XmlBuilder xmlBldr;
 	private AbstractRowHelper row;
 	private JSONObject mapping4Version;
-	private JSONObject mapping4type;
+	private JSONObject mapping4type; 
 
 	static {
 		/*
@@ -100,7 +100,7 @@ public class MetadataBuilder {
 	 * @return
 	 */
 	public Element appendMData(AbstractRowHelper row, String assetWorkType) {
-		this.row = row;
+		this.row = row; 
 		/*
 		 * Need to determine what metadata structure to use based on the
 		 * Asset/WorkType
@@ -313,6 +313,17 @@ public class MetadataBuilder {
 	}
 
 	/**
+	 * Set an <tt>AltIdentifier</tt>. The <tt>functionDef</tt> may include two
+	 * optional arguments:
+	 * <ul>
+	 * <li><tt>namespace</tt>: if present, this value is used as the
+	 * <tt>AltIdentifier/Namespace</tt>. If not specified, the default value
+	 * specified by <tt>ALT_ID_NAMESPACE_PREFIX</tt> will be used.</li>
+	 * <li><tt>filterEidr</tt>: If <tt>yes</tt>, EIDR values will be dropped. If
+	 * <tt>no</tt> an EIDR value may still be used as an <tt>AltIdentifier</tt>.
+	 * If not specified, the default value is <tt>yes</tt>.</li>
+	 * </ul>
+	 * 
 	 * @param functionDef
 	 * @param altIdEl
 	 */
@@ -328,11 +339,20 @@ public class MetadataBuilder {
 		if (pg.isEmpty() && !isRequired(curKey)) {
 			return;
 		}
+		String idValue = pg.getRawValue();
+		String filter = functionArgs.optString("filterEidr", "yes");
+		if (filter.equalsIgnoreCase("yes")) {
+			// what's the namespace (i.e., encoding fmt)?
+			String format = parseIdFormat(idValue);
+			if (format.startsWith("eidr")) {
+				return;
+			}
+		}
+
 		Element altIdEl = buildElement(curKey);
 		parentEl.addContent(altIdEl);
 
-		String idValue = pg.getRawValue();
-		String namespace = ALT_ID_NAMESPACE_PREFIX;
+		String namespace =  functionArgs.optString("namespace", ALT_ID_NAMESPACE_PREFIX);
 		String[] srcId = colKey.split("/");
 		idValue = srcId[srcId.length - 1] + ":" + idValue;
 		xmlBldr.addToPedigree(altIdEl, pg);
@@ -366,18 +386,18 @@ public class MetadataBuilder {
 		Element typeEl = buildElement("{md}Type");
 		grpEl.addContent(typeEl);
 		typeEl.setText(grpType);
-		
+
 		Element idEl = buildElement("{md}GroupIdentity");
 		grpEl.addContent(idEl);
 		idEl.setText(grpId);
-		
+
 		Element nameEl = buildElement("{md}DisplayName");
 		grpEl.addContent(nameEl);
-		nameEl.setText(grpName);		
-		
+		nameEl.setText(grpName);
+
 		xmlBldr.addToPedigree(grpEl, pg);
 		xmlBldr.addToPedigree(idEl, pg);
-		xmlBldr.addToPedigree(nameEl, pg);		
+		xmlBldr.addToPedigree(nameEl, pg);
 	}
 
 	/**
@@ -462,7 +482,10 @@ public class MetadataBuilder {
 	}
 
 	/**
-	 * Ensure all EIDR values are in URN format that is compatible with XML.
+	 * Create an element that requires an EIDR value. While doing so, ensure all
+	 * EIDR values are in URN format that is compatible with XML. If the cell's
+	 * value is NOT a valid EIDR, handling depends on the <tt>filter</tt>
+	 * argument specified by the <tt>functionDef</tt>.
 	 * 
 	 * @param functionDef
 	 * @param curKey
@@ -484,6 +507,15 @@ public class MetadataBuilder {
 		case "eidr-URN":
 			break;
 		default:
+			/* value is not an EIDR. */
+			String filter = functionArgs.optString("filter", "yes");
+			if (filter.equalsIgnoreCase("yes")) {
+				return;
+			}
+			/*
+			 * the non-EIDR value will be used. Assumption is that validation
+			 * procedure will catch and flag the problem.
+			 */
 			break;
 		}
 		Element targetEl = buildElement(curKey);
