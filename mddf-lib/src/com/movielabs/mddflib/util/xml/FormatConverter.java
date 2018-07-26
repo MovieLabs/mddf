@@ -236,6 +236,6 @@ public class FormatConverter {
 		case "f":
 			return "false";
 		}
-		return null;
+		return input;
 	}
 }
