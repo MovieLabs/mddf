@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.movielabs.mddf</groupId>
 	<artifactId>mddf-lib</artifactId>
-	<version>1.3.3</version>
+	<version>1.4_rc2</version>
 	<name>mddf library</name>
 	<description>implements all core (i.e., non-UI) functionality that can be used to generate, validate, or transform MovieLabs Digital Distribution Framework (MDDF) files.</description>
 
@@ -150,9 +150,8 @@
 		<url>https://movielabs.com/</url>
 	</organization>
 	<url>https://github.com/MovieLabs/mddf</url>
-
 	<properties>
-		<mddf.src.tag>1.3.3</mddf.src.tag>
+		<mddf.src.tag>1.4_rc2</mddf.src.tag>
 		<mddf.build>1</mddf.build>
 	</properties>
 </project>

@@ -5,7 +5,12 @@
 
 ## Versioning
 
-The latest release of the core mddf-lib is v1.4_rc1
+The latest release of the core mddf-lib is v1.4_rc2
+
+* Bug Fix: XLSX ingest of local file required WRITE access to close resource handle.
+* Bug Fix: handling XLSX cell with invalid boolean value did not report error correctly
+* Bug Fix: XLSX Avails without AssetLanguage threw Null Pointer Exception
+* Enhancement: support for Avails v1.7.3 for TV added
 
 ### mddf-lib v1.4_rc1:
 * Bug Fix: Conversion of XLSX Avails to XML dropped FormatProfile attributes
@@ -16,7 +21,7 @@ The latest release of the core mddf-lib is v1.4_rc1
 * Bug Fix: Manifest validation incorrectly flagged AppGroup and Interactive  elements as unreferenced.
 * Enhancement: any information removed when translating between versions gets logged (severity level = 'Notice')
 * Enhancement: allow, in addition to Yes/No, either Y/N, T/F, or True/False as boolean values 
-* Enhancement: support for Avails v1.7.3 added
+* Enhancement: support for Avails v1.7.3 added (Movies ONLY)
 * Enhancement: support for translating to/from Avails v2.3 added
 
 #### mddf-lib v1.3.2
