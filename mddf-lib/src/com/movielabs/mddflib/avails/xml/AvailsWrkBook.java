@@ -92,11 +92,10 @@ public class AvailsWrkBook {
 		boolean exitOnError = false;
 		AvailsWrkBook ss;
 		try {
-			if (inStream == null) {
-				ss = new AvailsWrkBook(xslxFile, logMgr, exitOnError, autoCorrect);
-			} else {
-				ss = new AvailsWrkBook(inStream, xslxFile, logMgr, exitOnError, autoCorrect);
+			if (inStream == null) { 
+				inStream = new FileInputStream(xslxFile); 
 			}
+			ss = new AvailsWrkBook(inStream, xslxFile, logMgr, exitOnError, autoCorrect);
 		} catch (FileNotFoundException e1) {
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found", xslxFile, logMsgSrcId);
 			return null;
@@ -106,12 +105,7 @@ public class AvailsWrkBook {
 			return null;
 		} catch (IOException e1) {
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", xslxFile, logMsgSrcId);
-			return null;
-		} catch (InvalidFormatException e) {
-			// POI issue probably due to a missing file
-			String msg = e.getCause().getMessage();
-			e.printStackTrace();
-			return null;
+			return null; 
 		}
 		int sheetNum = 0; // KLUDGE for now
 		AvailsSheet as;
@@ -276,13 +270,8 @@ public class AvailsWrkBook {
 	 * @throws InvalidFormatException
 	 */
 	public AvailsWrkBook(File file, LogMgmt logger, boolean exitOnError, boolean cleanupData)
-			throws FileNotFoundException, IOException, POIXMLException, InvalidFormatException {
-		this.file = file;
-		this.logger = logger;
-		this.exitOnError = exitOnError;
-		this.cleanupData = cleanupData;
-		sheets = new ArrayList<AvailsSheet>();
-		wrkBook = new XSSFWorkbook(file);
+			throws FileNotFoundException, IOException, POIXMLException, InvalidFormatException { 
+		this(new FileInputStream(file),   file,   logger,   exitOnError,   cleanupData);
 	}
 
 	public AvailsSheet ingestSheet(String sheetName) throws Exception {
@@ -317,7 +306,7 @@ public class AvailsWrkBook {
 			wrkBook.close();
 			throw new IllegalArgumentException(file + ": sheet number " + sheetNumber + " not found");
 		}
-		AvailsSheet as = new AvailsSheet(this, excelSheet);
+		AvailsSheet as = new AvailsSheet(this, excelSheet); 
 		wrkBook.close();
 		return as;
 	}
