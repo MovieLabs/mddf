@@ -110,25 +110,29 @@ public class RowToXmlHelperV1_7_3 extends RowToXmlHelperV1_7_2 {
 		String value = pg.getRawValue();
 		String[] valueArray;
 		String separator = ",";
+		// remove white space
+		value = value.replaceAll(" ", "");
 		valueArray = value.split(separator);
 		Collection<String> reqLanguages = new HashSet<String>(Arrays.asList(valueArray));
 		Collection<String> providedLanguages = new HashSet<String>();
-		for (int i = 0; i < assetLangEls.length; i++) {
-			Element aEl = assetLangEls[i];
-			String langCode = aEl.getValue(); 
-			Attribute aa = aEl.getAttribute("asset");
-			if(aa != null){
-				langCode = langCode +":"+aa.getValue();
+		if (assetLangEls != null) {
+			for (int i = 0; i < assetLangEls.length; i++) {
+				Element aEl = assetLangEls[i];
+				String langCode = aEl.getValue();
+				Attribute aa = aEl.getAttribute("asset");
+				if (aa != null) {
+					langCode = langCode + ":" + aa.getValue();
+				}
+				if (reqLanguages.contains(langCode)) {
+					aEl.setAttribute("assetProvided", "true");
+				}
+				providedLanguages.add(langCode);
 			}
-			if (reqLanguages.contains(langCode)) {
-				aEl.setAttribute("assetProvided", "true");
-			}
-			providedLanguages.add(langCode);
 		}
 		// Now check for a REQUIRED language that IS NOT included in the set of
 		// Asset Languages
 		reqLanguages.removeAll(providedLanguages);
-		reqLanguages.remove("");  // not the same as null
+		reqLanguages.remove(""); // not the same as null
 		// Anything left is probably an error
 		if (!reqLanguages.isEmpty()) {
 			Cell sourceCell = (Cell) pg.getSource();
