@@ -237,6 +237,20 @@
 					}
 				},
 
+				"{avail}People": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "people",
+						"args": 
+						{
+							"col": "AvailMetadata/Director",
+							"job": "Director"
+						}
+					}
+				},
+				
+
 				"{avail}ReleaseHistory": 
 				[
 					{
@@ -281,6 +295,18 @@
 				},
 
 				"{avail}LocalizationOffering": "AvailMetadata/LocalizationType",
+				"{avail}GroupingEntity": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "channelGrouping",
+						"args": 
+						{
+							"type": "SVOD channel",
+							"col": "AvailMetadata/GroupIdentity"
+						}
+					}
+				},
 				"{avail}EpisodeNumber": 
 				{
 					"{md}Number": "AvailMetadata/EpisodeNumber"
