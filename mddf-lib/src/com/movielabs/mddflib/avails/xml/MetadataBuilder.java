@@ -41,6 +41,8 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
+ * Add to XML representation the Metadata portion of an Avails using the
+ * mappings specified in the JSON file <tt>MetadataMappings.json</tt>
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -58,7 +60,7 @@ public class MetadataBuilder {
 	private XmlBuilder xmlBldr;
 	private AbstractRowHelper row;
 	private JSONObject mapping4Version;
-	private JSONObject mapping4type; 
+	private JSONObject mapping4type;
 
 	static {
 		/*
@@ -95,12 +97,23 @@ public class MetadataBuilder {
 	}
 
 	/**
+	 * Convert the relevant information in a spreadsheet row to an XML Metadata
+	 * structure that may be appended to an <tt>&lt;avail:Asset&gt;</tt>
+	 * element. The <tt>assetWorkType</tt> determines the specific Metadata
+	 * element that will be returned. Valid <tt>assetWorkType</tt> values are:
+	 * <ul>
+	 * <li>Movie: returns a <tt>&lt;avail:Metadata&gt;</tt></li>
+	 * <li>Episode: returns a <tt>&lt;avail:EpisodeMetadata&gt;</tt></li>
+	 * <li>Season: returns a <tt>&lt;avail:SeasonMetadata&gt;</tt></li>
+	 * <li>Series: returns a <tt>&lt;avail:SeriesMetadata&gt;</tt></li>
+	 * </ul>
+	 * 
 	 * @param row
 	 * @param assetWorkType
-	 * @return
+	 * @return a metadata <tt>Element</tt>
 	 */
 	public Element appendMData(AbstractRowHelper row, String assetWorkType) {
-		this.row = row; 
+		this.row = row;
 		/*
 		 * Need to determine what metadata structure to use based on the
 		 * Asset/WorkType
@@ -352,7 +365,7 @@ public class MetadataBuilder {
 		Element altIdEl = buildElement(curKey);
 		parentEl.addContent(altIdEl);
 
-		String namespace =  functionArgs.optString("namespace", ALT_ID_NAMESPACE_PREFIX);
+		String namespace = functionArgs.optString("namespace", ALT_ID_NAMESPACE_PREFIX);
 		String[] srcId = colKey.split("/");
 		idValue = srcId[srcId.length - 1] + ":" + idValue;
 		xmlBldr.addToPedigree(altIdEl, pg);
