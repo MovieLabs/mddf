@@ -32,7 +32,6 @@ import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
-import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.FormatConverter;
 import com.movielabs.mddflib.util.xml.RatingSystem;
@@ -41,8 +40,127 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
- * Add to XML representation the Metadata portion of an Avails using the
+ * Add to XML representation the Asset Metadata portion of an Avails using the
  * mappings specified in the JSON file <tt>MetadataMappings.json</tt>
+ * 
+ * <h2>Metadata Mappings:</h2>
+ * <h3>Structure and Organization:</h3>
+ * <p>
+ * The mappings are organized hierarchically, first by XML schema version and
+ * then by <tt>WorkType</tt>. For example:
+ * 
+ * <pre>
+ * v2.3
+ *   |
+ *   +--Movies
+ *   |
+ *   +--Episode
+ *   |
+ *   +--Series
+ *   |
+ *   +--Season
+ * </pre>
+ * 
+ * Within each <tt>WorkType</tt> the entries are ordered to match the Element
+ * sequence that is specified in the XSD. This will define the order in which
+ * the constructed XML elements are appended to their parent.
+ * </p>
+ * <h3>Syntax:</h3>
+ * <p>
+ * Each mapping is defined as a <tt>key/value<tt> pair where
+ * <ul>
+ * <li>the <i>key</i> will specify the <i>namespace</i> and <i>name</i> of the
+ * XML element to be constructed</li>
+ * <li>the <i>value</i> indicates column(s) in the XLSX row that contain the
+ * data</li>
+ * </ul>
+ * The <i>value</i> may be specified in a number of ways:
+ * <ul>
+ * <li>a column identifier</li> 
+ * <li>a function that takes one or more function specific arguments, one of
+ * which is a column identifier </li>
+ * <li>an ordered array of column identifiers and/or functions that will be
+ * evaluated until the first one that matches data in the XLSX row is found.
+ * </li>
+ * </ul> 
+ * </p>
+ * <p>
+ * The formal EBNF grammar is:
+ * <tt>
+ * <pre>
+ *  &lt;mapping&gt; ::=  '"'&lt;key&gt; '" :'  &lt;mapping&gt;
+ *  &lt;key&gt; ::=   &lt;namespace&gt; &lt;element-name&gt;
+ *  &lt;namespace&gt; ::= '{avails}' | '{md}'
+ *  &lt;element-name&gt; ::= &lt;string&gt;
+ *  &lt;mapping&gt; ::= &lt;col-id&gt; | &lt;nested-mapping&gt; | &lt;mapping-sequence&gt; | &lt;function-def&gt; | &lt;recursion&gt;
+ *  &lt;col-id&gt; ::=  '"' &lt;top-level-element&gt; '/' &lt;sub-element&gt; '"' (see Note #1)
+ *  &lt;top-level-element&gt; ::= 'Avail' | 'AvailMetadata' | 'AvailTrans'
+ *  &lt;sub-element&gt; ::= &lt;string&gt; 
+ *  &lt;nested-mapping&gt; ::= '{' &lt;mapping&gt; '}'
+ *  &lt;mapping-sequence&gt; ::= '['  &lt;mapping&gt; { ','  &lt;mapping&gt; } ']}'
+ *  &lt;function-def&gt; ::= '{ "%FUNCTION": {'  &lt;function-id&gt; ','  &lt;function-args&gt;  '}  }'
+ *  &lt;function-id&gt; ::= ' "name" :  "' &lt;function-name&gt; '"'
+ *  &lt;function-name&gt; ::= 'altId' | 'channelGrouping' | 'contentRating' | 'eidr' | 'formatType' | 'people' | 'releaseHistory' (see Note #2)
+ *  &lt;function-args&gt; ::= '"args": { "col": ' &lt;col-id&gt; { ',' &lt;nvp-arg&gt; } '}'
+ *  &lt;nvp-arg&gt; ::=   &lt;quoted-string&gt; ':' &lt;quoted-string&gt;   (see Note #3)
+ *  &lt;quoted-string&gt; ::= '"' &lt;string&gt; '"'
+ *  &lt;recursion&gt; ::= '"#REF:' &lt;epsiodic-work-type&gt; '/'&lt;key&gt;  '"' (see Note #4) 
+ *  &lt;epsiodic-work-type&gt; ::= 'Season' | 'Series'
+ * </pre>
+ * </tt>
+ * <h5>Notes:</h5>
+ * <ol>
+ * <li>Column identifiers that do not match a top-level-element/sub-element pair
+ * defined in the MDDF template for the version of XLSX being ingested will be
+ * ignored. Matching is case sensitive.</li>
+ * <li>Function usage is documented in the following section. Future versions of
+ * this software may add additional functions.</li>
+ * <li>The name/value pairs that specify function arguments are unique to each
+ * function and are documented in the next section.</li>
+ * <li>Recursion allows Series metadata to be included as a child of Session
+ * metadata and Session metadata to be included as a child of Episode metadata
+ * </li>
+ * </ol>
+ * </p>
+ * <h3>Functions:</h3>
+ * <h4>altId</h4>
+ * <p>
+ * Set an <tt>AltIdentifier</tt>.
+ * 
+ * <h5>Arguments:</h5>
+ * <ul>  
+ * <li><tt>namespace</tt>: if present, this value is used as the
+ * <tt>AltIdentifier/Namespace</tt>. If not specified, the default value
+ * specified by <tt>ALT_ID_NAMESPACE_PREFIX</tt> will be used.(<b>OPTIONAL</b>)
+ * </li>
+ * <li><tt>filterEidr</tt>: If <tt>yes</tt>, EIDR values will be dropped. If
+ * <tt>no</tt> an EIDR value may still be used as an <tt>AltIdentifier</tt>. If
+ * not specified, the default value is <tt>yes</tt>. (<b>OPTIONAL</b>)</li>
+ * </ul>
+ * </p>
+ * <h4>channelGrouping</h4>
+ * <h4>contentRating</h4>
+ * <h4>eidr</h4>
+ * 
+ * Create an element that requires an EIDR value. While doing so, ensure all
+ * EIDR values are in URN format that is compatible with XML. If the cell's
+ * value is NOT a valid EIDR, handling depends on the <tt>filter</tt> argument..
+ * <h4>formatType</h4>
+ * <p>
+ * Handle cases where value has to be translated or reformatted. This happens,
+ * for example, with durations where XSD specifies xs:duration. This function
+ * does not take any arguments.
+ * </p>
+ * <h4>people:</h4>
+ * <p>
+ * Create a &lt;avails:People&gt; containing only the required sub-elements.
+ * </p>
+ * <h5>Arguments:</h5>
+ * <ul>
+ * <li><tt>job</tt>: used as the &lt;md:JobFunction&gt; value (<b>REQUIRED</b>)
+ * </li>
+ * </ul>
+ * <h4>releaseHistory</h4>
  * 
  * @author L. Levin, Critical Architectures LLC
  *
