@@ -165,7 +165,7 @@ public class XmlBuilder {
 		entitlement2IdMap = new HashMap<Element, List<String>>();
 		element2SrcRowMap = new HashMap<Element, AbstractRowHelper>();
 
-		mdBuilder = new MetadataBuilder(aSheet.getVersion(), logger, this);
+		mdBuilder = new MetadataBuilder( logger, this);
 
 		// Create and initialize Document...
 		String xsdUri = "http://www.movielabs.com/schema/avails/v" + xsdVersion + "/avails";

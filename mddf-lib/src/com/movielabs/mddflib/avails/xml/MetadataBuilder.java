@@ -84,16 +84,18 @@ public class MetadataBuilder {
 	}
 
 	/**
-	 * @param xlsxVersion
+	 * Construct a <i>helper</i> instance compatible with the
+	 * <tt>XmlBuilder</tt>'s XSD version.
+	 * 
 	 * @param logger
+	 * @param xmlBldr
 	 */
-	public MetadataBuilder(Version xlsxVersion, LogMgmt logger, XmlBuilder xmlBldr) {
+	public MetadataBuilder(LogMgmt logger, XmlBuilder xmlBldr) {
 		this.logger = logger;
 		this.xmlBldr = xmlBldr;
 		String schemaVer = "V" + xmlBldr.getVersion();
 		mapping4Version = mappings.getJSONObject(schemaVer);
 		logger.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, null, logMsgSrcId);
-
 	}
 
 	/**
@@ -340,7 +342,7 @@ public class MetadataBuilder {
 	 * @param functionDef
 	 * @param altIdEl
 	 */
-	protected void func_altId(JSONObject functionDef, String curKey, Element parentEl) {
+	private void func_altId(JSONObject functionDef, String curKey, Element parentEl) {
 		JSONObject functionArgs = functionDef.getJSONObject("args");
 		String colKey = functionArgs.getString("col");
 		logger.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "func_altId prcessing Col key " + colKey, null, logMsgSrcId);
