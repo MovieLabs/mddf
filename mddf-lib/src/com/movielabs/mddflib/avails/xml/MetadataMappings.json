@@ -1,4 +1,5 @@
 {
+	"Documentation": "Syntax defined in Javadoc for com.movielabs.mddflib.avails.xml.MetadataBuilder",
 	"V2.3": 
 	{
 		"Documentation": "Avails mappings from EXCEL v1.7.3 to XML v2.3",
@@ -34,6 +35,29 @@
 
 				"{avail}AltIdentifier": 
 				[
+					{
+						"%FUNCTION": 
+						{
+							"name": "altId",
+							"args": 
+							{
+								"col": "AvailAsset/EditID",
+								"filterEidr": "yes"
+							}
+						}
+					},
+					{
+						"%FUNCTION": 
+						{
+							"name": "altId",
+							"args": 
+							{
+								"col": "AvailAsset/TitleID",
+								"filterEidr": "yes"
+							}
+						}
+					},
+				
 					{
 						"%FUNCTION": 
 						{
@@ -176,6 +200,19 @@
 			{
 				"{avail}TitleDisplayUnlimited": "AvailMetadata/EpisodeTitleDisplayUnlimited",
 				"{avail}TitleInternalAlias": "AvailMetadata/EpisodeTitleInternalAlias",
+				"{avail}EditEIDR-URN": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "eidr",
+						"args": 
+						{
+							"col": "AvailMetadata/EpisodeID",
+							"filter": "yes"
+						}
+					}
+				},
+
 				"{avail}AltIdentifier": 
 				[
 					{
@@ -184,11 +221,11 @@
 							"name": "altId",
 							"args": 
 							{
-								"col": "AvailMetadata/EpisodeID"
+								"col": "AvailMetadata/EpisodeID",
+								"filterEidr": "yes"
 							}
 						}
 					},
-
 					{
 						"%FUNCTION": 
 						{
@@ -249,7 +286,6 @@
 						}
 					}
 				},
-				
 
 				"{avail}ReleaseHistory": 
 				[
@@ -307,6 +343,7 @@
 						}
 					}
 				},
+
 				"{avail}EpisodeNumber": 
 				{
 					"{md}Number": "AvailMetadata/EpisodeNumber"
@@ -321,6 +358,18 @@
 			"{avail}SeasonMetadata": 
 			{
 				"{avail}SeasonContentID": "AvailAsset/SeasonContentID",
+				"{avail}SeasonEIDR-URN": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "eidr",
+						"args": 
+						{
+							"col": "AvailMetadata/SeasonID",
+							"filter": "yes"
+						}
+					}
+				},
 				"{avail}SeasonTitleDisplayUnlimited": "AvailMetadata/SeasonTitleDisplayUnlimited",
 				"{avail}SeasonTitleInternalAlias": "AvailMetadata/SeasonTitleInternalAlias",
 				"{avail}SeasonNumber": 
@@ -418,6 +467,18 @@
 			"{avail}SeriesMetadata": 
 			{
 				"{avail}SeriesContentID": "AvailAsset/SeriesContentID",
+				"{avail}SeriesEIDR-URN": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "eidr",
+						"args": 
+						{
+							"col": "AvailMetadata/SeriesID",
+							"filter": "yes"
+						}
+					}
+				},
 				"{avail}SeriesTitleDisplayUnlimited": "AvailMetadata/SeriesTitleDisplayUnlimited",
 				"{avail}SeriesTitleInternalAlias": "AvailMetadata/SeriesTitleInternalAlias",
 				"{avail}ReleaseDate": "AvailMetadata/ReleaseYear",
@@ -525,7 +586,8 @@
 						"name": "eidr",
 						"args": 
 						{
-							"col": "AvailAsset/EditID"
+							"col": "AvailAsset/EditID",
+							"filter": "yes"
 						}
 					}
 				},
@@ -537,13 +599,37 @@
 						"name": "eidr",
 						"args": 
 						{
-							"col": "AvailAsset/TitleID"
+							"col": "AvailAsset/TitleID",
+							"filter": "yes"
 						}
 					}
 				},
 
 				"{avail}AltIdentifier": 
 				[
+					{
+						"%FUNCTION": 
+						{
+							"name": "altId",
+							"args": 
+							{
+								"col": "AvailAsset/EditID",
+								"filterEidr": "yes"
+							}
+						}
+					},
+					{
+						"%FUNCTION": 
+						{
+							"name": "altId",
+							"args": 
+							{
+								"col": "AvailAsset/TitleID",
+								"filterEidr": "yes"
+							}
+						}
+					},
+				
 					{
 						"%FUNCTION": 
 						{
@@ -667,7 +753,7 @@
 						"name": "eidr",
 						"args": 
 						{
-							"col": "AvailAsset/EpisodeID",
+							"col": "AvailMetadata/EpisodeID",
 							"filter": "yes"
 						}
 					}
@@ -681,19 +767,8 @@
 							"name": "altId",
 							"args": 
 							{
-								"col": "AvailAsset/EpisodeID",
+								"col": "AvailMetadata/EpisodeID",
 								"filterEidr": "yes"
-							}
-						}
-					},
-
-					{
-						"%FUNCTION": 
-						{
-							"name": "altId",
-							"args": 
-							{
-								"col": "AvailMetadata/EpisodeID"
 							}
 						}
 					},
@@ -914,7 +989,6 @@
 			"{avail}SeriesMetadata": 
 			{
 				"{avail}SeriesContentID": "AvailAsset/SeriesContentID",
-				
 				"{avail}SeriesEIDR-URN": 
 				{
 					"%FUNCTION": 
@@ -927,6 +1001,7 @@
 						}
 					}
 				},
+
 				"{avail}SeriesTitleDisplayUnlimited": "AvailMetadata/SeriesTitleDisplayUnlimited",
 				"{avail}SeriesTitleInternalAlias": "AvailMetadata/SeriesTitleInternalAlias",
 				"{avail}ReleaseDate": "AvailMetadata/ReleaseYear",
