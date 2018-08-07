@@ -34,7 +34,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class AvailsTool extends ValidatorTool {
 
-	private static final String AVAIL_DOC_VER = "v1.1";
+	private static final String AVAIL_DOC_VER = "v1.4";
 
 	/**
 	 * Launch the application.
