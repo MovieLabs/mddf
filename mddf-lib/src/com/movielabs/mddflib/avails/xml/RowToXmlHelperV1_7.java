@@ -242,7 +242,11 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		if (isSpecified(pg)) {
 			String tName = pg.getRawValue();
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
-			switch (tName) {
+			/* 
+			 * Any term may be prefixed with 'TPR-' to indicate temp price reduction
+			 */
+			String baseTName = tName.replaceFirst("TPR-", "");
+			switch (baseTName) {
 			case "Tier":
 			case "Category":
 			case "LicenseFee":
@@ -259,13 +263,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 			case "SeasonWSP":
 			case "SRP":
 			case "DMRP":
-			case "SMRP":
-			case "TPR-SRP":
-			case "TPR-WSP":
-			case "TPR-EpisodeWSP":
-			case "TPR-SeasonWSP":
-			case "TPR-DMRP":
-			case "TPR-SMRP":
+			case "SMRP": 
 				Element moneyEl = process(termEl, "Money", xb.getAvailsNSpace(), prefix + "PriceValue");
 				Pedigree curPGee = getPedigreedData(prefix + "PriceCurrency");
 				if (moneyEl != null && isSpecified(curPGee)) {
