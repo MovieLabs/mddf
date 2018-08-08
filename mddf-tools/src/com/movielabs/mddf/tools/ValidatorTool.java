@@ -669,14 +669,17 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 					 */
 					Properties mddfLibProps = loadProperties("/com/movielabs/mddflib/build.properties");
 					String libVersion;
-					String libBuildDate;
+					String libBuild;
+					String libTimestamp;
 					if (mddfLibProps == null) {
 						libVersion = "n.a.";
-						libBuildDate = "n.a.";
+						libBuild = "n.a.";
+						libTimestamp = "n.a.";
 					} else {
-						libVersion = mddfLibProps.getProperty("version");
-						libBuildDate = mddfLibProps.getProperty("buildDate") + "; "
-								+ mddfLibProps.getProperty("buildTime");
+						libVersion = mddfLibProps.getProperty("mddf.src.tag");
+						libBuild = mddfLibProps.getProperty("mddf.build"); 
+						libTimestamp = mddfLibProps.getProperty("timestamp");
+						libTimestamp = libTimestamp.replaceAll("\\:", ":");
 					}
 					Properties mddfToolProps = loadProperties("/com/movielabs/mddf/tools/build.properties");
 					String toolVersion;
@@ -705,9 +708,10 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 					dialog.addEntry("Build", "<b>App Version:</b> <tt>" + toolVersion + "</tt>");
 					dialog.addEntry("Build", "<b>App Build Date:</b> <tt>" + toolBuildDate + "</tt><hr/>");
 					dialog.addEntry("Build", "<b>mddflib S/W Version:</b> <tt>" + libVersion + "</tt>");
-					dialog.addEntry("Build", "<b>mddflib Build Date:</b> <tt>" + libBuildDate + "</tt><hr/>");
+					dialog.addEntry("Build", "<b>mddflib Build:</b> <tt>" + libBuild + "</tt>");
+					dialog.addEntry("Build", "<b>mddflib Timestamp:</b> <tt>" + libTimestamp + "</tt><hr/>");
 					dialog.addTab("License");
-					dialog.addEntry("License", "Copyright Motion Picture Laboratories, Inc. 2017<br/>");
+					dialog.addEntry("License", "Copyright Motion Picture Laboratories, Inc. 2018<br/>");
 					dialog.addEntry("License", license);
 					dialog.setLocationRelativeTo(frame);
 					dialog.setVisible(true);
