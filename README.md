@@ -23,7 +23,7 @@
 ---
 ## <a name="h_News">What's New</a>
 
-* 2018-Jul-27: mddf-tool v1.4_rc2 has been released as an executable jar for testing and evaluation.
+* 2018-Aug-08: mddf-tool v1.4 has been released as both an executable jar and as native executables.
 
 ## <a name="h_Overview">Overview:</a>
 
@@ -171,6 +171,8 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">Release History:</a>
+
+* **2018-Aug-08: mddf-tool v1.4 released.
 
 * **2018-Jul-27**: mddf-tool v1.4_rc2 released as an executable jar for testing and evaluation.
 

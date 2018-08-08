@@ -5,11 +5,17 @@
 
 ## Versioning
 
-The latest release of the core mddf-lib is v1.4_rc2
+The latest release of the core mddf-lib is v1.4
+
+* Bug Fix: v1.7.3 XLSX ingest dropped SeriesID, SeasonID and non-EIDR EditID and TitleID
+* Bug Fix: Avails validation did not allow TPR prefix for LicenseFee and Category terms
+
+### mddf-lib v1.4_rc2:
 
 * Bug Fix: XLSX ingest of local file required WRITE access to close resource handle.
 * Bug Fix: handling XLSX cell with invalid boolean value did not report error correctly
 * Bug Fix: XLSX Avails without AssetLanguage threw Null Pointer Exception
+* BUG FIX: re XLSX Avails v1.7.3 mapping of EIDR vs non-EIDR EditID and TitleID
 * Enhancement: support for Avails v1.7.3 for TV added
 
 ### mddf-lib v1.4_rc1:
