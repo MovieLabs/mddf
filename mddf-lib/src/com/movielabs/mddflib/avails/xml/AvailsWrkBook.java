@@ -74,26 +74,28 @@ public class AvailsWrkBook {
 	 * <p>
 	 * The result <tt>Map</tt> that is returned will contain:
 	 * <ul>
-	 * <li>
-	 * <tt>xlsx<tt>: the xlsx File that was passed as the input argument</li>
-	 * <li><tt>xml<tt>: the JDOM2 Document that was created from the xlsx</li>
-	 * <li><tt>pedigree<tt>: the <tt>Pedigree</tt> map that was created by the
+	 * <li><tt>xlsx</tt>: the xlsx File that was passed as the input argument
+	 * </li>
+	 * <li><tt>xml</tt>: the JDOM2 Document that was created from the xlsx</li>
+	 * <li><tt>pedigree</tt>: the <tt>Pedigree</tt> map that was created by the
 	 * <tt>XmlBuilder</tt> during the conversion process.</li>
+	 * <li><tt>srcFmt</tt>: the <tt>MddfContect.FILE_FMT</tt> of the ingested
+	 * file.
 	 * </ul>
 	 * </p>
 	 * 
 	 * @param xslxFile
 	 * @param inStream
 	 * @param logMgr
-	 * @return
+	 * @return a Map&lt;String, Object&gt;
 	 */
 	public static Map<String, Object> convertSpreadsheet(File xslxFile, InputStream inStream, LogMgmt logMgr) {
 		boolean autoCorrect = false;
 		boolean exitOnError = false;
 		AvailsWrkBook ss;
 		try {
-			if (inStream == null) { 
-				inStream = new FileInputStream(xslxFile); 
+			if (inStream == null) {
+				inStream = new FileInputStream(xslxFile);
 			}
 			ss = new AvailsWrkBook(inStream, xslxFile, logMgr, exitOnError, autoCorrect);
 		} catch (FileNotFoundException e1) {
@@ -105,7 +107,7 @@ public class AvailsWrkBook {
 			return null;
 		} catch (IOException e1) {
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", xslxFile, logMsgSrcId);
-			return null; 
+			return null;
 		}
 		int sheetNum = 0; // KLUDGE for now
 		AvailsSheet as;
@@ -190,7 +192,7 @@ public class AvailsWrkBook {
 	 * @return
 	 */
 	public static boolean compress(File srcFile, String outputDir, String outFileName) {
-		try { 
+		try {
 			XSSFWorkbook srcWrkBook = compress(new FileInputStream(srcFile));
 			if (srcWrkBook == null) {
 				return false;
@@ -270,8 +272,8 @@ public class AvailsWrkBook {
 	 * @throws InvalidFormatException
 	 */
 	public AvailsWrkBook(File file, LogMgmt logger, boolean exitOnError, boolean cleanupData)
-			throws FileNotFoundException, IOException, POIXMLException, InvalidFormatException { 
-		this(new FileInputStream(file),   file,   logger,   exitOnError,   cleanupData);
+			throws FileNotFoundException, IOException, POIXMLException, InvalidFormatException {
+		this(new FileInputStream(file), file, logger, exitOnError, cleanupData);
 	}
 
 	public AvailsSheet ingestSheet(String sheetName) throws Exception {
@@ -306,7 +308,7 @@ public class AvailsWrkBook {
 			wrkBook.close();
 			throw new IllegalArgumentException(file + ": sheet number " + sheetNumber + " not found");
 		}
-		AvailsSheet as = new AvailsSheet(this, excelSheet); 
+		AvailsSheet as = new AvailsSheet(this, excelSheet);
 		wrkBook.close();
 		return as;
 	}
