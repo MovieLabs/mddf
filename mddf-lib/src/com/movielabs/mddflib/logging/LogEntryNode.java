@@ -24,6 +24,8 @@ package com.movielabs.mddflib.logging;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jdom2.Element;
+
 /**
  * @author L. Levin, Critical Architectures LLC
  *
@@ -97,6 +99,75 @@ public class LogEntryNode extends LogEntry {
 
 	public String toString() {
 		return summary.substring(0, Math.min(10, summary.length()));
+	}
+
+	/**
+	 * Create a XML representation of the <tt>LogEntry</tt>. All fields
+	 * identified by <tt>DEFAULT_COL_NAMES</tt> are included.
+	 * 
+	 * @return Element
+	 */
+	public Element toXml() {
+		return toXml(DEFAULT_COL_NAMES);
+	}
+
+	/**
+	 * Create a XML representation of the <tt>LogEntry</tt>. All fields listed
+	 * in <tt>selectedFields</tt> are included.
+	 * 
+	 * @param selectedFields
+	 * @return Element
+	 */
+	private Element toXml(String[] selectedFields) {
+		Element entryEl = new Element("Entry");
+		for (int j = 0; j < selectedFields.length; j++) {
+			String value = null;
+			switch (selectedFields[j]) {
+			case "Num":
+				value = Integer.toString(msgSeqNum);
+				break;
+			case "Level":
+				value = LogMgmt.logLevels[level];
+				break;
+			case "Tag":
+				value = getTagAsText();
+				break;
+			case "File":
+				value = locFile;
+				break;
+			case "Line":
+				if (locLine < 0) {
+				} else {
+					value = Integer.toString(locLine);
+				}
+				break;
+			case "Module":
+				value = moduleID;
+				break;
+			case "Reference":
+				value = getReference();
+				break;
+			// ... Non Attribute data:
+			case "Summary":
+				entryEl.setText(summary);
+				break;
+			case "Details":
+				if (tooltip != null && !tooltip.isEmpty() && !tooltip.equalsIgnoreCase(summary)) {
+					Element detailEl = new Element("Details");
+					detailEl.setText(tooltip);
+					entryEl.addContent(detailEl);
+				}
+				break;
+			default:
+				value = null;
+				break;
+			}
+			if (value != null) {
+				entryEl.setAttribute(selectedFields[j], value);
+			}
+		}
+
+		return entryEl;
 	}
 
 	public String toCSV() {
