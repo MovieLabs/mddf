@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.movielabs.mddf</groupId>
+	<groupId>com.movielabs</groupId>
 	<artifactId>mddf-lib</artifactId>
-	<version>1.4</version>
+	<version>1.4.1.rc1-SNAPSHOT</version>
 	<name>mddf library</name>
 	<description>implements all core (i.e., non-UI) functionality that can be used to generate, validate, or transform MovieLabs Digital Distribution Framework (MDDF) files.</description>
 
@@ -152,6 +152,32 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -165,11 +191,31 @@
 		<name>Movie Labs</name>
 		<url>https://movielabs.com/</url>
 	</organization>
+
+	<developers>
+		<developer>
+			<name>Larry Levin</name>
+			<email>ljlevin@critarch.com</email>
+			<organization>Critical Architectures, LLC</organization>
+			<organizationUrl>http://www.criticalarchitectures.com</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:https://github.com/MovieLabs/mddf.git</connection>
+		<developerConnection>scm:git:https://github.com/MovieLabs/mddf.git</developerConnection>
+		<url>scm:git:https://github.com/MovieLabs/mddf.git</url>
+	</scm>
+
 	<url>https://github.com/MovieLabs/mddf</url>
 	<properties>
-		<mddf.src.tag>1.4</mddf.src.tag>
+		<mddf.src.tag>1.4.1.rc1</mddf.src.tag>
 		<mddf.build>1</mddf.build>
-        <timestamp>${maven.build.timestamp}</timestamp>
-        <maven.build.timestamp.format>yyyy-MMM-dd HH:mm:ss z</maven.build.timestamp.format>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MMM-dd HH:mm:ss z</maven.build.timestamp.format>
 	</properties>
 </project>
