@@ -59,50 +59,6 @@ import com.movielabs.mddflib.util.xml.XsdValidation;
  */
 public class ManifestValidator extends CMValidator {
 
-	/**
-	 * Used to facilitate keeping track of cross-references and identifying
-	 * 'orphan' elements.
-	 * 
-	 * @author L. Levin, Critical Architectures LLC
-	 *
-	 */
-	protected class XrefCounter {
-		private int count = 0;
-		private String elType;
-		private String elId;
-
-		/**
-		 * @param elType
-		 * @param elId
-		 */
-		XrefCounter(String elType, String elId) {
-			super();
-			this.elType = elType;
-			this.elId = elId;
-			// System.out.println("CONSTRUCT: "+elId+", cnt="+count);
-		}
-
-		int increment() {
-			count++;
-			return count;
-		}
-
-		void validate() {
-			// System.out.println(" VALIDATE: "+elId+", cnt="+count);
-			if (count > 0) {
-				return;
-			} else {
-				Map<String, Element> idMap = id2XmlMappings.get(elType);
-				Element targetEl = idMap.get(elId);
-				String explanation = "The element is never referenced by it's ID";
-				String msg = "Unreferenced <" + elType + "> Element";
-				loggingMgr.logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, targetEl, msg, explanation, null,
-						logMsgSrcId);
-			}
-		}
-
-	}
-
 	public static final String LOGMSG_ID = "ManifestValidator";
 
 	static {
@@ -394,6 +350,7 @@ public class ManifestValidator extends CMValidator {
 		 */
 		// Usage in Common Metadata XSD...
 		validateRegion(mdNSpace, "Region", mdNSpace, "country");
+		validateRegion(mdNSpace, "ExcludedRegion", mdNSpace, "country");
 		validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country");
 		validateRegion(mdNSpace, "CountryOfOrigin", mdNSpace, "country");
 

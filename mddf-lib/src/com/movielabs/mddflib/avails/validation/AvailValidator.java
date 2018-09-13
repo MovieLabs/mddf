@@ -54,102 +54,6 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  */
 public class AvailValidator extends CMValidator implements IssueLogger {
 
-	/**
-	 * Used to facilitate keeping track of the presence or absence of required
-	 * Assets within an Avail.
-	 * 
-	 * @author L. Levin, Critical Architectures LLC
-	 *
-	 */
-
-	protected class AvailRqmt {
-		private JSONObject rqmt;
-		private JSONArray included;
-		private int counter = 0;
-
-		AvailRqmt(JSONObject rqmt) {
-			this.rqmt = rqmt;
-			included = rqmt.getJSONArray("WorkType");
-		}
-
-		boolean notePresenceOf(String workType) {
-			if (included.contains(workType)) {
-				counter++;
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		/**
-		 * @param availEl
-		 * @return
-		 */
-		public boolean violated(Element availTypeEl) {
-			int min = rqmt.optInt("min", 0);
-			int max = rqmt.optInt("max", -1);
-			Element availEl = availTypeEl.getParentElement();
-			String availType = availTypeEl.getTextTrim();
-			String msg = "Invalid Asset structure for specified AvailType";
-			if (counter < min) {
-				String explanation = "Avail of type='" + availType + "' must have at least " + min
-						+ " Assets of WorkType=" + included.toString();
-				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, availEl, msg, explanation, AVAIL_RQMT_srcRef, logMsgSrcId);
-				return true;
-			}
-
-			if ((max > 0) && (counter > max)) {
-				String explanation = "Avail of type='" + availType + "' must have no more than " + max
-						+ " Assets of WorkType=" + included.toString();
-				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, availTypeEl, msg, explanation, AVAIL_RQMT_srcRef,
-						logMsgSrcId);
-				return true;
-			}
-			return false;
-		}
-	}
-
-	/**
-	 * Used to facilitate keeping track of cross-references and identifying
-	 * 'orphan' elements.
-	 * 
-	 * @author L. Levin, Critical Architectures LLC
-	 *
-	 */
-	protected class XrefCounter {
-		private int count = 0;
-		private String elType;
-		private String elId;
-
-		/**
-		 * @param elType
-		 * @param elId
-		 */
-		XrefCounter(String elType, String elId) {
-			super();
-			this.elType = elType;
-			this.elId = elId;
-		}
-
-		int increment() {
-			count++;
-			return count;
-		}
-
-		void validate() {
-			if (count > 0) {
-				return;
-			} else {
-				Map<String, Element> idMap = id2XmlMappings.get(elType);
-				Element targetEl = idMap.get(elId);
-				String explanation = "The element is never referenced by it's ID";
-				String msg = "Unreferenced <" + elType + "> Element";
-				logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_WARN, targetEl, msg, explanation, null, logMsgSrcId);
-			}
-		}
-
-	}
-
 	public static final String LOGMSG_ID = "AvailValidator";
 
 	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL", "avail01");
@@ -397,7 +301,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateRegion(primaryNS, "Region", mdNSpace, "country");
 
 		// in multiple places
-		validateRegion(mdNSpace, "Region", mdNSpace, "country");
+		validateRegion(mdNSpace, "Region", mdNSpace, "country"); 
 
 		/* Validate language codes */
 
