@@ -251,7 +251,7 @@ public class CMValidator extends XmlIngester {
 				} else {
 					int index = Integer.parseInt(indexAsString);
 					if (index >= validIndex.length) {
-						String msg = "value for indexing attribute out of range";
+						String msg = "Invalid value for indexing attribute (out of range)";
 						logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, nextChildEl, msg, null, null, logMsgSrcId);
 
 					} else if (validIndex[index]) {
@@ -270,7 +270,7 @@ public class CMValidator extends XmlIngester {
 				allValues = allValues && validIndex[j];
 			}
 			if (!allValues) {
-				String msg = "Invalid indexing of " + elementName + " sequence: be monotonically increasing";
+				String msg = "Invalid indexing of " + elementName + " sequence: must be continuous";
 				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, parentEl, msg, null, null, logMsgSrcId);
 				curFileIsValid = false;
 			}
@@ -392,7 +392,7 @@ public class CMValidator extends XmlIngester {
 			} else {
 				if (!idSet.add(idValue)) {
 					LogReference srcRef = LogReference.getRef("CM", "cm001a");
-					String msg = idAttribute + " is not unique";
+					String msg = "ID "+idAttribute + " is not unique";
 					int msgLevel;
 					if (reqUniqueness) {
 						msgLevel = LogMgmt.LEV_ERR;
@@ -692,7 +692,7 @@ public class CMValidator extends XmlIngester {
 				region = target.getText();
 				/* Is it valid ISO-3166-1 code? */
 				if (!iso3166_1_codes.containsKey(region)) {
-					String msg = "Invalid code for country";
+					String msg = "Invalid country code";
 					String explanation = "A country should be specified as a ISO 3166-1 Alpha-2 code";
 					logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
 					curFileIsValid = false;

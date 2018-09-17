@@ -277,7 +277,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 			default:
 				String errMsg = "Unrecognized PriceType '"+tName+"'";
 				Cell target = (Cell) pg.getSource();
-				logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, target, errMsg, null, null, XmlBuilder.moduleId);
+				logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, target, errMsg, null, null, XmlBuilder.moduleId);
 				return;
 
 			}
@@ -309,9 +309,9 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		String value = pg.getRawValue();
 		switch (value) {
 		case "SRP":
-			String errMsg = "The value '" + value + "' is not a valid PriceType for v1.7 Excel";
+			String errMsg = "Invalid PriceType  '" + value + "' for v1.7 Excel";
 			Cell target = (Cell) pg.getSource();
-			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, target, errMsg, null, null, XmlBuilder.moduleId);
+			logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, target, errMsg, null, null, XmlBuilder.moduleId);
 			return null;
 		}
 		return pg;

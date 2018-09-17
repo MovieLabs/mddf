@@ -324,7 +324,7 @@ public class XmlBuilder {
 				String details = "AVAIL was 1st defined in row " + row4log + " which specifies AvailAsset/WorkType as "
 						+ srcRow.getData("AvailAsset/WorkType") + " and requires WorkType=" + definedValue;
 				Cell sourceCell = curRow.sheet.getCell("AvailAsset/WorkType", curRow.getRowNumber());
-				logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
+				logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
 			}
 		}
 		return availEL;
@@ -352,7 +352,7 @@ public class XmlBuilder {
 			String details = entityName + " was 1st defined in row " + row4log + " which specifies " + colKey + " as '"
 					+ definedValue + "'";
 			Cell sourceCell = curRow.sheet.getCell(colKey, curRow.getRowNumber());
-			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
+			logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
 			return false;
 		}
 

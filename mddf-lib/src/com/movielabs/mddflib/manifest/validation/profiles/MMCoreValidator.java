@@ -146,7 +146,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		Element profileEl = compEl.getChild("Profile", manifestNSpace);
 		String profile = profileEl.getTextNormalize();
 		if (!profile.equals("MMC-1")) {
-			String msg = "Incompatible value";
+			String msg = "Incompatible profile";
 			String details = "Manifest must be specified as compatible with Profile 'MMC-1'";
 			loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, profileEl, msg, details, srcRef, logMsgSrcId);
 			curFileIsValid = false;
@@ -242,7 +242,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 			for(Element aeMapEl : mapElList){
 				expElList = aeMapEl.getChildren("ExperienceID", manifestNSpace);
 				if (expElList.size() != 1) {
-					String msg = "only one Experience can be referenced by 'ALIDExperienceMaps'";
+					String msg = "Invalid ALIDExperienceMaps; only one Experience can be referenced";
 					loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, aeMapEl, msg, null, srcRef, logMsgSrcId);
 					curFileIsValid = false;
 				}

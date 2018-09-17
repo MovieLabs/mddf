@@ -217,7 +217,7 @@ public abstract class AbstractRowHelper {
 		if (sourceCell != null && (sourceCell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
 			String errMsg = "Use of Excel Formulas not supported";
 			String details = "Use of formulas may prevent the use of automated workflows for ingesting and processing the Avails.";
-			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null, XmlBuilder.moduleId);
+			logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null, XmlBuilder.moduleId);
 			return true;
 		} else {
 			return false;
