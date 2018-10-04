@@ -181,7 +181,7 @@
 						"name": "channelGrouping",
 						"args": 
 						{
-							"type": "SVOD channel",
+							"type": "channel",
 							"col": "AvailMetadata/GroupIdentity"
 						}
 					}
@@ -338,7 +338,7 @@
 						"name": "channelGrouping",
 						"args": 
 						{
-							"type": "SVOD channel",
+							"type": "channel",
 							"col": "AvailMetadata/GroupIdentity"
 						}
 					}

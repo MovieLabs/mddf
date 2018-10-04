@@ -731,7 +731,7 @@
 			},
 			"AvailMetadata:CompanyDisplayCredit": "{avail}Metadata/{avail}CompanyDisplayCredit/{md}DisplayString",
 			"AvailMetadata:Director": "{avail}Metadata/{avail}People[//{md}JobFunction='Director']/{md}Name/{md}DisplayName",
-			"AvailMetadata:GroupIdentity": "{avail}Metadata/{avail}GroupingEntity[./{md}Type='SVOD channel']/{md}DisplayName",
+			"AvailMetadata:GroupIdentity": "{avail}Metadata/{avail}GroupingEntity[./{md}Type='channel']/{md}DisplayName",
 			"AvailMetadata:LocalizationType": "{avail}Metadata/{avail}LocalizationOffering",
 			"AvailMetadata:RatingReason": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Reason",
 			"AvailMetadata:RatingSystem": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}System",
@@ -899,7 +899,7 @@
 			},
 			"AvailMetadata:GroupIdentity": 
 			{
-				"Episode":"{avail}EpisodeMetadata/{avail}GroupingEntity[./{md}Type='SVOD channel']/{md}DisplayName"
+				"Episode":"{avail}EpisodeMetadata/{avail}GroupingEntity[./{md}Type='channel']/{md}DisplayName"
 			},
 			"AvailMetadata:LocalizationType": "{avail}EpisodeMetadata/{avail}LocalizationOffering",
 			"AvailMetadata:RatingReason": 
