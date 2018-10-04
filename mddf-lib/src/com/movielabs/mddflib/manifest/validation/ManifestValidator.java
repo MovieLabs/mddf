@@ -85,7 +85,6 @@ public class ManifestValidator extends CMValidator {
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_MANIFEST;
 	}
-	
 
 	/**
 	 * @param target
@@ -121,7 +120,6 @@ public class ManifestValidator extends CMValidator {
 		}
 		return curFileIsValid;
 	}
-
 
 	/**
 	 * Validate everything that is fully specified via the XSD.
@@ -177,8 +175,8 @@ public class ManifestValidator extends CMValidator {
 		validateXRef(".//manifest:Experience/manifest:TextGroupID", "TextGroup");
 		validateXRef(".//manifest:Experience/manifest:TimedSequenceID", "TimedEventSequence");
 		String xpath = ".//manifest:ExperienceChild/manifest:ExperienceID[not(../manifest:ExternalManifestID)]";
-		validateXRef(xpath, "Experience"); 
-		
+		validateXRef(xpath, "Experience");
+
 		validateXRef(".//manifest:Gallery/manifest:PictureGroupID", "PictureGroup");
 		validateXRef(".//manifest:Gallery/manifest:ContentID", "Metadata");
 
@@ -200,9 +198,9 @@ public class ManifestValidator extends CMValidator {
 		validateXRef(".//manifest:SubtitleTrackReference/manifest:SubtitleTrackID", "Subtitle");
 
 		validateXRef(".//manifest:InteractiveTrackReference/manifest:InteractiveTrackID", "Interactive");
-		
+
 		validateXRef(".//manifest:Experience/manifest:App/manifest:AppGroupID", "AppGroup");
-		
+
 		validateXRef(".//manifest:TimedEventSequence/manifest:PresentationID", "Presentation");
 		validateXRef(".//manifest:TimedEventSequence/manifest:PlayableSequenceID", "PlayableSequence");
 
@@ -223,9 +221,8 @@ public class ManifestValidator extends CMValidator {
 		 */
 		HashSet<String> idSet = idSets.get("Experience");
 		xpath = ".//manifest:ExperienceChild/manifest:ExperienceID[../manifest:ExternalManifestID]";
-		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null,
-				manifestNSpace);
-		List<Element> elementList = xpExpression.evaluate(curRootEl); 
+		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, manifestNSpace);
+		List<Element> elementList = xpExpression.evaluate(curRootEl);
 		for (int i = 0; i < elementList.size(); i++) {
 			Element refEl = (Element) elementList.get(i);
 			String targetId = refEl.getTextNormalize();
@@ -312,37 +309,56 @@ public class ManifestValidator extends CMValidator {
 			return;
 		}
 
-		JSONArray allowed = cmVocab.optJSONArray("WorkType");
-		LogReference srcRef = LogReference.getRef("CM", CM_VER, "cm002");
-		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, srcRef, true);
+		JSONArray expectedValues = cmVocab.optJSONArray("WorkType");
+		LogReference docRef = LogReference.getRef("CM", CM_VER, "cm002");
+		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", expectedValues, docRef, true, true);
+		validateVocab(mdNSpace, "Work", mdNSpace, "WorkType", expectedValues, docRef, true, true);
 
-		allowed = cmVocab.optJSONArray("ColorType");
-		srcRef = LogReference.getRef("CM", CM_VER, "cm003");
-		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", allowed, srcRef, true);
+		expectedValues = cmVocab.optJSONArray("ColorType");
+		docRef = LogReference.getRef("CM", CM_VER, "cm003");
+		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", expectedValues, docRef, true,
+				true);
 
-		allowed = cmVocab.optJSONArray("PictureFormat");
-		srcRef = LogReference.getRef("CM", CM_VER, "cm004");
-		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", allowed, srcRef, true);
+		expectedValues = cmVocab.optJSONArray("PictureFormat");
+		docRef = LogReference.getRef("CM", CM_VER, "cm004");
+		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", expectedValues, docRef, true, true);
 
-		allowed = cmVocab.optJSONArray("ReleaseType");
-		srcRef = LogReference.getRef("CM", CM_VER, "cm005");
-		validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, srcRef, true);
+		expectedValues = cmVocab.optJSONArray("ReleaseType");
+		docRef = LogReference.getRef("CM", CM_VER, "cm005");
+		validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", expectedValues, docRef, true, true);
 
-		allowed = cmVocab.optJSONArray("TitleAlternate@type");
-		srcRef = LogReference.getRef("CM", CM_VER, "cm006");
-		validateVocab(mdNSpace, "TitleAlternate", null, "@type", allowed, srcRef, true);
+		expectedValues = cmVocab.optJSONArray("TitleAlternate@type");
+		docRef = LogReference.getRef("CM", CM_VER, "cm006");
+		validateVocab(mdNSpace, "TitleAlternate", null, "@type", expectedValues, docRef, true, true);
 
-		allowed = cmVocab.optJSONArray("Parent@relationshipType");
-		srcRef = LogReference.getRef("CM", CM_VER, "cm007");
-		validateVocab(mdNSpace, "Parent", null, "@relationshipType", allowed, srcRef, true);
+		expectedValues = cmVocab.optJSONArray("Parent@relationshipType");
+		docRef = LogReference.getRef("CM", CM_VER, "cm007");
+		validateVocab(mdNSpace, "Parent", null, "@relationshipType", expectedValues, docRef, true, true);
 
-		allowed = cmVocab.optJSONArray("EntryClass");
-		srcRef = LogReference.getRef("CM", CM_VER, "cm008");
-		validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", allowed, srcRef, true);
+		expectedValues = cmVocab.optJSONArray("EntryClass");
+		docRef = LogReference.getRef("CM", CM_VER, "cm008");
+		validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", expectedValues, docRef, true, true);
 
-		allowed = cmVocab.optJSONArray("Parent@relationshipType");
-		srcRef = LogReference.getRef("CM", CM_VER, "cm007");
-		validateVocab(manifestNSpace, "ExperienceChild", manifestNSpace, "Relationship", allowed, srcRef, true);
+		expectedValues = cmVocab.optJSONArray("Parent@relationshipType");
+		docRef = LogReference.getRef("CM", CM_VER, "cm007");
+		validateVocab(manifestNSpace, "ExperienceChild", manifestNSpace, "Relationship", expectedValues, docRef, true,
+				true);
+
+		expectedValues = cmVocab.optJSONArray("Compliance/Disposition");
+		docRef = LogReference.getRef("CM", CM_VER, "cm_disp");
+		validateVocab(mdNSpace, "Compliance", mdNSpace, "Disposition", expectedValues, docRef, true, true);
+
+		expectedValues = cmVocab.optJSONArray("Gender");
+		docRef = LogReference.getRef("CM", CM_VER, "cm_gender");
+		validateVocab(mdNSpace, "People", mdNSpace, "Gender", expectedValues, docRef, true, true);
+
+		expectedValues = cmVocab.optJSONArray("GroupingEntity/Type");
+		docRef = LogReference.getRef("CM", "cm_gType");
+		validateVocab(mdNSpace, "GroupingEntity", mdNSpace, "Type", expectedValues, docRef, true, false);
+
+		expectedValues = cmVocab.optJSONArray("Relationship/Type");
+		docRef = LogReference.getRef("CM", "cm_gType");
+		validateVocab(mdNSpace, "Relationship", mdNSpace, "Type", expectedValues, docRef, true, false);
 
 		// ----------------------------------------
 		/*
@@ -361,10 +377,11 @@ public class ManifestValidator extends CMValidator {
 
 		// --------------- Validate language codes
 		// ----------------------------------------
-		
+
 		/* First check all usage of the '@language' attribute */
 		validateLanguage(manifestNSpace);
-		
+		validateLanguage(mdNSpace);
+
 		/*
 		 * Language codes in INVENTORY:
 		 */
@@ -373,13 +390,13 @@ public class ManifestValidator extends CMValidator {
 		validateLanguage(mdNSpace, "SignedLanguage", null, null);
 		validateLanguage(mdNSpace, "PrimarySpokenLanguage", null, null);
 		validateLanguage(mdNSpace, "OriginalLanguage", null, null);
-		validateLanguage(mdNSpace, "VersionLanguage", null, null); 
+		validateLanguage(mdNSpace, "VersionLanguage", null, null);
 		/*
 		 * PRESENTATION:
 		 */
 		validateLanguage(manifestNSpace, "SystemLanguage", null, null);
 		validateLanguage(manifestNSpace, "AudioLanguage", null, null);
-		validateLanguage(manifestNSpace, "SubtitleLanguage", null, null); 
+		validateLanguage(manifestNSpace, "SubtitleLanguage", null, null);
 		/*
 		 * PLAYABLE SEQ:
 		 */
@@ -391,18 +408,16 @@ public class ManifestValidator extends CMValidator {
 		validateLanguage(manifestNSpace, "LanguageInImage", null, null);
 		/*
 		 * TEXT GROUP:
-		 */ 
-		
+		 */
+
 		/*
 		 * EXPERIENCES:
 		 */
 		validateLanguage(manifestNSpace, "Language", null, null);
-		validateLanguage(manifestNSpace, "ExcludedLanguage", null, null); 
+		validateLanguage(manifestNSpace, "ExcludedLanguage", null, null);
 
 		validateRatings();
 
-		// ====================================
-		// TODO: DIGITAL ASSET METADATA
 
 	}
 
@@ -438,7 +453,7 @@ public class ManifestValidator extends CMValidator {
 			try {
 				String targetLoc = PathUtilities.convertToAbsolute(baseLoc, containerPath);
 				File target = new File(targetLoc);
-				System.out.println("DEBUG-1: Found MEC to validate at "+targetLoc);
+				System.out.println("DEBUG-1: Found MEC to validate at " + targetLoc);
 				supportingMecFiles.add(target);
 				if (!target.exists()) {
 					String errMsg = "Referenced container not found";
@@ -511,9 +526,7 @@ public class ManifestValidator extends CMValidator {
 	 * @see com.movielabs.mddflib.util.CMValidator#validateUsage()
 	 */
 	protected void validateUsage() {
-		// TODO Auto-generated method stub
-		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.LEV_INFO, "Validating structure...", curFile, LOGMSG_ID);
-
+		super.validateUsage();
 		/*
 		 * Load JSON that defines various constraints on structure of the XML
 		 * This is version-specific but not all schema versions have their own
@@ -560,5 +573,5 @@ public class ManifestValidator extends CMValidator {
 	public ArrayList<File> getSupportingMecFiles() {
 		return supportingMecFiles;
 	}
- 
+
 }

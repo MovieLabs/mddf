@@ -208,9 +208,45 @@ public class CMValidator extends XmlIngester {
 	 * @see com.movielabs.mddflib.util.xml.StructureValidation
 	 */
 	protected void validateUsage() {
+
 		/*
-		 * nothing to deo Should be overridden by extending classes.
+		 * Load JSON that defines various constraints on structure of the XML
+		 * This is version-specific but not all schema versions have their own
+		 * unique struct file (e.g., a minor release may be compatible with a
+		 * previous release).
 		 */
+		/* v2.7 is 1st CM version to have structure rqmts */
+		String structVer = null;
+		switch (CM_VER) {
+		case "2.7":
+			structVer = "2.7";
+			break;
+		default:
+			// Not supported for the version
+			return;
+		}
+
+		JSONObject structDefs = XmlIngester.getMddfResource("structure_cm", structVer);
+		if (structDefs == null) {
+			// LOG a FATAL problem.
+			String msg = "Unable to process; missing structure definitions for Common Metadata v" + CM_VER;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MD, msg, curFile, logMsgSrcId);
+			return;
+		}
+
+		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
+		Iterator<String> keys = rqmtSet.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
+			// NOTE: This block of code requires a 'targetPath' be defined
+			if (rqmtSpec.has("targetPath")) {
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, "Structure check; key= " + key, curFile, logMsgSrcId);
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
+			}
+		}
+
+		return;
 	}
 
 	/**
@@ -392,7 +428,7 @@ public class CMValidator extends XmlIngester {
 			} else {
 				if (!idSet.add(idValue)) {
 					LogReference srcRef = LogReference.getRef("CM", "cm001a");
-					String msg = "ID "+idAttribute + " is not unique";
+					String msg = "ID " + idAttribute + " is not unique";
 					int msgLevel;
 					if (reqUniqueness) {
 						msgLevel = LogMgmt.LEV_ERR;
@@ -992,6 +1028,23 @@ public class CMValidator extends XmlIngester {
 		return allOK;
 	}
 
+	/**
+	 * Equivalent to calling
+	 * <tt>validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
+			JSONArray expected, LogReference srcRef, boolean caseSensitive, boolean strict)</tt>
+	 * with <tt>strict = true</tt>
+	 * 
+	 * @param primaryNS
+	 * @param primaryEl
+	 * @param childNS
+	 * @param child
+	 * @param expected
+	 * @param srcRef
+	 * @param caseSensitive
+	 * @deprecated use validateVocab(Namespace primaryNS, String primaryEl,
+	 *             Namespace childNS, String child, JSONArray expected,
+	 *             LogReference srcRef, boolean caseSensitive, boolean strict)
+	 */
 	protected void validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
 			JSONArray expected, LogReference srcRef, boolean caseSensitive) {
 		validateVocab(primaryNS, primaryEl, childNS, child, expected, srcRef, caseSensitive, true);
@@ -1002,10 +1055,10 @@ public class CMValidator extends XmlIngester {
 	 * @param primaryEl
 	 * @param childNS
 	 * @param child
-	 * @param expected
-	 * @param srcRef
-	 * @param caseSensitive
-	 * @return
+	 * @param expected expected values
+	 * @param srcRef source of supplementary documentation for log entries (optional)
+	 * @param caseSensitive if <tt>true</tt> matching to expected values is case-sensitive.
+	 * @param strict if <tt>true</tt> non-matches are treated as errors, otherwise as warnings. 
 	 */
 	protected void validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
 			JSONArray expected, LogReference srcRef, boolean caseSensitive, boolean strict) {

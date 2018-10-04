@@ -132,6 +132,7 @@ public class MecValidator extends CMValidator {
 		
 		/* First check all usage of the '@language' attribute */
 		validateLanguage(manifestNSpace);
+		validateLanguage(mdNSpace);
 		
 		// Now check any other usage....
 		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "PrimarySpokenLanguage");

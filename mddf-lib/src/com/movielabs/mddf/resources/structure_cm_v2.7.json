@@ -1,0 +1,24 @@
+{
+	"COMMENT": "refer to Javadoc for com.movielabs.mddflib.util.xml.StructureValidation before editing",
+	"StrucRqmts": 
+	{ 
+		"Compliance": 
+		{
+			"targetPath": ".//{md}Compliance",
+			"constraint": 
+			[
+				{
+					"xpath": 
+					[
+						"./{md}Category",
+						"./{md}Standard"
+					],
+ 
+					"min": "1", 
+					"severity": "Error",
+					"msg": "At least one of Category and Standard must be specified for Compliance"
+				}
+			]
+		} 
+	}
+}
