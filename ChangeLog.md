@@ -5,29 +5,32 @@
 
 ## Versioning
 
-The latest release of the core mddf-lib is v1.4.1_rc{n}
+The latest release of the core mddf-lib is v1.4.1_rc2
 
-* Bug Fix: All Avail conversions to an XLSX format failed due to improper identification of target format
+* Enhancement: support for CM v2.7 added
+* Internal: refactoring of code validating cross-referencing
+
+#### mddf-lib v1.4.1_rc1
 * Enhancement: Log file can now be exported as XML
+* Bug Fix: All Avail conversions to an XLSX format failed due to improper identification of target format
 
-### mddf-lib mddf-lib is v1.4
-
+### mddf-lib v1.4
 * Enhancement: support for Avails v1.7.3 
 * Enhancement: support for translating to/from Avails v2.3 added 
 * Enhancement: any information removed when translating between versions gets logged (severity level = 'Notice')
 * Enhancement: allow, in addition to Yes/No, either Y/N, T/F, or True/False as boolean values 
 
-#### rc3
+#### _v1.4.rc3_
 * Bug Fix: v1.7.3 XLSX ingest dropped SeriesID, SeasonID and non-EIDR EditID and TitleID
 * Bug Fix: Avails validation did not allow TPR prefix for LicenseFee and Category terms
  
-#### rc2
+#### *v1.4.rc2*
 * Bug Fix: XLSX ingest of local file required WRITE access to close resource handle.
 * Bug Fix: handling XLSX cell with invalid boolean value did not report error correctly
 * Bug Fix: XLSX Avails without AssetLanguage threw Null Pointer Exception
 * BUG FIX: re XLSX Avails v1.7.3 mapping of EIDR vs non-EIDR EditID and TitleID
 
-#### rc1
+#### v1.4.rc1_
 * Bug Fix: Conversion of XLSX Avails to XML dropped FormatProfile attributes
 * Bug Fix: Validation of controlled vocabulary did not check attributes (e.g., Avails termNames)
 * Bug Fix: Processing of XLSX Avails dropped Start or End values that included time values.
@@ -35,25 +38,24 @@ The latest release of the core mddf-lib is v1.4.1_rc{n}
 * Bug Fix: Conversion to XLSX Avails from either XML or another version of XLSX incorrectly processed ReportingID
 * Bug Fix: Manifest validation incorrectly flagged AppGroup and Interactive  elements as unreferenced.
 
-#### mddf-lib v1.3.2
-
+### mddf-lib v1.3.2
 * Enhancement: POM file for Maven builds added.
 * Enhancement: Added APIs to validation functions to support cloud-based services.
 * Enhancement: Additions to logging utilities to support cloud-based services.
 * Bug Fix: Conversion of XLSX Avails to XML incorrectly rounded Transaction start and end dates.
 * Internal: refactoring of utilities used to convert dates and times to/from XSD syntax
 
-#### mddf-lib v1.3.1
+### mddf-lib v1.3.1
 * Enhancement: support for Avails v2.3 added
 * Enhancement: support for Manifest v1.7 added
 * Enhancement: support for MDMEC v2.6 added
 * Deprecation: support for translation to Avails v2.2.2 has been removed
 * Internal: added functions to support advanced XSD usage
 
-#### mddf-lib v1.3
+### mddf-lib v1.3
 * v1.3_rc4 has been released as v1.3
 
-#### mddf-lib v1.3_rc4
+#### *v1.3_rc4*
 * Enhancement: Avails XLSX file may be re-formatted and cleaned up.
 * Bug Fix: Flag as an ERROR when Avails XLSX contains Avail in 3rd row.
 * Bug Fix: Error handling when an Excel column is missing
@@ -62,7 +64,7 @@ The latest release of the core mddf-lib is v1.4.1_rc{n}
 * BUG FIX: ReportingID was being dropped when converting Avails to XML
 * BUG FIX: Avails XSLX compression (i.e. empty column hiding) now preserves all data formats
 
-#### mddf-lib v1.3_rc3
+#### *v1.3_rc3*
 * Enhancement: Identified use of Excel formats other than .xlsx as a security risk.
 * Enhancement: UI for Avails translation has improved layout and design.
 * Enhancement: hide empty Excel columns in saved Avails spreadsheets
@@ -83,16 +85,16 @@ The latest release of the core mddf-lib is v1.4.1_rc{n}
 * Internal: increased flexibility of Structure Validation module
 * Internal: refactoring of Avails Translator and TranslatorDialog to improve modularity.
 
-#### mddf-lib v1.2
+### mddf-lib v1.2
 * No changes. Functionally equivalent to v1.1.3_rc8
 
-#### mddf-lib v1.1.3_rc8
+#### *v1.1.3_rc8*
 * Enhancement: Inability to parse Avails in XLSX due to embedded objects or comments now results in log msgs clearly identifying problem.
 * Enhancement: CLI support for translation of Avails
 * Bug fix: When translating v1.6 XLSX Avails to v1.7 XLSX or v2.2 XML, StoreLanguage was not properly converted to AssetLanguage.
 * Bug fix: When translating v1.6 XLSX Avails to v1.7 XLSX or v2.2 XML, HoldbackExclusionLanguage was not properly converted to AllowedLanguage.
 
-#### mddf-lib v1.1.3_rc6
+#### *v1.1.3_rc6*
 
 * Enhancement: processing of TV Avails specified in Excel v1.6 format now handles 'Exception(s)Flag' typo in the template
 * Enhancement: support for MEC v2.5 added.
@@ -107,20 +109,17 @@ The latest release of the core mddf-lib is v1.4.1_rc{n}
 * Internal: LicenseRightsDescription is now treated as freeform when validating Avails.
 * Internal: Class AbstractValidator has been renamed CMValidator and is no longer abstract.
 
-#### mddf-lib v1.1.2
-
+### mddf-lib v1.1.2
 * Bug Fix: Validation of controlled (i.e., enummerated) vocabulary did not correctly use appropriate schema version when checking.
 * Bug Fix: Validation of language tags ignored case of multiple languages being specified.
 * Bug Fix: Processing of TV Avails specified in Excel v1.6 format did not correctly identify version of template as v1.6
 * Bug Fix: Validation of TV Avails specified in Excel v1.6 format did not check EpisodeAltID, SeasonAltID, and SeriesAltID
 
-
-#### mddf-lib v1.1.1
+### mddf-lib v1.1.1
 
 * Bug Fix: When converting Avail from XLSX to XML multiple ReleaseHistory and Rating elements for a single Asset are now transfered even if defined on multiple rows.
 
-#### mddf-lib v1.1
-
+### mddf-lib v1.1
 * Enhancement: Conversion of Avails from XML to XLSX is now supported. Supported conversions are:
   * from XML (v2.1 or v2.2) to XLSX v1.7
   * from XLSX (v1.6 or v1.7) to XML v2.2
