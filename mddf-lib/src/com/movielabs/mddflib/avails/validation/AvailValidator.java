@@ -139,7 +139,6 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		return curFileIsValid;
 	}
 
-
 	/**
 	 * Validate everything that is not fully specified via the XSD.
 	 */
@@ -167,6 +166,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateAvailVocab();
 
 		validateUsage();
+
+		/* Validate indexed sequences that must be continuously increasing */
+		validateIndexing("BundledAsset", availsNSpace, "sequence", "Asset", availsNSpace);
 	}
 
 	/**
@@ -251,8 +253,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		Collection<Namespace> nSpaces = new HashSet<Namespace>();
 		nSpaces.add(primaryNS);
 		int tag4log = getLogTag(primaryNS, null);
-		boolean strict = false;  // allows for contract-specific terminology
-		validateVocab(nSpaces, "//avails:Term/@termName", true, allowed, docRef, true, strict, tag4log, "@termName"); 
+		boolean strict = false; // allows for contract-specific terminology
+		validateVocab(nSpaces, "//avails:Term/@termName", true, allowed, docRef, true, strict, tag4log, "@termName");
 
 		allowed = availVocab.optJSONArray("SharedEntitlement@ecosystem");
 		docRef = LogReference.getRef(doc, "avail09");
@@ -263,17 +265,21 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		allowed = availVocab.optJSONArray("USACaptionsExemptionReason");
 		docRef = LogReference.getRef(doc, "avail03");
 		validateVocab(primaryNS, "Asset", primaryNS, "USACaptionsExemptionReason", allowed, docRef, true, true);
-		validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "USACaptionsExemptionReason", allowed, docRef, true, true);
-		validateVocab(primaryNS, "SeasonMetadata", primaryNS, "USACaptionsExemptionReason", allowed, docRef, true, true);
-		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "USACaptionsExemptionReason", allowed, docRef, true, true);
-				
-		//added for v2.3
+		validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "USACaptionsExemptionReason", allowed, docRef, true,
+				true);
+		validateVocab(primaryNS, "SeasonMetadata", primaryNS, "USACaptionsExemptionReason", allowed, docRef, true,
+				true);
+		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "USACaptionsExemptionReason", allowed, docRef, true,
+				true);
+
+		// added for v2.3
 		tag4log = getLogTag(primaryNS, null);
 		allowed = availVocab.optJSONArray("@termName='TitleStatus'");
 		nSpaces = new HashSet<Namespace>();
 		nSpaces.add(primaryNS);
-		validateVocab(nSpaces, "//avails:Term/avails:Text[../@termName='TitleStatus']", false, allowed, docRef, true, true, tag4log, "@termName='TitleStatus'");
-		
+		validateVocab(nSpaces, "//avails:Term/avails:Text[../@termName='TitleStatus']", false, allowed, docRef, true,
+				true, tag4log, "@termName='TitleStatus'");
+
 	}
 
 	/**
@@ -300,7 +306,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateRegion(primaryNS, "Region", mdNSpace, "country");
 
 		// in multiple places
-		validateRegion(mdNSpace, "Region", mdNSpace, "country"); 
+		validateRegion(mdNSpace, "Region", mdNSpace, "country");
 
 		/* Validate language codes */
 
@@ -313,9 +319,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateLanguage(primaryNS, "Transaction", primaryNS, "AssetLanguage");
 		validateLanguage(primaryNS, "Transaction", primaryNS, "HoldbackLanguage");
 		validateLanguage(primaryNS, "Term", primaryNS, "Language");
-		
 
-		//added for CM v2.7, Avails v2.4:
+		// added for CM v2.7, Avails v2.4:
 		JSONObject cmVocab = (JSONObject) getVocabResource("cm", CM_VER);
 		if (cmVocab == null) {
 			String msg = "Unable to validate controlled vocab: missing resource file";
@@ -338,7 +343,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * @see com.movielabs.mddflib.util.CMValidator#validateUsage()
 	 */
 	protected void validateUsage() {
-		super.validateUsage(); 
+		super.validateUsage();
 		/*
 		 * Load JSON that defines various constraints on structure of an Avails.
 		 * This is version-specific but not all schema versions have their own
@@ -360,8 +365,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			structVer = "2.2";
 		}
 
-		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Validating structure using v"+structVer+" requirements", curFile, LOGMSG_ID);
-		
+		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL,
+				"Validating structure using v" + structVer + " requirements", curFile, LOGMSG_ID);
+
 		JSONObject availStructDefs = XmlIngester.getMddfResource("structure_avail", structVer);
 		if (availStructDefs == null) {
 			// LOG a FATAL problem.

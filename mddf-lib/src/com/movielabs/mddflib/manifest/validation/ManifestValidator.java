@@ -236,8 +236,16 @@ public class ManifestValidator extends CMValidator {
 		checkForOrphans();
 
 		/* Validate indexed sequences that must be monotonically increasing */
-		validateIndexing("Chapter", "index", "Chapters");
-
+		validateIndexing("Chapter", manifestNSpace, "index", "Chapters", manifestNSpace);
+		validateIndexing("Clip", manifestNSpace, "sequence", "PlayableSequence", manifestNSpace); 
+		validateIndexing("ImageClip", manifestNSpace, "sequence", "PlayableSequence", manifestNSpace); 
+		// ?? PictureGroup/Picture/Sequence
+		validateIndexing("TextString", manifestNSpace, "index", "TextObject", manifestNSpace); 
+		// ?? ExperienceChild/SequenceInfo/{md}Number ??? Note other 3 domain-specific numbers
+		validateIndexing("TextGroupID", manifestNSpace, "index", "TimedEvent", manifestNSpace); 
+		
+		//-------------------------------------------------------------------------------------
+		
 		/*
 		 * Validate the usage of controlled vocab (i.e., places where XSD
 		 * specifies a xs:string but the documentation specifies an enumerated
