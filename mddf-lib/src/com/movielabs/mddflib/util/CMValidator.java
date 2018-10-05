@@ -33,6 +33,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.jdom2.Attribute;
+import org.jdom2.DataConversionException;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
@@ -261,17 +262,27 @@ public class CMValidator extends XmlIngester {
 	}
 
 	/**
-	 * @param elementName
+	 * Validate sequencing of a set of <tt>targetEl</tt> where the set consists of all targets belonging to a
+	 * specific parentEl. Thus
+	 * <pre>
+	 * for each parentEl:
+	 *    Set targetSet = all targetEl with (parent == parentEl)
+	 *    <i>validate sequencing/indexing of <tt>targetSet</tt>
+	 * </pre>
+	 * @param targetEl
+	 * @param targetNSpace
 	 * @param idxAttribute
-	 * @param parentName
+	 * @param parentEl
+	 * @param parentNSpace
 	 */
-	protected void validateIndexing(String elementName, String idxAttribute, String parentName) {
-		XPathExpression<Element> xpExpression = xpfac.compile(".//manifest:" + parentName, Filters.element(), null,
-				manifestNSpace);
+	protected void validateIndexing(String targetEl, Namespace targetNSpace, String idxAttribute, String parentEl,
+			Namespace parentNSpace) {
+		XPathExpression<Element> xpExpression = xpfac.compile(".//" + parentNSpace.getPrefix() + ":" + parentEl,
+				Filters.element(), null, parentNSpace);
 		List<Element> parentElList = xpExpression.evaluate(curRootEl);
 		for (int i = 0; i < parentElList.size(); i++) {
-			Element parentEl = (Element) parentElList.get(i);
-			List<Element> childList = parentEl.getChildren(elementName, manifestNSpace);
+			Element nextParent = (Element) parentElList.get(i);
+			List<Element> childList = nextParent.getChildren(targetEl, targetNSpace);
 			Boolean[] validIndex = new Boolean[childList.size()];
 			Arrays.fill(validIndex, Boolean.FALSE);
 			for (int cPtr = 0; cPtr < childList.size(); cPtr++) {
@@ -306,8 +317,8 @@ public class CMValidator extends XmlIngester {
 				allValues = allValues && validIndex[j];
 			}
 			if (!allValues) {
-				String msg = "Invalid indexing of " + elementName + " sequence: must be continuous";
-				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, parentEl, msg, null, null, logMsgSrcId);
+				String msg = "Invalid indexing of " + targetEl + " sequence: must be continuous";
+				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, nextParent, msg, null, null, logMsgSrcId);
 				curFileIsValid = false;
 			}
 		}
@@ -1055,10 +1066,17 @@ public class CMValidator extends XmlIngester {
 	 * @param primaryEl
 	 * @param childNS
 	 * @param child
-	 * @param expected expected values
-	 * @param srcRef source of supplementary documentation for log entries (optional)
-	 * @param caseSensitive if <tt>true</tt> matching to expected values is case-sensitive.
-	 * @param strict if <tt>true</tt> non-matches are treated as errors, otherwise as warnings. 
+	 * @param expected
+	 *            expected values
+	 * @param srcRef
+	 *            source of supplementary documentation for log entries
+	 *            (optional)
+	 * @param caseSensitive
+	 *            if <tt>true</tt> matching to expected values is
+	 *            case-sensitive.
+	 * @param strict
+	 *            if <tt>true</tt> non-matches are treated as errors, otherwise
+	 *            as warnings.
 	 */
 	protected void validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
 			JSONArray expected, LogReference srcRef, boolean caseSensitive, boolean strict) {
