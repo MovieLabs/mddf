@@ -33,7 +33,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.jdom2.Attribute;
-import org.jdom2.DataConversionException;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
