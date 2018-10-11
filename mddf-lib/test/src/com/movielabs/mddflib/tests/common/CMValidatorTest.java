@@ -22,16 +22,19 @@
  */
 package com.movielabs.mddflib.tests.common;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.util.HashMap;
 import org.jdom2.Document;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.CMValidator;
@@ -63,21 +66,21 @@ public class CMValidatorTest extends CMValidator {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception {
 	}
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@AfterClass
+	@AfterAll
 	public static void tearDownAfterClass() throws Exception {
 	}
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		curFile = null;
 		curFileName = null;
@@ -90,7 +93,7 @@ public class CMValidatorTest extends CMValidator {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
  
@@ -134,7 +137,7 @@ public class CMValidatorTest extends CMValidator {
 
 		/* Reset and repeat with error-generating XML */
 		iLog.clearLog();
-		iLog.setPrintToConsole(true);
+//		iLog.setPrintToConsole(true);
 		initialize("CM_ID-errors.xml");
 		super.validateConstraints();
 		validateId("Audio", "AudioTrackID", true, true);

@@ -21,18 +21,21 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.movielabs.mddflib.tests.cpe;
-
-import static org.junit.Assert.*;
+ 
 import java.io.File;
 import java.util.List;
 
 import javax.swing.tree.DefaultTreeModel;
 
 import org.jdom2.Document;
-import org.jdom2.Element;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.jdom2.Element; 
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.CpeValidator;
@@ -57,14 +60,14 @@ public class CpeValidatorTest extends CpeValidator {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception {
 	}
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		curFile = null;
 		curFileName = null;

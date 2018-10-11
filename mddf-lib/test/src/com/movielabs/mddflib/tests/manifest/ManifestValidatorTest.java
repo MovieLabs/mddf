@@ -21,14 +21,15 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.movielabs.mddflib.tests.manifest;
-
-import static org.junit.Assert.*;
+ 
 import java.io.File;
 
 import org.jdom2.Document;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator;
@@ -41,27 +42,26 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  */
 public class ManifestValidatorTest extends ManifestValidator {
 
-
 	private static String rsrcPath = "./test/resources/manifest/";
 	private InstrumentedLogger iLog;
 
 	public ManifestValidatorTest() {
 		super(true, new InstrumentedLogger());
-		iLog = (InstrumentedLogger)loggingMgr;
+		iLog = (InstrumentedLogger) loggingMgr;
 	}
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception {
 	}
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
-	public void setUp() throws Exception { 
+	@BeforeEach
+	public void setUp() throws Exception {
 		curFile = null;
 		curFileName = null;
 		curFileIsValid = true;
@@ -69,19 +69,19 @@ public class ManifestValidatorTest extends ManifestValidator {
 		rootNS = null;
 		iLog.clearLog();
 	}
-	
+
 	/**
 	 * @param string
 	 */
 	protected void initialize(String testFileName) {
 		try {
 			setUp();
-		} catch (Exception e) { 
+		} catch (Exception e) {
 			assertNotNull(curRootEl);
 			return;
 		}
 		Document xmlDoc = loadTestArtifact(testFileName);
-		if (xmlDoc == null) { 
+		if (xmlDoc == null) {
 			assertNotNull(curRootEl);
 			return;
 		}
@@ -105,12 +105,12 @@ public class ManifestValidatorTest extends ManifestValidator {
 		}
 		return xmlDoc;
 	}
-	
+
 	/**
 	 * 
 	 */
 	@Test
-	public void testValidataMetadata(){
+	public void testValidataMetadata() {
 		/*
 		 * First run with error-free XML
 		 */
@@ -119,7 +119,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		
+
 		/*
 		 * Repeat with error-generating XML:
 		 */
@@ -130,5 +130,5 @@ public class ManifestValidatorTest extends ManifestValidator {
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
- 
+
 }

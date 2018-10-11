@@ -21,8 +21,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.movielabs.mddflib.tests.util.xml;
-
-import static org.junit.Assert.*;
+ 
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,18 +31,20 @@ import java.util.List;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test; 
+import static org.junit.jupiter.api.Assertions.*; 
 
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.xml.StructureValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
-import net.sf.json.JSONArray;
+import net.sf.json.JSONArray; 
 import net.sf.json.JSONObject;
 
 /**
@@ -66,7 +67,7 @@ public class StructureValidationTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@BeforeClass
+	@BeforeAll
 	public static void setUpBeforeClass() throws Exception {
 		iLog = new InstrumentedLogger();
 	}
@@ -74,14 +75,14 @@ public class StructureValidationTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@AfterClass
+	@AfterAll
 	public static void tearDownAfterClass() throws Exception {
 	}
 
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		iLog.clearLog();
 		Document xmlDoc = loadTestArtifact("mec1.xml");
@@ -95,7 +96,7 @@ public class StructureValidationTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	}
 
