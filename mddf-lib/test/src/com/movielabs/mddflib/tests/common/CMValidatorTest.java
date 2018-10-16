@@ -22,22 +22,14 @@
  */
 package com.movielabs.mddflib.tests.common;
 
-import java.io.File;
 import java.util.HashMap;
-import org.jdom2.Document;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.movielabs.mddflib.logging.LogMgmt;
-import com.movielabs.mddflib.testsupport.InstrumentedLogger;
-import com.movielabs.mddflib.util.CMValidator;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -53,50 +45,10 @@ import net.sf.json.JSONObject;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class CMValidatorTest extends CMValidator {
-
-	private static String rsrcPath = "./test/resources/common/";
-	private InstrumentedLogger iLog;
-
-	public CMValidatorTest() {
-		super(true, new InstrumentedLogger());
-		iLog = (InstrumentedLogger) loggingMgr;
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@BeforeAll
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@AfterAll
-	public static void tearDownAfterClass() throws Exception {
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@BeforeEach
-	public void setUp() throws Exception {
-		curFile = null;
-		curFileName = null;
-		curFileIsValid = true;
-		curRootEl = null;
-		rootNS = null;
-		iLog.clearLog();
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@AfterEach
-	public void tearDown() throws Exception {
-	}
+public class CMValidatorTest extends AbstractCmmTester {
  
+  
+
 	/**
 	 * Test method for
 	 * {@link com.movielabs.mddflib.util.CMValidator#validateNotEmpty(java.lang.String)}
@@ -104,7 +56,7 @@ public class CMValidatorTest extends CMValidator {
 	 */
 	@Test
 	public void testValidateNotEmpty() {
-		initialize("CM_withErrors.xml");
+		initialize("common/CM_withErrors.xml");
 		SchemaWrapper targetSchema = SchemaWrapper.factory("md-v" + XmlIngester.CM_VER);
 		validateNotEmpty(targetSchema);
 		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
@@ -125,12 +77,17 @@ public class CMValidatorTest extends CMValidator {
 		/*
 		 * First run with error-free XML
 		 */
-		initialize("CM_base.xml");
+		initialize("common/CM_base.xml");
 		super.validateConstraints();
-
-		validateId("Audio", "AudioTrackID", true, true);
-		validateId("Video", "VideoTrackID", true, true);
-		validateId("Metadata", "ContentID", true, true);
+		int count = 0;
+		Set idSet = validateId("Audio", "AudioTrackID", true, true);
+		count = count + idSet.size();
+		idSet = validateId("Video", "VideoTrackID", true, true);
+		count = count + idSet.size();
+		idSet = validateId("Metadata", "ContentID", true, true);
+		count = count + idSet.size();
+		System.out.println(".....idCount = " + count);
+		assertEquals(3, count);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
@@ -138,7 +95,7 @@ public class CMValidatorTest extends CMValidator {
 		/* Reset and repeat with error-generating XML */
 		iLog.clearLog();
 //		iLog.setPrintToConsole(true);
-		initialize("CM_ID-errors.xml");
+		initialize("common/CM_ID-errors.xml");
 		super.validateConstraints();
 		validateId("Audio", "AudioTrackID", true, true);
 		validateId("Video", "VideoTrackID", true, true);
@@ -165,7 +122,7 @@ public class CMValidatorTest extends CMValidator {
 		/*
 		 * First run with error-free XML
 		 */
-		initialize("CM_base.xml");
+		initialize("common/CM_base.xml");
 		super.validateConstraints();
 		/*
 		 * IDs must be processed before XREFs can be validated..
@@ -187,7 +144,7 @@ public class CMValidatorTest extends CMValidator {
 		 * Reset and run file with errors
 		 */
 		iLog.clearLog();
-		initialize("CM_IdXref-errors.xml");
+		initialize("common/CM_IdXref-errors.xml");
 		super.validateConstraints();
 		/*
 		 * IDs must be processed before XREFs can be validated..
@@ -211,88 +168,23 @@ public class CMValidatorTest extends CMValidator {
 
 	/**
 	 * Test method for
-	 * {@link com.movielabs.mddflib.util.CMValidator#validateRatings()}.
-	 */
-	@Test
-	public void testValidateRatings() {
-		initialize("CM_withErrors.xml");
-		validateRatings();
-		assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.movielabs.mddflib.util.CMValidator#validateLanguage(org.jdom2.Namespace, java.lang.String, org.jdom2.Namespace, java.lang.String)}
-	 * .
-	 */
-	@Test
-	public void testValidateLanguage() {
-		initialize("CM_withErrors.xml");
-		validateLanguage(mdNSpace, "PrimarySpokenLanguage", null, null); 
-		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.movielabs.mddflib.util.CMValidator#validateRegion(org.jdom2.Namespace, java.lang.String, org.jdom2.Namespace, java.lang.String)}
-	 * .
-	 */
-	@Test
-	public void testValidateRegion() {
-		initialize("CM_withErrors.xml");
-		boolean ok = validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country");
-		assertFalse(ok);
-		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.movielabs.mddflib.util.CMValidator#validateVocab(org.jdom2.Namespace, java.lang.String, org.jdom2.Namespace, java.lang.String, net.sf.json.JSONArray, com.movielabs.mddflib.logging.LogReference, boolean)}
 	 * .
 	 */
 	@Test
 	public void testValidateVocab() {
-		initialize("CM_withErrors.xml");
+		initialize("common/CM_withErrors.xml");
 		JSONObject cmVocab = (JSONObject) getVocabResource("cm", CM_VER);
 
 		JSONArray allowed = cmVocab.optJSONArray("WorkType");
-		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, null, true); 
+		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", allowed, null, true);
 		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 
 		iLog.clearLog();
 		allowed = cmVocab.optJSONArray("ReleaseType");
-		validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, null, true); 
+		validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, null, true);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 	}
-
-	/**
-	 * @param string
-	 */
-	protected void initialize(String testFileName) {
-		Document xmlDoc = loadTestArtifact(testFileName);
-		if (xmlDoc == null) {
-			return;
-		}
-		curRootEl = xmlDoc.getRootElement();
-		String schemaVer = identifyXsdVersion(curRootEl);
-		setManifestVersion(schemaVer);
-		rootNS = manifestNSpace;
-	}
-
-	private Document loadTestArtifact(String fileName) {
-		String srcFilePath = rsrcPath + fileName;
-		srcFile = new File(srcFilePath);
-		if (!srcFile.canRead()) {
-			return null;
-		}
-		Document xmlDoc;
-		try {
-			xmlDoc = XmlIngester.getAsXml(srcFile);
-		} catch (Exception e) {
-			return null;
-		}
-		return xmlDoc;
-	}
+ 
 
 }

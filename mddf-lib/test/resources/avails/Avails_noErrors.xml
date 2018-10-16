@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<avails:AvailList 
+  xmlns:avails="http://www.movielabs.com/schema/avails/v2.2.2/avails" 
+  xmlns:md="http://www.movielabs.com/schema/md/v2.5/md" 
+  xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.5" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <avails:Avail>
+    <avails:ALID>md:pseudoalid:wprid.fox.com:001143</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>20th Century Fox</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>single</avails:AvailType>
+    <avails:ShortDescription>generated XML from MOVIES_ANYWHERE_Avails_GoodHeader.xlsx:Sheet_0 on 2017.10.23.14.06.11</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:eidr-s:8FF3-1C20-84F5-F247-8BCD-E">
+      <avails:WorkType>Movie</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleDisplayUnlimited>THE BRAVADOS</avails:TitleDisplayUnlimited>
+        <avails:TitleInternalAlias>Bravados, The</avails:TitleInternalAlias>
+        <avails:EditEIDR-URN>urn:eidr:10.5240:77C5-ED35-8FC2-7D9D-9531-1</avails:EditEIDR-URN>
+        <avails:TitleEIDR-URN>urn:eidr:10.5240:8FF3-1C20-84F5-F247-8BCD-E</avails:TitleEIDR-URN>
+        <avails:AltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>AltID:001143</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:ReleaseDate>1958</avails:ReleaseDate>
+        <avails:RunLength>PT01H37M49S</avails:RunLength>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>DVD</md:ReleaseType>
+          <md:Date>2005-05-24</md:Date>
+        </avails:ReleaseHistory>
+        <avails:LocalizationOffering>any</avails:LocalizationOffering>
+      </avails:Metadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="1431081">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>1917-09-24T23:59:59</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>ar</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cmn</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cs</avails:AllowedLanguage>
+      <avails:AllowedLanguage>da</avails:AllowedLanguage>
+      <avails:AllowedLanguage>de</avails:AllowedLanguage>
+      <avails:AllowedLanguage>el</avails:AllowedLanguage>
+      <avails:AssetLanguage>EN</avails:AssetLanguage>
+      <avails:LicenseRightsDescription>Library</avails:LicenseRightsDescription>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:ReportingID>001143</avails:ReportingID>
+      <avails:Term termName="NA">
+        <avails:Text>NA</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="1432642">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>1917-09-24T23:59:59</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>ar</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cmn</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cs</avails:AllowedLanguage>
+      <avails:AllowedLanguage>da</avails:AllowedLanguage>
+      <avails:AllowedLanguage>de</avails:AllowedLanguage>
+      <avails:AllowedLanguage>el</avails:AllowedLanguage>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es-419</avails:AllowedLanguage>
+      <avails:AllowedLanguage>fi</avails:AllowedLanguage>
+      <avails:AllowedLanguage>fr</avails:AllowedLanguage>
+      <avails:AssetLanguage>EN</avails:AssetLanguage>
+      <avails:LicenseRightsDescription>Library</avails:LicenseRightsDescription>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:ReportingID>001143</avails:ReportingID>
+      <avails:Term termName="NA">
+        <avails:Text>NA</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:SharedEntitlement ecosystem="UVVU">
+      <avails:EcosystemID>urn:dece:alid:eidr-s:77C5-ED35-8FC2-7D9D-9531-1</avails:EcosystemID>
+    </avails:SharedEntitlement>
+    <avails:SharedEntitlement ecosystem="DMA">
+      <avails:EcosystemID>10.5240/77C5-ED35-8FC2-7D9D-9531-1</avails:EcosystemID>
+    </avails:SharedEntitlement>
+  </avails:Avail>
+  <!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+    <avails:Avail>
+    <avails:ALID>030434</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>20th Century Fox</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>single</avails:AvailType>
+    <avails:ShortDescription>generated XML from Amazon Avail 011317-nopricevalue_v1.xlsx:Sheet_0 on 2017.02.03.17.55.10</avails:ShortDescription>
+    <avails:Asset contentID="030434">
+      <avails:WorkType>Movie</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleDisplayUnlimited>Voll auf die Nüsse</avails:TitleDisplayUnlimited>
+        <avails:TitleInternalAlias>Dodgeball: A True Underdog Story</avails:TitleInternalAlias>
+        <avails:EditEIDR-URN>10.5240/2156-FA16-777A-20BF-AF2B-C</avails:EditEIDR-URN>
+        <avails:TitleEIDR-URN>10.5240/6FE7-5382-637F-2E34-7518-O</avails:TitleEIDR-URN>
+        <avails:ReleaseDate>2004</avails:ReleaseDate>
+        <avails:RunLength>PT01H32M03S</avails:RunLength>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>DVD</md:ReleaseType>
+          <md:Date>2005-02-10</md:Date>
+        </avails:ReleaseHistory>
+        <avails:Ratings>
+          <md:Rating>
+            <md:Region>
+              <md:country>DE</md:country>
+            </md:Region>
+            <md:System>FSK</md:System>
+            <md:Value>6</md:Value>
+          </md:Rating>
+        </avails:Ratings>
+        <avails:LocalizationOffering>subdub</avails:LocalizationOffering>
+      </avails:Metadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="957373">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>1917-09-24T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>ar</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cmn</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cs</avails:AllowedLanguage>
+      <avails:AllowedLanguage>da</avails:AllowedLanguage>
+      <avails:AllowedLanguage>de</avails:AllowedLanguage>
+      <avails:AllowedLanguage>el</avails:AllowedLanguage>
+      <avails:AssetLanguage>EN</avails:AssetLanguage>
+      <avails:LicenseRightsDescription>Library</avails:LicenseRightsDescription>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:Term termName="WSP">
+        <avails:Money>999.99</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="957355">
+      <avails:LicenseType>VOD</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2007-05-01T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>ar</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cmn</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cs</avails:AllowedLanguage>
+      <avails:AllowedLanguage>da</avails:AllowedLanguage>
+      <avails:AllowedLanguage>de</avails:AllowedLanguage>
+      <avails:AssetLanguage>EN</avails:AssetLanguage>
+      <avails:LicenseRightsDescription>Library</avails:LicenseRightsDescription>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="Category">
+        <avails:Text>NR</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+</avails:AvailList>

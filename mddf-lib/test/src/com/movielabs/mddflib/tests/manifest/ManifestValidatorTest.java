@@ -21,11 +21,13 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.movielabs.mddflib.tests.manifest;
- 
+
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.MissingResourceException;
 
-import org.jdom2.Document;
-
+import org.jdom2.JDOMException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
-import com.movielabs.mddflib.util.xml.XmlIngester;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * @author L. Levin, Critical Architectures LLC
@@ -73,62 +75,74 @@ public class ManifestValidatorTest extends ManifestValidator {
 	/**
 	 * @param string
 	 */
-	protected void initialize(String testFileName) {
+	protected MddfTarget initialize(String testFileName) {
+		String srcFilePath = rsrcPath + testFileName;
+		srcFile = new File(srcFilePath);
 		try {
-			setUp();
-		} catch (Exception e) {
-			assertNotNull(curRootEl);
-			return;
+			MddfTarget target = new MddfTarget(srcFile, iLog);
+			return target;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
 		}
-		Document xmlDoc = loadTestArtifact(testFileName);
-		if (xmlDoc == null) {
-			assertNotNull(curRootEl);
-			return;
-		}
-		curRootEl = xmlDoc.getRootElement();
-		String schemaVer = identifyXsdVersion(curRootEl);
-		setManifestVersion(schemaVer);
-		rootNS = manifestNSpace;
+
 	}
 
-	private Document loadTestArtifact(String fileName) {
-		String srcFilePath = rsrcPath + fileName;
-		srcFile = new File(srcFilePath);
-		if (!srcFile.canRead()) {
-			return null;
-		}
-		Document xmlDoc;
-		try {
-			xmlDoc = XmlIngester.getAsXml(srcFile);
-		} catch (Exception e) {
-			return null;
-		}
-		return xmlDoc;
+	/**
+	 * @throws JDOMException 
+	 * @throws IOException 
+	 * 
+	 */
+	@Test
+	public void testV16noErrors() throws IOException, JDOMException {
+		/*
+		 * First run with error-free XML
+		 */
+		MddfTarget target = initialize("MMM_v1.6_base.xml");
+		iLog.setPrintToConsole(true);
+		super.process(target);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
 
 	/**
 	 * 
 	 */
 	@Test
-	public void testValidataMetadata() {
-		/*
-		 * First run with error-free XML
-		 */
-		initialize("MMM_base_v1.6.xml");
-		super.validateMetadata();
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-
-		/*
-		 * Repeat with error-generating XML:
-		 */
-		iLog.clearLog();
-		initialize("MMM_wErrors_v1.6.xml");
+	public void testV16withErrors() {
+		initialize("MMM_v1.6_errors.xml");
 		super.validateMetadata();
 		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
 
+	/**
+	 * 
+	 */
+	@Test
+	public void testV17noErrors() {
+		/*
+		 * First run with error-free XML
+		 */
+		initialize("MMM_v1.7_base.xml");
+		super.validateMetadata();
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testV17withErrors() {
+		initialize("MMM_v1.7_errors.xml");
+		super.validateMetadata();
+		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+	}
 }

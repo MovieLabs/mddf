@@ -196,6 +196,9 @@
 	<manifest:Experiences>
 		<manifest:Experience version="0.1"
 			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq"> 
+			<manifest:ExcludedLanguage>en</manifest:ExcludedLanguage>
+			<!-- ERROR: Invalid language code -->
+			<manifest:ExcludedLanguage>canuk</manifest:ExcludedLanguage>
 			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 			</manifest:ContentID>
 			<manifest:Audiovisual
@@ -203,7 +206,20 @@
 				<!-- Unrecognized Audiovisual/Type -->
 				<manifest:Type>FOOBAR</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>
-				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V</manifest:PresentationID>
+				<manifest:PlayableSequence>
+				  <!-- ERROR: empty language code -->
+				  <manifest:Clip audioLanguage="">				
+				      <manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V</manifest:PresentationID>
+				  </manifest:Clip>
+				  <manifest:Clip audioLanguage="en">				
+				      <manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V</manifest:PresentationID>
+				  </manifest:Clip>
+				  <!-- ERROR: Invalid language code -->
+				  <manifest:Clip audioLanguage="english">				
+				      <manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V</manifest:PresentationID>
+				  </manifest:Clip>
+				</manifest:PlayableSequence>
+				
 			</manifest:Audiovisual>
 		</manifest:Experience>
 	</manifest:Experiences>
