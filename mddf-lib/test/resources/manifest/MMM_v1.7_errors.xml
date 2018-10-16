@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TEST ARTIFACT: This file contains 3 errors and 3 warnings -->
-<!--         To be used to perform tests relating to the v1.7 Media Manifest specification. -->
+<!-- TEST ARTIFACT: This file includes errors that can be used to perform 
+	specific JUnit tests relating to the Media Manifest specification. -->
 <manifest:MediaManifest
 	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.7/manifest"
 	xmlns:md="http://www.movielabs.com/schema/md/v2.6/md" xmlns:xs="http://www.w3.org/2001/XMLSchema"
