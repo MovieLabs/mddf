@@ -49,7 +49,7 @@
       <avails:LicenseType>EST</avails:LicenseType>
       <avails:Territory>
 	<!-- ERROR -->
-        <md:country>USA</md:country>
+        <md:country>JJ</md:country>
       </avails:Territory>
       <avails:Start>1917-09-24T23:59:59</avails:Start>
       <avails:EndCondition>Open</avails:EndCondition>
