@@ -156,9 +156,8 @@
 	</manifest:Presentations>
 	<manifest:Experiences>
 		<manifest:Experience version="0.1"
-			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha">
-			<!-- Not an ERR as Manifest spec does not require CID to map to Metadata in Inventory -->
-			<manifest:ContentID>md:cid:eidr-s:FFFF-FFFF-FFFF-FFFF-FFFF-V
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha"> 
+			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
 			</manifest:ContentID>
 			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 				<!-- feature movie -->

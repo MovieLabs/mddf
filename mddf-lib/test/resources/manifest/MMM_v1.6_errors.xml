@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TEST ARTIFACT: This file defines an error-free base-case that can be 
-	used to create artifacts supporting specific JUnit tests relating to the 
-	Media Manifest specification. -->
+<!-- TEST ARTIFACT: This file includes errors that can be used to perform 
+	specific JUnit tests relating to the Media Manifest specification. -->
 <manifest:MediaManifest
 	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.6/manifest"
 	xmlns:md="http://www.movielabs.com/schema/md/v2.5/md" 
@@ -23,6 +22,7 @@
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Audio>
+		<!-- WARNING: element is never referenced by it's ID due to ERR on line 161 -->
 		<manifest:Video VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<md:Picture />
 			<manifest:ContainerReference>
@@ -31,7 +31,7 @@
 			</manifest:ContainerReference>
 		</manifest:Video>
 		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
-		<!--  ERROR: Metadata/Alias requires peer BasicMetadata -->
+			<!--  ERROR: Metadata/Alias requires peer BasicMetadata -->
 			<manifest:Alias ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<manifest:LocalizedPair>
 					<manifest:LanguageIncluded>en</manifest:LanguageIncluded>
@@ -69,7 +69,8 @@
 				<md:ReleaseHistory>
 					<md:ReleaseType>original</md:ReleaseType>
 					<md:DistrTerritory>
-						<md:country>US</md:country>
+						<!--  ERROR: invalid country code -->
+						<md:country>JJ</md:country>
 					</md:DistrTerritory>
 					<md:Date>2016-09-24</md:Date>
 				</md:ReleaseHistory>
@@ -136,7 +137,8 @@
 				<md:PrimarySpokenLanguage>en-DE</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>en</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>en-1694acad</md:PrimarySpokenLanguage>
-				<md:PrimarySpokenLanguage>yee-HK</md:PrimarySpokenLanguage>
+				<!--  ERROR:Invalid language code-->
+				<md:PrimarySpokenLanguage>HK</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>cmn-Hans-CN</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>sr-Latn-RS</md:PrimarySpokenLanguage>
 			</manifest:BasicMetadata>
@@ -149,14 +151,14 @@
 		</manifest:Metadata>
 	</manifest:Inventory>
 	<manifest:Presentations>
-		<!-- the movie -->
+	  <!-- NOTICE: ID does not conform to recommendation (i.e. 'presentationid') -->
 		<manifest:Presentation
-			PresentationID="md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			PresentationID="md:pid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<manifest:TrackMetadata>
 				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
 				<manifest:VideoTrackReference>
-					<!-- the vidtrackid must match the one used in the inventory. -->
-					<manifest:VideoTrackID>md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					<!-- ERROR: the vidtrackid must match the one used in the inventory. -->
+					<manifest:VideoTrackID>md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-XXXX-V
 					</manifest:VideoTrackID>
 				</manifest:VideoTrackReference>
 				<manifest:AudioTrackReference>
@@ -174,14 +176,14 @@
 				<!-- feature movie -->
 				<manifest:Type>Main</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>
-				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				<manifest:PresentationID>md:pid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 				</manifest:PresentationID>
 			</manifest:Audiovisual>
 		</manifest:Experience>
 	</manifest:Experiences>
 	<manifest:ALIDExperienceMaps>
 		<manifest:ALIDExperienceMap>
-			<manifest:ALID>md:alid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02
+			<manifest:ALID>md:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02
 			</manifest:ALID>
 			<manifest:ExperienceID condition="Acquired">md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha
 			</manifest:ExperienceID>

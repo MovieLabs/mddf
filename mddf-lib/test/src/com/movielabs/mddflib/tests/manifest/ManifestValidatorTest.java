@@ -95,12 +95,8 @@ public class ManifestValidatorTest extends ManifestValidator {
 	 * 
 	 */
 	@Test
-	public void testV16noErrors() throws IOException, JDOMException {
-		/*
-		 * First run with error-free XML
-		 */
+	public void testV16noErrors() throws IOException, JDOMException { 
 		MddfTarget target = initialize("MMM_v1.6_base.xml");
-		iLog.setPrintToConsole(true);
 		super.process(target);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
@@ -108,41 +104,46 @@ public class ManifestValidatorTest extends ManifestValidator {
 	}
 
 	/**
+	 * @throws JDOMException 
+	 * @throws IOException 
 	 * 
 	 */
 	@Test
-	public void testV16withErrors() {
-		initialize("MMM_v1.6_errors.xml");
-		super.validateMetadata();
-		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+	public void testV16withErrors() throws IOException, JDOMException {
+		MddfTarget target = initialize("MMM_v1.6_errors.xml");
+		super.process(target);
+		assertEquals(5, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
 
 	/**
+	 * @throws JDOMException 
+	 * @throws IOException 
 	 * 
 	 */
 	@Test
-	public void testV17noErrors() {
-		/*
-		 * First run with error-free XML
-		 */
-		initialize("MMM_v1.7_base.xml");
-		super.validateMetadata();
+	public void testV17noErrors() throws IOException, JDOMException { 
+		MddfTarget target = initialize("MMM_v1.7_base.xml");
+		super.process(target);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
 
 	/**
+	 * @throws JDOMException 
+	 * @throws IOException 
 	 * 
 	 */
 	@Test
-	public void testV17withErrors() {
-		initialize("MMM_v1.7_errors.xml");
-		super.validateMetadata();
-		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+	public void testV17withErrors() throws IOException, JDOMException {
+		MddfTarget target = initialize("MMM_v1.7_errors.xml");
+		iLog.setPrintToConsole(true);
+		super.process(target);
+		iLog.setPrintToConsole(false);
+		assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		assertEquals(4, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
 }
