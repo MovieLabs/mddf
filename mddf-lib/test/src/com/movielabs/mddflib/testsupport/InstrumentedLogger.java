@@ -50,6 +50,7 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 
 	public InstrumentedLogger() {
 		clearLog();
+		minLevel = LogMgmt.LEV_NOTICE; //default
 	}
 
 	/**
@@ -61,6 +62,9 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	private void record(int level, int tag, int line, String msg) {
 		countByLevel[level]++;
 		countByTag[tag]++;
+		if(level < minLevel) {
+			return;
+		}
 		String key = line + ":" + tag + ":" + level;
 		msgMap.put(key, msg);
 		if (printToConsole) {
@@ -78,10 +82,15 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	 * @return
 	 */
 	public String getMsg(int level, int tag, int line) {
-		String key = line + ":" + tag + ":" + level;
+		String key = line + ":" + tag + ":" + level; 
 		return (msgMap.get(key));
 	}
 
+	/**
+	 * Return number of log entries tagged with the specified severity level
+	 * @param level
+	 * @return
+	 */
 	public int getCountForLevel(int level) {
 		return countByLevel[level];
 	}
@@ -188,10 +197,10 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	 * 
 	 * @see com.movielabs.mddflib.logging.LogMgmt#setMinLevel(int)
 	 */
-	@Override
-	public void setMinLevel(int level) {
-		// Not used or required for JUnit tests
-	}
+//	@Override
+//	public void setMinLevel(int level) {
+//		// Not used or required for JUnit tests
+//	}
 
 	/*
 	 * (non-Javadoc)
