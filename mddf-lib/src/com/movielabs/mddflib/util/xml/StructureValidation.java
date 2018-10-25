@@ -197,6 +197,9 @@ public class StructureValidation {
 
 		int min = constraint.optInt("min", 0);
 		int max = constraint.optInt("max", -1);
+		String severity = constraint.optString("severity", "Error");
+		int logLevel = LogMgmt.text2Level(severity);
+		
 		String docRef = constraint.optString("docRef");
 
 		Object xpaths = constraint.opt("xpath");
@@ -248,7 +251,7 @@ public class StructureValidation {
 				explanation = explanation + " matching the criteria [" + xpParts[1];
 			}
 			LogReference srcRef = resolveDocRef(docRef);
-			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
+			logger.logIssue(LogMgmt.TAG_AVAIL, logLevel, target, msg, explanation, srcRef, logMsgSrcId);
 			curFileIsValid = false;
 		}
 		if (max > -1 && (count > max)) {
@@ -261,7 +264,7 @@ public class StructureValidation {
 			}
 			String explanation = elName + " permits maximum of " + max + "  " + targetList + " elements";
 			LogReference srcRef = resolveDocRef(docRef);
-			logger.logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, target, msg, explanation, srcRef, logMsgSrcId);
+			logger.logIssue(LogMgmt.TAG_AVAIL, logLevel, target, msg, explanation, srcRef, logMsgSrcId);
 			curFileIsValid = false;
 		}
 
