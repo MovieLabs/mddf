@@ -337,8 +337,8 @@
 					],
 
 					"min": "1",
-					"severity": "Error",
-					"msg": "A TVOD License requires at least one term indicating pricing"
+					"severity": "Warning",
+					"msg": "A TVOD-based LicenseType requires at least one term indicating pricing"
 				}
 			]
 		},
