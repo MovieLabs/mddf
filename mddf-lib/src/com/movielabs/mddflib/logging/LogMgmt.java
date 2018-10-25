@@ -24,6 +24,7 @@ package com.movielabs.mddflib.logging;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author L. Levin, Critical Architectures LLC
@@ -136,4 +137,12 @@ public interface LogMgmt extends IssueLogger {
 	public void setInfoIncluded(boolean flag);
 
 	public boolean isInfoIncluded();
+
+	/**
+	 * @param severity
+	 * @return
+	 */
+	public static int text2Level(String severity) { 
+		return Arrays.binarySearch(logLevels, severity);
+	}
 }
