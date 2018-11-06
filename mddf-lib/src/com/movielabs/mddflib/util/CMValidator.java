@@ -275,10 +275,20 @@ public class CMValidator extends XmlIngester {
 
 	/**
 	 * Validate sequencing of a set of <tt>targetEl</tt> where the set consists of
-	 * all targets belonging to a specific parentEl. Thus
+	 * all targets belonging to a specific parentEl. *
+	 * <p>
+	 * In most cases indexing is optional. If it is a required attribute and is
+	 * missing then the XSD schema validation will fail before reaching this part of
+	 * the code. So in the current context of this code block we can consider
+	 * indexing to always be optional. HOWEVER if ANY child of a specific parent has
+	 * an index value specified then ALL child elements of that parent MUST also
+	 * specify an index value.
+	 * </p>
+	 * 
+	 * Thus
 	 * 
 	 * <pre>
-	 * for each parentEl:
+	 * for each parentEl  containing a targetEl with the index attribute present:
 	 *    Set targetSet = all targetEl with (parent == parentEl)
 	 *    <i>validate sequencing/indexing of <tt>targetSet</tt>
 	 * </pre>
@@ -291,12 +301,21 @@ public class CMValidator extends XmlIngester {
 	 */
 	protected void validateIndexing(String targetEl, Namespace targetNSpace, String idxAttribute, String parentEl,
 			Namespace parentNSpace) {
-		XPathExpression<Element> xpExpression = xpfac.compile(".//" + parentNSpace.getPrefix() + ":" + parentEl,
-				Filters.element(), null, parentNSpace);
+		String childPath = targetNSpace.getPrefix() + ":" + targetEl + "[@" + idxAttribute + "]";
+		String xpath = ".//" + parentNSpace.getPrefix() + ":" + parentEl + "[" + childPath + "]";
+		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, parentNSpace,
+				targetNSpace);
 		List<Element> parentElList = xpExpression.evaluate(curRootEl);
 		for (int i = 0; i < parentElList.size(); i++) {
 			Element nextParent = (Element) parentElList.get(i);
+
 			List<Element> childList = nextParent.getChildren(targetEl, targetNSpace);
+			if (childList.isEmpty()) {
+				continue;
+			}
+			int[] indexValues = new int[childList.size()];
+			Arrays.fill(indexValues, Integer.MAX_VALUE);
+			int ivCnt = 0;
 			Boolean[] validIndex = new Boolean[childList.size()];
 			Arrays.fill(validIndex, Boolean.FALSE);
 			for (int cPtr = 0; cPtr < childList.size(); cPtr++) {
@@ -311,30 +330,25 @@ public class CMValidator extends XmlIngester {
 					curFileIsValid = false;
 				} else {
 					int index = Integer.parseInt(indexAsString);
-					if (index >= validIndex.length) {
-						String msg = "Invalid value for indexing attribute (out of range)";
-						logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, nextChildEl, msg, null, null, logMsgSrcId);
-
-					} else if (validIndex[index]) {
-						// duplicate value
-						String msg = "Invalid value for indexing attribute (duplicate value)";
-						logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, nextChildEl, msg, null, null, logMsgSrcId);
-						curFileIsValid = false;
-					} else {
-						validIndex[index] = true;
-					}
+					indexValues[ivCnt++] = index;
 				}
 			}
 			// now make sure all values were covered..
-			boolean allValues = true;
-			for (int j = 0; j < validIndex.length; j++) {
-				allValues = allValues && validIndex[j];
-			}
-			if (!allValues) {
-				String msg = "Invalid indexing of " + targetEl + " sequence: must be continuous";
-				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, nextParent, msg, null, null, logMsgSrcId);
-				curFileIsValid = false;
-			}
+			Arrays.sort(indexValues);
+			if (childList.size() == ivCnt) {
+				/* we have correct number of valid index values but are they sequential? */
+				int lastValue = indexValues[0];
+				check: for (int next = 1; next < ivCnt; next++) {
+					if ((lastValue + 1) == indexValues[next]) {
+						lastValue = indexValues[next];
+					} else {
+						String msg = "Invalid indexing of " + targetEl + " sequence: must be continuous";
+						logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, nextParent, msg, null, null, logMsgSrcId);
+						curFileIsValid = false;
+						break;
+					}
+				}
+			} 
 		}
 	}
 
