@@ -62,8 +62,8 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 public class CMValidator extends XmlIngester {
 
 	/**
-	 * Used to facilitate keeping track of cross-references and identifying
-	 * 'orphan' elements.
+	 * Used to facilitate keeping track of cross-references and identifying 'orphan'
+	 * elements.
 	 * 
 	 * @author L. Levin, Critical Architectures LLC
 	 *
@@ -107,6 +107,7 @@ public class CMValidator extends XmlIngester {
 	protected static HashMap<String, String> id2typeMap;
 
 	protected static Properties iso3166_1_codes;
+	protected static Properties iso4217_codes;
 
 	protected static HashSet<String> specialRatings = new HashSet<String>();
 
@@ -137,10 +138,13 @@ public class CMValidator extends XmlIngester {
 			rfc5646Variant = rfc5646.getJSONArray("variant");
 			rfc5646Script = rfc5646.getJSONArray("script");
 			/*
-			 * ISO region/country codes are simple so we use Properties
+			 * ISO country and currency codes are simple so we use Properties
 			 */
-			String iso3166RsrcPath = MddfContext.RSRC_PATH + "ISO3166-1.properties";
-			iso3166_1_codes = loadProperties(iso3166RsrcPath);
+			String isoRsrcPath = MddfContext.RSRC_PATH + "ISO3166-1.properties";
+			iso3166_1_codes = loadProperties(isoRsrcPath);
+			isoRsrcPath = MddfContext.RSRC_PATH + "ISO4217.properties";
+			iso4217_codes = loadProperties(isoRsrcPath);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -153,8 +157,8 @@ public class CMValidator extends XmlIngester {
 	protected boolean validateC;
 	protected Element curRootEl;
 	/**
-	 * Set to <tt>true</tt> when starting validation of a file, then set to
-	 * false when any error is detected.
+	 * Set to <tt>true</tt> when starting validation of a file, then set to false
+	 * when any error is detected.
 	 */
 	protected boolean curFileIsValid;
 	protected Map<String, HashSet<String>> idSets;
@@ -187,21 +191,31 @@ public class CMValidator extends XmlIngester {
 	 * Validate everything that is not fully specified via the XSD.
 	 */
 	protected void validateConstraints() {
+		validateIdSet();
+		validateCountries();
+		validateLanguageCodes();
+		validateCurrencyCodes();
+		validateRatings();
+	}
+
+	/**
+	 * 
+	 */
+	protected void validateIdSet() {
 		idSets = new HashMap<String, HashSet<String>>();
 		idXRefCounts = new HashMap<String, Map<String, XrefCounter>>();
 		id2XmlMappings = new HashMap<String, Map<String, Element>>();
-
 	}
 
 	/**
 	 * Check for consistent usage. This typically means that an OPTIONAL element
-	 * will be either REQUIRED or INVALID for certain use-cases (e.g.
-	 * BundledAsset is only allowed when WorkType is 'Collection').
+	 * will be either REQUIRED or INVALID for certain use-cases (e.g. BundledAsset
+	 * is only allowed when WorkType is 'Collection').
 	 * <p>
-	 * Validation is based primarily on the <i>structure definitions</i> defined
-	 * in a version-specific JSON file. This will define various criteria that
-	 * must be satisfied for a given usage. The criteria are specified in the
-	 * form of XPATHs.
+	 * Validation is based primarily on the <i>structure definitions</i> defined in
+	 * a version-specific JSON file. This will define various criteria that must be
+	 * satisfied for a given usage. The criteria are specified in the form of
+	 * XPATHs.
 	 * </p>
 	 * 
 	 * @return
@@ -210,10 +224,9 @@ public class CMValidator extends XmlIngester {
 	protected void validateUsage() {
 
 		/*
-		 * Load JSON that defines various constraints on structure of the XML
-		 * This is version-specific but not all schema versions have their own
-		 * unique struct file (e.g., a minor release may be compatible with a
-		 * previous release).
+		 * Load JSON that defines various constraints on structure of the XML This is
+		 * version-specific but not all schema versions have their own unique struct
+		 * file (e.g., a minor release may be compatible with a previous release).
 		 */
 		/* v2.7 is 1st CM version to have structure rqmts */
 		String structVer = null;
@@ -254,20 +267,22 @@ public class CMValidator extends XmlIngester {
 	 */
 	private void validateCardinality() {
 		/*
-		 * Sec 4.2.7: At least one instance of ContainerReference or
-		 * BasicMetadata must be included for each Inventory/Metadata instance
+		 * Sec 4.2.7: At least one instance of ContainerReference or BasicMetadata must
+		 * be included for each Inventory/Metadata instance
 		 */
 
 	}
 
 	/**
-	 * Validate sequencing of a set of <tt>targetEl</tt> where the set consists of all targets belonging to a
-	 * specific parentEl. Thus
+	 * Validate sequencing of a set of <tt>targetEl</tt> where the set consists of
+	 * all targets belonging to a specific parentEl. Thus
+	 * 
 	 * <pre>
 	 * for each parentEl:
 	 *    Set targetSet = all targetEl with (parent == parentEl)
 	 *    <i>validate sequencing/indexing of <tt>targetSet</tt>
 	 * </pre>
+	 * 
 	 * @param targetEl
 	 * @param targetNSpace
 	 * @param idxAttribute
@@ -324,11 +339,11 @@ public class CMValidator extends XmlIngester {
 	}
 
 	/**
-	 * Check all Elements (or attributes) that are REQUIRED by a MDDF
-	 * Specification to provide a value actually do. This is a necessary step as
-	 * validation against the XSD only verify the presence of an Element. Thus,
-	 * an XML file with the Element <tt>&lt;Foo&gt;&lt;/Foo&gt;</tt> would pass
-	 * the XSD check even though it fails to provide a required value.
+	 * Check all Elements (or attributes) that are REQUIRED by a MDDF Specification
+	 * to provide a value actually do. This is a necessary step as validation
+	 * against the XSD only verify the presence of an Element. Thus, an XML file
+	 * with the Element <tt>&lt;Foo&gt;&lt;/Foo&gt;</tt> would pass the XSD check
+	 * even though it fails to provide a required value.
 	 * 
 	 * @param targetSchema
 	 */
@@ -363,20 +378,19 @@ public class CMValidator extends XmlIngester {
 	// ..................
 
 	/**
-	 * Check for the presence of an ID and, if provided, verify it is unique and
-	 * has the correct structure and syntax as defined in Section 3 of
+	 * Check for the presence of an ID and, if provided, verify it is unique and has
+	 * the correct structure and syntax as defined in Section 3 of
 	 * <tt>Manifest/Avails Delivery Best Practices (BP-META-MMMD)</tt>. All
 	 * extracted ID values will be saved as an <tt>idSet</tt> that can latter be
 	 * used to validate cross-references.
 	 * <p>
-	 * The value of the ID is extracted using the <tt>idElement</tt> and
-	 * (optional) <tt>idAttribute</tt> arguments. If the <tt>idAttribute</tt> is
-	 * <tt>null</tt> the value used is the idElement's text.
+	 * The value of the ID is extracted using the <tt>idElement</tt> and (optional)
+	 * <tt>idAttribute</tt> arguments. If the <tt>idAttribute</tt> is <tt>null</tt>
+	 * the value used is the idElement's text.
 	 * </p>
 	 * 
 	 * @param idElement
-	 * @param idAttribute
-	 *            (optional)
+	 * @param idAttribute   (optional)
 	 * @param reqUniqueness
 	 * @param chkSyntax
 	 * @return the <tt>Set</tt> of unique IDs found.
@@ -388,13 +402,11 @@ public class CMValidator extends XmlIngester {
 		HashSet<String> idSet = new HashSet<String>();
 
 		/*
-		 * idXRefCounter is initialized here but will 'filled in' by
-		 * validateXRef();
+		 * idXRefCounter is initialized here but will 'filled in' by validateXRef();
 		 */
 		HashMap<String, XrefCounter> idXRefCounter = new HashMap<String, XrefCounter>();
 		/*
-		 * id2XmlMap is provided for look-ups later as an alternative to using
-		 * XPaths.
+		 * id2XmlMap is provided for look-ups later as an alternative to using XPaths.
 		 */
 		HashMap<String, Element> id2XmlMap = new HashMap<String, Element>();
 
@@ -450,8 +462,8 @@ public class CMValidator extends XmlIngester {
 				}
 				if (chkSyntax) {
 					/*
-					 * Validate identifier structure conforms with Sec 2.1 of
-					 * Common Metadata spec (v2.4)
+					 * Validate identifier structure conforms with Sec 2.1 of Common Metadata spec
+					 * (v2.4)
 					 */
 
 					String idSyntaxPattern = "[\\S-[:]]+:[\\S-[:]]+:[\\S-[:]]+:[\\S]+$";
@@ -485,10 +497,10 @@ public class CMValidator extends XmlIngester {
 	 * @param idAttribute
 	 * @param targetEl
 	 */
-	protected void validateIdType(String idType, String idAttribute, Element targetEl) {
+	private void validateIdType(String idType, String idAttribute, Element targetEl) {
 		/*
-		 * Check syntax of the 'type' as defined in Manifest/Avails Delivery
-		 * Best Practices (BP-META-MMMD) Section 3.1.7
+		 * Check syntax of the 'type' as defined in Manifest/Avails Delivery Best
+		 * Practices (BP-META-MMMD) Section 3.1.7
 		 */
 		String type = id2typeMap.get(idAttribute);
 		if (type == null) {
@@ -506,7 +518,7 @@ public class CMValidator extends XmlIngester {
 	 * @param idSchema
 	 * @param targetEl
 	 */
-	protected void validateIdScheme(String idScheme, Element targetEl) {
+	private void validateIdScheme(String idScheme, Element targetEl) {
 		if (!idScheme.startsWith("eidr")) {
 			String msg = "Use of EIDR-based identifiers is recommended";
 			String details = "Best Practice is to derive IDs from an EIDR-base ALID";
@@ -515,7 +527,7 @@ public class CMValidator extends XmlIngester {
 		}
 	}
 
-	protected void validateIdSsid(String idSSID, String idScheme, Element targetEl) {
+	private void validateIdSsid(String idSSID, String idScheme, Element targetEl) {
 		String idPattern = null;
 		LogReference srcRef = null;
 		switch (idScheme) {
@@ -594,7 +606,9 @@ public class CMValidator extends XmlIngester {
 	}
 
 	/**
-	 * 
+	 * Identify elements with ID values that are never referenced anywhere else in
+	 * the file. This may be valid but it may also be the result of a typo or
+	 * editing error. Thus, a WARNING, rather than an ERROR, will be generated.
 	 */
 	protected void checkForOrphans() {
 		// Map<String, Map<String, XrefCounter>> idXRefCounts;
@@ -630,9 +644,9 @@ public class CMValidator extends XmlIngester {
 	// ########################################################################
 
 	/**
-	 * Use the specified <tt>xpath</tt> to retrieve and validate image
-	 * resolution. The resolution must be a String in the form colxrow (e.g.,
-	 * 800x600 would mean an image 800 pixels wide and 600 pixels tall).
+	 * Use the specified <tt>xpath</tt> to retrieve and validate image resolution.
+	 * The resolution must be a String in the form colxrow (e.g., 800x600 would mean
+	 * an image 800 pixels wide and 600 pixels tall).
 	 * 
 	 * @param xpath
 	 */
@@ -667,9 +681,9 @@ public class CMValidator extends XmlIngester {
 	}
 
 	/**
-	 * Locate and validate all instances of a &lt;md:Rating&gt; Element.
-	 * Validation checks will be based on the data contained in the latest
-	 * release of the MovieLabs Common Metadata Ratings.
+	 * Locate and validate all instances of a &lt;md:Rating&gt; Element. Validation
+	 * checks will be based on the data contained in the latest release of the
+	 * MovieLabs Common Metadata Ratings.
 	 * 
 	 * @see <a href="http://www.movielabs.com/md/ratings/index.html">MovieLabs
 	 *      Common Metadata Ratings</a>
@@ -713,8 +727,7 @@ public class CMValidator extends XmlIngester {
 				}
 			}
 			/*
-			 * Is the RatingSystem in use in the specified country or
-			 * countryRegion?
+			 * Is the RatingSystem in use in the specified country or countryRegion?
 			 * 
 			 */
 			LogReference srcRef = LogReference.getRef("CM", "2.4", "cm_regions");
@@ -725,8 +738,8 @@ public class CMValidator extends XmlIngester {
 				target = regionEl.getChild("countryRegion", mdNSpace);
 				region = target.getText();
 				/*
-				 * We don't check validity of ISO-3166-2 codes as there are too
-				 * many defined but very few used for ratings
+				 * We don't check validity of ISO-3166-2 codes as there are too many defined but
+				 * very few used for ratings
 				 */
 				if (!rSystem.isUsedInSubRegion(region)) {
 					String msg = "RatingSystem not used in specified Country SubRegion";
@@ -751,8 +764,8 @@ public class CMValidator extends XmlIngester {
 				}
 			}
 			/*
-			 * Validation of Reasons: IF RatingSys provides defined reason codes
-			 * then validate zero or more codes ELSE allow any string value.
+			 * Validation of Reasons: IF RatingSys provides defined reason codes then
+			 * validate zero or more codes ELSE allow any string value.
 			 * 
 			 */
 			if (rSystem.providesReasons()) {
@@ -772,79 +785,79 @@ public class CMValidator extends XmlIngester {
 		}
 	}
 
-	/**
-	 * Validate a language entry conforms to RFC5646. This method is a more
-	 * flexible way to check language codes than
-	 * <tt>validateLanguage(Namespace primaryNS)</tt> in that the arguments
-	 * allow full specification of the source of the language code.
-	 * <p>
-	 * The source of the entry is the <i>child</i> node. The child may be:
-	 * <ul>
-	 * <li>A JDOM Element,</li>
-	 * <li>an attribute of the primary JDOM Element (as indicated by the '@'
-	 * prefix), or</li>
-	 * <li><tt>null</tt>, in which case the text value of the <tt>primaryEl</tt>
-	 * will be used.</li>
-	 * </ul>
-	 * </p>
-	 * <p>
-	 * Use of RFC5646 is limited to a subset of the complete syntax in that only
-	 * the <tt>Language</tt>, <tt>Region</tt>, and <tt>Variant</tt> subtags are
-	 * supported. Use of the <tt>Script</tt> subtag is not supported.
-	 * </p>
-	 * 
-	 * @param primaryNS
-	 * @param primaryEl
-	 * @param childNS
-	 * @param child
-	 * @return
-	 * @see validateLanguage(Namespace primaryNS)
-	 */
-	protected void validateLanguage(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
-		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
-				Filters.element(), null, primaryNS);
-		List<Element> elementList = xpExpression.evaluate(curRootEl);
-		int tag4log = getLogTag(primaryNS, childNS);
-		for (int i = 0; i < elementList.size(); i++) {
-			Element targetEl = (Element) elementList.get(i);
-			String text;
-			if (child == null) {
-				text = targetEl.getTextNormalize();
-				if (!checkLangTag(text)) {
-					reportLangError(targetEl, tag4log, text);
-				}
-			} else if (child.startsWith("@")) {
-				// dealing with an attribute
-				String targetAttb = child.replaceFirst("@", "");
-				text = targetEl.getAttributeValue(targetAttb);
-				if (!checkLangTag(text)) {
-					reportLangError(targetEl, tag4log, text);
-				}
-			} else {
-				// dealing with one or more child elements
-				List<Element> langElList = targetEl.getChildren(child, childNS);
-				for (int j = 0; j < langElList.size(); j++) {
-					Element langEl = (Element) langElList.get(j);
-					text = langEl.getTextNormalize();
-					if (!checkLangTag(text)) {
-						reportLangError(langEl, tag4log, text);
-					}
-				}
+	protected void validateCurrencyCodes() {
+		XPathExpression<Attribute> xpExpression = xpfac.compile(".//@currency", Filters.attribute(), null, availsNSpace,
+				manifestNSpace, mdNSpace);
+		List<Attribute> attList = xpExpression.evaluate(curRootEl);
+		int tag4log = getLogTag(mdNSpace, null);
+		for (int i = 0; i < attList.size(); i++) {
+			Attribute targetAtt = (Attribute) attList.get(i);
+			String text = targetAtt.getValue();
+			if (!iso4217_codes.containsKey(text)) {
+				String errMsg = "Invalid currency identifier '" + text + "'";
+				String details = "Currency encoding must conform to ISO-4217";
+				LogReference srcRef = LogReference.getRef("CM", CM_VER, "cm_currency");
+				logIssue(tag4log, LogMgmt.LEV_ERR, targetAtt.getParent(), errMsg, details, srcRef, logMsgSrcId);
+				curFileIsValid = false;
 			}
 		}
 	}
 
 	/**
-	 * Validate language codes specified in any <tt>@language</tt> attribute
-	 * conform to RFC5646.
+	 * Validate a language entry conforms to RFC5646. Language codes used as both
+	 * element values and attribute values will be checked.
+	 * <p>
+	 * This code assumes that any element or attribute with a name that ends with
+	 * the string 'language' will contain an RFC5646 code. Matching is case
+	 * insensitive. For example, all of the following will be tested:
+	 * <ul>
+	 * <li>an element with the name 'AllowedLanguage'</li>
+	 * <li>an element with the name 'Spokenlanguage'</li>
+	 * <li>an attribute with the name 'assetLanguage'</li>
+	 * <li>an attribute with the name 'language'</li>
+	 * </ul>
+	 * On the other hand, an element named 'Dialect' would not be checked.
+	 * </p>
 	 * 
-	 * @param primaryNS
-	 *            used only for log messages
+	 * <p>
+	 * Use of RFC5646 is limited to a subset of the complete syntax in that only the
+	 * <tt>Language</tt>, <tt>Region</tt>, and <tt>Variant</tt> subtags are
+	 * supported. Use of the <tt>Script</tt> subtag is not supported.
+	 * </p>
+	 * 
+	 * @return
+	 * @see validateLanguage(Namespace primaryNS)
 	 */
-	protected void validateLanguage(Namespace primaryNS) {
-		XPathExpression<Attribute> xpExpression = xpfac.compile("//@language", Filters.attribute(), null, primaryNS);
+
+	protected void validateLanguageCodes() {
+		validateLanguageElements();
+		validateLanguageAttributes();
+	}
+
+	protected void validateLanguageElements() {
+		XPathExpression<Element> xpExpression = xpfac.compile(
+				".//*[substring(name(), string-length(name()) - string-length('anguage') +1) = 'anguage']",
+				Filters.element(), null, availsNSpace, manifestNSpace, mdNSpace);
+		List<Element> elementList = xpExpression.evaluate(curRootEl);
+		String text = null;
+		int tag4log = getLogTag(mdNSpace, null);
+		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "valRegion1: element count = " + elementList.size(), null,
+				logMsgSrcId);
+		for (int i = 0; i < elementList.size(); i++) {
+			Element targetEl = (Element) elementList.get(i);
+			text = targetEl.getTextNormalize();
+			if (!checkLangTag(text)) {
+				reportLangError(targetEl, tag4log, text);
+			}
+		}
+	}
+
+	protected void validateLanguageAttributes() {
+		XPathExpression<Attribute> xpExpression = xpfac.compile(
+				".//@*[substring(name(), string-length(name()) - string-length('anguage') +1) = 'anguage']",
+				Filters.attribute(), null, availsNSpace, manifestNSpace, mdNSpace);
 		List<Attribute> attList = xpExpression.evaluate(curRootEl);
-		int tag4log = getLogTag(primaryNS, null);
+		int tag4log = getLogTag(mdNSpace, null);
 		for (int i = 0; i < attList.size(); i++) {
 			Attribute targetAtt = (Attribute) attList.get(i);
 			String text = targetAtt.getValue();
@@ -857,30 +870,29 @@ public class CMValidator extends XmlIngester {
 	private boolean checkLangTag(String text) {
 		if (text == null) {
 			/*
-			 * something was missing. If it was REQ the XSD-based (i.e., schema)
-			 * validation will flag it.
+			 * something was missing. If it was REQ the XSD-based (i.e., schema) validation
+			 * will flag it.
 			 */
 			return true;
 		}
 		if (text.isEmpty()) {
 			/*
-			 * The habit some folks have is to enter a required element (which
-			 * passes schema check) but leave the value empty. THAT IS AN ERROR!
+			 * The habit some folks have is to enter a required element (which passes schema
+			 * check) but leave the value empty. THAT IS AN ERROR!
 			 */
 			return false;
 		}
 		/*
-		 * RFC4647 states matching of language codes is case-insensitive. The
-		 * codes have been converted and stored as all lowercase so we do the
-		 * same conversion of the value we are checking.
+		 * RFC4647 states matching of language codes is case-insensitive. The codes have
+		 * been converted and stored as all lowercase so we do the same conversion of
+		 * the value we are checking.
 		 * 
 		 */
 		text = text.toLowerCase();
 		String[] langSubfields = text.split("-");
 		boolean passed = true;
 		/*
-		 * 1st field should be specified in ISO639-2 or ISO639-3 and will be
-		 * MANDATORY
+		 * 1st field should be specified in ISO639-2 or ISO639-3 and will be MANDATORY
 		 */
 		String subTag = langSubfields[0];
 		switch (subTag.length()) {
@@ -926,8 +938,8 @@ public class CMValidator extends XmlIngester {
 		}
 
 		/*
-		 * 3rd field may be region or a variant. Make sure we didn't already
-		 * process a region in subtag #2.
+		 * 3rd field may be region or a variant. Make sure we didn't already process a
+		 * region in subtag #2.
 		 */
 		subTag = langSubfields[2];
 		boolean foundVariant = false;
@@ -945,8 +957,8 @@ public class CMValidator extends XmlIngester {
 		}
 
 		/*
-		 * 4th field can only be a variant. Make sure we didn't already process
-		 * a variant in prior subtag.
+		 * 4th field can only be a variant. Make sure we didn't already process a
+		 * variant in prior subtag.
 		 */
 		if (foundVariant) {
 			passed = false;
@@ -958,8 +970,8 @@ public class CMValidator extends XmlIngester {
 
 	private void reportLangError(Element targetEl, int tag4log, String langTag) {
 		/*
-		 * Build an appropriate log entry based on nature and structure of the
-		 * value source
+		 * Build an appropriate log entry based on nature and structure of the value
+		 * source
 		 */
 		String errMsg = "Invalid Language code value '" + langTag + "'";
 		String details = "Language encoding must conform to RFC5646 syntax and use registered subtag value";
@@ -968,17 +980,54 @@ public class CMValidator extends XmlIngester {
 		curFileIsValid = false;
 	}
 
-	protected boolean validateRegion(Namespace primaryNS, String primaryEl, Namespace childNS, String child) {
+	/**
+	 * Validate proper encoding of the <tt>&lt;md:country&gt;</tt> element. Values
+	 * are checked for conformance with ISO3166-1 Alpha2 or UN M.49 code sets.
+	 * <p>
+	 * Note that <tt>&lt;md:countrRegion&gt;</tt> elements are <b>not</b> subject to
+	 * validation other than for conformance to the required pattern specified in
+	 * the XSD.
+	 * </p>
+	 * 
+	 * @return
+	 */
+	protected boolean validateCountries() {
+		boolean allOK = true;
+		/*
+		 * check for use of the <tt>&lt;md:country&gt;</tt> element.
+		 */
+		XPathExpression<Element> xpExpression = xpfac.compile(".//" + mdNSpace.getPrefix() + ":country",
+				Filters.element(), null, mdNSpace);
+		List<Element> elementList = xpExpression.evaluate(curRootEl);
+		String text = null;
+		Element logMsgEl;
+		int tag4log = getLogTag(mdNSpace, null);
 		LogReference srcRef = LogReference.getRef("CM", "cm_regions");
-		return validateCode(primaryNS, primaryEl, childNS, child, iso3166_1_codes, srcRef, false);
+		String errMsg = null;
+		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "vAlRegion1: element count = " + elementList.size(), null,
+				logMsgSrcId);
+
+		for (int i = 0; i < elementList.size(); i++) {
+			Element targetEl = (Element) elementList.get(i);
+			logMsgEl = targetEl;
+			text = targetEl.getTextNormalize();
+			errMsg = "Unrecognized value '" + text + "' for country or region";
+			if (text != null) {
+				if (!iso3166_1_codes.containsKey(text)) {
+					logIssue(tag4log, LogMgmt.LEV_ERR, logMsgEl, errMsg, null, srcRef, logMsgSrcId);
+					allOK = false;
+					curFileIsValid = false;
+				}
+			}
+		}
+		return allOK;
 	}
 
 	/**
-	 * Validate country codes specified in any <tt>@region</tt> attribute
-	 * conform to ISO 3166-1
+	 * Validate country codes specified in any <tt>@region</tt> attribute are
+	 * conforming to either the ISO3166-1 Alpha2 or UN M.49 code sets.
 	 * 
-	 * @param primaryNS
-	 *            used only for log messages
+	 * @param primaryNS used only for log messages
 	 */
 	protected boolean validateRegion(Namespace primaryNS) {
 		boolean allOK = true;
@@ -1006,6 +1055,9 @@ public class CMValidator extends XmlIngester {
 		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
 				Filters.element(), null, primaryNS);
 		List<Element> elementList = xpExpression.evaluate(curRootEl);
+		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "valCode: element count = " + elementList.size(), null,
+				logMsgSrcId);
+
 		for (int i = 0; i < elementList.size(); i++) {
 			String text = null;
 			String errMsg = null;
@@ -1052,8 +1104,8 @@ public class CMValidator extends XmlIngester {
 	 * @param srcRef
 	 * @param caseSensitive
 	 * @deprecated use validateVocab(Namespace primaryNS, String primaryEl,
-	 *             Namespace childNS, String child, JSONArray expected,
-	 *             LogReference srcRef, boolean caseSensitive, boolean strict)
+	 *             Namespace childNS, String child, JSONArray expected, LogReference
+	 *             srcRef, boolean caseSensitive, boolean strict)
 	 */
 	protected void validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
 			JSONArray expected, LogReference srcRef, boolean caseSensitive) {
@@ -1065,17 +1117,13 @@ public class CMValidator extends XmlIngester {
 	 * @param primaryEl
 	 * @param childNS
 	 * @param child
-	 * @param expected
-	 *            expected values
-	 * @param srcRef
-	 *            source of supplementary documentation for log entries
-	 *            (optional)
-	 * @param caseSensitive
-	 *            if <tt>true</tt> matching to expected values is
-	 *            case-sensitive.
-	 * @param strict
-	 *            if <tt>true</tt> non-matches are treated as errors, otherwise
-	 *            as warnings.
+	 * @param expected      expected values
+	 * @param srcRef        source of supplementary documentation for log entries
+	 *                      (optional)
+	 * @param caseSensitive if <tt>true</tt> matching to expected values is
+	 *                      case-sensitive.
+	 * @param strict        if <tt>true</tt> non-matches are treated as errors,
+	 *                      otherwise as warnings.
 	 */
 	protected void validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
 			JSONArray expected, LogReference srcRef, boolean caseSensitive, boolean strict) {
@@ -1117,8 +1165,8 @@ public class CMValidator extends XmlIngester {
 			LogReference srcRef, boolean caseSensitive, boolean strict, int logTag, String logLabel) {
 		if (expected == null || expected.isEmpty()) {
 			/*
-			 * The version of the schema being used does not define an
-			 * enumerated set of valid terms for the target element.
+			 * The version of the schema being used does not define an enumerated set of
+			 * valid terms for the target element.
 			 * 
 			 */
 			return;
