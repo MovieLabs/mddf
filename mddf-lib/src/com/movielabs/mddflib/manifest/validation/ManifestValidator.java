@@ -69,6 +69,7 @@ public class ManifestValidator extends CMValidator {
 		id2typeMap.put("InteractiveTrackID", "interactiveid");
 		id2typeMap.put("ProductID", "alid");
 		id2typeMap.put("ContentID", "cid");
+		id2typeMap.put("TextObjectID", "textobjid");
 	}
 
 	private ArrayList<File> supportingMecFiles;
@@ -93,18 +94,18 @@ public class ManifestValidator extends CMValidator {
 	 * @throws JDOMException
 	 */
 	public boolean process(MddfTarget target) throws IOException, JDOMException {
+		String schemaVer = identifyXsdVersion(target);
+		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Schema Version " + schemaVer, curFile,
+				logMsgSrcId);
+		setManifestVersion(schemaVer);
+		rootNS = manifestNSpace;
+
 		curTarget = target;
 		curFile = target.getSrcFile();
 		curFileName = curFile.getName();
 		curFileIsValid = true;
 		curRootEl = null;
 		supportingMecFiles = new ArrayList<File>();
-
-		String schemaVer = identifyXsdVersion(target);
-		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Schema Version " + schemaVer, curFile,
-				logMsgSrcId);
-		setManifestVersion(schemaVer);
-		rootNS = manifestNSpace;
 
 		validateXml(target);
 		if (!curFileIsValid) {
@@ -142,6 +143,46 @@ public class ManifestValidator extends CMValidator {
 		SchemaWrapper targetSchema = SchemaWrapper.factory("manifest-v" + XmlIngester.MAN_VER);
 		validateNotEmpty(targetSchema);
 
+		/* Validate indexed sequences that must be monotonically increasing */
+		validateIndexing("Chapter", manifestNSpace, "index", "Chapters", manifestNSpace);
+		validateIndexing("Clip", manifestNSpace, "sequence", "PlayableSequence", manifestNSpace);
+		validateIndexing("ImageClip", manifestNSpace, "sequence", "PlayableSequence", manifestNSpace);
+		// ?? PictureGroup/Picture/Sequence
+		validateIndexing("TextString", manifestNSpace, "index", "TextObject", manifestNSpace);
+		// ?? ExperienceChild/SequenceInfo/{md}Number ??? Note other 3 domain-specific
+		// numbers
+		validateIndexing("TextGroupID", manifestNSpace, "index", "TimedEvent", manifestNSpace);
+
+		// -------------------------------------------------------------------------------------
+
+		/*
+		 * Validate the usage of controlled vocab (i.e., places where XSD specifies a
+		 * xs:string but the documentation specifies an enumerated set of allowed values
+		 * or otherwise constrained).
+		 */
+		// start with Common Metadata spec..
+		validateCMVocab();
+		validateResolution("//{md}LocalizedInfo/{md}ArtReference/@resolution");
+		validateResolution("//{manifest}Picture/{manifest}ImageID/@resolution");
+		validateResolution("//{manifest}Picture/{manifest}ThumbnailImageID/@resolution");
+
+		// Now do any defined in Manifest spec..
+		validateManifestVocab();
+
+		validateLocations();
+
+		validateMetadata();
+
+		validateUsage();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.util.CMValidator#validateIdSet()
+	 */
+	protected void validateIdSet() {
+		// do set-up and init....
+		super.validateIdSet();
+
 		// TODO: Load from JSON file....
 		/*
 		 * Check ID for any Inventory components....
@@ -153,9 +194,11 @@ public class ManifestValidator extends CMValidator {
 		validateId("Interactive", "InteractiveTrackID", true, true);
 		validateId("Ancillary", "AncillaryTrackID", true, true);
 		validateId("TextObject", "TextObjectID", true, true);
-		validateId("Metadata", "ContentID", true, true);
-		// validateId("BasicMetadata", "ContentID");
-
+		validateId("Metadata", "ContentID", true, true); 
+		
+		// added in v1.7:
+		validateId("ExternalManifest", "ManifestID", true, true);
+		
 		/*
 		 * Check ID for everything else...
 		 */
@@ -196,7 +239,10 @@ public class ManifestValidator extends CMValidator {
 		validateXRef(".//manifest:AudioTrackReference/manifest:AudioTrackID", "Audio");
 		validateXRef(".//manifest:AncillaryTrackReference/manifest:AncillaryTrackID", "Ancillary");
 		validateXRef(".//manifest:SubtitleTrackReference/manifest:SubtitleTrackID", "Subtitle");
+		validateXRef(".//manifest:TextObject/manifest:SubtitleID", "Subtitle");
 
+		validateXRef(".//manifest:TextGroup/manifest:TextObjectID", "TextObject");
+		
 		validateXRef(".//manifest:InteractiveTrackReference/manifest:InteractiveTrackID", "Interactive");
 
 		validateXRef(".//manifest:Experience/manifest:App/manifest:AppGroupID", "AppGroup");
@@ -213,11 +259,15 @@ public class ManifestValidator extends CMValidator {
 		validateXRef(".//manifest:TimedEvent/manifest:TextGroupID", "TextGroup");
 
 		validateXRef(".//manifest:ALIDExperienceMap/manifest:ExperienceID", "Experience");
+		
+		// added in v1.7: 
+		xpath = ".//manifest:ExperienceChild/manifest:ExternalManifestID";
+		validateXRef(xpath, "ExternalManifest");
 		/*
-		 * SPECIAL CASE: For v1.7 and after.... When ExternalManifestID is
-		 * present in a ExperienceChild, there may not be an Experience with
-		 * that ID contained in the same file. That is, the Manifest is valid
-		 * only if the Experience is NOT present."
+		 * SPECIAL CASE: For v1.7 and after.... When ExternalManifestID is present in a
+		 * ExperienceChild, there may not be an Experience with that ID contained in the
+		 * same file. That is, the Manifest is valid only if the Experience is NOT
+		 * present."
 		 */
 		HashSet<String> idSet = idSets.get("Experience");
 		xpath = ".//manifest:ExperienceChild/manifest:ExperienceID[../manifest:ExternalManifestID]";
@@ -232,39 +282,7 @@ public class ManifestValidator extends CMValidator {
 				curFileIsValid = false;
 			}
 		}
-
 		checkForOrphans();
-
-		/* Validate indexed sequences that must be monotonically increasing */
-		validateIndexing("Chapter", manifestNSpace, "index", "Chapters", manifestNSpace);
-		validateIndexing("Clip", manifestNSpace, "sequence", "PlayableSequence", manifestNSpace); 
-		validateIndexing("ImageClip", manifestNSpace, "sequence", "PlayableSequence", manifestNSpace); 
-		// ?? PictureGroup/Picture/Sequence
-		validateIndexing("TextString", manifestNSpace, "index", "TextObject", manifestNSpace); 
-		// ?? ExperienceChild/SequenceInfo/{md}Number ??? Note other 3 domain-specific numbers
-		validateIndexing("TextGroupID", manifestNSpace, "index", "TimedEvent", manifestNSpace); 
-		
-		//-------------------------------------------------------------------------------------
-		
-		/*
-		 * Validate the usage of controlled vocab (i.e., places where XSD
-		 * specifies a xs:string but the documentation specifies an enumerated
-		 * set of allowed values or otherwise constrained).
-		 */
-		// start with Common Metadata spec..
-		validateCMVocab();
-		validateResolution("//{md}LocalizedInfo/{md}ArtReference/@resolution");
-		validateResolution("//{manifest}Picture/{manifest}ImageID/@resolution");
-		validateResolution("//{manifest}Picture/{manifest}ThumbnailImageID/@resolution");
-
-		// Now do any defined in Manifest spec..
-		validateManifestVocab();
-
-		validateLocations();
-
-		validateMetadata();
-
-		validateUsage();
 	}
 
 	/**
@@ -368,74 +386,15 @@ public class ManifestValidator extends CMValidator {
 		docRef = LogReference.getRef("CM", "cm_gType");
 		validateVocab(mdNSpace, "Relationship", mdNSpace, "Type", expectedValues, docRef, true, false);
 
-		// ----------------------------------------
-		/*
-		 * Validate use of Country identifiers....
-		 */
-		// Usage in Common Metadata XSD...
-		validateRegion(mdNSpace, "Region", mdNSpace, "country");
-		validateRegion(mdNSpace, "ExcludedRegion", mdNSpace, "country");
-		validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country");
-		validateRegion(mdNSpace, "CountryOfOrigin", mdNSpace, "country");
-
-		// Usage in Manifest XSD....
-		validateRegion(manifestNSpace, "Region", mdNSpace, "country");
-		validateRegion(manifestNSpace, "RegionIncluded", mdNSpace, "country");
-		validateRegion(manifestNSpace, "ExcludedRegion", mdNSpace, "country");
-
-		// --------------- Validate language codes
-		// ----------------------------------------
-
-		/* First check all usage of the '@language' attribute */
-		validateLanguage(manifestNSpace);
-		validateLanguage(mdNSpace);
-
-		/*
-		 * Language codes in INVENTORY:
-		 */
-		validateLanguage(mdNSpace, "Language", null, null);
-		validateLanguage(mdNSpace, "SubtitleLanguage", null, null);
-		validateLanguage(mdNSpace, "SignedLanguage", null, null);
-		validateLanguage(mdNSpace, "PrimarySpokenLanguage", null, null);
-		validateLanguage(mdNSpace, "OriginalLanguage", null, null);
-		validateLanguage(mdNSpace, "VersionLanguage", null, null);
-		/*
-		 * PRESENTATION:
-		 */
-		validateLanguage(manifestNSpace, "SystemLanguage", null, null);
-		validateLanguage(manifestNSpace, "AudioLanguage", null, null);
-		validateLanguage(manifestNSpace, "SubtitleLanguage", null, null);
-		/*
-		 * PLAYABLE SEQ:
-		 */
-		validateLanguage(manifestNSpace, "Clip", null, "@audioLanguage");
-		validateLanguage(manifestNSpace, "ImageClip", null, "@audioLanguage");
-		/*
-		 * PICTURE GROUPS:
-		 */
-		validateLanguage(manifestNSpace, "LanguageInImage", null, null);
-		/*
-		 * TEXT GROUP:
-		 */
-
-		/*
-		 * EXPERIENCES:
-		 */
-		validateLanguage(manifestNSpace, "Language", null, null);
-		validateLanguage(manifestNSpace, "ExcludedLanguage", null, null);
-
-		validateRatings();
-
-
 	}
 
 	// ########################################################################
 
 	/**
 	 * Validate a local <tt>ContainerLocation</tt>. These should be a
-	 * <i>relative</i> path where the base location is that of the XML file
-	 * being processed. Note that network locations (i.e, full URLs) are
-	 * <b>not</b> verified.
+	 * <i>relative</i> path where the base location is that of the XML file being
+	 * processed. Note that network locations (i.e, full URLs) are <b>not</b>
+	 * verified.
 	 */
 	protected void validateLocations() {
 		String pre = manifestNSpace.getPrefix();
@@ -481,17 +440,17 @@ public class ManifestValidator extends CMValidator {
 	protected void validateMetadata() {
 		String pre = manifestNSpace.getPrefix();
 		/**
-		 * The ContentID alias mechanism is filter for a peer BasicMetadata that
-		 * results in a new BasicMetadata instance with a subset of the
-		 * LocalizedInfo instance in the original BasicMetadata instance. Thus:
+		 * The ContentID alias mechanism is filter for a peer BasicMetadata that results
+		 * in a new BasicMetadata instance with a subset of the LocalizedInfo instance
+		 * in the original BasicMetadata instance. Thus:
 		 * <ul>
-		 * <li>If the a Metatadata element contains a child Alias, it must also
-		 * have as a child a BasicMetadata element for the Alias to filter. This
-		 * may be identified either directly via a child BasicMetadata element
-		 * or indirectly via a ContainerReference.</li>
+		 * <li>If the a Metatadata element contains a child Alias, it must also have as
+		 * a child a BasicMetadata element for the Alias to filter. This may be
+		 * identified either directly via a child BasicMetadata element or indirectly
+		 * via a ContainerReference.</li>
 		 * 
-		 * <li>If the Alias has a LocalizedPair/LanguageIncluded = 'foobar' then
-		 * the BasicMetadata element must have a child
+		 * <li>If the Alias has a LocalizedPair/LanguageIncluded = 'foobar' then the
+		 * BasicMetadata element must have a child
 		 * LocalizedInfo[@language='foobar']</li>
 		 * </ul>
 		 */
@@ -536,10 +495,9 @@ public class ManifestValidator extends CMValidator {
 	protected void validateUsage() {
 		super.validateUsage();
 		/*
-		 * Load JSON that defines various constraints on structure of the XML
-		 * This is version-specific but not all schema versions have their own
-		 * unique struct file (e.g., a minor release may be compatible with a
-		 * previous release).
+		 * Load JSON that defines various constraints on structure of the XML This is
+		 * version-specific but not all schema versions have their own unique struct
+		 * file (e.g., a minor release may be compatible with a previous release).
 		 */
 		String structVer = null;
 		switch (MAN_VER) {
