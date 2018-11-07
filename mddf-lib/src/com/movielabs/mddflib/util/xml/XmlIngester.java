@@ -124,8 +124,8 @@ public abstract class XmlIngester implements IssueLogger {
 	 * 
 	 * @param rsrcId
 	 * @param rsrcVersion
-	 * @return a JSONObject or <tt>null</tt. if the resource is not accessible
-	 *         or is not valid JSON
+	 * @return a JSONObject or <tt>null</tt. if the resource is not accessible or is
+	 *         not valid JSON
 	 */
 	protected static Object getVocabResource(String rsrcId, String rsrcVersion) {
 		String key = rsrcId + "_v" + rsrcVersion;
@@ -209,10 +209,8 @@ public abstract class XmlIngester implements IssueLogger {
 	 * 
 	 * @param inputFile
 	 * @return
-	 * @throws SAXParseException
-	 *             if the XML is improperly formatted
-	 * @throws IOException
-	 *             it the specified file can not be found or read.
+	 * @throws SAXParseException if the XML is improperly formatted
+	 * @throws IOException       it the specified file can not be found or read.
 	 */
 	public static Document getAsXml(File inputFile) throws SAXParseException, IOException {
 		InputStreamReader isr;
@@ -273,8 +271,7 @@ public abstract class XmlIngester implements IssueLogger {
 	}
 
 	/**
-	 * @param srcPath
-	 *            the srcPath to set
+	 * @param srcPath the srcPath to set
 	 */
 	public static void setSourceDirPath(String srcPath) {
 		if (srcPath != null) {
@@ -287,9 +284,9 @@ public abstract class XmlIngester implements IssueLogger {
 
 	/**
 	 * Identify the XSD version for the document's <i>primary</i> MDDF namespace
-	 * (i.e., Manifest, Avails, MDMec, etc.). Version is returned as a string
-	 * that <i>may</i> contain major and minor version identification (e.g.
-	 * '2.1', '1.7.3_rc1')
+	 * (i.e., Manifest, Avails, MDMec, etc.). Version is returned as a string that
+	 * <i>may</i> contain major and minor version identification (e.g. '2.1',
+	 * '1.7.3_rc1')
 	 * 
 	 * @param target
 	 * @return
@@ -301,9 +298,9 @@ public abstract class XmlIngester implements IssueLogger {
 
 	/**
 	 * Identify the XSD version for the document's <i>primary</i> MDDF namespace
-	 * (i.e., Manifest, Avails, MDMec, etc.). Version is returned as a string
-	 * that <i>may</i> contain major and minor version identification (e.g.
-	 * '2.1', '1.7.3_rc1')
+	 * (i.e., Manifest, Avails, MDMec, etc.). Version is returned as a string that
+	 * <i>may</i> contain major and minor version identification (e.g. '2.1',
+	 * '1.7.3_rc1')
 	 * 
 	 * @param docRootEl
 	 * @return
@@ -327,11 +324,61 @@ public abstract class XmlIngester implements IssueLogger {
 	}
 
 	/**
-	 * Configure all XML-related functions to work with the specified version of
-	 * the Manifest XSD. This includes setting the correct version of the Common
+	 * Configure all XML-related functions to work with the specified MDDF format.
+	 * This includes setting the correct version of the Common Metadata (CM) XSD
+	 * that is used with the version indicated. For example, if the <tt>mddfFmt</tt>
+	 * indicates the format is "Manifest v1.6" then the CM version is set to v2.5.
+	 * At the same time, since Manifest XSD do not reference the MEC XSD, the MEX
+	 * version would be set to <tt>null</tt>.
+	 * 
+	 * @param mddfFmt
+	 */
+	public static void setMddfVersions(FILE_FMT mddfFmt) {
+		Map<String, String> uses = MddfContext.getReferencedXsdVersions(mddfFmt);
+		switch (mddfFmt.getStandard()) {
+		case "Avails":
+			AVAIL_VER = mddfFmt.getVersion();
+			CM_VER = uses.get("MD");
+			MDMEC_VER = uses.get("MDMEC");
+			/* Since Manifest isn't used for Avails, set to NULL */
+			MAN_VER = null;
+			mdmecNSpace = Namespace.getNamespace("md",
+					"http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
+			mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
+			availsNSpace = Namespace.getNamespace("avails",
+					"http://www.movielabs.com/schema/avails/v" + AVAIL_VER + "/avails");
+			break;
+		case "Manifest":
+			MAN_VER = mddfFmt.getVersion();
+			CM_VER = uses.get("MD");
+			/* Since MDMEC isn't used for Manifest, set to NULL */
+			MDMEC_VER = null;
+			mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
+			manifestNSpace = Namespace.getNamespace("manifest",
+					MddfContext.NSPACE_MANIFEST_PREFIX + MAN_VER + MddfContext.NSPACE_MANIFEST_SUFFIX);
+			break;
+		case "MEC":
+			MDMEC_VER = mddfFmt.getVersion();
+			CM_VER = uses.get("MD");
+			/* Since Manifest isn't used for MEC, set to NULL */
+			MAN_VER = null;
+			mdmecNSpace = Namespace.getNamespace("mdmec",
+					"http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
+			mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
+			break;
+		}
+	}
+
+	/**
+	 * Configure all XML-related functions to work with the specified version of the
+	 * Manifest XSD. This includes setting the correct version of the Common
 	 * Metadata XSD that is used with the specified Manifest version. If the
 	 * <tt>manifestSchemaVer</tt> is not supported by the current version of
 	 * <tt>mddf-lib</tt> an <tt>IllegalArgumentException</tt> will be thrown.
+	 * <p>
+	 * Use of this method is an alternative to use of
+	 * <tt>setMddfVersions(FILE_FMT mddfFmt)</tt>
+	 * </p>
 	 * 
 	 * @param manifestSchemaVer
 	 * @throws IllegalArgumentException
@@ -341,14 +388,7 @@ public abstract class XmlIngester implements IssueLogger {
 		if (manifestFmt == null) {
 			throw new IllegalArgumentException("Unsupported Manifest Schema version " + manifestSchemaVer);
 		}
-		Map<String, String> uses = MddfContext.getReferencedXsdVersions(manifestFmt);
-		MAN_VER = manifestSchemaVer;
-		CM_VER = uses.get("MD");
-		/* Since MDMEC isn't used for Manifest, set to NULL */
-		MDMEC_VER = null;
-		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
-		manifestNSpace = Namespace.getNamespace("manifest",
-				MddfContext.NSPACE_MANIFEST_PREFIX + MAN_VER + MddfContext.NSPACE_MANIFEST_SUFFIX);
+		setMddfVersions(manifestFmt);
 	}
 
 	/**
@@ -360,21 +400,19 @@ public abstract class XmlIngester implements IssueLogger {
 		if (mecFmt == null) {
 			throw new IllegalArgumentException("Unsupported MEC Schema version " + mecSchemaVer);
 		}
-		Map<String, String> uses = MddfContext.getReferencedXsdVersions(mecFmt);
-		MDMEC_VER = mecSchemaVer;
-		CM_VER = uses.get("MD");
-		/* Since Manifest isn't used for MEC, set to NULL */
-		MAN_VER = null;
-		mdmecNSpace = Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
-		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
+		setMddfVersions(mecFmt);
 	}
 
 	/**
-	 * Configure all XML-related functions to work with the specified version of
-	 * the Avails XSD. This includes setting the correct version of the Common
-	 * Metadata and MDMEC XSD that are used with the specified Avails version.
-	 * If the <tt>availSchemaVer</tt> is not supported by the current version of
+	 * Configure all XML-related functions to work with the specified version of the
+	 * Avails XSD. This includes setting the correct version of the Common Metadata
+	 * and MDMEC XSD that are used with the specified Avails version. If the
+	 * <tt>availSchemaVer</tt> is not supported by the current version of
 	 * <tt>mddf-lib</tt> an <tt>IllegalArgumentException</tt> will be thrown.
+	 * <p>
+	 * Use of this method is an alternative to use of
+	 * <tt>setMddfVersions(FILE_FMT mddfFmt)</tt>
+	 * </p>
 	 * 
 	 * @param availSchemaVer
 	 * @throws IllegalArgumentException
@@ -384,16 +422,7 @@ public abstract class XmlIngester implements IssueLogger {
 		if (availsFmt == null) {
 			throw new IllegalArgumentException("Unsupported Avails Schema version " + availSchemaVer);
 		}
-		Map<String, String> uses = MddfContext.getReferencedXsdVersions(availsFmt);
-		AVAIL_VER = availSchemaVer;
-		CM_VER = uses.get("MD");
-		MDMEC_VER = uses.get("MDMEC");
-		/* Since Manifest isn't used for Avails, set to NULL */
-		MAN_VER = null;
-		mdmecNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
-		mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
-		availsNSpace = Namespace.getNamespace("avails",
-				"http://www.movielabs.com/schema/avails/v" + AVAIL_VER + "/avails");
+		setMddfVersions(availsFmt);
 	}
 
 }
