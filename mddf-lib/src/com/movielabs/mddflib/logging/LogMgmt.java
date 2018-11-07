@@ -120,8 +120,8 @@ public interface LogMgmt extends IssueLogger {
 
 	/**
 	 * Set the file currently being processed. Until the next invocation of
-	 * <tt>setCurrentFile()</tt>, all subsequent log entries will be associated
-	 * with this file.
+	 * <tt>setCurrentFile()</tt>, all subsequent log entries will be associated with
+	 * this file.
 	 * 
 	 * @param curFileID
 	 */
@@ -142,7 +142,13 @@ public interface LogMgmt extends IssueLogger {
 	 * @param severity
 	 * @return
 	 */
-	public static int text2Level(String severity) { 
-		return Arrays.binarySearch(logLevels, severity);
+	public static int text2Level(String severity) {
+		// its a short list so no need to get clever....
+		for (int i = 0; i < logLevels.length; i++) {
+			if (logLevels[i].equals(severity)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 }
