@@ -31,6 +31,9 @@ import net.sf.json.JSONObject;
 
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+
+import com.movielabs.mddf.MddfContext;
+import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -80,14 +83,14 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	}
 
 	/**
-	 * Validate a single Avails document. The Avails data is structured as an
-	 * XML document regardless of the original source file's format. This means
-	 * that when an Avails has been provided as an Excel file, it will have
-	 * already been converted to an XML document. Invoking the
-	 * <tt>process()</tt> method will validate that XML regardless of its
-	 * original source format. The <tt>pedigreeMap</tt> will link a specific
-	 * element in the XML being processed back to its original source (i.e.,
-	 * either a row and cell in an Excel spreadsheet or a line in an XML file).
+	 * Validate a single Avails document. The Avails data is structured as an XML
+	 * document regardless of the original source file's format. This means that
+	 * when an Avails has been provided as an Excel file, it will have already been
+	 * converted to an XML document. Invoking the <tt>process()</tt> method will
+	 * validate that XML regardless of its original source format. The
+	 * <tt>pedigreeMap</tt> will link a specific element in the XML being processed
+	 * back to its original source (i.e., either a row and cell in an Excel
+	 * spreadsheet or a line in an XML file).
 	 * 
 	 * @param target
 	 * @param pedigreeMap
@@ -97,18 +100,18 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		String msg = "Begining validation of Avails...";
 		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, msg, target.getSrcFile(), logMsgSrcId);
 
+		availSchemaVer = identifyXsdVersion(target);
+		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Avails Schema Version " + availSchemaVer,
+				curFile, logMsgSrcId);
+		setAvailVersion(availSchemaVer);
+		rootNS = availsNSpace;
+
 		curTarget = target;
 		curRootEl = null;
 		curFile = target.getSrcFile();
 		curFileName = curFile.getName();
 		this.pedigreeMap = pedigreeMap;
 		curFileIsValid = true;
-
-		availSchemaVer = identifyXsdVersion(target);
-		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Avails Schema Version " + availSchemaVer,
-				curFile, logMsgSrcId);
-		setAvailVersion(availSchemaVer);
-		rootNS = availsNSpace;
 
 		validateXml(target);
 		if (!curFileIsValid) {
@@ -150,14 +153,10 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 		validateNotEmpty(availSchema);
 
-		// TODO: Load from JSON file....
-
-		validateId("ALID", null, true, false);
-
 		/*
-		 * Validate the usage of controlled vocab (i.e., places where XSD
-		 * specifies a xs:string but the documentation specifies an enumerated
-		 * set of allowed values).
+		 * Validate the usage of controlled vocab (i.e., places where XSD specifies a
+		 * xs:string but the documentation specifies an enumerated set of allowed
+		 * values).
 		 */
 		// start with Common Metadata spec..
 		validateCMVocab();
@@ -167,8 +166,30 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 		validateUsage();
 
-		/* Validate indexed sequences that must be continuously increasing */
-		validateIndexing("BundledAsset", availsNSpace, "sequence", "Asset", availsNSpace);
+		switch (availSchemaVer) {
+		case "2.4":
+			/* Validate indexed sequences that must be continuously increasing */
+			validateIndexing("BundledAsset", availsNSpace, "sequence", "Asset", availsNSpace);
+		case "2.3":
+		case "2.2.2":
+		case "2.2.1":
+		case "2.2":
+		case "2.1":
+			break;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.util.CMValidator#validateIdSet()
+	 */
+	protected void validateIdSet() {
+		// do set-up and init....
+		super.validateIdSet();
+
+		// TODO: Load from JSON file....
+		validateId("ALID", null, true, false);
 	}
 
 	/**
@@ -179,8 +200,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		String doc = "AVAIL";
 		String vocabVer = availSchemaVer;
 		/*
-		 * handle any case of backwards (or forwards) compatibility between
-		 * versions.
+		 * handle any case of backwards (or forwards) compatibility between versions.
 		 */
 		switch (availSchemaVer) {
 		case "2.2.1":
@@ -290,35 +310,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 				LOGMSG_ID);
 		Namespace primaryNS = availsNSpace;
 		/*
-		 * Validate use of Country identifiers starting with use of @region
-		 * attribute
+		 * Validate use of Country identifiers starting with use of @region attribute
 		 */
 		validateRegion(primaryNS);
-
-		// In 'Metadata/Release History/DistrTerritory'
-		validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country");
-
-		// in Transaction/Territory...
-		validateRegion(primaryNS, "Territory", mdNSpace, "country");
-		validateRegion(primaryNS, "TerritoryExcluded", mdNSpace, "country");
-
-		// in 'Term/Region
-		validateRegion(primaryNS, "Region", mdNSpace, "country");
-
-		// in multiple places
-		validateRegion(mdNSpace, "Region", mdNSpace, "country");
-
-		/* Validate language codes */
-
-		/* First check all usage of the '@language' attribute */
-		validateLanguage(primaryNS);
-		validateLanguage(mdNSpace);
-
-		// other usages...
-		validateLanguage(primaryNS, "Transaction", primaryNS, "AllowedLanguage");
-		validateLanguage(primaryNS, "Transaction", primaryNS, "AssetLanguage");
-		validateLanguage(primaryNS, "Transaction", primaryNS, "HoldbackLanguage");
-		validateLanguage(primaryNS, "Term", primaryNS, "Language");
 
 		// added for CM v2.7, Avails v2.4:
 		JSONObject cmVocab = (JSONObject) getVocabResource("cm", CM_VER);
@@ -345,10 +339,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	protected void validateUsage() {
 		super.validateUsage();
 		/*
-		 * Load JSON that defines various constraints on structure of an Avails.
-		 * This is version-specific but not all schema versions have their own
-		 * unique struct file (e.g., a minor release may be compatible with a
-		 * previous release).
+		 * Load JSON that defines various constraints on structure of an Avails. This is
+		 * version-specific but not all schema versions have their own unique struct
+		 * file (e.g., a minor release may be compatible with a previous release).
 		 */
 		String structVer = null;
 		switch (availSchemaVer) {
@@ -388,27 +381,22 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
 			}
 		}
-		// ==============================================
-
-		/* Validate any Ratings information */
-		validateRatings();
-
 		return;
 	}
 	// ########################################################################
 
 	/**
 	 * Log an issue after first determining the appropriate <i>target</i> to
-	 * associate with the log entry. The target indicates a construct within a
-	 * file being validated and should be specified as either
+	 * associate with the log entry. The target indicates a construct within a file
+	 * being validated and should be specified as either
 	 * <ul>
 	 * <li>an JDOM Element within an XML file, or</tt>
 	 * <li>a <tt>POI Cell</tt> instance used to identify a cell in an XLSX
 	 * spreadsheet.</li>
 	 * </ul>
-	 * Note that validation of XLSX files is only supported by the Avails
-	 * validator and that other validator classes do not, therefore, require
-	 * this intermediate stage when logging.
+	 * Note that validation of XLSX files is only supported by the Avails validator
+	 * and that other validator classes do not, therefore, require this intermediate
+	 * stage when logging.
 	 * 
 	 * 
 	 * @param tag
