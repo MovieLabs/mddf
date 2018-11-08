@@ -16,6 +16,22 @@
 
 				}
 			]
+		},
+		
+		"TrackSelectionNumber": 
+		{
+			"targetPath": ".//{manifest}Presentation",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{manifest}TrackMetadata[{manifest}TrackSelectionNumber='0']",
+					"msg": "Must have exactly 1 instance of TrackMetadata with TrackSelectionNumber='0' per Presentation"
+
+				}
+			]
 		}
  
 	}
