@@ -385,6 +385,15 @@ public class ManifestValidator extends CMValidator {
 		expectedValues = cmVocab.optJSONArray("Relationship/Type");
 		docRef = LogReference.getRef("CM", "cm_gType");
 		validateVocab(mdNSpace, "Relationship", mdNSpace, "Type", expectedValues, docRef, true, false);
+		
+
+		switch (MAN_VER) { 
+		case "1.8":
+			expectedValues = cmVocab.optJSONArray("WorkType");
+			docRef = LogReference.getRef("CM", CM_VER, "cm002");
+			validateVocab(manifestNSpace, "Purpose", manifestNSpace, "WorkType", expectedValues, docRef, true, true);
+			break; 
+		}
 
 	}
 
@@ -501,8 +510,10 @@ public class ManifestValidator extends CMValidator {
 		 */
 		String structVer = null;
 		switch (MAN_VER) {
+		case "1.6":
 		case "1.7":
-			structVer = "1.7";
+		case "1.8":
+			structVer = MAN_VER;
 			break;
 		default:
 			// Not supported for the version
