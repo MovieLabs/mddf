@@ -60,10 +60,18 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	 * @param msg
 	 */
 	private void record(int level, int tag, int line, String msg) {
+		if(level < 0) {
+			// good place for breakpoint when debugging
+			int foo = 0;
+		}
 		countByLevel[level]++;
 		countByTag[tag]++;
 		if(level < minLevel) {
 			return;
+		}
+		if(level == LogMgmt.LEV_ERR) {
+			// good place for breakpoint when debugging
+			int foo = 0;
 		}
 		String key = line + ":" + tag + ":" + level;
 		msgMap.put(key, msg);
