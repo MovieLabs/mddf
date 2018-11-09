@@ -37,8 +37,10 @@ public class MecValidator extends CMValidator {
 
 	static final String DOC_VER = "2.4";
 
-	static {
-		id2typeMap = new HashMap<String, String>();
+	private static HashMap<String, String> mec_id2typeMap;
+	static { 
+		mec_id2typeMap = new HashMap<String, String>();
+		// if any MEC-specific ID type-mapping, put here
 	}
 
 	/**
@@ -49,20 +51,22 @@ public class MecValidator extends CMValidator {
 		this.validateC = validateC;
 
 		logMsgSrcId = LOGMSG_ID;
-		logMsgDefaultTag = LogMgmt.TAG_MEC;
+		logMsgDefaultTag = LogMgmt.TAG_MEC;		
+
+		id2typeMap = mec_id2typeMap;
 	}
 
 	public boolean process(MddfTarget target) throws IOException, JDOMException {
+		String schemaVer = identifyXsdVersion(target);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, srcFile, logMsgSrcId);
+		setMdMecVersion(schemaVer);
+		rootNS = mdmecNSpace;
+		
 		curTarget = target;
 		curRootEl = null;
 		curFile = target.getSrcFile();
 		curFileName = curFile.getName();
 		curFileIsValid = true;
-
-		String schemaVer = identifyXsdVersion(target);
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, srcFile, logMsgSrcId);
-		setMdMecVersion(schemaVer);
-		rootNS = mdmecNSpace;
 
 		validateXml(target);
 		// }
@@ -111,33 +115,41 @@ public class MecValidator extends CMValidator {
 		 * specifies a xs:string but the documentation specifies an enumerated
 		 * set of allowed values).
 		 */
+		validateMecVocab();
 		validateCMVocab();
+	}
 
-		validateRatings();
+	/**
+	 * 
+	 */
+	protected void validateMecVocab() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**
 	 * @return
 	 */
 	protected void validateCMVocab() { 
+		// TODO method stub
 		/*
 		 * Validate use of Country identifiers....
 		 */
-		validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country");
-		validateRegion(mdNSpace, "CountryOfOrigin", mdNSpace, "country");
-		// in multiple places
-		validateRegion(mdNSpace, "Region", mdNSpace, "country");
+//		validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country");
+//		validateRegion(mdNSpace, "CountryOfOrigin", mdNSpace, "country");
+//		// in multiple places
+//		validateRegion(mdNSpace, "Region", mdNSpace, "country");
 
 		/* Validate language codes */
 		
 		/* First check all usage of the '@language' attribute */
-		validateLanguage(manifestNSpace);
-		validateLanguage(mdNSpace);
-		
-		// Now check any other usage....
-		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "PrimarySpokenLanguage");
-		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "OriginalLanguage");
-		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "VersionLanguage"); 
+//		validateLanguage(manifestNSpace);
+//		validateLanguage(mdNSpace);
+//		
+//		// Now check any other usage....
+//		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "PrimarySpokenLanguage");
+//		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "OriginalLanguage");
+//		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "VersionLanguage"); 
 	}
 
 }

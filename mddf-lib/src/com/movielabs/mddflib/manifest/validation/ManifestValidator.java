@@ -60,16 +60,16 @@ import com.movielabs.mddflib.util.xml.XsdValidation;
 public class ManifestValidator extends CMValidator {
 
 	public static final String LOGMSG_ID = "ManifestValidator";
-
+	protected static HashMap<String, String> mmm_id2typeMap;
 	static {
-		id2typeMap = new HashMap<String, String>();
-		id2typeMap.put("AudioTrackID", "audtrackid");
-		id2typeMap.put("VideoTrackID", "vidtrackid");
-		id2typeMap.put("SubtitleTrackID", "subtrackid");
-		id2typeMap.put("InteractiveTrackID", "interactiveid");
-		id2typeMap.put("ProductID", "alid");
-		id2typeMap.put("ContentID", "cid");
-		id2typeMap.put("TextObjectID", "textobjid");
+		mmm_id2typeMap = new HashMap<String, String>();
+		mmm_id2typeMap.put("AudioTrackID", "audtrackid");
+		mmm_id2typeMap.put("VideoTrackID", "vidtrackid");
+		mmm_id2typeMap.put("SubtitleTrackID", "subtrackid");
+		mmm_id2typeMap.put("InteractiveTrackID", "interactiveid");
+		mmm_id2typeMap.put("ProductID", "alid");
+		mmm_id2typeMap.put("ContentID", "cid");
+		mmm_id2typeMap.put("TextObjectID", "textobjid");
 	}
 
 	private ArrayList<File> supportingMecFiles;
@@ -85,6 +85,8 @@ public class ManifestValidator extends CMValidator {
 
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_MANIFEST;
+		
+		id2typeMap = mmm_id2typeMap;
 	}
 
 	/**

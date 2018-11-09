@@ -58,17 +58,18 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 public class AvailValidator extends CMValidator implements IssueLogger {
 
 	public static final String LOGMSG_ID = "AvailValidator";
+	protected static HashMap<String, String> avail_id2typeMap;
+
+	static {
+		avail_id2typeMap = new HashMap<String, String>();
+		// if any avail-specific ID type-mapping, put here
+	}
 
 	static final LogReference AVAIL_RQMT_srcRef = LogReference.getRef("AVAIL", "avail01");
 
 	private Map<Object, Pedigree> pedigreeMap;
 
 	private String availSchemaVer;
-
-	static {
-		id2typeMap = new HashMap<String, String>();
-
-	}
 
 	/**
 	 * @param validateC
@@ -80,6 +81,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_AVAIL;
+		id2typeMap = avail_id2typeMap;
 	}
 
 	/**

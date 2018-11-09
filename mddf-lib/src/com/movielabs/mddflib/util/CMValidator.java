@@ -104,12 +104,12 @@ public class CMValidator extends XmlIngester {
 
 	public static final String LOGMSG_ID = "AbstractValidator";
 
-	protected static HashMap<String, String> id2typeMap;
+	protected HashMap<String, String> id2typeMap;
 
-	protected static Properties iso3166_1_codes;
-	protected static Properties iso4217_codes;
+	private static Properties iso3166_1_codes;
+	private static Properties iso4217_codes;
 
-	protected static HashSet<String> specialRatings = new HashSet<String>();
+	private static HashSet<String> specialRatings = new HashSet<String>();
 
 	private static JSONArray iso639_2;
 
@@ -524,6 +524,8 @@ public class CMValidator extends XmlIngester {
 			LogReference srcRef = LogReference.getRef("MMM-BP", "mmbp01.3");
 			String msg = "ID <type> does not conform to recommendation (i.e. '" + type + "')";
 			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_NOTICE, targetEl, msg, null, srcRef, logMsgSrcId);
+
+			
 		}
 
 	}
@@ -855,7 +857,7 @@ public class CMValidator extends XmlIngester {
 		List<Element> elementList = xpExpression.evaluate(curRootEl);
 		String text = null;
 		int tag4log = getLogTag(mdNSpace, null);
-		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "valRegion1: element count = " + elementList.size(), null,
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "valRegion1: element count = " + elementList.size(), null,
 				logMsgSrcId);
 		for (int i = 0; i < elementList.size(); i++) {
 			Element targetEl = (Element) elementList.get(i);
@@ -1017,10 +1019,7 @@ public class CMValidator extends XmlIngester {
 		Element logMsgEl;
 		int tag4log = getLogTag(mdNSpace, null);
 		LogReference srcRef = LogReference.getRef("CM", "cm_regions");
-		String errMsg = null;
-		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "vAlRegion1: element count = " + elementList.size(), null,
-				logMsgSrcId);
-
+		String errMsg = null; 
 		for (int i = 0; i < elementList.size(); i++) {
 			Element targetEl = (Element) elementList.get(i);
 			logMsgEl = targetEl;
@@ -1069,7 +1068,7 @@ public class CMValidator extends XmlIngester {
 		XPathExpression<Element> xpExpression = xpfac.compile(".//" + primaryNS.getPrefix() + ":" + primaryEl,
 				Filters.element(), null, primaryNS);
 		List<Element> elementList = xpExpression.evaluate(curRootEl);
-		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "valCode: element count = " + elementList.size(), null,
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "valCode: element count = " + elementList.size(), null,
 				logMsgSrcId);
 
 		for (int i = 0; i < elementList.size(); i++) {
