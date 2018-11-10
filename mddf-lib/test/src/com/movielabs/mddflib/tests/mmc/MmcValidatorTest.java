@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 MovieLabs
+ * Copyright (c) 2018 MovieLabs
 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -20,12 +20,11 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.avails;
+package com.movielabs.mddflib.tests.mmc;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Map;
 import java.util.MissingResourceException;
 
 import org.jdom2.JDOMException;
@@ -34,9 +33,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.movielabs.mddflib.avails.validation.AvailValidator;
-import com.movielabs.mddflib.avails.xml.Pedigree;
-import com.movielabs.mddflib.logging.LogMgmt; 
+import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.manifest.validation.profiles.MMCoreValidator;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.xml.MddfTarget;
 
@@ -44,13 +42,13 @@ import com.movielabs.mddflib.util.xml.MddfTarget;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class AvailsValidatorTest extends AvailValidator {
+public class MmcValidatorTest extends MMCoreValidator {
 
-	private static String rsrcPath = "./test/resources/avails/";
+	private static String rsrcPath = "./test/resources/mmc/";
 	private InstrumentedLogger iLog;
 
-	public AvailsValidatorTest() {
-		super(true, new InstrumentedLogger());
+	public MmcValidatorTest() {
+		super(new InstrumentedLogger());
 		iLog = (InstrumentedLogger) loggingMgr;
 	}
 
@@ -90,70 +88,73 @@ public class AvailsValidatorTest extends AvailValidator {
 		}
 
 	}
- 
 
 	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
+	 * @throws JDOMException
+	 * @throws IOException
 	 * 
 	 */
 	@Test
-	public void testNoErrors_2_2_2() throws IOException, JDOMException { 
-		MddfTarget target = initialize("Avails_noErrors_v2.2.2.xml");
-		execute(target, false);
+	public void testV1_noErrors() throws IOException, JDOMException {
+		MddfTarget target = initialize("MMCore_v1_noErr.xml");
+		execute(target, "MMC-1", false);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-	}
-
-	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
-	 * 
-	 */
-	@Test
-	public void testNoErrors_2_3() throws IOException, JDOMException { 
-		MddfTarget target = initialize("Avails_noErrors_v2.3.xml");
-		execute(target, false);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(12, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-	}
-
-	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
-	 * 
-	 */
-	//@Test
-	public void testNoErrors_2_4() throws IOException, JDOMException { 
-		MddfTarget target = initialize("Avails_noErrors_v2.4.xml");
-		execute(target, true);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
 	
+
 	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
+	 * @throws JDOMException
+	 * @throws IOException
 	 * 
 	 */
 	@Test
-	public void testWithErrors() throws IOException, JDOMException {
-		MddfTarget target = initialize("Avails_withErrors.xml");  
-		iLog.setMinLevel(LogMgmt.LEV_NOTICE);
-		execute(target, false);
-		assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+	public void test_TV_Series() throws IOException, JDOMException {
+		MddfTarget target = initialize("TV/VEEP_Series_manifest.xml");
+		execute(target, "MMC-1", false);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		assertEquals(7, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
 
+	/**
+	 * @throws JDOMException
+	 * @throws IOException
+	 * 
+	 */
+	@Test
+	public void test_TV_Season() throws IOException, JDOMException {
+		MddfTarget target = initialize("TV/VEEP_Season5_manifest.xml");
+		execute(target, "MMC-1", false);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		assertEquals(8, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+	}
 
-	protected void execute(MddfTarget target, boolean logToConsole) throws IOException, JDOMException {
+	/**
+	 * @throws JDOMException
+	 * @throws IOException
+	 * 
+	 */
+	@Test
+	public void test_TV_Episode() throws IOException, JDOMException {
+		MddfTarget target = initialize("TV/VEEP_Season5_E5_manifest.xml");
+		execute(target, "MMC-1", false);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		assertEquals(7, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+	}
+	
+	protected void execute(MddfTarget target, String profile, boolean logToConsole) throws IOException, JDOMException {
 		iLog.setPrintToConsole(logToConsole);
-		Map<Object, Pedigree> pedigreeMap = null;
-		super.process(target, pedigreeMap);
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Testing with file " + target.getSrcFile().getCanonicalPath(), null,
+				"JUnit");
+		super.process(target, profile, null);
 		iLog.setPrintToConsole(false);
 	}
 }

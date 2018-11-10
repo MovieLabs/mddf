@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<manifest:MediaManifest
+	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.7/manifest"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.6/md"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.5/manifest manifest-v1.7.xsd"
+	ManifestID="md:mid:eidr-x:9B79-929D-8C21-2F9C-D3C5-3:Test-1"
+	ExtraVersionReference="1.MA.2016-11-20T18:27:17" updateNum="1">
+	<manifest:Compatibility>
+		<manifest:SpecVersion>1.7</manifest:SpecVersion>
+		<manifest:Profile>MMC-1</manifest:Profile>
+	</manifest:Compatibility>
+	<manifest:Source>
+		<manifest:ServiceProvider>
+			<md:DisplayName>Mediator</md:DisplayName>
+		</manifest:ServiceProvider>
+	</manifest:Source>
+	<manifest:Inventory>
+		<manifest:Image
+			ImageID="imageid:eidr-x:9B79-929D-8C21-2F9C-D3C5-3:disneyjakeandtheneverlandpirates.series-logo.en">
+			<md:Purpose>series-logo</md:Purpose>
+			<md:Width>1920</md:Width>
+			<md:Height>1080</md:Height>
+			<md:Encoding>JPG</md:Encoding>
+			<md:Language>en</md:Language>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>resources/DISNEY_disneyjakeandtheneverlandpirates_AND_THE_NEVER_LAND_PIRATES_IMG_LOG_ENG.jpg
+				</manifest:ContainerLocation>
+				<manifest:Hash method="MD5">fa862b9c54bc103aea196c635713ecdf
+				</manifest:Hash>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<manifest:Metadata
+			ContentID="md:cid:eidr-x:9B79-929D-8C21-2F9C-D3C5-3:disneyjakeandtheneverlandpirates.series.DisneySVODMetadata">
+			<manifest:ContainerReference
+				type="common">
+				<manifest:ContainerLocation>resources/DISNEY_disneyjakeandtheneverlandpirates_AND_THE_NEVER_LAND_PIRATES_mec.xml
+				</manifest:ContainerLocation>
+				<manifest:Hash method="MD5">FC2138CF96266DE3B6D1DE610CA4705F
+				</manifest:Hash>
+			</manifest:ContainerReference>
+		</manifest:Metadata>
+	</manifest:Inventory>
+	<manifest:Experiences>
+		<manifest:Experience
+			ExperienceID="md:experience:eidr-x:9B79-929D-8C21-2F9C-D3C5-3:disneyjakeandtheneverlandpirates.series"
+			version="1.0">
+			<manifest:ContentID>md:cid:eidr-x:9B79-929D-8C21-2F9C-D3C5-3:disneyjakeandtheneverlandpirates.series.DisneySVODMetadata
+			</manifest:ContentID>
+			<manifest:Audiovisual
+				ContentID="md:cid:eidr-x:9B79-929D-8C21-2F9C-D3C5-3:disneyjakeandtheneverlandpirates.series.DisneySVODMetadata">
+				<manifest:Type>Main</manifest:Type>
+			</manifest:Audiovisual>
+		</manifest:Experience>
+	</manifest:Experiences>
+	<manifest:ALIDExperienceMaps>
+		<manifest:ALIDExperienceMap>
+			<manifest:ALID>md:alid:org:eidr-x:9B79-929D-8C21-2F9C-D3C5-3:disneyjakeandtheneverlandpirates.series
+			</manifest:ALID>
+			<manifest:ExperienceID>md:experience:eidr-x:9B79-929D-8C21-2F9C-D3C5-3:disneyjakeandtheneverlandpirates.series
+			</manifest:ExperienceID>
+		</manifest:ALIDExperienceMap>
+	</manifest:ALIDExperienceMaps>
+</manifest:MediaManifest>

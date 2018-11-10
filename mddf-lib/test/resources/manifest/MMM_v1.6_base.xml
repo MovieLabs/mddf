@@ -159,7 +159,7 @@
 			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha"> 
 			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
 			</manifest:ContentID>
-			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<!-- feature movie -->
 				<manifest:Type>Main</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>

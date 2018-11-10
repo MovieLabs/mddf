@@ -76,7 +76,7 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 		String key = line + ":" + tag + ":" + level;
 		msgMap.put(key, msg);
 		if (printToConsole) {
-			System.out.println("ILOG--->" + LogMgmt.logLevels[level] + "(line " + line + ")" + "--" + msg);
+			System.out.println("ILOG:  " + LogMgmt.logLevels[level].toUpperCase() + ":\t line " + line + ": " + msg);
 			if (level == LogMgmt.LEV_FATAL) {
 				System.out.println("DEAD AGAIN");
 			}

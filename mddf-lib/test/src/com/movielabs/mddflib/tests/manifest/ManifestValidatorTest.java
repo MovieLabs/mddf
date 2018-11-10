@@ -90,60 +90,147 @@ public class ManifestValidatorTest extends ManifestValidator {
 	}
 
 	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
+	 * @throws JDOMException
+	 * @throws IOException
 	 * 
 	 */
 	@Test
-	public void testV16noErrors() throws IOException, JDOMException { 
+	public void testV16noErrors() throws IOException, JDOMException {
 		MddfTarget target = initialize("MMM_v1.6_base.xml");
-		super.process(target);
+		execute(target, false);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
 
 	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
+	 * @throws JDOMException
+	 * @throws IOException
 	 * 
 	 */
 	@Test
 	public void testV16withErrors() throws IOException, JDOMException {
 		MddfTarget target = initialize("MMM_v1.6_errors.xml");
-		super.process(target);
+		execute(target, false);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 		assertEquals(5, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
 
 	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
+	 * @throws JDOMException
+	 * @throws IOException
 	 * 
 	 */
 	@Test
-	public void testV17noErrors() throws IOException, JDOMException { 
+	public void testV17noErrors() throws IOException, JDOMException {
 		MddfTarget target = initialize("MMM_v1.7_base.xml");
-		super.process(target);
+		execute(target, false);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
 
 	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
+	 * @throws JDOMException
+	 * @throws IOException
 	 * 
 	 */
 	@Test
 	public void testV17withErrors() throws IOException, JDOMException {
 		MddfTarget target = initialize("MMM_v1.7_errors.xml");
-		iLog.setPrintToConsole(true);
-		super.process(target);
-		iLog.setPrintToConsole(false);
-		assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(4, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		execute(target, false);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+		assertEquals(9, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		assertEquals(7, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+	}
+
+	@Test
+	public void testFull1_v1_6() throws IOException, JDOMException {
+		MddfTarget target = initialize("Manifest_v1.6_A.xml");
+		execute(target, false);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		/*
+		 * WIP:
+		 */
+//		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+	}
+
+	@Test
+	public void testFull1_v1_7() throws IOException, JDOMException {
+		MddfTarget target = initialize("Manifest_v1.7_A.xml");
+		execute(target, false);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		/*
+		 * WIP:
+		 */
+//		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+	}
+
+	@Test
+	public void testFull1_v1_8() throws IOException, JDOMException {
+		MddfTarget target = initialize("Manifest_v1.8_A.xml");
+		execute(target, false);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		/*
+		 * WIP:
+		 */
+//		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+	}
+
+	// ======================================================
+	/*
+	 * These tests are disabled. The logic for validation process to 'follow'
+	 * Container references to MEC files, currently resides in the
+	 * ValidationController rather than the ManifestValidator.
+	 */
+//	/**
+//	 * @throws JDOMException
+//	 * @throws IOException
+//	 * 
+//	 */
+//	@Test
+//	public void testMEC_noErr() throws IOException, JDOMException {
+//		MddfTarget target = initialize("containers/Manifest_w_good_MEC_v1.6.xml"); 
+//		super.process(target); 
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+//	}
+//
+//	/**
+//	 * @throws JDOMException
+//	 * @throws IOException
+//	 * 
+//	 */
+//	@Test
+//	public void testMEC_withErrors() throws IOException, JDOMException {
+//		MddfTarget target = initialize("containers/Manifest_w_bad_MEC_v1.6.xml");
+//		iLog.setPrintToConsole(true);
+//		super.process(target);
+//		iLog.setPrintToConsole(false);
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+//	}
+
+	protected void execute(MddfTarget target, boolean logToConsole) throws IOException, JDOMException {
+		iLog.setPrintToConsole(logToConsole);
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + target.getSrcFile().getCanonicalPath(), null,
+				"JUnit");
+		super.process(target);
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Test completed", null,
+				"JUnit");
+		iLog.setPrintToConsole(false);
 	}
 }

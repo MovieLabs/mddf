@@ -98,6 +98,7 @@ public abstract class AbstractCmmTester extends CMValidator {
 		FILE_FMT srcMddfFmt = MddfContext.identifyMddfFormat(curRootEl);		
 		setMddfVersions(srcMddfFmt);
 		rootNS = manifestNSpace;
+		iLog.setPrintToConsole(false);
 	}
 
 	private Document loadTestArtifact(String fileName) {

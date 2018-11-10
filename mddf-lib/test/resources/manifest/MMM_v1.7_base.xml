@@ -1,33 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TEST ARTIFACT: This file  can be used to perform specific JUnit tests relating to the Media Manifest specification. -->
+<!-- TEST ARTIFACT: This file can be used to perform specific JUnit tests 
+	relating to the Media Manifest specification. -->
 <manifest:MediaManifest
 	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.7/manifest"
-	xmlns:md="http://www.movielabs.com/schema/md/v2.6/md" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.6/md"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.7/manifest manifest-v1.7.xsd"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 	<manifest:Compatibility>
-		<manifest:SpecVersion>1.6</manifest:SpecVersion>
+		<manifest:SpecVersion>1.7</manifest:SpecVersion>
 		<manifest:System>HTML5</manifest:System>
 		<manifest:System>Roku</manifest:System>
 		<manifest:Profile>none</manifest:Profile>
 	</manifest:Compatibility>
 	<manifest:Inventory>
-		<manifest:Audio AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		<manifest:Audio
+			AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<md:Language>en</md:Language>
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Audio>
-		<manifest:Video VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		<manifest:Video
+			VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<md:Picture />
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Video>
-		<manifest:Metadata ContentID="md:cid:eidr-s:FFFF-FFFF-FFFF-FFFF-FFFF-V">
-			<manifest:BasicMetadata ContentID="md:cid:eidr-s:FFFF-FFFF-FFFF-FFFF-FFFF-V">
+		<manifest:Metadata
+			ContentID="md:cid:eidr-s:FFFF-FFFF-FFFF-FFFF-FFFF-V">
+			<manifest:BasicMetadata
+				ContentID="md:cid:eidr-s:FFFF-FFFF-FFFF-FFFF-FFFF-V">
 				<md:LocalizedInfo language="en" default="true">
 					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
 					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
@@ -128,7 +135,8 @@
 				<md:PrimarySpokenLanguage>cmn-Hans-CN</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>sr-Latn-RS</md:PrimarySpokenLanguage>
 			</manifest:BasicMetadata>
-			<manifest:Alias ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+			<manifest:Alias
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<manifest:LocalizedPair>
 					<manifest:LanguageIncluded>en</manifest:LanguageIncluded>
 				</manifest:LocalizedPair>
@@ -156,23 +164,27 @@
 	<manifest:Experiences>
 		<manifest:Experience version="0.1"
 			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha">
-			<!-- Not an ERR as Manifest spec does not require CID to map to Metadata in Inventory -->
+			<!-- Not an ERR as Manifest spec does not require CID to map to Metadata 
+				in Inventory -->
 			<manifest:ContentID>md:cid:eidr-s:FFFF-FFFF-FFFF-FFFF-FFFF-V
 			</manifest:ContentID>
-			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:Audiovisual
+				ContentID="md:cid:eidr-s:FFFF-FFFF-FFFF-FFFF-FFFF-V">
 				<!-- feature movie -->
 				<manifest:Type>Main</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>
 				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 				</manifest:PresentationID>
 			</manifest:Audiovisual>
-		</manifest:Experience> 
+		</manifest:Experience>
 	</manifest:Experiences>
 	<manifest:ALIDExperienceMaps>
 		<manifest:ALIDExperienceMap>
 			<manifest:ALID>md:alid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02
 			</manifest:ALID>
-			<manifest:ExperienceID condition="Acquired" licenseType="Foo">md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha</manifest:ExperienceID>
+			<manifest:ExperienceID condition="Acquired"
+				licenseType="Foo">md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha
+			</manifest:ExperienceID>
 		</manifest:ALIDExperienceMap>
 	</manifest:ALIDExperienceMaps>
 </manifest:MediaManifest>

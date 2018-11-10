@@ -46,8 +46,6 @@ import net.sf.json.JSONObject;
  *
  */
 public class CMValidatorTest extends AbstractCmmTester {
- 
-  
 
 	/**
 	 * Test method for
@@ -113,15 +111,12 @@ public class CMValidatorTest extends AbstractCmmTester {
 	 * .
 	 */
 	@Test
-	public void testValidateXRef() {
+	public void testValidateXRef_noErr() {
 		id2typeMap = new HashMap<String, String>();
 		id2typeMap.put("AudioTrackID", "audtrackid");
 		id2typeMap.put("VideoTrackID", "vidtrackid");
 		id2typeMap.put("ContentID", "cid");
 
-		/*
-		 * First run with error-free XML
-		 */
 		initialize("common/CM_base.xml");
 		super.validateConstraints();
 		/*
@@ -140,10 +135,16 @@ public class CMValidatorTest extends AbstractCmmTester {
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		/*
-		 * Reset and run file with errors
-		 */
-		iLog.clearLog();
+	}
+
+	@Test
+	public void testValidateXRef_errors() {
+
+		id2typeMap = new HashMap<String, String>();
+		id2typeMap.put("AudioTrackID", "audtrackid");
+		id2typeMap.put("VideoTrackID", "vidtrackid");
+		id2typeMap.put("ContentID", "cid"); 
+		
 		initialize("common/CM_IdXref-errors.xml");
 		super.validateConstraints();
 		/*
@@ -185,6 +186,5 @@ public class CMValidatorTest extends AbstractCmmTester {
 		validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, null, true);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 	}
- 
 
 }

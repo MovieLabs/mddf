@@ -43,7 +43,7 @@ public class RatingsTest extends AbstractCmmTester {
 
 	@Test
 	public void availsNoErrors() {
-		initialize("avails/Avails_noErrors.xml");
+		initialize("avails/Avails_noErrors_v2.2.2.xml"); 
 		validateRatings();
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
