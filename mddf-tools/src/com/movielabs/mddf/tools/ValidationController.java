@@ -49,6 +49,7 @@ import com.movielabs.mddflib.manifest.validation.ManifestValidator;
 import com.movielabs.mddflib.manifest.validation.MecValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.MMCoreValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator;
+import com.movielabs.mddflib.util.StringUtils;
 import com.movielabs.mddflib.util.Translator;
 import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -327,7 +328,7 @@ public class ValidationController {
 
 	protected void validateFile(File srcFile, String uxProfile, List<String> useCases)
 			throws IOException, JDOMException {
-		String fileType = extractFileType(srcFile.getAbsolutePath());
+		String fileType = StringUtils.extractFileType(srcFile.getAbsolutePath());
 		fileType = fileType.toLowerCase();
 		if (!(fileType.equals("xml") || fileType.equals("xlsx"))) {
 			// Skipping file: Unsupported file type
@@ -447,16 +448,6 @@ public class ValidationController {
 		return name;
 	}
 
-	private String extractFileType(String name) {
-		int cutPt = name.lastIndexOf(".");
-		String extension;
-		if (cutPt < 0) {
-			extension = "";
-		} else {
-			extension = name.substring(cutPt + 1, name.length());
-		}
-		return extension.toLowerCase();
-	}
 
 	/**
 	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file.
@@ -520,7 +511,7 @@ public class ValidationController {
 		System.out.println("Obfuscate " + inFile.getName());
 		System.out.println("Output to " + outFile.getName());
 		Document xmlDoc;
-		String fileType = extractFileType(inFile.getAbsolutePath());
+		String fileType = StringUtils.extractFileType(inFile.getAbsolutePath());
 		if (fileType.equals("xlsx")) {
 			Map<String, Object> results = convertSpreadsheet(inFile);
 			if (results == null) {
@@ -630,9 +621,9 @@ public class ValidationController {
 						pValidator = new MMCoreValidator(logMgr);
 						isValid = pValidator.process(target, profile, useCases) && isValid;
 						List<File> supportingMecFiles = ((ManifestValidator) pValidator).getSupportingMecFiles();
-						for (File nextMec : supportingMecFiles) {
+						for (File nextReferencedMddf : supportingMecFiles) {
 							try {
-								validateReferencedMec(nextMec);
+								validateReferencedMec(nextReferencedMddf);
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								// e.printStackTrace();
@@ -649,61 +640,34 @@ public class ValidationController {
 		return isValid;
 	}
 
-	private void validateReferencedMec(File mecFile) throws IOException, JDOMException {
-		if (!mecFile.exists()) {
+	private void validateReferencedMec(File mddfFile) throws IOException, JDOMException {
+		if (!mddfFile.exists()) {
 			return;
 		}
-		String fileType = extractFileType(mecFile.getAbsolutePath());
+		String fileType = StringUtils.extractFileType(mddfFile.getAbsolutePath());
 		fileType = fileType.toLowerCase();
 		if (!fileType.equals("xml")) {
 			// ERROR
-			String errMsg = "Referenced location does not contain MEC file.";
+			String errMsg = "Referenced location does not contain MDDF file.";
 			String supplemental = "Invalid file extension";
-			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, mecFile, -1, MODULE_ID, supplemental, null);
+			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, mddfFile, -1, MODULE_ID, supplemental, null);
 			return;
 		}
-		FILE_FMT srcMddfFmt = null;
-		Document xmlDoc = null;
-		try {
-			xmlDoc = XmlIngester.getAsXml(mecFile);
-		} catch (SAXParseException e) {
-			int ln = e.getLineNumber();
-			String errMsg = "Invalid XML on or before line " + e.getLineNumber();
-			String supplemental = e.getMessage();
-			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, mecFile, ln, MODULE_ID, supplemental, null);
-			return;
+		MddfTarget target = new MddfTarget(mddfFile, logMgr);
+		MDDF_TYPE type = target.getMddfType();
+		switch (type) {
+		case MANIFEST:
+			break;
+		case MEC: 
+			if (logNav != null) {
+				logNav.setFileMddfType(mddfFile, type);
+				logNav.setXml(mddfFile, target.getXmlDoc());
+			}
+			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MEC, "Validating referenced MEC file", mddfFile, MODULE_ID);
+						validateMEC(target);
+			break;
 		}
-		srcMddfFmt = MddfContext.identifyMddfFormat(xmlDoc.getRootElement());
-		if (logNav != null) {
-			logNav.setMddfFormat(mecFile, srcMddfFmt);
-		}
-
-		XmlIngester.setSourceDirPath(mecFile.getAbsolutePath());
-		/*
-		 * Identify type of XML file (i.e., Manifest, Avail, etc)
-		 */
-		Element docRootEl = xmlDoc.getRootElement();
-		String nSpaceUri = docRootEl.getNamespaceURI();
-		String schemaType = null;
-		MDDF_TYPE mddfType = null;
-		int logTag = -1;
-		if (nSpaceUri.contains("mdmec")) {
-			schemaType = "mdmec";
-			logTag = LogMgmt.TAG_MEC;
-			mddfType = MDDF_TYPE.MEC;
-		} else {
-			String errMsg = "Referenced location does not contain MEC file.";
-			String supplemental = "Root has unrecognized namespace " + nSpaceUri;
-			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, mecFile, -1, MODULE_ID, supplemental, null);
-			return;
-		}
-		if (logNav != null) {
-			logNav.setFileMddfType(mecFile, mddfType);
-			logNav.setXml(mecFile, xmlDoc);
-		}
-		logMgr.log(LogMgmt.LEV_INFO, logTag, "Validating file as a " + schemaType, mecFile, MODULE_ID);
-		MddfTarget target = new MddfTarget(mecFile, logMgr);
-		validateMEC(target);
+		 
 	}
 
 	/**
