@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdmec:CoreMetadata xmlns="http://www.movielabs.com/schema/md/v2.7/md" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.xsd">
+	<mdmec:Basic ContentID="md:cid:org:number.hbo.com:787232">
+		<md:LocalizedInfo language="de">
+			<md:TitleDisplayUnlimited>Thanksgiving</md:TitleDisplayUnlimited>
+			<md:TitleSort>Thanksgiving</md:TitleSort>
+			<md:ArtReference resolution="800x800">md:imageid:org:number.hbo.com:787232:season-photo.de</md:ArtReference>
+			<md:Summary190 cast="false">Selina feiert Thanksgiving auf eigene Weise. Zwischenzeitlich kümmern Ben und Kent sich um eine Thanksgiving-Day-Krise und bitten Tom James und VP Doyle, in Selinas Abwesenheit Erklärungen abzugeben. Ben beauftragt Dan damit, für Tom James zu arbeiten.</md:Summary190>
+			<md:Summary400 cast="false">Selina feiert Thanksgiving auf eigene Weise. Zwischenzeitlich kümmern Ben und Kent sich um eine Thanksgiving-Day-Krise und bitten Tom James und VP Doyle, in Selinas Abwesenheit Erklärungen abzugeben. Ben beauftragt Dan damit, für Tom James zu arbeiten.</md:Summary400>
+			<md:Summary4000 cast="false">Selina feiert Thanksgiving auf eigene Weise. Zwischenzeitlich kümmern Ben und Kent sich um eine Thanksgiving-Day-Krise und bitten Tom James und VP Doyle, in Selinas Abwesenheit Erklärungen abzugeben. Ben beauftragt Dan damit, für Tom James zu arbeiten.</md:Summary4000>
+			<md:Genre>Action</md:Genre>
+			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:LocalizedInfo language="en">
+			<md:TitleDisplayUnlimited>Thanksgiving</md:TitleDisplayUnlimited>
+			<md:TitleSort>Thanksgiving</md:TitleSort>
+			<md:ArtReference resolution="800x800">md:imageid:org:number.hbo.com:787232:season-photo.en</md:ArtReference>
+			<md:Summary190 cast="false">Selina celebrates Thanksgiving in her own special way. Meanwhile, Ben and Kent manage a Thanksgiving Day crisis, deploying Tom James and VP Doyle to make statements in Selina's absence. Ben sends Dan to work for Tom James.</md:Summary190>
+			<md:Summary400 cast="false">Selina celebrates Thanksgiving in her own special way. Meanwhile, Ben and Kent manage a Thanksgiving Day crisis, deploying Tom James and VP Doyle to make statements in Selina's absence. Ben sends Dan to work for Tom James.</md:Summary400>
+			<md:Summary4000 cast="false">Selina celebrates Thanksgiving in her own special way. Meanwhile, Ben and Kent manage a Thanksgiving Day crisis, deploying Tom James and VP Doyle to make statements in Selina's absence. Ben sends Dan to work for Tom James.</md:Summary4000>
+			<md:Genre>Action</md:Genre>
+			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:ReleaseYear>2016</md:ReleaseYear>
+		<md:ReleaseDate>2016-05-22</md:ReleaseDate>
+		<md:ReleaseHistory>
+			<md:ReleaseType>original</md:ReleaseType>
+			<md:DistrTerritory>
+				<md:country>DE</md:country>
+			</md:DistrTerritory>
+			<md:Date>2016-05-22</md:Date>
+		</md:ReleaseHistory>
+		<md:WorkType>Episode</md:WorkType>
+		<md:AltIdentifier>
+			<md:Namespace>MPM</md:Namespace>
+			<md:Identifier>md:cid:org:microsoft-x:787232_WW:VEEP_43_THANKSGIVING</md:Identifier>
+		</md:AltIdentifier>
+		<md:RatingSet>
+			<md:Rating>
+				<md:Region>
+					<md:country>DE</md:country>
+				</md:Region>
+				<md:System>FSK</md:System>
+				<md:Value>16</md:Value>
+			</md:Rating>
+		</md:RatingSet>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>1</md:BillingBlockOrder>
+				<md:Character>Selina Meyer</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Julia Louis-Dreyfus</md:DisplayName>
+				<md:SortName>Louis-Dreyfus,Louis-Dreyfus</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>10</md:BillingBlockOrder>
+				<md:Character>Richard</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Sam Richardson</md:DisplayName>
+				<md:SortName>Richardson,Sam</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>2</md:BillingBlockOrder>
+				<md:Character>Gary</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Tony Hale</md:DisplayName>
+				<md:SortName>Hale,Tony</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>3</md:BillingBlockOrder>
+				<md:Character>Amy</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Anna Chlumsky</md:DisplayName>
+				<md:SortName>Chlumsky,Anna</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>4</md:BillingBlockOrder>
+				<md:Character>Dan Egan</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Reid Scott</md:DisplayName>
+				<md:SortName>Scott,Reid</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>5</md:BillingBlockOrder>
+				<md:Character>Mike McClintock</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Matt Walsh</md:DisplayName>
+				<md:SortName>Walsh,Matt</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>6</md:BillingBlockOrder>
+				<md:Character>Jonah</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Timothy C. Simons</md:DisplayName>
+				<md:SortName>Simons,Timothy C.</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>7</md:BillingBlockOrder>
+				<md:Character>Sue</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Sufe Bradshaw</md:DisplayName>
+				<md:SortName>Bradshaw,Sufe</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>8</md:BillingBlockOrder>
+				<md:Character>Ben</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Kevin Dunn</md:DisplayName>
+				<md:SortName>Dunn,Kevin</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>9</md:BillingBlockOrder>
+				<md:Character>Kent Davison</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Gary Cole</md:DisplayName>
+				<md:SortName>Cole,Gary</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Director</md:JobFunction>
+				<md:JobDisplay>Director</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Chris Addison</md:DisplayName>
+				<md:SortName>Addison,Chris</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Julia Louis-Dreyfus</md:DisplayName>
+				<md:SortName>Louis-Dreyfus,Julia</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Georgia Pritchett</md:DisplayName>
+				<md:SortName>Pritchett,Georgia</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Morgan Sackett</md:DisplayName>
+				<md:SortName>Sackett,Morgan</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Will Smith</md:DisplayName>
+				<md:SortName>Smith,Will</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Christopher Godsick</md:DisplayName>
+				<md:SortName>Godsick,Christopher</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Dave Mandel</md:DisplayName>
+				<md:SortName>Mandel,Dave</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Lew Morton</md:DisplayName>
+				<md:SortName>Morton,Lew</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Frank Rich</md:DisplayName>
+				<md:SortName>Rich,Frank</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Peter Huyck</md:DisplayName>
+				<md:SortName>Huyck,Peter</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Alex Gregory</md:DisplayName>
+				<md:SortName>Gregory,Alex</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Sean Grey</md:DisplayName>
+				<md:SortName>Grey,Sean</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Jim Margolis</md:DisplayName>
+				<md:SortName>Margolis,Jim</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Writer</md:JobFunction>
+				<md:JobDisplay>Writer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Sean Gray</md:DisplayName>
+				<md:SortName>Gray,Sean</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Writer</md:JobFunction>
+				<md:JobDisplay>Writer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Georgia Pritchett</md:DisplayName>
+				<md:SortName>Pritchett,Georgia</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Writer</md:JobFunction>
+				<md:JobDisplay>Writer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Will Smith</md:DisplayName>
+				<md:SortName>Smith,Will</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:CountryOfOrigin>
+			<md:country>US</md:country>
+		</md:CountryOfOrigin>
+		<md:PrimarySpokenLanguage>en</md:PrimarySpokenLanguage>
+		<md:AssociatedOrg role="distributor">
+			<md:DisplayName>HBO</md:DisplayName>
+		</md:AssociatedOrg>
+		<md:SequenceInfo>
+			<md:Number>5</md:Number>
+			<md:HouseSequence>43</md:HouseSequence>
+		</md:SequenceInfo>
+		<md:Parent relationshipType="isepisodeof">
+			<md:ParentContentID>md:cid:eidr-s:2D99-3C1C-9F31-3E10-3411-1</md:ParentContentID>
+		</md:Parent>
+	</mdmec:Basic>
+</mdmec:CoreMetadata>
