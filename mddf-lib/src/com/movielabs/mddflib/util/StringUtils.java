@@ -91,5 +91,14 @@ public class StringUtils {
 		return sb.toString();
 	}
 
-
+	public static String extractFileType(String name) {
+		int cutPt = name.lastIndexOf(".");
+		String extension;
+		if (cutPt < 0) {
+			extension = "";
+		} else {
+			extension = name.substring(cutPt + 1, name.length());
+		}
+		return extension.toLowerCase();
+	}
 }
