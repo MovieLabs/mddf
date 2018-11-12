@@ -41,6 +41,7 @@ import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.CMValidator;
 import com.movielabs.mddflib.util.PathUtilities;
+import com.movielabs.mddflib.util.StringUtils;
 import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -392,13 +393,16 @@ public class ManifestValidator extends CMValidator {
 			try {
 				String targetLoc = PathUtilities.convertToAbsolute(baseLoc, containerPath);
 				File target = new File(targetLoc);
-				String dbgMsg = "Found MEC to validate at ContainerLocation " + targetLoc;
-				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_DEBUG, clocEl, dbgMsg, null, null, logMsgSrcId);
-				supportingMecFiles.add(target);
 				if (!target.exists()) {
 					String errMsg = "Referenced container not found";
 					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, clocEl, errMsg, null, null, logMsgSrcId);
 					continue outterLoop;
+				} else {
+					String dbgMsg = "Possible MDDF file to validate at ContainerLocation " + targetLoc;
+					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_DEBUG, clocEl, dbgMsg, null, null, logMsgSrcId);
+					if (StringUtils.extractFileType(targetLoc).equals("xml")) {
+						supportingMecFiles.add(target);
+					}
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
