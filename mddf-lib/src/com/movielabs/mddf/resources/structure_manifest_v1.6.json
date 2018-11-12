@@ -13,10 +13,42 @@
 					"severity": "Error",
 					"xpath": "./{manifest}TrackMetadata[{manifest}TrackSelectionNumber='0']",
 					"msg": "Must have exactly 1 instance of TrackMetadata with TrackSelectionNumber='0' per Presentation"
+				}
+			]
+		},
 
+		"Metadata": 
+		{
+			"targetPath": "./{manifest}Inventory/{manifest}Metadata",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"xpath": 
+					[
+						"./{manifest}ContainerReference",
+						"./{manifest}BasicMetadata",
+						"./{manifest}Alias"
+					]
+				}
+			]
+		},
+
+		"ContainerRef": 
+		{
+			"targetPath": ".//{manifest}ContainerReference",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"xpath": 
+					[
+						"./{manifest}ContainerIdentifier",
+						"./{manifest}ContainerLocation",
+						"./{manifest}ParentContainer"
+					]
 				}
 			]
 		}
- 
 	}
 }
