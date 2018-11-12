@@ -25,22 +25,28 @@ import java.io.IOException;
 import java.util.HashMap;
 import org.jdom2.JDOMException;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.CMValidator;
 import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XsdValidation;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 public class MecValidator extends CMValidator {
 
 	public static final String LOGMSG_ID = "MecValidator";
 
-	static final String DOC_VER = "2.4";
+//	static final String DOC_VER = "2.4";
 
-	private static HashMap<String, String> mec_id2typeMap;
-	static { 
+	protected static HashMap<String, String> mec_id2typeMap;
+	static {
 		mec_id2typeMap = new HashMap<String, String>();
-		// if any MEC-specific ID type-mapping, put here
+		mec_id2typeMap.put("ContentID", "cid");
+		mec_id2typeMap.put("ParentContentID", "cid");
 	}
 
 	/**
@@ -51,7 +57,7 @@ public class MecValidator extends CMValidator {
 		this.validateC = validateC;
 
 		logMsgSrcId = LOGMSG_ID;
-		logMsgDefaultTag = LogMgmt.TAG_MEC;		
+		logMsgDefaultTag = LogMgmt.TAG_MEC;
 
 		id2typeMap = mec_id2typeMap;
 	}
@@ -61,7 +67,7 @@ public class MecValidator extends CMValidator {
 		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, srcFile, logMsgSrcId);
 		setMdMecVersion(schemaVer);
 		rootNS = mdmecNSpace;
-		
+
 		curTarget = target;
 		curRootEl = null;
 		curFile = target.getSrcFile();
@@ -85,7 +91,6 @@ public class MecValidator extends CMValidator {
 		// clean up and go home
 		return curFileIsValid;
 	}
-	
 
 	/**
 	 * Validate everything that is fully specified via the XSD.
@@ -99,7 +104,6 @@ public class MecValidator extends CMValidator {
 		return curFileIsValid;
 	}
 
-
 	/**
 	 * Validate everything that is not fully specified via the XSD.
 	 */
@@ -111,9 +115,9 @@ public class MecValidator extends CMValidator {
 		validateNotEmpty(mecSchema);
 
 		/*
-		 * Validate the usage of controlled vocab (i.e., places where XSD
-		 * specifies a xs:string but the documentation specifies an enumerated
-		 * set of allowed values).
+		 * Validate the usage of controlled vocab (i.e., places where XSD specifies a
+		 * xs:string but the documentation specifies an enumerated set of allowed
+		 * values).
 		 */
 		validateMecVocab();
 		validateCMVocab();
@@ -122,34 +126,18 @@ public class MecValidator extends CMValidator {
 	/**
 	 * 
 	 */
-	protected void validateMecVocab() {
-		// TODO Auto-generated method stub
-		
+	private void validateCMVocab() {
+		validateBasicMetadata();
 	}
 
 	/**
-	 * @return
+	 * 
 	 */
-	protected void validateCMVocab() { 
-		// TODO method stub
+	protected void validateMecVocab() {
 		/*
-		 * Validate use of Country identifiers....
+		 * There is no MEC-specific terminology so this is a pass-thru method.
 		 */
-//		validateRegion(mdNSpace, "DistrTerritory", mdNSpace, "country");
-//		validateRegion(mdNSpace, "CountryOfOrigin", mdNSpace, "country");
-//		// in multiple places
-//		validateRegion(mdNSpace, "Region", mdNSpace, "country");
 
-		/* Validate language codes */
-		
-		/* First check all usage of the '@language' attribute */
-//		validateLanguage(manifestNSpace);
-//		validateLanguage(mdNSpace);
-//		
-//		// Now check any other usage....
-//		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "PrimarySpokenLanguage");
-//		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "OriginalLanguage");
-//		validateLanguage(mdmecNSpace, "Basic", mdNSpace, "VersionLanguage"); 
 	}
 
 }
