@@ -188,7 +188,9 @@ public class CMValidator extends XmlIngester {
 	}
 
 	/**
-	 * Validate everything that is not fully specified via the XSD.
+	 * Validate everything that is not fully specified via the XSD. This method
+	 * should be invoked when validating MEC and Manifest files. Avails has it's own
+	 * unique Metadata schema and therefore does not need to invoke this method.
 	 */
 	protected void validateConstraints() {
 		validateIdSet();
@@ -196,6 +198,72 @@ public class CMValidator extends XmlIngester {
 		validateLanguageCodes();
 		validateCurrencyCodes();
 		validateRatings();
+	}
+
+	/**
+	 * Validates any terminology used in conjunction with
+	 * <tt>md:BasicMetadata-type</tt>
+	 */
+	protected void validateBasicMetadata() {
+		JSONObject cmVocab = (JSONObject) getVocabResource("cm", CM_VER);
+		if (cmVocab == null) {
+			String msg = "Unable to validate controlled vocab: missing resource file";
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
+			curFileIsValid = false;
+			return;
+		}
+
+		JSONArray expectedValues = cmVocab.optJSONArray("WorkType");
+		LogReference docRef = LogReference.getRef("CM", CM_VER, "cm002");
+		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "WorkType", expectedValues, docRef, true, true);
+		validateVocab(mdNSpace, "Work", mdNSpace, "WorkType", expectedValues, docRef, true, true);
+
+		expectedValues = cmVocab.optJSONArray("ColorType");
+		docRef = LogReference.getRef("CM", CM_VER, "cm003");
+		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureColorType", expectedValues, docRef, true,
+				true);
+
+		expectedValues = cmVocab.optJSONArray("PictureFormat");
+		docRef = LogReference.getRef("CM", CM_VER, "cm004");
+		validateVocab(manifestNSpace, "BasicMetadata", mdNSpace, "PictureFormat", expectedValues, docRef, true, true);
+
+		expectedValues = cmVocab.optJSONArray("ReleaseType");
+		docRef = LogReference.getRef("CM", CM_VER, "cm005");
+		validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", expectedValues, docRef, true, true);
+
+		expectedValues = cmVocab.optJSONArray("TitleAlternate@type");
+		docRef = LogReference.getRef("CM", CM_VER, "cm006");
+		validateVocab(mdNSpace, "TitleAlternate", null, "@type", expectedValues, docRef, true, true);
+
+		expectedValues = cmVocab.optJSONArray("Parent@relationshipType");
+		docRef = LogReference.getRef("CM", CM_VER, "cm007");
+		validateVocab(mdNSpace, "Parent", null, "@relationshipType", expectedValues, docRef, true, true);
+
+		expectedValues = cmVocab.optJSONArray("EntryClass");
+		docRef = LogReference.getRef("CM", CM_VER, "cm008");
+		validateVocab(mdNSpace, "Entry", mdNSpace, "EntryClass", expectedValues, docRef, true, true);
+
+		expectedValues = cmVocab.optJSONArray("Parent@relationshipType");
+		docRef = LogReference.getRef("CM", CM_VER, "cm007");
+		validateVocab(manifestNSpace, "ExperienceChild", manifestNSpace, "Relationship", expectedValues, docRef, true,
+				true);
+
+		expectedValues = cmVocab.optJSONArray("Compliance/Disposition");
+		docRef = LogReference.getRef("CM", CM_VER, "cm_disp");
+		validateVocab(mdNSpace, "Compliance", mdNSpace, "Disposition", expectedValues, docRef, true, true);
+
+		expectedValues = cmVocab.optJSONArray("Gender");
+		docRef = LogReference.getRef("CM", CM_VER, "cm_gender");
+		validateVocab(mdNSpace, "People", mdNSpace, "Gender", expectedValues, docRef, true, true);
+
+		expectedValues = cmVocab.optJSONArray("GroupingEntity/Type");
+		docRef = LogReference.getRef("CM", "cm_gType");
+		validateVocab(mdNSpace, "GroupingEntity", mdNSpace, "Type", expectedValues, docRef, true, false);
+
+		expectedValues = cmVocab.optJSONArray("Relationship/Type");
+		docRef = LogReference.getRef("CM", "cm_gType");
+		validateVocab(mdNSpace, "Relationship", mdNSpace, "Type", expectedValues, docRef, true, false);
+
 	}
 
 	/**
@@ -348,7 +416,7 @@ public class CMValidator extends XmlIngester {
 						break;
 					}
 				}
-			} 
+			}
 		}
 	}
 
@@ -464,7 +532,7 @@ public class CMValidator extends XmlIngester {
 			} else {
 				if (!idSet.add(idValue)) {
 					LogReference srcRef = LogReference.getRef("CM", "cm001a");
-					String msg = "ID " + idAttribute + " is not unique";
+					String msg = "ID " + idKey + " is not unique";
 					int msgLevel;
 					if (reqUniqueness) {
 						msgLevel = LogMgmt.LEV_ERR;
@@ -495,7 +563,7 @@ public class CMValidator extends XmlIngester {
 						String idSSID = idValue.split(":" + idScheme + ":")[1];
 						validateIdScheme(idScheme, targetEl);
 						validateIdSsid(idSSID, idScheme, targetEl);
-						validateIdType(idType, idAttribute, targetEl);
+						validateIdType(idType, idKey, targetEl);
 					}
 				}
 			}
@@ -508,24 +576,23 @@ public class CMValidator extends XmlIngester {
 
 	/**
 	 * @param idType
-	 * @param idAttribute
+	 * @param idKey
 	 * @param targetEl
 	 */
-	private void validateIdType(String idType, String idAttribute, Element targetEl) {
+	private void validateIdType(String idType, String idKey, Element targetEl) {
 		/*
 		 * Check syntax of the 'type' as defined in Manifest/Avails Delivery Best
 		 * Practices (BP-META-MMMD) Section 3.1.7
 		 */
-		String type = id2typeMap.get(idAttribute);
+		String type = id2typeMap.get(idKey);
 		if (type == null) {
-			type = idAttribute.toLowerCase();
+			type = idKey.toLowerCase();
 		}
 		if (!idType.equals(type)) {
 			LogReference srcRef = LogReference.getRef("MMM-BP", "mmbp01.3");
 			String msg = "ID <type> does not conform to recommendation (i.e. '" + type + "')";
 			logIssue(LogMgmt.TAG_BEST, LogMgmt.LEV_NOTICE, targetEl, msg, null, srcRef, logMsgSrcId);
 
-			
 		}
 
 	}
@@ -592,31 +659,53 @@ public class CMValidator extends XmlIngester {
 	}
 
 	/**
-	 * @param srcElement
-	 * @param xrefElement
+	 * @param xpath
 	 * @param targetElType
 	 */
 	protected void validateXRef(String xpath, String targetElType) {
 		HashSet<String> idSet = idSets.get(targetElType);
 		Map<String, XrefCounter> idXRefCounter = idXRefCounts.get(targetElType);
-		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, manifestNSpace);
-		List<Element> elementList = xpExpression.evaluate(curRootEl);
-		for (int i = 0; i < elementList.size(); i++) {
-			Element refEl = (Element) elementList.get(i);
-			String targetId = refEl.getTextNormalize();
-			if (!idSet.contains(targetId)) {
-				String msg = "Invalid cross-reference: the referenced " + targetElType
-						+ " is not defined in this manifest";
-				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, refEl, msg, null, null, logMsgSrcId);
-				curFileIsValid = false;
-			} else {
-				XrefCounter count = idXRefCounter.get(targetId);
-				if (count == null) {
-					System.out.println("TRAPPED :" + targetId);
-					count = new XrefCounter(targetElType, targetId);
-					idXRefCounter.put(targetId, count);
+		if (xpath.contains("@")) {
+			XPathExpression<Attribute> xpExpression = xpfac.compile(xpath, Filters.attribute(), null, manifestNSpace);
+			List<Attribute> attributeList = xpExpression.evaluate(curRootEl);
+			for (int i = 0; i < attributeList.size(); i++) {
+				Attribute refAtt = (Attribute) attributeList.get(i);
+				String targetId = refAtt.getValue();
+				if (!idSet.contains(targetId)) {
+					String msg = "Invalid cross-reference: the referenced " + targetElType
+							+ " is not defined in this manifest";
+					logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, refAtt.getParent(), msg, null, null, logMsgSrcId);
+					curFileIsValid = false;
+				} else {
+					XrefCounter count = idXRefCounter.get(targetId);
+					if (count == null) {
+						System.out.println("TRAPPED :" + targetId);
+						count = new XrefCounter(targetElType, targetId);
+						idXRefCounter.put(targetId, count);
+					}
+					count.increment();
 				}
-				count.increment();
+			}
+		} else {
+			XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, manifestNSpace);
+			List<Element> elementList = xpExpression.evaluate(curRootEl);
+			for (int i = 0; i < elementList.size(); i++) {
+				Element refEl = (Element) elementList.get(i);
+				String targetId = refEl.getTextNormalize();
+				if (!idSet.contains(targetId)) {
+					String msg = "Invalid cross-reference: the referenced " + targetElType
+							+ " is not defined in this manifest";
+					logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, refEl, msg, null, null, logMsgSrcId);
+					curFileIsValid = false;
+				} else {
+					XrefCounter count = idXRefCounter.get(targetId);
+					if (count == null) {
+						System.out.println("TRAPPED :" + targetId);
+						count = new XrefCounter(targetElType, targetId);
+						idXRefCounter.put(targetId, count);
+					}
+					count.increment();
+				}
 			}
 		}
 	}
@@ -1019,7 +1108,7 @@ public class CMValidator extends XmlIngester {
 		Element logMsgEl;
 		int tag4log = getLogTag(mdNSpace, null);
 		LogReference srcRef = LogReference.getRef("CM", "cm_regions");
-		String errMsg = null; 
+		String errMsg = null;
 		for (int i = 0; i < elementList.size(); i++) {
 			Element targetEl = (Element) elementList.get(i);
 			logMsgEl = targetEl;
