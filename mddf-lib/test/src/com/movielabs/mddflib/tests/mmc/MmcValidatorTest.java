@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.MissingResourceException;
 
 import org.jdom2.JDOMException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,6 +72,11 @@ public class MmcValidatorTest extends MMCoreValidator {
 		rootNS = null;
 		iLog.clearLog();
 	}
+	
+	@AfterEach
+	public void tearDown() {
+		iLog.printLog(); 
+	}
 
 	/**
 	 * @param string
@@ -97,11 +103,12 @@ public class MmcValidatorTest extends MMCoreValidator {
 	@Test
 	public void testV1_noErrors() throws IOException, JDOMException {
 		MddfTarget target = initialize("MMCore_v1_noErr.xml");
-		execute(target, "MMC-1", false);
+		execute(target, "MMC-1", true);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		iLog.clearLog();
 	}
 	
 
@@ -113,11 +120,12 @@ public class MmcValidatorTest extends MMCoreValidator {
 	@Test
 	public void test_TV_Series() throws IOException, JDOMException {
 		MddfTarget target = initialize("TV/VEEP_Series_manifest.xml");
-		execute(target, "MMC-1", false);
+		execute(target, "MMC-1", true);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(7, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		iLog.clearLog();
 	}
 
 	/**
@@ -128,11 +136,12 @@ public class MmcValidatorTest extends MMCoreValidator {
 	@Test
 	public void test_TV_Season() throws IOException, JDOMException {
 		MddfTarget target = initialize("TV/VEEP_Season5_manifest.xml");
-		execute(target, "MMC-1", false);
+		execute(target, "MMC-1", true);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(8, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertEquals(7, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		iLog.clearLog();
 	}
 
 	/**
@@ -143,11 +152,12 @@ public class MmcValidatorTest extends MMCoreValidator {
 	@Test
 	public void test_TV_Episode() throws IOException, JDOMException {
 		MddfTarget target = initialize("TV/VEEP_Season5_E5_manifest.xml");
-		execute(target, "MMC-1", false);
+		execute(target, "MMC-1", true);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(7, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		iLog.clearLog();
 	}
 	
 	protected void execute(MddfTarget target, String profile, boolean logToConsole) throws IOException, JDOMException {
@@ -155,6 +165,8 @@ public class MmcValidatorTest extends MMCoreValidator {
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Testing with file " + target.getSrcFile().getCanonicalPath(), null,
 				"JUnit");
 		super.process(target, profile, null);
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "===== Test completed =====", null,
+				"JUnit");
 		iLog.setPrintToConsole(false);
 	}
 }
