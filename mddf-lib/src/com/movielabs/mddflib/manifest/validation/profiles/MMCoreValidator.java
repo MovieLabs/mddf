@@ -23,6 +23,7 @@ package com.movielabs.mddflib.manifest.validation.profiles;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jdom2.Element;
@@ -34,6 +35,9 @@ import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.manifest.validation.ManifestValidator;
 import com.movielabs.mddflib.util.xml.MddfTarget;
+import com.movielabs.mddflib.util.xml.XmlIngester;
+
+import net.sf.json.JSONObject;
 
 /**
  * Validates conformance of a Manifest to the requirements of the Media Manifest
@@ -85,8 +89,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.movielabs.mddf.preProcess.manifest.Validator#getSupporteUseCases(
+	 * @see com.movielabs.mddf.preProcess.manifest.Validator#getSupporteUseCases(
 	 * java. lang.String)
 	 */
 	@Override
@@ -112,12 +115,10 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		return pucList;
 	}
 
-	public boolean process(MddfTarget target,  String profileId, List<String> useCases)
+	public boolean process(MddfTarget target, String profileId, List<String> useCases)
 			throws JDOMException, IOException {
 		super.process(target);
-		if (curFileIsValid) {
-			validateProfileConstraints();
-		}
+		validateProfileConstraints();
 		return curFileIsValid;
 	}
 
@@ -125,32 +126,57 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 	 * Validate everything that is not fully specified via the XSD.
 	 */
 	protected void validateProfileConstraints() {
-		/*
-		 * now check the additional constraints identified in MMC Section
-		 * 2.1.2....
-		 */
-		LogReference srcRef = LogReference.getRef("MMC", "1.0", "mmc01");
-		String rootType = curRootEl.getName();
-		if (!rootType.equals("MediaManifest")) {
-			String msg = "Missing required Element 'MediaManifest'";
-			loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, curRootEl, msg, null, srcRef, logMsgSrcId);
-			curFileIsValid = false;
-			return;
-		}
-		if (curRootEl.getAttribute("ManifestID") == null) {
-			String msg = "Missing required Attribute 'ManifestID'";
-			loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, curRootEl, msg, null, srcRef, logMsgSrcId);
-			curFileIsValid = false;
-		}
 		Element compEl = curRootEl.getChild("Compatibility", manifestNSpace);
 		Element profileEl = compEl.getChild("Profile", manifestNSpace);
 		String profile = profileEl.getTextNormalize();
-		if (!profile.equals("MMC-1")) {
-			String msg = "Incompatible profile";
-			String details = "Manifest must be specified as compatible with Profile 'MMC-1'";
+		/*
+		 * Load JSON that defines various constraints on structure of the XML This is
+		 * version-specific but not all MMC versions have their own unique struct file
+		 * (e.g., a minor release may be compatible with a previous release).
+		 */
+		String structVer = null;
+		switch (profile) {
+		case "MMC-1":
+		case "MMC-2":
+			structVer = profile.toLowerCase();
+			break;
+		default:
+			// Not supported for the version
+			String msg = "Unrecognized MMC profile";
+			String details = profile + " is not a recognized MMC Profile";
+			LogReference srcRef = LogReference.getRef("MMC", "mmc01");
 			loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, profileEl, msg, details, srcRef, logMsgSrcId);
 			curFileIsValid = false;
+			return;
 		}
+		/*
+		 * First stage checks using the 'structure validation' mechanism
+		 */
+		JSONObject structDefs = XmlIngester.getMddfResource("structure_" + structVer);
+		if (structDefs == null) {
+			// LOG a FATAL problem.
+			String msg = "Unable to process; missing structure definitions for MMC Profile " + structVer;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_PROFILE, msg, curFile, logMsgSrcId);
+			return;
+		}
+		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
+		Iterator<String> keys = rqmtSet.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
+			// NOTE: This block of code requires a 'targetPath' be defined
+			if (rqmtSpec.has("targetPath")) {
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_PROFILE, "Structure check; key= " + key, curFile,
+						logMsgSrcId);
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
+			}
+		}
+		/*
+		 * now check the additional constraints identified in MMC Section 2.1.2. This
+		 * are currently NOT supportable via the JSON-based 'structure validation'
+		 * mechanism
+		 */
+		LogReference srcRef = LogReference.getRef("MMC", "mmc01");
 		/*
 		 * Validate Presentations and TrackMetadata
 		 */
@@ -161,19 +187,17 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		for (int i = 0; i < tMdElList.size(); i++) {
 			Element trackMDataEl = (Element) tMdElList.get(i);
 			/*
-			 * AT LEAST ONE instance of a TrackReference (either Video, Audio,
-			 * Subtitle, or Ancillary) is required for each TrackMetadata in a
-			 * Presentation. Since the XSD requires a single TrackSlectionNumber
-			 * also be defined as a child element of the TrackMetadata, all we
-			 * need to do is check to see that there are TWO OR MORE child
-			 * elements of the TrackMetadata.
+			 * AT LEAST ONE instance of a TrackReference (either Video, Audio, Subtitle, or
+			 * Ancillary) is required for each TrackMetadata in a Presentation. Since the
+			 * XSD requires a single TrackSlectionNumber also be defined as a child element
+			 * of the TrackMetadata, all we need to do is check to see that there are TWO OR
+			 * MORE child elements of the TrackMetadata.
 			 */
 			List<Element> childList = trackMDataEl.getChildren();
 			if (childList.size() < 2) {
 				String msg = "Missing TrackReference";
 				String details = "AT LEAST ONE instance of a TrackReference (either Video, Audio, Subtitle, or Ancillary) is required ";
 				loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, trackMDataEl, msg, details, srcRef, logMsgSrcId);
-				;
 				curFileIsValid = false;
 			}
 		}
@@ -181,33 +205,36 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		/*
 		 * Validate Experiences
 		 */
-		xpExpression = xpfac.compile("./manifest:Experiences/manifest:Experience", Filters.element(), null,
-				manifestNSpace);
-		List<Element> expElList = xpExpression.evaluate(curRootEl);
+		Element expSetEl = curRootEl.getChild("Experiences", manifestNSpace);
+		xpExpression = xpfac.compile("./manifest:Experience", Filters.element(), null, manifestNSpace);
+		List<Element> expElList = xpExpression.evaluate(expSetEl);
+		int rootExpCount = 0;
 		for (int i = 0; i < expElList.size(); i++) {
 			Element expEl = (Element) expElList.get(i);
-			if (expEl.getAttribute("ExperienceID") == null) {
-				String msg = "Missing required Attribute 'ExperienceID'";
-				loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, expEl, msg, null, srcRef, logMsgSrcId);
-				curFileIsValid = false;
+			/*
+			 * in order to validate that there is a single top-level Experience (i.e. we
+			 * have a hierarchical tree-like structure) we keep track of how many
+			 * ExperienceIDs are NOT referenced w/in an ExperienceChild.
+			 */
+			String expId = expEl.getAttributeValue("ExperienceID");
+			String targetXPath = "./manifest:Experience/manifest:ExperienceChild/manifest:ExperienceID[.='" + expId
+					+ "']";
+			xpExpression = xpfac.compile(targetXPath, Filters.element(), null, manifestNSpace);
+			Element targetEl = xpExpression.evaluateFirst(expSetEl);
+			if (targetEl == null) {
+				rootExpCount++;
 			}
-			Element mdEl = null;
 			String cid = expEl.getChildTextNormalize("ContentID", manifestNSpace);
-			if ((cid == null) || (cid.isEmpty())) {
-				String msg = "Missing 'ContentID'";
-				loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, expEl, msg, null, srcRef, logMsgSrcId);
-				curFileIsValid = false;
-			} else {
-				/* Retrieve referenced Metadata. */
-				xpExpression = xpfac.compile("./manifest:Inventory/manifest:Metadata[@ContentID='" + cid + "']",
-						Filters.element(), null, manifestNSpace);
-				mdEl = xpExpression.evaluateFirst(curRootEl);
-			}
+			/* Retrieve referenced Metadata. */
+			xpExpression = xpfac.compile("./manifest:Inventory/manifest:Metadata[@ContentID='" + cid + "']",
+					Filters.element(), null, manifestNSpace);
+			Element mdEl = xpExpression.evaluateFirst(curRootEl);
+
 			if (mdEl != null) {
 				/*
-				 * PictureGroupID should be included if the ContentID references
-				 * Metadata with images (i.e., LocalizedInfo/ArtReference).
-				 * Additional instances may be included.
+				 * PictureGroupID should be included if the ContentID references Metadata with
+				 * images (i.e., LocalizedInfo/ArtReference). Additional instances may be
+				 * included.
 				 * 
 				 */
 				xpExpression = xpfac.compile("../manifest:LocalizedInfo/manifest:ArtReference", Filters.element(), null,
@@ -225,28 +252,14 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 				}
 			}
 		}
-
-		Element aeMapsEl = curRootEl.getChild("ALIDExperienceMaps", manifestNSpace);
-		if (aeMapsEl == null) {
-			String msg = "Missing required Element 'ALIDExperienceMaps'";
-			loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, curRootEl, msg, null, srcRef, logMsgSrcId);
+		if (rootExpCount > 1) {
+			String msg = "Only one root Experience is allowed";
+			loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, expSetEl, msg, null, srcRef, logMsgSrcId);
 			curFileIsValid = false;
-		} else {
-			/*
-			 * Validate each ALIDExperienceMap. One Experience (top-level
-			 * Experience) can be referenced per ALIDExperienceMap.
-			 */
-			xpExpression = xpfac.compile("./manifest:ALIDExperienceMap", Filters.element(), null,
-					manifestNSpace);
-			List<Element> mapElList = xpExpression.evaluate(aeMapsEl);
-			for(Element aeMapEl : mapElList){
-				expElList = aeMapEl.getChildren("ExperienceID", manifestNSpace);
-				if (expElList.size() != 1) {
-					String msg = "Invalid ALIDExperienceMaps; only one Experience can be referenced";
-					loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, aeMapEl, msg, null, srcRef, logMsgSrcId);
-					curFileIsValid = false;
-				}
-			}
+		} else if (rootExpCount < 1) {
+			String msg = "Root Experience not found";
+			loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, expSetEl, msg, null, srcRef, logMsgSrcId);
+			curFileIsValid = false;
 		}
 
 	}
@@ -264,8 +277,8 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 	 */
 	private boolean validateUseCases(String profileId, List<String> useCases) {
 		/*
-		 * From this point on we are dealing with the use-cases (an
-		 * as-yet-to-be-groked capability)
+		 * From this point on we are dealing with the use-cases (an as-yet-to-be-groked
+		 * capability)
 		 */
 		curProfileId = profileId;
 		boolean isValid = true;
@@ -306,10 +319,9 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		// has already verified any ID cross-references are valid.
 		// ------------------------------------------------------------------
 		/*
-		 * ALIDExperienceMaps will contain a single ALIDExperienceMap that will
-		 * in turn specify a single ExperienceID. This will be the 'feature'
-		 * Experience. That in turn will have a single ExperienceChild
-		 * indicating the trailer.
+		 * ALIDExperienceMaps will contain a single ALIDExperienceMap that will in turn
+		 * specify a single ExperienceID. This will be the 'feature' Experience. That in
+		 * turn will have a single ExperienceChild indicating the trailer.
 		 * 
 		 */
 		// String srcRef = "See Section 3.1.2 of " + srcDoc;
@@ -331,8 +343,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 				null, manifestNSpace);
 		Element featureExpEl = xpExpression.evaluateFirst(expSetEl);
 		/*
-		 * Retrieve the 'trailer' Experience which will be singleton
-		 * ExperienceChild.
+		 * Retrieve the 'trailer' Experience which will be singleton ExperienceChild.
 		 */
 		Element trailerExpEl = null;
 		List<Element> expChildElList = featureExpEl.getChildren("ExperienceChild", manifestNSpace);
@@ -374,8 +385,8 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 	 * Validate that a generic Experience is constructed as follows:
 	 * </p>
 	 * <ol>
-	 * <li>A unique ExperienceID in the md: format, preferably using the eidr-s
-	 * or eidr-x format.</li>
+	 * <li>A unique ExperienceID in the md: format, preferably using the eidr-s or
+	 * eidr-x format.</li>
 	 * <li>ContentID references metadata for the feature (i.e., matches the
 	 * ContentID in the Inventory)</li>
 	 * <li>PictureGroupID for metadata images</li>
@@ -416,8 +427,8 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 	 * 
 	 * ##### DEAD END??? #######
 	 * <p>
-	 * Verify that the Audiovisual element and its referenced constructs conform
-	 * to the structural requirements of the indicated use case.
+	 * Verify that the Audiovisual element and its referenced constructs conform to
+	 * the structural requirements of the indicated use case.
 	 * </p>
 	 * 
 	 * @param avEl
@@ -432,8 +443,8 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		 */
 		List<String> pidList = new ArrayList<String>();
 		/*
-		 * AV element will have as child 1 and only 1 of the following:
-		 * PresentationID, PlayableSequenceID, or PlayableSequence.
+		 * AV element will have as child 1 and only 1 of the following: PresentationID,
+		 * PlayableSequenceID, or PlayableSequence.
 		 */
 		Element pidEl = avEl.getChild("PresentationID", manifestNSpace);
 		Element pSeqidEl = avEl.getChild("PlayableSequenceID", manifestNSpace);
@@ -456,8 +467,8 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 				isValid = false;
 			} else {
 				/*
-				 * get PresentationID for each included Clips (i.e., there may
-				 * be 1 or more Clips)
+				 * get PresentationID for each included Clips (i.e., there may be 1 or more
+				 * Clips)
 				 */
 				xpfac.compile("./manifest:Clip/manifest:PresentationID", Filters.element(), null, manifestNSpace);
 				List<Element> pidElList = xpExpression.evaluate(targetPSeqEl);
