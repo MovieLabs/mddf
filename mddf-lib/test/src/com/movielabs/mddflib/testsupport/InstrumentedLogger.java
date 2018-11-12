@@ -24,7 +24,9 @@ package com.movielabs.mddflib.testsupport;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -47,10 +49,11 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	private int[] countByLevel;
 	private int[] countByTag;
 	private Map<String, String> msgMap;
+	private List<String> msgList;
 
 	public InstrumentedLogger() {
 		clearLog();
-		minLevel = LogMgmt.LEV_NOTICE; //default
+		minLevel = LogMgmt.LEV_NOTICE; // default
 	}
 
 	/**
@@ -60,23 +63,24 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	 * @param msg
 	 */
 	private void record(int level, int tag, int line, String msg) {
-		if(level < 0) {
+		if (level < 0) {
 			// good place for breakpoint when debugging
 			int foo = 0;
 		}
 		countByLevel[level]++;
 		countByTag[tag]++;
-		if(level < minLevel) {
+		if (level < minLevel) {
 			return;
 		}
-		if(level == LogMgmt.LEV_ERR) {
+		if (level == LogMgmt.LEV_ERR) {
 			// good place for breakpoint when debugging
 			int foo = 0;
 		}
 		String key = line + ":" + tag + ":" + level;
 		msgMap.put(key, msg);
 		if (printToConsole) {
-			System.out.println("ILOG:  " + LogMgmt.logLevels[level].toUpperCase() + ":\t line " + line + ": " + msg);
+			msgList.add("ILOG:  " + LogMgmt.logLevels[level].toUpperCase() + ":\t line " + line + ": " + msg);
+//			System.out.println("ILOG:  " + LogMgmt.logLevels[level].toUpperCase() + ":\t line " + line + ": " + msg);
 			if (level == LogMgmt.LEV_FATAL) {
 				System.out.println("DEAD AGAIN");
 			}
@@ -90,12 +94,13 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	 * @return
 	 */
 	public String getMsg(int level, int tag, int line) {
-		String key = line + ":" + tag + ":" + level; 
+		String key = line + ":" + tag + ":" + level;
 		return (msgMap.get(key));
 	}
 
 	/**
 	 * Return number of log entries tagged with the specified severity level
+	 * 
 	 * @param level
 	 * @return
 	 */
@@ -110,8 +115,8 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.movielabs.mddflib.logging.LogMgmt#log(int, int,
-	 * java.lang.String, java.io.File, java.lang.String)
+	 * @see com.movielabs.mddflib.logging.LogMgmt#log(int, int, java.lang.String,
+	 * java.io.File, java.lang.String)
 	 */
 	@Override
 	public void log(int levInfo, int logTag, String msg, File curFile, String moduleId) {
@@ -121,8 +126,8 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.movielabs.mddflib.logging.LogMgmt#log(int, int,
-	 * java.lang.String, java.io.File, int, java.lang.String, java.lang.String,
+	 * @see com.movielabs.mddflib.logging.LogMgmt#log(int, int, java.lang.String,
+	 * java.io.File, int, java.lang.String, java.lang.String,
 	 * com.movielabs.mddflib.logging.LogReference)
 	 */
 	@Override
@@ -165,6 +170,13 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 		countByLevel = new int[LogMgmt.logLevels.length];
 		countByTag = new int[LogMgmt.logTags.length];
 		msgMap = new HashMap<String, String>();
+		msgList = new ArrayList<String>();
+	}
+
+	public void printLog() {
+		for (int i = 0; i < msgList.size(); i++) {
+			System.out.println(msgList.get(i));
+		}
 	}
 
 	/*
