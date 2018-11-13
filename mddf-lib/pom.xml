@@ -9,7 +9,7 @@
 	<description>implements all core (i.e., non-UI) functionality that can be used to generate, validate, or transform MovieLabs Digital Distribution Framework (MDDF) files.</description>
 
 	<properties>
-		<mddf.src.tag>1.4.1.rc2-SNAPSHOT</mddf.src.tag>
+		<mddf.src.tag>1.5</mddf.src.tag>
 		<mddf.build>1</mddf.build>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MMM-dd HH:mm:ss z</maven.build.timestamp.format>
