@@ -586,10 +586,10 @@ public class ValidationController {
 		if (profileNameList.isEmpty() || profileNameList.contains("none")) {
 			ManifestValidator tool1 = new ManifestValidator(validateC, logMgr);
 			isValid = tool1.process(target);
-			List<File> supportingMecFiles = tool1.getSupportingMecFiles();
-			for (File nextMec : supportingMecFiles) {
+			List<File> supportingMdfFiles = tool1.getSupportingMddfFiles();
+			for (File nextMec : supportingMdfFiles) {
 				try {
-					validateReferencedMec(nextMec);
+					validateReferencedMddf(nextMec);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					// e.printStackTrace();
@@ -620,10 +620,10 @@ public class ValidationController {
 					case "MMC-1":
 						pValidator = new MMCoreValidator(logMgr);
 						isValid = pValidator.process(target, profile, useCases) && isValid;
-						List<File> supportingMecFiles = ((ManifestValidator) pValidator).getSupportingMecFiles();
+						List<File> supportingMecFiles = ((ManifestValidator) pValidator).getSupportingMddfFiles();
 						for (File nextReferencedMddf : supportingMecFiles) {
 							try {
-								validateReferencedMec(nextReferencedMddf);
+								validateReferencedMddf(nextReferencedMddf);
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								// e.printStackTrace();
@@ -640,7 +640,7 @@ public class ValidationController {
 		return isValid;
 	}
 
-	private void validateReferencedMec(File mddfFile) throws IOException, JDOMException {
+	private void validateReferencedMddf(File mddfFile) throws IOException, JDOMException {
 		if (!mddfFile.exists()) {
 			return;
 		}
