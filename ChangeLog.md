@@ -5,12 +5,24 @@
 
 ## Versioning
 
-The latest release of the core mddf-lib is v1.4.1_rc2
+The latest release of the core mddf-lib is v1.5
 
-* Enhancement: support for CM v2.7 added
+* Enhancement: support for Manifest v 1.8 added
+* Enhancement: support for CM v2.7 and MDMEC 2.7 added
+* Enhancement: currency codes checked for conformance with ISO-4217
+* Bug Fix: When mapping Avails to/from Excel, the GroupingEntity/Type should be 'channel', not 'SVOD channel'
+* Bug Fix: cross-references from TextGroup/TextObjectID to TextObject were not being checked
+* Bug Fix: cross-references from ExperienceChild to ExternalManifest were not being checked
+* Bug Fix: Avails Transaction with TVOD-based LicenseType and no pricing Term was flagged as ERROR (now a WARNING)
+* Bug Fix: All violations of structure constraints were flagged as ERROR regardless of actual severity level.
+* Bug Fix: when indexing is optional, index usage must be consistent for all child elements
+* Bug Fix: Verify exactly 1 instance of TrackMetadata with TrackSelectionNumber='0' per Presentation"
+* Bug Fix: Eliminate race-condition in initialization of code validating ID types.
+* Bug Fix: non-MDDF files (e.g. jpg) were included in list of supporting files to validate
 * Internal: refactoring of code validating cross-referencing
+* Internal: migrated mddf-lib testing to use JUnit5
 
-#### mddf-lib v1.4.1_rc1
+#### mddf-lib v1.5_rc1
 * Enhancement: Log file can now be exported as XML
 * Bug Fix: All Avail conversions to an XLSX format failed due to improper identification of target format
 
