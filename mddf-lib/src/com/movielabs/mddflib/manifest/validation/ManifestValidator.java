@@ -74,7 +74,7 @@ public class ManifestValidator extends CMValidator {
 		mmm_id2typeMap.put("ExternalManifestID", "manifestid");
 	}
 
-	private ArrayList<File> supportingMecFiles;
+	private ArrayList<File> supportingMddfFiles;
 
 	/**
 	 * @param validateC
@@ -109,7 +109,7 @@ public class ManifestValidator extends CMValidator {
 		curFileName = curFile.getName();
 		curFileIsValid = true;
 		curRootEl = null;
-		supportingMecFiles = new ArrayList<File>();
+		supportingMddfFiles = new ArrayList<File>();
 
 		validateXml(target);
 		if (!curFileIsValid) {
@@ -401,7 +401,7 @@ public class ManifestValidator extends CMValidator {
 					String dbgMsg = "Possible MDDF file to validate at ContainerLocation " + targetLoc;
 					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_DEBUG, clocEl, dbgMsg, null, null, logMsgSrcId);
 					if (StringUtils.extractFileType(targetLoc).equals("xml")) {
-						supportingMecFiles.add(target);
+						supportingMddfFiles.add(target);
 					}
 				}
 			} catch (IOException e) {
@@ -513,10 +513,10 @@ public class ManifestValidator extends CMValidator {
 	}
 
 	/**
-	 * @return the supportingMecFiles
+	 * @return the supportingMddfFiles
 	 */
-	public ArrayList<File> getSupportingMecFiles() {
-		return supportingMecFiles;
+	public ArrayList<File> getSupportingMddfFiles() {
+		return supportingMddfFiles;
 	}
 
 }
