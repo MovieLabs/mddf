@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TEST ARTIFACT: This file includes errors that can be used to perform 
+	specific JUnit tests relating to the Media Manifest specification. -->
+<manifest:MediaManifest
+	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.6/manifest"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.5/md" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.6/manifest manifest-v1.6.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+	<manifest:Compatibility>
+		<manifest:SpecVersion>1.6</manifest:SpecVersion>
+		<manifest:System>HTML5</manifest:System>
+		<manifest:System>Roku</manifest:System>
+		<manifest:Profile>none</manifest:Profile>
+	</manifest:Compatibility>
+	<manifest:Inventory>
+		<manifest:Audio AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Language>en</md:Language>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Audio>
+		<manifest:Video VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Picture />
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Video>
+		<manifest:Image
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1">
+			<md:Width>1920</md:Width>
+			<md:Height>1080</md:Height>
+			<md:Encoding>image/jpeg</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>resources/Galleries/BBB_Set_01.jpg
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>containers/MEC_v1.6_noErr.xml</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Metadata>
+	</manifest:Inventory>
+	<manifest:Presentations>
+		<!-- the movie -->
+		<manifest:Presentation
+			PresentationID="md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:TrackMetadata>
+				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
+				<manifest:VideoTrackReference>
+					<!-- the vidtrackid must match the one used in the inventory. -->
+					<manifest:VideoTrackID>md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:VideoTrackID>
+				</manifest:VideoTrackReference>
+				<manifest:AudioTrackReference>
+					<manifest:AudioTrackID>md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:AudioTrackID>
+				</manifest:AudioTrackReference>
+			</manifest:TrackMetadata>
+		</manifest:Presentation>
+	</manifest:Presentations>
+	<manifest:Experiences>
+		<manifest:Experience version="0.1"
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha"> 
+			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
+			</manifest:ContentID>
+			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+				<!-- feature movie -->
+				<manifest:Type>Main</manifest:Type>
+				<manifest:SubType>Feature</manifest:SubType>
+				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				</manifest:PresentationID>
+			</manifest:Audiovisual>
+		</manifest:Experience> 
+	</manifest:Experiences>
+	<manifest:ALIDExperienceMaps>
+		<manifest:ALIDExperienceMap>
+			<manifest:ALID>md:alid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02
+			</manifest:ALID>
+			<manifest:ExperienceID condition="Acquired">md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha
+			</manifest:ExperienceID>
+		</manifest:ALIDExperienceMap>
+	</manifest:ALIDExperienceMaps>
+</manifest:MediaManifest>
