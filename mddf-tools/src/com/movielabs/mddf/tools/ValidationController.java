@@ -27,6 +27,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -131,17 +132,16 @@ public class ValidationController {
 	}
 
 	/**
-	 * Construct new <tt>PreProcessor</tt> for use in the indicated
-	 * <i>context</i>.
+	 * Construct new <tt>PreProcessor</tt> for use in the indicated <i>context</i>.
 	 * 
 	 * @param context
 	 */
 	public ValidationController(LogMgmt logMgr) {
 		this.logMgr = logMgr;
 		/*
-		 * Determine if we are running in an interactive mode via a GUI. If so,
-		 * there is a need at various stages to provide the logging UI with
-		 * additional status updates.
+		 * Determine if we are running in an interactive mode via a GUI. If so, there is
+		 * a need at various stages to provide the logging UI with additional status
+		 * updates.
 		 */
 		if (logMgr instanceof AdvLogPanel) {
 			logNav = ((AdvLogPanel) logMgr).getLogNavPanel();
@@ -158,7 +158,7 @@ public class ValidationController {
 	}
 
 	public void runScript(File scriptFile) throws IOException {
-		if ((scriptFile==null) || !scriptFile.isFile()) {
+		if ((scriptFile == null) || !scriptFile.isFile()) {
 			return;
 		}
 		JSONObject script = XmlIngester.getAsJson(scriptFile);
@@ -264,19 +264,16 @@ public class ValidationController {
 	}
 
 	/**
-	 * Validate one or more files. The <tt>srcPath</tt> argument indicates a
-	 * either a single Common Media Manifest (CMM) or Avails file or a directory
-	 * containing CMM and/or Avails files. If the later, any file found in the
-	 * directory will be validated. The <tt>uxProfile</tt> argument specifies
-	 * which profile to use for the validation process. A value of <tt>none</tt>
-	 * indicates validation is to be performed only in the context of the
-	 * generic CPE Information Model.
+	 * Validate one or more files. The <tt>srcPath</tt> argument indicates a either
+	 * a single Common Media Manifest (CMM) or Avails file or a directory containing
+	 * CMM and/or Avails files. If the later, any file found in the directory will
+	 * be validated. The <tt>uxProfile</tt> argument specifies which profile to use
+	 * for the validation process. A value of <tt>none</tt> indicates validation is
+	 * to be performed only in the context of the generic CPE Information Model.
 	 * 
-	 * @param srcPath
-	 *            location of a file or a directory containing CMM and/or Avails
-	 *            files.
-	 * @param uxProfile
-	 *            the name of a valid profile or <tt>none</tt>
+	 * @param srcPath   location of a file or a directory containing CMM and/or
+	 *                  Avails files.
+	 * @param uxProfile the name of a valid profile or <tt>none</tt>
 	 * @param useCases
 	 * @throws IOException
 	 * @throws JDOMException
@@ -385,9 +382,9 @@ public class ValidationController {
 			}
 		} else {
 			/*
-			 * Because of the file-type check at the start of this method, this
-			 * code block should never be executed. However, just to be super
-			 * cautious and safe, I've added this trap...
+			 * Because of the file-type check at the start of this method, this code block
+			 * should never be executed. However, just to be super cautious and safe, I've
+			 * added this trap...
 			 */
 			String errMsg = "Skipping file: Unsupported file type";
 			String supplemental = null;
@@ -448,13 +445,11 @@ public class ValidationController {
 		return name;
 	}
 
-
 	/**
-	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file.
-	 * The result <tt>Map</tt> that is returned will contain:
+	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file. The
+	 * result <tt>Map</tt> that is returned will contain:
 	 * <ul>
-	 * <li>
-	 * <tt>xlsx<tt>: the xlsx File that was passed as the input argument</li>
+	 * <li><tt>xlsx<tt>: the xlsx File that was passed as the input argument</li>
 	 * <li><tt>xml<tt>: the JDOM2 Document that was created from the xlsx</li>
 	 * <li><tt>pedigree<tt>: the <tt>Pedigree</tt> map that was created by the
 	 * <tt>XmlBuilder</tt> during the conversion process.</li>
@@ -475,18 +470,16 @@ public class ValidationController {
 	}
 
 	/**
-	 * Perform requested pre-processing on a single Avail file. The extent of
-	 * the pre-processing may depend on the arguments passed when invoking this
-	 * method as well as any a-priori set-up and configuration (e.g., use of the
+	 * Perform requested pre-processing on a single Avail file. The extent of the
+	 * pre-processing may depend on the arguments passed when invoking this method
+	 * as well as any a-priori set-up and configuration (e.g., use of the
 	 * <tt>setValidation()</tt> function).
 	 * 
-	 * @param docRootEl
-	 *            root of the Avail
-	 * @param pedigreeMap
-	 *            links XML Elements to their original source (used for logging
-	 *            only)
-	 * @param srcFile
-	 *            is source from which XML was obtained (used for logging only)
+	 * @param docRootEl   root of the Avail
+	 * @param pedigreeMap links XML Elements to their original source (used for
+	 *                    logging only)
+	 * @param srcFile     is source from which XML was obtained (used for logging
+	 *                    only)
 	 * @throws IOException
 	 * @throws JDOMException
 	 */
@@ -565,9 +558,9 @@ public class ValidationController {
 	}
 
 	/**
-	 * Perform requested pre-processing on a single Manifest file. The extent of
-	 * the pre-processing will depend on the arguments passed when invoking this
-	 * method as well as any a-priori set-up and configuration (e.g., use of the
+	 * Perform requested pre-processing on a single Manifest file. The extent of the
+	 * pre-processing will depend on the arguments passed when invoking this method
+	 * as well as any a-priori set-up and configuration (e.g., use of the
 	 * <tt>setValidation()</tt> function).
 	 * 
 	 * @param srcFile
@@ -586,15 +579,14 @@ public class ValidationController {
 		if (profileNameList.isEmpty() || profileNameList.contains("none")) {
 			ManifestValidator tool1 = new ManifestValidator(validateC, logMgr);
 			isValid = tool1.process(target);
-			List<File> supportingMdfFiles = tool1.getSupportingMddfFiles();
-			for (File nextMec : supportingMdfFiles) {
-				try {
-					validateReferencedMddf(nextMec);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					// e.printStackTrace();
+			Map<String, List<Element>> supportingFiles = ((ManifestValidator) tool1).getSupportingRsrcLocations();
+			Set<String> foobar = supportingFiles.keySet();
+			for (String path : foobar) {
+				if (path.endsWith("xml") && !path.contains(":")) {
+					validateReferencedMddf(path, supportingFiles.get(path));
 				}
 			}
+
 		} else {
 			for (int i = 0; i < profileNameList.size(); i++) {
 				String profile = profileNameList.get(i);
@@ -620,15 +612,15 @@ public class ValidationController {
 					case "MMC-1":
 						pValidator = new MMCoreValidator(logMgr);
 						isValid = pValidator.process(target, profile, useCases) && isValid;
-						List<File> supportingMecFiles = ((ManifestValidator) pValidator).getSupportingMddfFiles();
-						for (File nextReferencedMddf : supportingMecFiles) {
-							try {
-								validateReferencedMddf(nextReferencedMddf);
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								// e.printStackTrace();
+						Map<String, List<Element>> supportingFiles = ((ManifestValidator) pValidator)
+								.getSupportingRsrcLocations();
+						Set<String> foobar = supportingFiles.keySet();
+						for (String path : foobar) {
+							if (path.endsWith("xml") && !path.contains(":")) {
+								validateReferencedMddf(path, supportingFiles.get(path));
 							}
 						}
+
 						break;
 					}
 				}
@@ -640,11 +632,9 @@ public class ValidationController {
 		return isValid;
 	}
 
-	private void validateReferencedMddf(File mddfFile) throws IOException, JDOMException {
-		if (!mddfFile.exists()) {
-			return;
-		}
-		String fileType = StringUtils.extractFileType(mddfFile.getAbsolutePath());
+	private void validateReferencedMddf(String path, List<Element> list) throws IOException, JDOMException {
+		File mddfFile = new File(path);
+		String fileType = StringUtils.extractFileType(path);
 		fileType = fileType.toLowerCase();
 		if (!fileType.equals("xml")) {
 			// ERROR
@@ -653,30 +643,46 @@ public class ValidationController {
 			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, mddfFile, -1, MODULE_ID, supplemental, null);
 			return;
 		}
-		MddfTarget target = new MddfTarget(mddfFile, logMgr);
+		MddfTarget target;
+		try {
+			target = new MddfTarget(mddfFile, logMgr);
+		} catch (FileNotFoundException e) {
+			String errMsg = "Referenced container not found";
+			for (Element clocEl : list) {
+				logMgr.logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, clocEl, errMsg, null, null, MODULE_ID);
+			}
+			return;
+		}
 		MDDF_TYPE type = target.getMddfType();
 		switch (type) {
 		case MANIFEST:
+			String errMsg = "Skipping validation of ExternalManifest (not yet supported)"; 
+			for (Element clocEl : list) {
+				logMgr.logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, clocEl, errMsg, null, null, MODULE_ID);
+			}
 			break;
-		case MEC: 
+		case MEC:
 			if (logNav != null) {
 				logNav.setFileMddfType(mddfFile, type);
 				logNav.setXml(mddfFile, target.getXmlDoc());
 			}
 			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MEC, "Validating referenced MEC file", mddfFile, MODULE_ID);
-						validateMEC(target);
+			validateMEC(target);
 			break;
+		default:
+			logMgr.log(LogMgmt.LEV_ERR, target.getLogTag(), "Referenced file has unrecognized MDDF type " + type.toString(), mddfFile,
+					MODULE_ID);
+
 		}
-		 
+
 	}
 
 	/**
-	 * Validate compatibility with any identified profiles.
-	 * Compatibility/Profile was added in v1.5. Prior to that Profile can only
-	 * be identified to Validator via external input (e.g., GUI or script). This
-	 * code will allow the use of either or both modes. It also anticipates
-	 * future changes to the schema to allow a single Manifest to be compatible
-	 * with multiple Profiles.
+	 * Validate compatibility with any identified profiles. Compatibility/Profile
+	 * was added in v1.5. Prior to that Profile can only be identified to Validator
+	 * via external input (e.g., GUI or script). This code will allow the use of
+	 * either or both modes. It also anticipates future changes to the schema to
+	 * allow a single Manifest to be compatible with multiple Profiles.
 	 * 
 	 * @param docRootEl
 	 * @param srcFile
@@ -721,8 +727,7 @@ public class ValidationController {
 	/**
 	 * If <tt>true</tt> processing of a directory will be recursive.
 	 * 
-	 * @param isRecursive
-	 *            the isRecursive to set
+	 * @param isRecursive the isRecursive to set
 	 */
 	public void setRecursive(boolean isRecursive) {
 		this.isRecursive = isRecursive;
