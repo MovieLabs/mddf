@@ -676,9 +676,9 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 						libBuild = "n.a.";
 						libTimestamp = "n.a.";
 					} else {
-						libVersion = mddfLibProps.getProperty("mddf.src.tag");
-						libBuild = mddfLibProps.getProperty("mddf.build"); 
-						libTimestamp = mddfLibProps.getProperty("timestamp");
+						libVersion = mddfLibProps.getProperty("mddf.lib.version");
+						libBuild = mddfLibProps.getProperty("mddf.lib.build"); 
+						libTimestamp = mddfLibProps.getProperty("mddf.lib.timestamp");
 						libTimestamp = libTimestamp.replaceAll("\\:", ":");
 					}
 					Properties mddfToolProps = loadProperties("/com/movielabs/mddf/tools/build.properties");
