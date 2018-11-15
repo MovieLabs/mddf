@@ -74,7 +74,7 @@ public class ManifestValidator extends CMValidator {
 		mmm_id2typeMap.put("ExternalManifestID", "manifestid");
 	}
 
-	private ArrayList<File> supportingMddfFiles;
+	private Map<String, List<Element>> supportingRsrcLocations;
 
 	/**
 	 * @param validateC
@@ -109,7 +109,7 @@ public class ManifestValidator extends CMValidator {
 		curFileName = curFile.getName();
 		curFileIsValid = true;
 		curRootEl = null;
-		supportingMddfFiles = new ArrayList<File>();
+		supportingRsrcLocations = new HashMap<String, List<Element>>();
 
 		validateXml(target);
 		if (!curFileIsValid) {
@@ -366,13 +366,14 @@ public class ManifestValidator extends CMValidator {
 	/**
 	 * Validate a local <tt>ContainerLocation</tt>. These should be a
 	 * <i>relative</i> path where the base location is that of the XML file being
-	 * processed. Note that network locations (i.e, full URLs) are <b>not</b>
-	 * verified.
+	 * processed. Note that network locations (i.e., URLs) are <b>not</b> verified.
+	 * Neither is there any requirement that the URL schema is HTTP as proprietary
+	 * schemes are allowed (e.g., <tt>flixster://foobar/BigBuckBunny.mp4</tt>)
 	 */
 	protected void validateLocations() {
 		String pre = manifestNSpace.getPrefix();
 		String baseLoc = curFile.getAbsolutePath();
-		LogReference srcRef = LogReference.getRef("MMM", "1.5", "mmm_locType");
+		LogReference srcRef = LogReference.getRef("MMM", "mmm_locType");
 		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + pre + ":ContainerLocation", Filters.element(), null,
 				manifestNSpace);
 		List<Element> cLocElList = xpExp01.evaluate(curRootEl);
@@ -386,24 +387,22 @@ public class ManifestValidator extends CMValidator {
 				curFileIsValid = false;
 				continue outterLoop;
 			}
-			if (!PathUtilities.isRelative(containerPath)) {
-				// We do not validate absolute or network-based URLs
-				continue outterLoop;
-			}
+			/*
+			 * at this point we have either (1) a relative path to a local file OR (2) a
+			 * full URL. No further validation takes place but we save the location in case
+			 * the Validation Controller being used wants to perform additional checks.
+			 */
 			try {
 				String targetLoc = PathUtilities.convertToAbsolute(baseLoc, containerPath);
-				File target = new File(targetLoc);
-				if (!target.exists()) {
-					String errMsg = "Referenced container not found";
-					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, clocEl, errMsg, null, null, logMsgSrcId);
-					continue outterLoop;
-				} else {
-					String dbgMsg = "Possible MDDF file to validate at ContainerLocation " + targetLoc;
-					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_DEBUG, clocEl, dbgMsg, null, null, logMsgSrcId);
-					if (StringUtils.extractFileType(targetLoc).equals("xml")) {
-						supportingMddfFiles.add(target);
-					}
+				String dbgMsg = "Possible MDDF file to validate at ContainerLocation " + targetLoc;
+				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_DEBUG, clocEl, dbgMsg, null, null, logMsgSrcId);
+				List<Element> usage = supportingRsrcLocations.get(targetLoc);
+				if (usage == null) {
+					usage = new ArrayList<Element>();
 				}
+				usage.add(clocEl);
+				supportingRsrcLocations.put(targetLoc, usage);
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -513,10 +512,16 @@ public class ManifestValidator extends CMValidator {
 	}
 
 	/**
-	 * @return the supportingMddfFiles
+	 * Return all <tt>ContainerLocations</tt> found in the last MDDF file processed.
+	 * Associated with each location is a <tt>List</tt> of all <tt>Elements</tt>
+	 * where the location was used. Thus, a single location may be referenced in
+	 * multiple locations.
+	 * 
+	 * 
+	 * @return the supportingRsrcLocations
 	 */
-	public ArrayList<File> getSupportingMddfFiles() {
-		return supportingMddfFiles;
+	public Map<String, List<Element>> getSupportingRsrcLocations() {
+		return supportingRsrcLocations;
 	}
 
 }
