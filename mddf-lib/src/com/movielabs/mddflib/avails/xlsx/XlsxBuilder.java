@@ -502,9 +502,7 @@ public class XlsxBuilder {
 		}
 		if (cePath == null) {
 			cePath = categoryMappings.get("AvailMetadata:CaptionExemption").get(0);
-		}  
-		@SuppressWarnings("unchecked")
-//		XPathExpression<Element> cePath = (XPathExpression<Element>) createXPath(ceSrcPath);
+		}   
 		Element targetEl = cePath.evaluateFirst(baseEl);
 		boolean exemptionProvided;
 		if (targetEl == null) {
