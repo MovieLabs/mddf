@@ -127,8 +127,8 @@ public class XlsxBuilder {
 
 	static {
 		/*
-		 * Load JSON file with the mapping (i.e., specification of how specific
-		 * xlsx columns are populated from the XML
+		 * Load JSON file with the mapping (i.e., specification of how specific xlsx
+		 * columns are populated from the XML
 		 */
 		try {
 			InputStream inp = XlsxBuilder.class.getResourceAsStream("Mappings.json");
@@ -190,9 +190,8 @@ public class XlsxBuilder {
 	 */
 	private void addTvAvails() {
 		/*
-		 * XLSX format will only support TV avails of type 'episode' or
-		 * 'season'. Anything else will have been filtered out when the Avails
-		 * were sorted.
+		 * XLSX format will only support TV avails of type 'episode' or 'season'.
+		 * Anything else will have been filtered out when the Avails were sorted.
 		 */
 		if (tvAvailsList.isEmpty()) {
 			return;
@@ -214,17 +213,15 @@ public class XlsxBuilder {
 		for (int i = 0; i < availList.size(); i++) {
 			Element availEl = availList.get(i);
 			/*
-			 * one row is added for each combination of Asset and Transaction
-			 * included in the Avail which means there are usually multiple rows
-			 * for each Avail. Start by getting the info that will be common to
-			 * each row.
+			 * one row is added for each combination of Asset and Transaction included in
+			 * the Avail which means there are usually multiple rows for each Avail. Start
+			 * by getting the info that will be common to each row.
 			 */
 			Map<String, List<XPathExpression>> availMappings = xpathSets.get("Avail");
 			Map<String, String> commonData = extractData(availEl, availMappings, "");
 			Set<String> foo = commonData.keySet();
 			/*
-			 * now identify each Asset that is a child of this Avail and prepare
-			 * its data.
+			 * now identify each Asset that is a child of this Avail and prepare its data.
 			 */
 			List<Element> assetList = availEl.getChildren("Asset", availsNSpace);
 			Map<String, List<XPathExpression>> assetMappings = xpathSets.get("AvailAsset");
@@ -233,8 +230,8 @@ public class XlsxBuilder {
 			for (int j = 0; j < assetList.size(); j++) {
 				Element assetEl = assetList.get(j);
 				/*
-				 * Mappings for Assets are in some cases dependent on the
-				 * WorkType so 1st step is get that value
+				 * Mappings for Assets are in some cases dependent on the WorkType so 1st step
+				 * is get that value
 				 */
 				String context = assetEl.getChildTextNormalize("WorkType", availsNSpace);
 				Map<String, String> assetData = extractData(assetEl, assetMappings, context);
@@ -245,8 +242,8 @@ public class XlsxBuilder {
 				perAssetData.add(assetData);
 			}
 			/*
-			 * now identify each Transaction that is a child of this Avail and
-			 * prepare its data.
+			 * now identify each Transaction that is a child of this Avail and prepare its
+			 * data.
 			 */
 			List<Element> transList = availEl.getChildren("Transaction", availsNSpace);
 			Map<String, List<XPathExpression>> transMappings = xpathSets.get("AvailTrans");
@@ -263,7 +260,7 @@ public class XlsxBuilder {
 				Map<String, String> assetData = perAssetData.get(aIdx);
 				for (int tIdx = 0; tIdx < perTransData.size(); tIdx++) {
 					Map<String, String> rowData = perTransData.get(tIdx);
-					rowData.putAll(assetData); 
+					rowData.putAll(assetData);
 					workbook.addDataRow(rowData, sheet);
 				}
 			}
@@ -273,20 +270,20 @@ public class XlsxBuilder {
 
 	/**
 	 * @param baseEl
-	 * @param mappings
+	 * @param categoryMappings
 	 * @param context
 	 * @return
 	 */
-	private Map<String, String> extractData(Element baseEl, Map<String, List<XPathExpression>> mappings,
+	private Map<String, String> extractData(Element baseEl, Map<String, List<XPathExpression>> categoryMappings,
 			String context) {
 		Map<String, String> dataMap = new HashMap<String, String>();
 		/* Now continue with everything else */
-		Iterator<String> keyIt = mappings.keySet().iterator();
+		Iterator<String> keyIt = categoryMappings.keySet().iterator();
 		while (keyIt.hasNext()) {
 			String mappingKey = keyIt.next();
 			if (mappingKey.contains(FUNCTION_IDENTIFIER)) {
 				try {
-					String value = processFunction(mappingKey, baseEl, context);
+					String value = processFunction(mappingKey, baseEl, context, categoryMappings);
 					if (value != null) {
 						String colKey = mappingKey.replace(FUNCTION_IDENTIFIER, "");
 						dataMap.put(colKey, value);
@@ -300,11 +297,11 @@ public class XlsxBuilder {
 			if (mappingKey.contains(CONTEXT_DELIM)) {
 				String[] parts = mappingKey.split(CONTEXT_DELIM);
 				if (parts[1].equals(context)) {
-					xpeList = mappings.get(mappingKey);
+					xpeList = categoryMappings.get(mappingKey);
 					mappingKey = parts[0];
 				}
 			} else {
-				xpeList = mappings.get(mappingKey);
+				xpeList = categoryMappings.get(mappingKey);
 			}
 			if (xpeList != null) {
 				for (int i = 0; i < xpeList.size(); i++) {
@@ -409,15 +406,17 @@ public class XlsxBuilder {
 	 * @param mappingKey
 	 * @param baseEl
 	 * @param context
+	 * @param categoryMappings
 	 * @return
 	 */
-	private String processFunction(String mappingKey, Element baseEl, String context) {
+	private String processFunction(String mappingKey, Element baseEl, String context,
+			Map<String, List<XPathExpression>> categoryMappings) {
 		String fKey = mappingKey.replaceAll(FUNCTION_IDENTIFIER, "");
 		JSONObject functionDef = functionList.get(fKey);
 		String funcName = functionDef.getString("name");
 		switch (funcName) {
 		case "caption":
-			return func_captions(functionDef, context, baseEl);
+			return func_captions(functionDef, context, baseEl, categoryMappings);
 		case "eidr":
 			return func_eidr(functionDef, context, baseEl);
 		default:
@@ -459,12 +458,11 @@ public class XlsxBuilder {
 	}
 
 	/**
-	 * Handles special case of US caption exemptions. This function should only
-	 * be used with the <tt>AvailMetadata/CaptionIncluded</tt> field. This is
-	 * required in the US. Non-US territories may leave it blank.
+	 * Handles special case of US caption exemptions. This function should only be
+	 * used with the <tt>AvailMetadata/CaptionIncluded</tt> field. This is required
+	 * in the US. Non-US territories may leave it blank.
 	 * <p>
-	 * Since there is no equivalent field in XML it must be inferred. The rule
-	 * is:
+	 * Since there is no equivalent field in XML it must be inferred. The rule is:
 	 * 
 	 * <pre>
 	 * IF (CaptionExemption is NOT set AND the Territory == 'US") THEN
@@ -478,30 +476,35 @@ public class XlsxBuilder {
 	 * <tt>baseEl</tt> parameters.
 	 * </p>
 	 * <p>
-	 * Since scope is limited to Avails applicable to US, that is a key issue.
-	 * The only territorial info in an Avails is part of a Transaction. The
-	 * problem is that there can be multiple Transactions and a single
-	 * Transaction may specify zero or many Territories. Thus, if there is
-	 * <b>any</b> Transaction row with “US” in-scope, then
-	 * <tt>CaptionIncluded</tt> should be set.
+	 * Since scope is limited to Avails applicable to US, that is a key issue. The
+	 * only territorial info in an Avails is part of a Transaction. The problem is
+	 * that there can be multiple Transactions and a single Transaction may specify
+	 * zero or many Territories. Thus, if there is <b>any</b> Transaction row with
+	 * “US” in-scope, then <tt>CaptionIncluded</tt> should be set.
 	 * 
 	 * </p>
 	 * 
 	 * @param functionDef
 	 * @param context
 	 * @param baseEl
+	 * @param categoryMappings
 	 * @return
 	 */
-	private String func_captions(JSONObject functionDef, String context, Element baseEl) {
+	private String func_captions(JSONObject functionDef, String context, Element baseEl,
+			Map<String, List<XPathExpression>> categoryMappings) {
 		// Q1: is <avails:CaptionExemption> set?
-		String ceSrcPath = null;
-		if (mappingDefs.containsKey("AvailMetadata:CaptionExemption")) {
-			ceSrcPath = mappingDefs.getString("AvailMetadata:CaptionExemption");
-		} else {
-			ceSrcPath = mappingDefs.getString("AvailMetadata:CaptionExemption" + CONTEXT_DELIM + context);
+		XPathExpression<Element> cePath = null;
+		if((context != null)&& (!context.isEmpty())) {
+			String contextKey = "AvailMetadata:CaptionExemption" + CONTEXT_DELIM + context;
+			if (categoryMappings.containsKey(contextKey)) {
+				cePath = categoryMappings.get(contextKey).get(0);
+			} 
 		}
+		if (cePath == null) {
+			cePath = categoryMappings.get("AvailMetadata:CaptionExemption").get(0);
+		}  
 		@SuppressWarnings("unchecked")
-		XPathExpression<Element> cePath = (XPathExpression<Element>) createXPath(ceSrcPath);
+//		XPathExpression<Element> cePath = (XPathExpression<Element>) createXPath(ceSrcPath);
 		Element targetEl = cePath.evaluateFirst(baseEl);
 		boolean exemptionProvided;
 		if (targetEl == null) {
@@ -512,8 +515,8 @@ public class XlsxBuilder {
 		}
 		if (exemptionProvided) {
 			/*
-			 * CaptionIncluded should be set to NO on assumption that since a
-			 * reason is provided US must be in-scope.
+			 * CaptionIncluded should be set to NO on assumption that since a reason is
+			 * provided US must be in-scope.
 			 */
 			return "No";
 		}
@@ -535,10 +538,10 @@ public class XlsxBuilder {
 	}
 
 	/**
-	 * check for special cases where value has to be translated. This happens
-	 * where XSD specifies xs:duration or xs:dateTime and the Excel specifies
-	 * some simpler format. It also covers special cases such as translating the
-	 * 'EpisodeWSP' <tt>termName</tt> attribute.
+	 * check for special cases where value has to be translated. This happens where
+	 * XSD specifies xs:duration or xs:dateTime and the Excel specifies some simpler
+	 * format. It also covers special cases such as translating the 'EpisodeWSP'
+	 * <tt>termName</tt> attribute.
 	 * 
 	 * @param input
 	 * @return
@@ -621,8 +624,8 @@ public class XlsxBuilder {
 			return input;
 		}
 		/*
-		 * If we got this far then we are dealing with some form of content
-		 * identifier. Now find out if its being used as an AltID...
+		 * If we got this far then we are dealing with some form of content identifier.
+		 * Now find out if its being used as an AltID...
 		 */
 		if (!(nsEl.getText().startsWith(MetadataBuilder.ALT_ID_NAMESPACE_PREFIX))) {
 			return input;
@@ -647,8 +650,7 @@ public class XlsxBuilder {
 		/* AVAIL-related mappings.... */
 		Map<String, List<XPathExpression>> availMappings = initCategoryMappings(mappingDefs, "Avail");
 		/*
-		 * Special Case #1: an Avail-related column that doesn't start with
-		 * 'Avail:'
+		 * Special Case #1: an Avail-related column that doesn't start with 'Avail:'
 		 */
 		String colKey = "Disposition:EntryType";
 		String mapping = mappingDefs.optString(colKey, "n.a");
@@ -656,8 +658,8 @@ public class XlsxBuilder {
 		xpeList.add(createXPath(mapping));
 		availMappings.put(colKey, xpeList);
 		/*
-		 * Special Case #2 (part 1): Avail-prefixed col is actually
-		 * transaction-scoped data
+		 * Special Case #2 (part 1): Avail-prefixed col is actually transaction-scoped
+		 * data
 		 */
 		List<XPathExpression> availIdXpe = availMappings.remove("Avail:AvailID");
 		List<XPathExpression> reportIdXpe = availMappings.remove("Avail:ReportingID");
@@ -697,9 +699,8 @@ public class XlsxBuilder {
 				} else if (value instanceof JSONObject) {
 					JSONObject innerMapping = (JSONObject) value;
 					/*
-					 * 'innerMapping' is either (a) a single %FUNCTION or (b) a
-					 * set of mappings, each one for a specific "context" (i.e.,
-					 * workType).
+					 * 'innerMapping' is either (a) a single %FUNCTION or (b) a set of mappings,
+					 * each one for a specific "context" (i.e., workType).
 					 */
 					Iterator<String> typeIt = innerMapping.keySet().iterator();
 					while (typeIt.hasNext()) {
@@ -735,8 +736,8 @@ public class XlsxBuilder {
 	}
 
 	/**
-	 * Similar to <tt>StructureValidation.resolveXPath()</tt> except that if
-	 * deals with the possible presence of a <i>cardinality indicator</i>.
+	 * Similar to <tt>StructureValidation.resolveXPath()</tt> except that if deals
+	 * with the possible presence of a <i>cardinality indicator</i>.
 	 * 
 	 * @param mapping
 	 * @return
@@ -751,11 +752,11 @@ public class XlsxBuilder {
 		String t1 = mapping.replaceAll("\\{avail\\}", availPrefix);
 		String t2 = t1.replaceAll("\\{md\\}", mdPrefix);
 		/*
-		 * Check for cardinality indicator. A leading '*' indicates that if
-		 * multiple elements match the xpath then their values are concatenated
-		 * into a single string of comma separated values. Otherwise when
-		 * multiple values are encountered a warning is logged and only the
-		 * first value is mapped to the excel.
+		 * Check for cardinality indicator. A leading '*' indicates that if multiple
+		 * elements match the xpath then their values are concatenated into a single
+		 * string of comma separated values. Otherwise when multiple values are
+		 * encountered a warning is logged and only the first value is mapped to the
+		 * excel.
 		 */
 		boolean multipleOk = t2.startsWith("*");
 		String xpath = "./" + t2.replace("*", "");
@@ -763,8 +764,8 @@ public class XlsxBuilder {
 		// Now compile the XPath
 		XPathExpression xpExpression;
 		/**
-		 * The following are examples of xpaths that return an attribute value
-		 * and that we therefore need to identity:
+		 * The following are examples of xpaths that return an attribute value and that
+		 * we therefore need to identity:
 		 * <ul>
 		 * <li>avail:Term/@termName</li>
 		 * <li>avail:Term[@termName[.='Tier' or .='WSP' or .='DMRP']</li>
@@ -788,9 +789,9 @@ public class XlsxBuilder {
 	}
 
 	/**
-	 * Sort the Avails defined in the XML into two sets: one for movies and one
-	 * for TV. Avails that have a type not supported by the XLSX version of
-	 * Avails will be ignored.
+	 * Sort the Avails defined in the XML into two sets: one for movies and one for
+	 * TV. Avails that have a type not supported by the XLSX version of Avails will
+	 * be ignored.
 	 */
 	private void sortAvails() {
 		movieAvailsList = new ArrayList<Element>();
@@ -825,10 +826,10 @@ public class XlsxBuilder {
 	}
 
 	/**
-	 * Configure all XML-related functions to work with the specified version of
-	 * the Avails XSD. This includes setting the correct version of the Common
-	 * Metadata and MDMEC XSD that are used with the specified Avails version.
-	 * If the <tt>availSchemaVer</tt> is not supported by the current version of
+	 * Configure all XML-related functions to work with the specified version of the
+	 * Avails XSD. This includes setting the correct version of the Common Metadata
+	 * and MDMEC XSD that are used with the specified Avails version. If the
+	 * <tt>availSchemaVer</tt> is not supported by the current version of
 	 * <tt>mddf-lib</tt> an <tt>IllegalArgumentException</tt> will be thrown.
 	 * 
 	 * @param availSchemaVer
