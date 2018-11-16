@@ -123,7 +123,7 @@ public class MmcValidatorTest extends MMCoreValidator {
 		execute(target, "MMC-1", true);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		iLog.clearLog();
 	}
@@ -139,7 +139,7 @@ public class MmcValidatorTest extends MMCoreValidator {
 		execute(target, "MMC-1", true);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(7, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		iLog.clearLog();
 	}
@@ -155,7 +155,7 @@ public class MmcValidatorTest extends MMCoreValidator {
 		execute(target, "MMC-1", true);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		iLog.clearLog();
 	}

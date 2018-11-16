@@ -25,8 +25,12 @@ package com.movielabs.mddflib.tests.manifest;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Set;
 
+import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -207,8 +211,15 @@ public class ManifestValidatorTest extends ManifestValidator {
 		execute(target);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR)); 
-		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		int supportingXmlCnt = getSupportingMddfFiles().size();
+		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+		Map<String, List<Element>> foo = getSupportingRsrcLocations();
+		Set<String> bar = foo.keySet();
+		int supportingXmlCnt =0;
+		for(String path : bar) {
+			if(path.endsWith("xml")) {
+				supportingXmlCnt++;
+			}
+		} 
 		assertEquals(1, supportingXmlCnt);
 		iLog.clearLog();
 	}
