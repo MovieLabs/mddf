@@ -172,9 +172,9 @@ Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">Release History:</a>
 
-* **2018-Nov-15: mddf-tool v1.5 released.
+* **2018-Nov-15**: mddf-tool v1.5 released.
 
-* **2018-Aug-08: mddf-tool v1.4 released.
+* **2018-Aug-08**: mddf-tool v1.4 released.
 
 * **2018-Jul-27**: mddf-tool v1.4_rc2 released as an executable jar for testing and evaluation.
 
