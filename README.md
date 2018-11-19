@@ -25,6 +25,10 @@
 
 * 2018-Nov-15: mddf-tool v1.5 has been released as both an executable jar and as native executables.
 
+__NOTE:__ Beginning with Release 1.5, pre-built executables for Windows, OS-X, and Linux will no longer
+be supported. The executable Java jar will still be supported. See ["__Installing and Running__"](#h_Install)
+for details.
+
 ## <a name="h_Overview">Overview:</a>
 
 This repository contains Java software supporting the creation and usage of MDDF files including
@@ -70,15 +74,12 @@ The mddf-tools software currently implements two applications:
 
 ### <a name="h_formats">Available Formats:</a>
 
-Binary releases are available in two forms:
-
-* as Native Executables for Windows, OS-X, and Linux systems. Each executable is specific to the processing of either Avails or Manifest files. 
-
-* as an executable Java jar which supports the processing of either Avails or Manifest files.  [NOTE: Version prior to v1.1.3 were not released as executable jars.]
-
-Note that the executable jar provides all of the capabilities available via the two native excutable packages. In addition, the jar provides a command
+Binary releases are available as an executable Java jar which supports the processing of either Avails or Manifest files. In addition to an interactive mode, the jar provides a command
 line interface (CLI) that may be used either from a terminal window or in conjunction with scheduled jobs (e.g., via crontab).
+[NOTE: Version prior to v1.1.3 did not include executable jars.]
 
+Prior to v1.5, releases included Native Executables for Windows, OS-X, and Linux systems. Each executable is specific to the processing of either Avails or Manifest files.
+ 
 Refer to ChangeLog.md for a list of specific enhancements and bug fixes for any given release.
 
 ### Versioning:
@@ -95,7 +96,9 @@ Executable jars are created for both stable and BETA releases and track the vers
 Example: mddf-tool-v3.1.jar would based on, and compatible with, v3.1 of mddf-lib.
 
 #### Native executables:
-Beginning with the release of v1.3 of mddf-lib, native executables are assigned versions that append a letter to the 
+As of v1.5, support for pre-built native executables has been dropped. 
+
+Beginning with the release of v1.3 of mddf-lib, native executables were assigned versions that append a letter to the 
 the underlying mddf-lib version.
 
 Examples: 
@@ -106,29 +109,6 @@ Prior to July 2017 and the release of v1.3 of the mddf-lib, the native executabl
 independent of the mddf-lib version. 
 
 ## <a name="h_Install">Installing and Running:</a>
-
-The use of the Java executable Jar is highly recommended as it is always the most up-to-date version and provides 
-the full range of capabilities. Native executables for OS-X, Windows, and Linux are also provided but will
-not be available for all developmental candidate releases. A single Java jar file provides support
-for both the Avails and Manifest Validators. This is in contrast to the OS-specific executables in which there is a separate 
-executable for each validation tool.
-
-
-See  [Available Formats](#h_formats) for download 
-locations for all versions.
-
-
-### <a name="h_download">Downloading:</a>
-
-Executable jar files may be downloaded from the ./binaries directory of this repository. The native executables may be downloaded from
-one of two sources:
-
-* The latest stable releases may be downloaded from the MovieLabs web site:
-
-   * Manifest Validator: <http://movielabs.com/md/manifest/validator/>
-   * Avails Validator: <http://movielabs.com/md/avails/validator/>
-
-* Development releases (i.e., release candidates) are distributed via Dropbox. For access, contact the appropriate individuals at MovieLabs.
 
 ### <a name="h_Install_Java">Java Executable Jar:</a>
 
@@ -144,7 +124,21 @@ The `-i` argument indicates the toolkit should be started in interactive mode. A
 `Tool Launcher`dialog will appear that allows the user to select the MDDF tool they 
 wish to use (e.g., the Avails Validator). To see all supported arguments, use `-h`
 
-### <a name="h_Install_OSX">OS-X:</a>
+### Native Executables (DEPRECATED):
+
+Prior to v1.5 native executables for OS-X, Windows, and Linux were also provided. While these are still available for download, usage
+is not recommended as they will lack support for the latest MDDF formats and standards. Laso note that the executable  Java jar provides support
+for both the Avails and Manifest Validators, in contrast to the OS-specific executables in which there is a separate 
+executable for each validation tool
+
+#### <a name="h_download">Downloading:</a>
+
+The native executables may be downloaded from one of two sources:
+
+   * Manifest Validator: <http://movielabs.com/md/manifest/validator/>
+   * Avails Validator: <http://movielabs.com/md/avails/validator/>
+
+#### <a name="h_Install_OSX">OS-X:</a>
 
 Due to issues with Apple's Gatekeeper security mechanism and JavaFX applications, OS-X executables are provided 
 in the form of zip files. Unlike with the Java jars, a separate file must be
@@ -161,12 +155,12 @@ downloaded and installed for each MDDF tool.
 The application may now be launched via the Finder. An error message that “the application can’t be opened” 
 indicates Step #2 was not performed correctly.
 
-### <a name="h_Install_MS">Windows:</a>
+#### <a name="h_Install_MS">Windows:</a>
 
 Executables for Windows environments are provided in the form of standard `.exe` files and require no special
 steps to install or run. The `.msi` formatted distro is not supported.
 
-### <a name="h_Install_LINUX">Linux:</a>
+#### <a name="h_Install_LINUX">Linux:</a>
 
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
