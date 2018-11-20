@@ -74,9 +74,9 @@ The mddf-tools software currently implements two applications:
 
 ### <a name="h_formats">Available Formats:</a>
 
-Binary releases are available as an executable Java jar which supports the processing of either Avails or Manifest files. In addition to an interactive mode, the jar provides a command
+Releases are available as an executable Java jar which supports the processing of either Avails or Manifest files. In addition to an interactive mode, the jar provides a command
 line interface (CLI) that may be used either from a terminal window or in conjunction with scheduled jobs (e.g., via crontab).
-[NOTE: Version prior to v1.1.3 did not include executable jars.]
+[NOTE: Releases prior to v1.1.3 did not include pre-built executable jars.]
 
 Prior to v1.5, releases included Native Executables for Windows, OS-X, and Linux systems. Each executable is specific to the processing of either Avails or Manifest files.
  
@@ -127,7 +127,7 @@ wish to use (e.g., the Avails Validator). To see all supported arguments, use `-
 ### Native Executables (DEPRECATED):
 
 Prior to v1.5 native executables for OS-X, Windows, and Linux were also provided. While these are still available for download, usage
-is not recommended as they will lack support for the latest MDDF formats and standards. Laso note that the executable  Java jar provides support
+is not recommended as they will lack support for the latest MDDF formats and standards. Also note that the executable  Java jar provides support
 for both the Avails and Manifest Validators, in contrast to the OS-specific executables in which there is a separate 
 executable for each validation tool
 
