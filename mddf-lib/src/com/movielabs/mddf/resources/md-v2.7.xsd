@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?> 
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 (x64) (http://www.altova.com) by Craig Seidel (Private) -->
 <xs:schema xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.movielabs.com/schema/md/v2.7/md" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.7">
 	<!--Common Metadata-->
-	<!--Verson md-v2.7-DRAFT-20180828-->
+	<!--Verson 2.7-->
 	<!-- *** Metadata References ***-->
 	<xs:simpleType name="id-type">
 		<xs:restriction base="xs:anyURI"/>
@@ -75,7 +76,11 @@
 		<xs:sequence>
 			<xs:element name="CharacterName" maxOccurs="unbounded">
 				<xs:complexType>
-					<xs:attribute name="language" type="xs:language"/>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="language" type="xs:language"/>
+						</xs:extension>
+					</xs:simpleContent>
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="CharacterID" type="md:PersonIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
@@ -83,7 +88,7 @@
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:boolean">
-							<xs:attribute name="context" type="xs:string"/>
+							<xs:attribute name="appearance" type="md:string-Nonfictional-appearance"/>
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>
@@ -217,7 +222,15 @@
 					</xs:simpleContent>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="BillingBlockOrder" type="xs:int" minOccurs="0"/>
+			<xs:element name="BillingBlockOrder" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:int">
+							<xs:attribute name="topBilled" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="Character" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="CharacterInfo" type="md:BasicMetadataCharacter-type" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="Guest" type="xs:boolean" minOccurs="0"/>
@@ -425,6 +438,7 @@
 			<xs:element name="CodecType" type="md:string-Video-Enc-CodecType" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="MPEGProfile" type="md:string-Video-Enc-MProfile" minOccurs="0"/>
 			<xs:element name="MPEGLevel" type="md:string-Video-Enc-MLevel" minOccurs="0"/>
+			<xs:element name="CodecProfile" type="xs:string" minOccurs="0"/>
 			<xs:element name="BitrateMax" type="xs:integer" minOccurs="0"/>
 			<xs:element name="BitRateAverage" type="xs:integer" minOccurs="0"/>
 			<xs:element name="VBR" type="md:string-Video-Enc-VBR" minOccurs="0"/>
@@ -453,6 +467,22 @@
 			<xs:element name="Primaries" type="md:string-Video-Pic-Primaries"/>
 			<xs:element name="TransferFunction" type="md:string-Video-Pic-OETF"/>
 			<xs:element name="ColorDifferencing" type="md:string-Video-Pic-ColorDifferencing"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DigitalAssetColorTransformMetadata-type">
+		<xs:sequence>
+			<xs:element name="ColorVolumeTransform" type="md:string-Video-Pic-ColorEnhTransform"/>
+			<xs:element name="ApplicationIdentifier" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:nonNegativeInteger">
+							<xs:attribute name="applicationVersion" type="xs:nonNegativeInteger"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TargetSystemDisplay" type="md:DigitalAssetColorVolume-type" minOccurs="0"/>
+			<xs:element name="DoNotTranscodeBase" type="xs:boolean" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="DigitalAssetVideoPictureFrameRate-type">
@@ -550,10 +580,20 @@
 			<xs:element name="FrameRate" type="md:DigitalAssetVideoPictureFrameRate-type" minOccurs="0"/>
 			<xs:element name="Progressive" type="md:DigitalAssetVideoPictureProgressive-type" minOccurs="0"/>
 			<xs:element name="ColorSubsampling" type="md:string-Video-Pic-ColorSampling" minOccurs="0"/>
+			<xs:element name="BitDepth" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:positiveInteger">
+							<xs:attribute name="alphaDepth" type="xs:nonNegativeInteger"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="Colorimetry" type="md:string-Video-Pic-Colorimetry" minOccurs="0"/>
 			<xs:element name="Type3D" type="md:string-Video-Pic-Type3D" minOccurs="0"/>
 			<xs:element name="MasteredColorVolume" type="md:DigitalAssetColorVolume-type" minOccurs="0"/>
 			<xs:element name="ColorEncoding" type="md:DigitalAssetColorEncoding-type" minOccurs="0"/>
+			<xs:element name="ColorTransformMetadata" type="md:DigitalAssetColorTransformMetadata-type" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="LightLevel" type="md:DigitalAssetVideoPictureLightLevel-type" minOccurs="0"/>
 			<xs:element name="HDRPlaybackInfo" type="md:DigitalAssetVideoPictureHDRPlaybackInfo-type" minOccurs="0"/>
 			<xs:element name="ThreeSixty" type="md:DigitalAssetVideoPicture360-type" minOccurs="0"/>
@@ -870,7 +910,7 @@
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:string">
-							<xs:attribute name="language" type="xs:language"/>
+							<xs:attribute name="language" type="md:language-redefine"/>
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>
@@ -992,17 +1032,17 @@
 	</xs:complexType>
 	<xs:complexType name="ContentRelatedToRelationship-type">
 		<xs:sequence>
-			<xs:element name="Type">
+			<xs:element name="Type" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>Reenactment, Fictionalization, Parody, etc.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="SubType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SubType" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="Description" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:string">
-							<xs:attribute name="language" type="xs:string"/>
+							<xs:attribute name="language" type="md:language-redefine"/>
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>
@@ -1023,7 +1063,7 @@
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:string">
-							<xs:attribute name="language" type="xs:language"/>
+							<xs:attribute name="language" type="md:language-redefine"/>
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>
@@ -1216,7 +1256,7 @@
 	</xs:complexType>
 	<xs:complexType name="Compliance-type">
 		<xs:sequence>
-			<xs:element name="Category" minOccurs="0"/>
+			<xs:element name="Category" type="xs:string" minOccurs="0"/>
 			<xs:element name="Standard" type="xs:string" minOccurs="0"/>
 			<xs:element name="Disposition" type="xs:string"/>
 			<xs:element name="CompetentAuthority" type="md:AssociatedOrg-type" minOccurs="0"/>
@@ -1224,7 +1264,7 @@
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:base64Binary">
-							<xs:attribute name="MIME"/>
+							<xs:attribute name="MIME" type="xs:string"/>
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>
@@ -1299,6 +1339,9 @@
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
 	<xs:simpleType name="string-Name_Suffix">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Nonfictional-appearance">
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
 	<xs:simpleType name="string-Gender">
@@ -1470,6 +1513,9 @@
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
 	<xs:simpleType name="string-Video-Pic-ColorDifferencing">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-Video-Pic-ColorEnhTransform">
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
 	<xs:simpleType name="string-Video-Pic-CMaxInterpretation">
