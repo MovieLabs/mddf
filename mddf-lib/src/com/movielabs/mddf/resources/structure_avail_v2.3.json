@@ -247,7 +247,7 @@
 				{
 					"docRef": "AVAIL:struc03",
 					"min": "1",
-					"xpath": "../../{avail}AvailType[. = ‘promotion’ or . =‘supplement’]",
+					"xpath": "../../{avail}AvailType[(. = 'promotion') or (. = 'supplement')]",
 					"severity": "Error",
 					"msg": "RefALID is defined only when AvailType = ‘promotion’ or ‘supplement’"
 				}
