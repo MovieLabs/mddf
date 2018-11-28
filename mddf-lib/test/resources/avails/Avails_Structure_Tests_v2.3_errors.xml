@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<avails:AvailList xmlns:ns4="http://www.w3.org/2000/09/xmldsig#" xmlns:md="http://www.movielabs.com/schema/md/v2.6/md" xmlns:avails="http://www.movielabs.com/schema/avails/v2.3/avails" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.6">
+	<avails:Avail>
+		<avails:ALID>md:alid:eidr-x:0344-992B-DF0A-21A5-8BF9-Q</avails:ALID>
+		<avails:Disposition>
+			<avails:EntryType>Full Extract</avails:EntryType>
+			<avails:IssueDate>2018-10-09</avails:IssueDate>
+		</avails:Disposition>
+		<avails:Licensor>
+			<md:DisplayName>Disney</md:DisplayName>
+		</avails:Licensor>
+		<avails:AvailType>supplement</avails:AvailType>
+		<avails:ShortDescription>default generated XML for movies/tv</avails:ShortDescription>
+		<avails:Asset contentID="md:cid:org:disney.com:radar:110524">
+			<avails:WorkType>Supplemental</avails:WorkType>
+			<avails:Metadata>
+				<avails:TitleDisplayUnlimited>The Incredible Hulk</avails:TitleDisplayUnlimited>
+				<avails:TitleInternalAlias>The Incredible Hulk</avails:TitleInternalAlias>
+				<avails:EditEIDR-URN>urn:eidr:10.5240:0344-992B-DF0A-21A5-8BF9-Q</avails:EditEIDR-URN>
+				<avails:TitleEIDR-URN>urn:eidr:10.5240:D2C6-38B8-FF2B-DB9E-88E8-Q</avails:TitleEIDR-URN>
+				<avails:AltIdentifier>
+					<md:Namespace>familyid</md:Namespace>
+					<md:Identifier>md:cid:org:disney.com:radar:110524</md:Identifier>
+				</avails:AltIdentifier>
+			</avails:Metadata>
+		</avails:Asset>
+		<avails:Transaction TransactionID="922247d2-ba07-45ed-8f47-69803fcd80b4">
+			<avails:LicenseType>SVOD</avails:LicenseType>
+			<avails:Territory>
+				<md:country>NL</md:country>
+			</avails:Territory>
+			<avails:Start>2023-07-01T00:00:00.000</avails:Start>
+			<avails:End>2025-03-31T00:00:00.000</avails:End>
+			<avails:AllowedLanguage>de</avails:AllowedLanguage>
+			<avails:AllowedLanguage>en-GB</avails:AllowedLanguage>
+			<avails:AllowedLanguage>en</avails:AllowedLanguage> 
+			<avails:FormatProfile>SD</avails:FormatProfile>
+			<avails:ReportingID>000000750000026403</avails:ReportingID>
+			<avails:RefALID>md:alid:eidr-x:0344-992B-DF0A-21A5-8BF9-R</avails:RefALID>
+			<avails:Term termName="Download">
+				<avails:Text>Yes</avails:Text>
+			</avails:Term>
+		</avails:Transaction>
+		<avails:Transaction TransactionID="ab1e2e14-7cb6-408d-9ee0-307b68f3d3e3">
+			<avails:LicenseType>SVOD</avails:LicenseType>
+			<avails:Territory>
+				<md:country>NL</md:country>
+			</avails:Territory>
+			<avails:Start>2023-07-01T00:00:00.000</avails:Start>
+			<avails:End>2025-03-31T00:00:00.000</avails:End>
+			<avails:AllowedLanguage>de</avails:AllowedLanguage>
+			<avails:AllowedLanguage>en-GB</avails:AllowedLanguage>
+			<avails:AllowedLanguage>en</avails:AllowedLanguage> 
+			<avails:AllowedLanguage>nl</avails:AllowedLanguage>
+			<avails:FormatProfile>HD</avails:FormatProfile>
+			<avails:ReportingID>000000750000026403</avails:ReportingID>
+			<avails:RefALID>md:alid:eidr-x:0344-992B-DF0A-21A5-8BF9-R</avails:RefALID>
+			<avails:Term termName="Download">
+				<avails:Text>Yes</avails:Text>
+			</avails:Term>
+		</avails:Transaction>
+	</avails:Avail>	<avails:Avail>
+		<avails:ALID>md:alid:eidr-x:0344-992B-DF0A-21A5-8BF9-Q</avails:ALID>
+		<avails:Disposition>
+			<avails:EntryType>Full Extract</avails:EntryType>
+			<avails:IssueDate>2018-10-09</avails:IssueDate>
+		</avails:Disposition>
+		<avails:Licensor>
+			<md:DisplayName>Disney</md:DisplayName>
+		</avails:Licensor>
+		<avails:AvailType>single</avails:AvailType>
+		<avails:ShortDescription>default generated XML for movies/tv</avails:ShortDescription>
+		<avails:Asset contentID="md:cid:org:disney.com:radar:110524">
+			<avails:WorkType>Movie</avails:WorkType>
+		</avails:Asset>
+		<avails:Transaction TransactionID="922247d2-ba07-45ed-8f47-69803fcd80b4">
+			<avails:LicenseType>SVOD</avails:LicenseType>
+			<avails:Territory>
+				<md:country>NL</md:country>
+			</avails:Territory>
+			<avails:Start>2023-07-01T00:00:00.000</avails:Start>
+			<avails:End>2025-03-31T00:00:00.000</avails:End>
+			<avails:AllowedLanguage>de</avails:AllowedLanguage>
+			<avails:AllowedLanguage>en-GB</avails:AllowedLanguage>
+			<avails:AllowedLanguage>en</avails:AllowedLanguage> 
+			<avails:FormatProfile>SD</avails:FormatProfile>
+			<avails:ReportingID>000000750000026403</avails:ReportingID>
+			<avails:RefALID>md:alid:eidr-x:0344-992B-DF0A-21A5-8BF9-R</avails:RefALID>
+			<avails:Term termName="Download">
+				<avails:Text>Yes</avails:Text>
+			</avails:Term>
+		</avails:Transaction>
+	</avails:Avail>
+</avails:AvailList>

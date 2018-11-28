@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jdom2.Document;
@@ -36,9 +37,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.movielabs.mddflib.logging.IssueLogger;
+import com.movielabs.mddf.MddfContext;
+import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.xml.StructureValidation;
@@ -59,7 +63,7 @@ import net.sf.json.JSONObject;
 public class StructureValidationTest extends StructureValidation {
 
 	private static InstrumentedLogger iLog;
-	private static String rsrcPath = "./test/resources/mec/";
+	private static String rsrcPath = "./test/resources/";
 	private JSONObject structDefs;
 	private Element rootEl;
 
@@ -67,7 +71,6 @@ public class StructureValidationTest extends StructureValidation {
 		super(new InstrumentedLogger(), "JUnit");
 		iLog = (InstrumentedLogger) this.logger;
 	}
-
 
 	/**
 	 * @throws java.lang.Exception
@@ -89,11 +92,6 @@ public class StructureValidationTest extends StructureValidation {
 	@BeforeEach
 	public void setUp() throws Exception {
 		iLog.clearLog();
-		Document xmlDoc = loadTestArtifact("mec1.xml");
-		rootEl = xmlDoc.getRootElement();
-		String mecSchemaVer = XmlIngester.identifyXsdVersion(rootEl);
-		XmlIngester.setMdMecVersion(mecSchemaVer);
-		structDefs = loadJSON("structure.json");
 	}
 
 	/**
@@ -101,6 +99,116 @@ public class StructureValidationTest extends StructureValidation {
 	 */
 	@AfterEach
 	public void tearDown() throws Exception {
+	}
+
+	// =====================================================
+	// =========== START OF TESTS ==================+=======
+
+	/**
+	 * Test simplest and most basic functionality.
+	 */
+	@Test
+	public void testBasicFunctions() {
+		initialize("mec/mec1.xml", "structure.json");
+		List<Element> basicElList = rootEl.getChildren("Basic", XmlIngester.mdmecNSpace);
+		JSONObject basicMD = structDefs.getJSONObject("BasicMetadata");
+		JSONArray rqmtSet = basicMD.getJSONArray("requirement");
+		for (int j = 0; j < basicElList.size(); j++) {
+			Element basicEl = basicElList.get(j);
+			for (int i = 0; i < rqmtSet.size(); i++) {
+				JSONObject nextRqmt = rqmtSet.getJSONObject(i);
+				boolean isValid = validateConstraint(basicEl, nextRqmt);
+				assertTrue(isValid);
+			}
+		}
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			System.out.println("\n === FAILED TEST... dumping log ===");
+			iLog.printLog();
+			System.out.println(" === End log dump for FAILED TEST ===");
+			throw e;
+		}
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testAvailsStruct_2_3_noErr() {
+		String targetFile = "avails/Avails_Structure_Tests_v2.3.xml";
+		initialize(targetFile, null);
+		JSONObject structDefs = XmlIngester.getMddfResource("structure_avail", "2.3");
+		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
+		Iterator<String> keys = rqmtSet.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
+			// NOTE: This block of code requires a 'targetPath' be defined
+			if (rqmtSpec.has("targetPath")) {
+				boolean isValid = validateDocStructure(rootEl, rqmtSpec);
+			}
+		} 
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			System.out.println("\n === FAILED TEST... dumping log ===");
+			iLog.printLog();
+			System.out.println(" === End log dump for FAILED TEST ===");
+			throw e;
+		}
+	}
+
+	/**
+	 * 
+	 */
+	@Test
+	public void testAvailsStruct_2_3_Errors() {
+		String targetFile = "avails/Avails_Structure_Tests_v2.3_errors.xml";
+		initialize(targetFile, null);
+		JSONObject structDefs = XmlIngester.getMddfResource("structure_avail", "2.3");
+		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
+		Iterator<String> keys = rqmtSet.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
+			// NOTE: This block of code requires a 'targetPath' be defined
+			if (rqmtSpec.has("targetPath")) {
+				boolean isValid = validateDocStructure(rootEl, rqmtSpec);
+			}
+		} 
+		try {
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			System.out.println("\n === FAILED TEST... dumping log ===");
+			iLog.printLog();
+			System.out.println(" === End log dump for FAILED TEST ===");
+			throw e;
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void initialize(String testFile, String jsonFile) {
+		Document xmlDoc = loadTestArtifact(testFile);
+		rootEl = xmlDoc.getRootElement();
+		FILE_FMT srcMddfFmt = MddfContext.identifyMddfFormat(rootEl);
+		XmlIngester.setMddfVersions(srcMddfFmt);
+		if (jsonFile != null) {
+			structDefs = loadJSON(jsonFile);
+		}
+		iLog.setPrintToConsole(true);
+		iLog.setMinLevel(iLog.LEV_DEBUG);
+		iLog.setInfoIncluded(true);
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + testFile, null, "JUnit");
+
 	}
 
 	private Document loadTestArtifact(String fileName) {
@@ -136,31 +244,5 @@ public class StructureValidationTest extends StructureValidation {
 		}
 		assertNotNull(input);
 		return JSONObject.fromObject(input);
-	}
-
-	// =====================================================
-	// =========== START OF TESTS ==================+=======
-
-	/**
-	 * Test method for
-	 * {@link com.movielabs.mddflib.util.xml.StructureValidation#validateStructure(org.jdom2.Element, net.sf.json.JSONObject)}
-	 * .
-	 */
-	@Test
-	public void testValidateStructure() {
-		List<Element> basicElList = rootEl.getChildren("Basic", XmlIngester.mdmecNSpace);
-		JSONObject basicMD = structDefs.getJSONObject("BasicMetadata");
-		JSONArray rqmtSet = basicMD.getJSONArray("requirement");
-		for (int j = 0; j < basicElList.size(); j++) {
-			Element basicEl = basicElList.get(j);
-			for (int i = 0; i < rqmtSet.size(); i++) {
-				JSONObject nextRqmt = rqmtSet.getJSONObject(i);
-				boolean isValid = validateConstraint(basicEl, nextRqmt);
-				assertTrue(isValid);
-			}
-		}
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 	}
 }
