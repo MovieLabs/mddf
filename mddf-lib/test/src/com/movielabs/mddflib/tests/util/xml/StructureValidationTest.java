@@ -21,7 +21,6 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.movielabs.mddflib.tests.util.xml;
- 
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,15 +35,16 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test; 
-import static org.junit.jupiter.api.Assertions.*; 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
+import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.xml.StructureValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
-import net.sf.json.JSONArray; 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -56,20 +56,24 @@ import net.sf.json.JSONObject;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class StructureValidationTest {
+public class StructureValidationTest extends StructureValidation {
 
 	private static InstrumentedLogger iLog;
 	private static String rsrcPath = "./test/resources/mec/";
 	private JSONObject structDefs;
 	private Element rootEl;
-	private StructureValidation validator;
+
+	public StructureValidationTest() {
+		super(new InstrumentedLogger(), "JUnit");
+		iLog = (InstrumentedLogger) this.logger;
+	}
+
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeAll
 	public static void setUpBeforeClass() throws Exception {
-		iLog = new InstrumentedLogger();
 	}
 
 	/**
@@ -90,7 +94,6 @@ public class StructureValidationTest {
 		String mecSchemaVer = XmlIngester.identifyXsdVersion(rootEl);
 		XmlIngester.setMdMecVersion(mecSchemaVer);
 		structDefs = loadJSON("structure.json");
-		validator = new StructureValidation(iLog, "JUnit");
 	}
 
 	/**
@@ -148,14 +151,14 @@ public class StructureValidationTest {
 		List<Element> basicElList = rootEl.getChildren("Basic", XmlIngester.mdmecNSpace);
 		JSONObject basicMD = structDefs.getJSONObject("BasicMetadata");
 		JSONArray rqmtSet = basicMD.getJSONArray("requirement");
-		for (int j =0; j <basicElList.size(); j++){
+		for (int j = 0; j < basicElList.size(); j++) {
 			Element basicEl = basicElList.get(j);
 			for (int i = 0; i < rqmtSet.size(); i++) {
 				JSONObject nextRqmt = rqmtSet.getJSONObject(i);
-				boolean isValid = validator.validateConstraint(basicEl, nextRqmt);
+				boolean isValid = validateConstraint(basicEl, nextRqmt);
 				assertTrue(isValid);
 			}
-		} 
+		}
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));

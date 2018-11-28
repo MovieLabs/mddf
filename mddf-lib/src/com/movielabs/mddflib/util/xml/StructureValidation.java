@@ -170,7 +170,7 @@ import net.sf.json.JSONObject;
  */
 public class StructureValidation {
 
-	private IssueLogger logger;
+	protected IssueLogger logger;
 	protected String logMsgSrcId;
 
 	public StructureValidation(IssueLogger logger, String logMsgSrcId) {
@@ -192,7 +192,7 @@ public class StructureValidation {
 		return isOk;
 	}
 
-	public boolean validateConstraint(Element target, JSONObject constraint) {
+	protected boolean validateConstraint(Element target, JSONObject constraint) {
 		boolean curFileIsValid = true;
 
 		int min = constraint.optInt("min", 0);
