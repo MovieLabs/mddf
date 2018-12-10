@@ -93,9 +93,10 @@ import net.sf.json.JSONObject;
  * cardinality constraints. If multiple xpaths are listed, the total number of
  * elements (or attributes) returned when each is separately evaluated must
  * satisfy the constraint.</li>
- * <li>
- * <tt>min</tt>: minimum number of matching objects that should be found when evaluating the xpath(s). [OPTIONAL, default is 0]</li> 
- * <li><tt>max</tt>: maximum number of matching objects that should be found when evaluating the xpath(s). [OPTIONAL, default is unlimited]</li> 
+ * <li><tt>min</tt>: minimum number of matching objects that should be found
+ * when evaluating the xpath(s). [OPTIONAL, default is 0]</li>
+ * <li><tt>max</tt>: maximum number of matching objects that should be found
+ * when evaluating the xpath(s). [OPTIONAL, default is unlimited]</li>
  * <li><tt>severity</tt>: must match one of the <tt>LogMgmt.level</tt> values
  * </li>
  * <li><tt>msg</tt>: text to use for a log entry if the constraint is not met.
@@ -158,6 +159,52 @@ import net.sf.json.JSONObject;
  *</tt>
  * </pre>
  * 
+ * <h3>Filters:</h3>
+ * <p>
+ * A 'Filter' may be used to supplement the matching criteria specified by the
+ * XPaths. This is used when XPath criteria are insufficient, or too unwieldy,
+ * to fully implement a constraint. Filters are (for now) defined as a set of
+ * values and an optional 'negated' flag set to <tt>true</tt> or <tt>false</tt>.
+ * </p>
+ * <p>
+ * For example, the following filter would identify <tt>Audio</tt> assets that
+ * have a <tt>ChannelMapping</tt> that is inconsistent with the number of actual
+ * channels:
+ * </p>
+ * 
+ * <pre>
+		"MultiChannel": 
+		{
+			"targetPath": ".//{md}Channels[. > 1]",
+			"constraint": 
+			[
+				{
+					"xpath": 
+					[
+						"../{md}Encoding/{md}ChannelMapping"
+					],
+
+					"filter": 
+					{
+						"values": 
+						[
+							"Mono",
+							"Left",
+							"Center",
+							"Right"
+						],
+
+						"negated": "false"
+					},
+
+					"max": "0",
+					"severity": "Error",
+					"msg": "ChannelMapping is not valid for multi-channel Audio"
+				}
+			]
+		}
+ * </pre>
+ * 
  * <h3>Usage:</h3>
  * <p>
  * Validation modules should determine the appropriate JSON resource file based
@@ -199,7 +246,7 @@ public class StructureValidation {
 		int max = constraint.optInt("max", -1);
 		String severity = constraint.optString("severity", "Error");
 		int logLevel = LogMgmt.text2Level(severity);
-		
+
 		String docRef = constraint.optString("docRef");
 
 		Object xpaths = constraint.opt("xpath");
@@ -226,12 +273,19 @@ public class StructureValidation {
 				}
 			}
 		}
+		// reformat targetList for use in log msgs....
 		targetList = targetList.replaceAll("\\{\\w+\\}", "");
+
+		/* Has an OPTIONAL filter been included with the constraint? */
+		JSONObject filterDef = constraint.optJSONObject("filter");
 
 		List<Element> matchedElList = new ArrayList<Element>();
 		for (int i = 0; i < xpeList.size(); i++) {
 			XPathExpression<Element> xpExp = (XPathExpression<Element>) xpeList.get(i);
 			List<Element> nextElList = xpExp.evaluate(target);
+			if (filterDef != null) {
+				nextElList = applyFilter(nextElList, filterDef);
+			}
 			matchedElList.addAll(nextElList);
 		}
 		String logMsg = constraint.optString("msg", "");
@@ -272,11 +326,45 @@ public class StructureValidation {
 	}
 
 	/**
+	 * Apply a filter to a list of Elements. This is used when XPath criteria are
+	 * insufficient, or too unwieldy, to fully implement a constraint.
+	 * <p>
+	 * Filters are (for now) defined as a set of values and an optional 'negated'
+	 * flag set to <tt>true</tt> or <tt>false</tt>
+	 * </p>
+	 * <b>NOTE:</b> future implementations may include support for REGEX pattern
+	 * matching.
+	 * 
+	 * @param elList
+	 * @param filterDef
+	 * @return
+	 */
+	private List<Element> applyFilter(List<Element> inList, JSONObject filterDef) {
+		List<Element> outList = new ArrayList();
+		JSONArray valueSet = filterDef.optJSONArray("values");
+		String negated = filterDef.optString("negated", "false");
+		boolean isNegated = negated.equals("true");
+		for (Element nextEl : inList) {
+			String value = nextEl.getValue();
+			if (valueSet.contains(value)) {
+				if (!isNegated) {
+					outList.add(nextEl);
+				}
+			} else {
+				if (isNegated) {
+					outList.add(nextEl);
+				}
+			}
+		}
+		return outList;
+	}
+
+	/**
 	 * Create a <tt>XPathExpression</tt> from a string representation. An
 	 * <tt>xpathDef</tt> is defined using the standard XPath syntax with one
-	 * modification. Namespaces are indicated using a variable indicating the
-	 * name of an MDDF schema. The appropriate namespace prefixes will be
-	 * inserted by the software. Supported namespaces are:
+	 * modification. Namespaces are indicated using a variable indicating the name
+	 * of an MDDF schema. The appropriate namespace prefixes will be inserted by the
+	 * software. Supported namespaces are:
 	 * <ul>
 	 * <li>{avail}</li>
 	 * <li>{mdmec}</li>
@@ -315,8 +403,8 @@ public class StructureValidation {
 		// Now compile the XPath
 		XPathExpression<?> xpExpression;
 		/**
-		 * The following are examples of xpaths that return an attribute value
-		 * and that we therefore need to identity:
+		 * The following are examples of xpaths that return an attribute value and that
+		 * we therefore need to identity:
 		 * <ul>
 		 * <li>avail:Term/@termName</li>
 		 * <li>avail:Term[@termName[.='Tier' or .='WSP' or .='DMRP']</li>
