@@ -243,8 +243,14 @@ public class MddfContext {
 	}
 
 	/**
-	 * Return the appropriate versions of the CM and MDMEC schemas that are to be
-	 * used with the specified standard.
+	 * Return the appropriate versions of supporting schemas that are to be used
+	 * with the specified MDDF standard. Supporting schemas are
+	 * <ul>
+	 * <li>Common Metadata ("MD") and</li>
+	 * <li>Media Entertainment Code ("MDMEC")</li>
+	 * </ul>
+	 * If a supporting schema is not used by the main schema then the map will
+	 * contain a <tt>null</tt> value for that key.
 	 * 
 	 * @param standard an MDDF XML standard for Avails, Manifest, or MEC.
 	 * @return
