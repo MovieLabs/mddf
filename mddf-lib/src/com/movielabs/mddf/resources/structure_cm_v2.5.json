@@ -17,7 +17,6 @@
 					{
 						"values": 
 						[
-							"Mono",
 							"Left",
 							"Center",
 							"Right",
@@ -63,7 +62,6 @@
 					{
 						"values": 
 						[
-							"Mono",
 							"Left",
 							"Center",
 							"Right",
@@ -274,28 +272,7 @@
 						[
 							"M",
 							"M10",
-							"MSP",
-							"M12",
-							"M42210",
-							"M42212",
-							"M42216",
-							"SM",
-							"SM10",
-							"MM",
-							"3DM",
-							"SEM",
-							"SEM10",
-							"SEHT",
-							"SEHT10",
-							"SEHT14",
-							"HT",
-							"HT10",
-							"HT14",
-							"SM",
-							"SM10",
-							"SM10",
-							"SM16",
-							"SM444"
+							"MSP"
 						],
 
 						"negated": "true"

@@ -49,11 +49,10 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
  * Base class for implementation of validators of a XML file for conformance
- * with the <tt>Common Metadata (md)</tt> specification as defined in
- * <tt>TR-META-CM (v2.4)</tt>. Extending subclasses will provide additional
- * customization to check for conformance with specifications built on top of
- * the CM (e.g., as conforming to the Common Media Manifest (CMM) as specified
- * in <tt>TR-META-MMM (v1.5)</tt>).
+ * with the <tt>Common Metadata (md)</tt> specifications. Extending subclasses
+ * will provide additional customization to check for conformance with
+ * specifications built on top of the CM (e.g., as conforming to the Common
+ * Media Manifest (CMM)).
  * 
  * 
  * @author L. Levin, Critical Architectures LLC
@@ -295,12 +294,13 @@ public class CMValidator extends XmlIngester {
 		 * Load JSON that defines various constraints on structure of the XML This is
 		 * version-specific but not all schema versions have their own unique struct
 		 * file (e.g., a minor release may be compatible with a previous release).
-		 */
-		/* v2.7 is 1st CM version to have structure rqmts */
+		 */ 
 		String structVer = null;
 		switch (CM_VER) {
 		case "2.7":
-			structVer = "2.7";
+		case "2.6":
+		case "2.5":
+			structVer = CM_VER;
 			break;
 		default:
 			// Not supported for the version
@@ -1193,6 +1193,80 @@ public class CMValidator extends XmlIngester {
 	}
 
 	/**
+	 * @param targetSelectionPath xPath to identify one or more target elements
+	 * @param baseEl              Element that is starting point for
+	 *                            <tt>targetSelectionPath</tt> evaluation.
+	 * @param rqmtSet             JSON-formatted requirements that all target
+	 *                            selections should satisfy
+	 */
+	protected void validateDigitalAsset(String targetSelectionPath, Element baseEl, JSONObject rqmtSet) {
+		Collection<Namespace> nSpaces = new HashSet<Namespace>();
+		nSpaces.add(rootNS);
+		nSpaces.add(mdNSpace);
+		XPathExpression<Element> xpExpression = xpfac.compile(targetSelectionPath, Filters.element(), null, nSpaces);
+		List<Element> assetList = xpExpression.evaluate(baseEl);
+		if (assetList.isEmpty()) {
+			return;
+		}
+
+		Iterator<String> keys = rqmtSet.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
+			loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, "DigitalAsset rqmt check; key= " + key, curFile,
+					logMsgSrcId);
+			String xPath = rqmtSpec.getString("targetPath");
+			if (rqmtSpec.containsKey("children")) {
+				/* Recursive descent */
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, "DigitalAsset Recursive descent; key= " + key,
+						curFile, logMsgSrcId);
+				JSONObject innerRqmtSet = rqmtSpec.getJSONObject("children");
+				for (Element nextAssetEl : assetList) {
+					validateDigitalAsset(xPath, nextAssetEl, innerRqmtSet);
+				}
+
+			} else {
+				/**
+				 * Rules for the xPath used for DigitalAsset are different from those used
+				 * elsewhere and are much simpler:
+				 * 
+				 * <pre>
+				 * 1) explicitly identifies the namespace prefix (i.e. md:Foo instead of {md}Foo
+				 * 2) can only include elements in the common metadata (i.e., md) namespace
+				 * </pre>
+				 */
+				boolean isAttribute;
+				XPathExpression xpExp;
+				if (xPath.contains("@")) {
+					isAttribute = true;
+					xpExp = xpfac.compile(xPath, Filters.attribute(), null, XmlIngester.mdNSpace);
+				} else {
+					isAttribute = false;
+					xpExp = xpfac.compile(xPath, Filters.element(), null, XmlIngester.mdNSpace);
+				}
+
+				String logLabel = targetSelectionPath + "/" + key;
+				/*
+				 * Code allows for either vocab checks or structural checks (but not both in the
+				 * same rqmt).
+				 */
+				String documentRef = rqmtSpec.optString("ref");
+				if (rqmtSpec.containsKey("values")) {
+					// vocab check
+					JSONArray expected = rqmtSpec.getJSONArray("values");
+					for (Element nextAssetEl : assetList) {
+						List<Element> targetElList = (List<Element>) xpExp.evaluate(nextAssetEl);
+						validateVocabUse(targetElList, expected, isAttribute, documentRef, true, true, LogMgmt.TAG_MD,
+								logLabel);
+					}
+				} else {
+					// structure check ??
+				}
+			}
+		}
+	}
+
+	/**
 	 * Equivalent to calling
 	 * <tt>validateVocab(Namespace primaryNS, String primaryEl, Namespace childNS, String child,
 			JSONArray expected, LogReference srcRef, boolean caseSensitive, boolean strict)</tt>
@@ -1281,8 +1355,51 @@ public class CMValidator extends XmlIngester {
 			xpExpression = xpfac.compile(xpath, Filters.element(), null, nSpaces);
 		}
 		List targetList = xpExpression.evaluate(curRootEl);
-		String optionsString = expected.toString().toLowerCase();
+		validateVocabUse(targetList, expected, isAttribute, srcRef, caseSensitive, strict, logTag, logLabel);
+	}
+	// .=============================================
 
+	/**
+	 * @param targetList
+	 * @param expected
+	 * @param isAttribute
+	 * @param srcRef
+	 * @param caseSensitive
+	 * @param strict
+	 * @param logTag
+	 * @param logLabel
+	 */
+	private void validateVocabUse(List targetList, JSONArray expected, boolean isAttribute, Object srcRef,
+			boolean caseSensitive, boolean strict, int logTag, String logLabel) {
+		String optionsString = expected.toString().toLowerCase();
+		int logLevel;
+		String explanation;
+		String docSec = null;
+		LogReference docRef = null;
+		if (srcRef instanceof LogReference) {
+			docRef = (LogReference) srcRef;
+		} else if (srcRef instanceof String) {
+			docSec = (String) srcRef;
+			if (docSec.isEmpty()) {
+				docSec = null;
+			}
+		}
+		if (strict) {
+			logLevel = LogMgmt.LEV_ERR;
+			explanation = "Value specified does not match one of the allowed strings.";
+			if (docSec != null) {
+				explanation = explanation + " (see CM " + docSec + ")";
+			}
+			if (caseSensitive) {
+				explanation = explanation + " Note that string-matching is case-sensitive";
+			}
+		} else {
+			logLevel = LogMgmt.LEV_WARN;
+			explanation = "Value specified doesn't match one of the recommended strings. Others may be used if all parties agree";
+			if (docSec != null) {
+				explanation = explanation + " (see CM " + docSec + ")";
+			}
+		}
 		for (Object next : targetList) {
 			String text = null;
 			String errMsg = null;
@@ -1301,29 +1418,17 @@ public class CMValidator extends XmlIngester {
 				errMsg = "Unrecognized value '" + text + "' for " + logLabel;
 			}
 			if (text != null) {
-				int logLevel;
-				String explanation;
-				if (strict) {
-					logLevel = LogMgmt.LEV_ERR;
-					explanation = "Value specified does not match one of the allowed strings.";
-					if (caseSensitive) {
-						explanation = explanation + " Note that string-matching is case-sensitive";
-					}
-				} else {
-					logLevel = LogMgmt.LEV_WARN;
-					explanation = "Value specified doesn't match one of the recommended strings. Others may be used if all parties agree";
-				}
 				boolean matched = true;
 				if (caseSensitive) {
 					if (!expected.contains(text)) {
-						logIssue(logTag, logLevel, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
+						logIssue(logTag, logLevel, logMsgEl, errMsg, explanation, docRef, logMsgSrcId);
 						matched = false;
 
 					}
 				} else {
 					String checkString = "\"" + text.toLowerCase() + "\"";
 					if (!optionsString.contains(checkString)) {
-						logIssue(logTag, logLevel, logMsgEl, errMsg, explanation, srcRef, logMsgSrcId);
+						logIssue(logTag, logLevel, logMsgEl, errMsg, explanation, docRef, logMsgSrcId);
 						matched = false;
 					}
 				}
@@ -1333,7 +1438,6 @@ public class CMValidator extends XmlIngester {
 			}
 		}
 	}
-	// .=============================================
 
 	/**
 	 * @param primaryNS
