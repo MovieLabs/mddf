@@ -1,23 +1,59 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<!--  TEST ARTIFACT: This file defines a Manifest with multiple errors
-                 relating to the Common Metadata specification.-->
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TEST ARTIFACT: This file defines a Manifest with multiple errors relating 
+	to the Common Metadata specification. -->
 <manifest:MediaManifest
-	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.5/manifest"
-	xmlns:md="http://www.movielabs.com/schema/md/v2.4/md" 
+	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.8/manifest"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.7/md"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.5/manifest manifest-v1.5.xsd"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.8/manifest manifest-v1.8.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 	<manifest:Compatibility>
 		<manifest:SpecVersion>1.5</manifest:SpecVersion>
 		<manifest:System>HTML5</manifest:System>
-		<manifest:System>Roku</manifest:System> 
+		<manifest:System>Roku</manifest:System>
 		<manifest:Profile>none</manifest:Profile>
 	</manifest:Compatibility>
 	<manifest:Inventory>
 		<manifest:Audio
-			AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-1">
+			<md:Type>primary</md:Type>
+			<!-- ERROR: SubType not valid for specified Type  -->
+			<md:SubType>Director</md:SubType>
+			<md:Encoding>
+				<md:Codec>DOLBY-TRUEHD</md:Codec>
+				<md:VBR>2-pass VBR</md:VBR>
+				<md:ChannelMapping>surround</md:ChannelMapping>
+			</md:Encoding>
 			<md:Language>en</md:Language>
+			<!-- ERROR: # of Channels invalid for specified ChannelMapping -->
+			<md:Channels>1</md:Channels>
+			<md:Compliance>
+				<!-- ERROR: at least 1 of Category or Standard required -->
+				<md:Disposition>pass</md:Disposition>
+			</md:Compliance>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Audio>
+		<manifest:Audio
+			AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-2">
+			<md:Type>primary</md:Type>
+			<!-- ERROR: SubType not valid   -->
+			<md:SubType>Special Effects</md:SubType>
+			<md:Encoding>
+				<md:Codec>DOLBY-TRUEHD</md:Codec>
+				<md:VBR>2-pass VBR</md:VBR>
+				<md:ChannelMapping>Mono</md:ChannelMapping>
+			</md:Encoding>
+			<md:Language>en</md:Language>
+			<!-- ERROR: # of Channels invalid for specified ChannelMapping -->
+			<md:Channels>2</md:Channels>
+			<md:Compliance>
+				<md:Category>EPS</md:Category>
+				<md:Disposition>pass</md:Disposition>
+			</md:Compliance>
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
 				</manifest:ContainerLocation>
@@ -25,22 +61,30 @@
 		</manifest:Audio>
 		<manifest:Video
 			VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		  <md:Encoding>
+		    <md:Codec>H.264</md:Codec>
+		    <!-- ERROR: Invalid MPEGProfile for specified Video CODEC -->
+		    <md:MPEGProfile>SP</md:MPEGProfile>
+		    <!-- ERROR: Invalid MPEGLevel for specified Video CODEC -->
+		    <md:MPEGLevel>LL</md:MPEGLevel>
+		  </md:Encoding>
 			<md:Picture />
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
-		</manifest:Video> 
-		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		</manifest:Video>
+		<manifest:Metadata
+			ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<manifest:BasicMetadata
 				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 				<md:LocalizedInfo language="en" default="true">
 					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
 					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
 					<md:TitleSort>Big Buck Bunny</md:TitleSort>
-					<!--  ERROR: Required Elements must specify a value -->
+					<!-- ERROR: Required Elements must specify a value -->
 					<md:Summary190></md:Summary190>
-					<!--  Summary400 is not REQ so empty value should not gen an error -->
+					<!-- Summary400 is not REQ so empty value should not gen an error -->
 					<md:Summary400></md:Summary400>
 					<md:Genre>Animation</md:Genre>
 					<md:Genre>Short</md:Genre>
@@ -48,21 +92,21 @@
 				</md:LocalizedInfo>
 				<md:RunLength>PT10M00.0S</md:RunLength>
 				<md:ReleaseYear>2008</md:ReleaseYear>
-            	<md:ReleaseHistory>
-            		<md:ReleaseType>original</md:ReleaseType>
-               		<md:DistrTerritory>
-                 		<md:country>DE</md:country>
-               		</md:DistrTerritory>
-              		<md:Date>2016-05-22</md:Date>
-            	</md:ReleaseHistory>
-            	<md:ReleaseHistory>
-            		<md:ReleaseType>original</md:ReleaseType>
-               		<md:DistrTerritory>
-               		<!-- Invalid country code -->
-                 		<md:country>XY</md:country>
-               		</md:DistrTerritory>
-              		<md:Date>2016-09-24</md:Date>
-            	</md:ReleaseHistory>
+				<md:ReleaseHistory>
+					<md:ReleaseType>original</md:ReleaseType>
+					<md:DistrTerritory>
+						<md:country>DE</md:country>
+					</md:DistrTerritory>
+					<md:Date>2016-05-22</md:Date>
+				</md:ReleaseHistory>
+				<md:ReleaseHistory>
+					<md:ReleaseType>original</md:ReleaseType>
+					<md:DistrTerritory>
+						<!-- Invalid country code -->
+						<md:country>XY</md:country>
+					</md:DistrTerritory>
+					<md:Date>2016-09-24</md:Date>
+				</md:ReleaseHistory>
 				<!-- invalid WorkType (wrong case) -->
 				<md:WorkType>movie</md:WorkType>
 				<md:RatingSet>
@@ -81,7 +125,7 @@
 						<!-- ERROR: Unrecognized Rating System -->
 						<md:System>FOOBAR</md:System>
 						<md:Value>16</md:Value>
-					</md:Rating> 
+					</md:Rating>
 					<md:Rating>
 						<md:Region>
 							<md:country>US</md:country>
@@ -89,16 +133,16 @@
 						<!-- ERROR: Invalid Rating for RatingSystem -->
 						<md:System>MPAA</md:System>
 						<md:Value>16</md:Value>
-					</md:Rating> 
+					</md:Rating>
 					<md:Rating>
 						<md:Region>
-						<!-- ERROR: ISO 2 character code required -->
+							<!-- ERROR: ISO 2 character code required -->
 							<md:country>USA</md:country>
 						</md:Region>
 						<!-- ERROR: Invalid code for country -->
 						<md:System>MPAA</md:System>
 						<md:Value>G</md:Value>
-					</md:Rating> 
+					</md:Rating>
 					<md:Rating>
 						<md:Region>
 							<md:country>ZA</md:country>
@@ -111,7 +155,7 @@
 						<md:Reason>N</md:Reason>
 						<!-- ERROR: Invalid Reason code -->
 						<md:Reason>BAR</md:Reason>
-					</md:Rating> 
+					</md:Rating>
 					<md:Rating>
 						<md:Region>
 							<md:country>US</md:country>
@@ -119,7 +163,7 @@
 						<!-- WARNING: Deprecated Rating -->
 						<md:System>MPAA</md:System>
 						<md:Value>X</md:Value>
-					</md:Rating> 
+					</md:Rating>
 					<md:Rating>
 						<md:Region>
 							<md:countryRegion>CA-QC</md:countryRegion>
@@ -127,7 +171,7 @@
 						<!-- WARNING: RatingSystem not used in specified SubRegion -->
 						<md:System>MPAA</md:System>
 						<md:Value>G</md:Value>
-					</md:Rating> 
+					</md:Rating>
 					<md:Rating>
 						<md:Region>
 							<md:countryRegion>CA</md:countryRegion>
@@ -135,7 +179,7 @@
 						<!-- WARNING: RatingSystem not used in specified Country -->
 						<md:System>MPAA</md:System>
 						<md:Value>G</md:Value>
-					</md:Rating> 
+					</md:Rating>
 				</md:RatingSet>
 				<md:People>
 					<md:Job>
@@ -165,12 +209,12 @@
 				<md:PrimarySpokenLanguage>de-DE</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>en-DE</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>EN</md:PrimarySpokenLanguage>
-				<!-- Invalid Region subtag  -->
+				<!-- Invalid Region subtag -->
 				<md:PrimarySpokenLanguage>en-USA</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>en-1694acad</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>yee-HK</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>cmn-Hans-CN</md:PrimarySpokenLanguage>
-				<!-- Invalid SCRIPT subtag  -->
+				<!-- Invalid SCRIPT subtag -->
 				<md:PrimarySpokenLanguage>sr-Latin-RS</md:PrimarySpokenLanguage>
 			</manifest:BasicMetadata>
 		</manifest:Metadata>
@@ -186,8 +230,12 @@
 					<manifest:VideoTrackID>md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 					</manifest:VideoTrackID>
 				</manifest:VideoTrackReference>
-				<manifest:AudioTrackReference>
-					<manifest:AudioTrackID>md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				<manifest:AudioTrackReference priority="1">
+					<manifest:AudioTrackID>md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-1
+					</manifest:AudioTrackID>
+				</manifest:AudioTrackReference>
+				<manifest:AudioTrackReference priority="2">
+					<manifest:AudioTrackID>md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-2
 					</manifest:AudioTrackID>
 				</manifest:AudioTrackReference>
 			</manifest:TrackMetadata>
@@ -195,7 +243,7 @@
 	</manifest:Presentations>
 	<manifest:Experiences>
 		<manifest:Experience version="0.1"
-			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq"> 
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq">
 			<manifest:ExcludedLanguage>en</manifest:ExcludedLanguage>
 			<!-- ERROR: Invalid language code -->
 			<manifest:ExcludedLanguage>canuk</manifest:ExcludedLanguage>
@@ -207,26 +255,31 @@
 				<manifest:Type>FOOBAR</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>
 				<manifest:PlayableSequence>
-				  <!-- ERROR: empty language code -->
-				  <manifest:Clip audioLanguage="">				
-				      <manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V</manifest:PresentationID>
-				  </manifest:Clip>
-				  <manifest:Clip audioLanguage="en">				
-				      <manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V</manifest:PresentationID>
-				  </manifest:Clip>
-				  <!-- ERROR: Invalid language code -->
-				  <manifest:Clip audioLanguage="english">				
-				      <manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V</manifest:PresentationID>
-				  </manifest:Clip>
+					<!-- ERROR: empty language code -->
+					<manifest:Clip audioLanguage="">
+						<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+						</manifest:PresentationID>
+					</manifest:Clip>
+					<manifest:Clip audioLanguage="en">
+						<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+						</manifest:PresentationID>
+					</manifest:Clip>
+					<!-- ERROR: Invalid language code -->
+					<manifest:Clip audioLanguage="english">
+						<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+						</manifest:PresentationID>
+					</manifest:Clip>
 				</manifest:PlayableSequence>
-				
+
 			</manifest:Audiovisual>
 		</manifest:Experience>
 	</manifest:Experiences>
 	<manifest:ALIDExperienceMaps>
 		<manifest:ALIDExperienceMap>
-			<manifest:ALID>md:alid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02</manifest:ALID>
-			<manifest:ExperienceID condition="Acquired">md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq</manifest:ExperienceID>
+			<manifest:ALID>md:alid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02
+			</manifest:ALID>
+			<manifest:ExperienceID condition="Acquired">md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq
+			</manifest:ExperienceID>
 		</manifest:ALIDExperienceMap>
 	</manifest:ALIDExperienceMaps>
 </manifest:MediaManifest>

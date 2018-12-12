@@ -41,8 +41,9 @@
 		</manifest:Video>
 		<manifest:Subtitle
 			SubtitleTrackID="md:subtrackid:org:number.hbo.com:787232:main.subtitle.de">
-			<md:Format>TTML</md:Format>
-			<md:Type>Normal</md:Type>
+			<md:Format>Text</md:Format>
+			<md:Type>normal</md:Type>
+			<md:FormatType>TTML</md:FormatType>
 			<md:Language>de</md:Language>
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>resources/VEEP__043_787232_858219:de_subtitle.sdb

@@ -3,33 +3,56 @@
 	used to create artifacts supporting specific JUnit tests relating to the 
 	Common Metadata specification. -->
 <manifest:MediaManifest
-	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.5/manifest"
-	xmlns:md="http://www.movielabs.com/schema/md/v2.4/md" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.5/manifest manifest-v1.5.xsd"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.8/manifest"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.7/md"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.8/manifest manifest-v1.8.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 	<manifest:Compatibility>
-		<manifest:SpecVersion>1.5</manifest:SpecVersion>
+		<manifest:SpecVersion>18</manifest:SpecVersion>
 		<manifest:System>HTML5</manifest:System>
 		<manifest:System>Roku</manifest:System>
 		<manifest:Profile>none</manifest:Profile>
 	</manifest:Compatibility>
 	<manifest:Inventory>
-		<manifest:Audio AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		<manifest:Audio
+			AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Type>commentary</md:Type>
+			<md:SubType>Director</md:SubType>
+			<md:Encoding>
+				<md:Codec>DOLBY-TRUEHD</md:Codec>
+				<md:VBR>2-pass VBR</md:VBR>
+				<md:ChannelMapping>Mono</md:ChannelMapping>
+			</md:Encoding>
 			<md:Language>en</md:Language>
+			<md:Channels>1</md:Channels>
+			<md:Compliance>
+				<md:Category>EPS</md:Category>
+				<md:Disposition>pass</md:Disposition>
+			</md:Compliance>
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Audio>
-		<manifest:Video VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		<manifest:Video
+			VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		  <md:Encoding>
+		    <md:Codec>H.264</md:Codec>
+		    <md:MPEGProfile>Hi444P</md:MPEGProfile>
+		    <md:MPEGLevel>3.1</md:MPEGLevel>
+		  </md:Encoding>
 			<md:Picture />
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Video>
-		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
-			<manifest:BasicMetadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		<manifest:Metadata
+			ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:BasicMetadata
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 				<md:LocalizedInfo language="en" default="true">
 					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
 					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
@@ -89,13 +112,13 @@
 					<md:Rating>
 						<md:Region>
 							<md:country>ZA</md:country>
-						</md:Region> 
+						</md:Region>
 						<md:System>FPB</md:System>
 						<md:Value>16</md:Value>
 						<md:Reason>D</md:Reason>
 						<md:Reason>H</md:Reason>
 						<md:Reason>N</md:Reason>
-					</md:Rating> 
+					</md:Rating>
 				</md:RatingSet>
 				<md:People>
 					<md:Job>
@@ -153,8 +176,10 @@
 	<manifest:Experiences>
 		<manifest:Experience version="0.1"
 			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq">
-			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V</manifest:ContentID>
-			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+			</manifest:ContentID>
+			<manifest:Audiovisual
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 				<!-- feature movie -->
 				<manifest:Type>Main</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>
