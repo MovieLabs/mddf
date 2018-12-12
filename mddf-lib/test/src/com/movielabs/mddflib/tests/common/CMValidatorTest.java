@@ -28,6 +28,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
@@ -57,7 +58,14 @@ public class CMValidatorTest extends AbstractCmmTester {
 		initialize("common/CM_withErrors.xml");
 		SchemaWrapper targetSchema = SchemaWrapper.factory("md-v" + XmlIngester.CM_VER);
 		validateNotEmpty(targetSchema);
-		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		} catch (AssertionFailedError e) {
+			System.out.println("\n === FAILED TEST... dumping log ===");
+			iLog.printLog();
+			System.out.println(" === End log dump for FAILED TEST ===");
+			throw e;
+		}
 	}
 
 	/**
@@ -66,14 +74,14 @@ public class CMValidatorTest extends AbstractCmmTester {
 	 * .
 	 */
 	@Test
-	public void testValidateId() {
+	public void testValidateId_OK() {
 		id2typeMap = new HashMap<String, String>();
 		id2typeMap.put("AudioTrackID", "audtrackid");
 		id2typeMap.put("VideoTrackID", "vidtrackid");
 		id2typeMap.put("ContentID", "cid");
 
 		/*
-		 * First run with error-free XML
+		 * run with error-free XML
 		 */
 		initialize("common/CM_base.xml");
 		super.validateConstraints();
@@ -85,24 +93,43 @@ public class CMValidatorTest extends AbstractCmmTester {
 		idSet = validateId("Metadata", "ContentID", true, true);
 		count = count + idSet.size();
 		System.out.println(".....idCount = " + count);
-		assertEquals(3, count);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		try {
+			assertEquals(3, count);
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			System.out.println("\n === FAILED TEST... dumping log ===");
+			iLog.printLog();
+			System.out.println(" === End log dump for FAILED TEST ===");
+			throw e;
+		}
+	}
 
-		/* Reset and repeat with error-generating XML */
-		iLog.clearLog();
-//		iLog.setPrintToConsole(true);
+	@Test
+	public void testValidateId_NOK() {
+		id2typeMap = new HashMap<String, String>();
+		id2typeMap.put("AudioTrackID", "audtrackid");
+		id2typeMap.put("VideoTrackID", "vidtrackid");
+		id2typeMap.put("ContentID", "cid");
+		/* Run with error-generating XML */
 		initialize("common/CM_ID-errors.xml");
 		super.validateConstraints();
 		validateId("Audio", "AudioTrackID", true, true);
 		validateId("Video", "VideoTrackID", true, true);
 		validateId("Metadata", "ContentID", true, true);
-		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertNotNull(iLog.getMsg(LogMgmt.LEV_ERR, LogMgmt.TAG_MD, 34));
-		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertNotNull(iLog.getMsg(LogMgmt.LEV_WARN, LogMgmt.TAG_MD, 26));
-		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		try {
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertNotNull(iLog.getMsg(LogMgmt.LEV_ERR, LogMgmt.TAG_MD, 34));
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertNotNull(iLog.getMsg(LogMgmt.LEV_WARN, LogMgmt.TAG_MD, 26));
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			System.out.println("\n === FAILED TEST... dumping log ===");
+			iLog.printLog();
+			System.out.println(" === End log dump for FAILED TEST ===");
+			throw e;
+		}
 	}
 
 	/**
@@ -131,10 +158,16 @@ public class CMValidatorTest extends AbstractCmmTester {
 		validateXRef("VideoTrackReference", "VideoTrackID", "Video");
 		validateXRef("AudioTrackReference", "AudioTrackID", "Audio");
 		validateXRef("Experience", "ContentID", "Metadata");
-
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			System.out.println("\n === FAILED TEST... dumping log ===");
+			iLog.printLog();
+			System.out.println(" === End log dump for FAILED TEST ===");
+			throw e;
+		}
 	}
 
 	@Test
@@ -143,8 +176,8 @@ public class CMValidatorTest extends AbstractCmmTester {
 		id2typeMap = new HashMap<String, String>();
 		id2typeMap.put("AudioTrackID", "audtrackid");
 		id2typeMap.put("VideoTrackID", "vidtrackid");
-		id2typeMap.put("ContentID", "cid"); 
-		
+		id2typeMap.put("ContentID", "cid");
+
 		initialize("common/CM_IdXref-errors.xml");
 		super.validateConstraints();
 		/*
@@ -159,12 +192,18 @@ public class CMValidatorTest extends AbstractCmmTester {
 		validateXRef("VideoTrackReference", "VideoTrackID", "Video");
 		validateXRef("AudioTrackReference", "AudioTrackID", "Audio");
 		validateXRef("Experience", "ContentID", "Metadata");
-
-		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		assertNotNull(iLog.getMsg(LogMgmt.LEV_ERR, LogMgmt.TAG_MD, 143));
-		assertNotNull(iLog.getMsg(LogMgmt.LEV_ERR, LogMgmt.TAG_MD, 156));
+		try {
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+			assertNotNull(iLog.getMsg(LogMgmt.LEV_ERR, LogMgmt.TAG_MD, 143));
+			assertNotNull(iLog.getMsg(LogMgmt.LEV_ERR, LogMgmt.TAG_MD, 156));
+		} catch (AssertionFailedError e) {
+			System.out.println("\n === FAILED TEST... dumping log ===");
+			iLog.printLog();
+			System.out.println(" === End log dump for FAILED TEST ===");
+			throw e;
+		}
 	}
 
 	/**

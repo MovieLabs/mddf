@@ -23,9 +23,11 @@
 package com.movielabs.mddflib.tests.common;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.MissingResourceException;
 
 import org.jdom2.Document;
+import org.jdom2.JDOMException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,6 +38,8 @@ import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.CMValidator;
 import com.movielabs.mddflib.util.xml.XmlIngester;
+
+import net.sf.json.JSONObject;
 
 /**
  * @author L. Levin, Critical Architectures LLC
@@ -66,6 +70,7 @@ public abstract class AbstractCmmTester extends CMValidator {
 		curRootEl = null;
 		rootNS = null;
 		iLog.clearLog();
+		iLog.setPrintToConsole(false);
 	}
 
 	/**
@@ -89,23 +94,41 @@ public abstract class AbstractCmmTester extends CMValidator {
 	public void tearDown() throws Exception {
 	}
 
+	protected void initialize(String mddfFile) {
+		try {
+			initialize(mddfFile, null);
+		} catch ( Exception e) { 
+			e.printStackTrace();
+		}  
+	}
+
 	/**
 	 * @param string
+	 * @throws IOException
+	 * @throws JDOMException
 	 */
-	protected void initialize(String testFileName) {
-		Document xmlDoc = loadTestArtifact(testFileName);
+	protected JSONObject initialize(String mddfFile, String jsonFile) throws JDOMException, IOException {
+		Document xmlDoc = loadTestArtifact(mddfFile);
 		curRootEl = xmlDoc.getRootElement();
-		FILE_FMT srcMddfFmt = MddfContext.identifyMddfFormat(curRootEl);		
+		FILE_FMT srcMddfFmt = MddfContext.identifyMddfFormat(curRootEl);
 		setMddfVersions(srcMddfFmt);
 		rootNS = manifestNSpace;
-		iLog.setPrintToConsole(false);
+		JSONObject jsonDefs = null;
+		if (jsonFile != null) {
+			jsonDefs = loadJSON(jsonFile);
+		}
+		iLog.setPrintToConsole(true);
+		iLog.setMinLevel(iLog.LEV_DEBUG);
+		iLog.setInfoIncluded(true);
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + mddfFile, null, "JUnit");
+		return jsonDefs;
 	}
 
 	private Document loadTestArtifact(String fileName) {
 		String srcFilePath = rsrcPath + fileName;
 		srcFile = new File(srcFilePath);
 		if (!srcFile.canRead()) {
-			throw new MissingResourceException("Missing test artifact "+srcFilePath, "File", srcFilePath);
+			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
 
 		}
 		Document xmlDoc;
