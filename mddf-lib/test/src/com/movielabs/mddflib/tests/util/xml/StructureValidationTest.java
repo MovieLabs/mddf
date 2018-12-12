@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -150,7 +151,7 @@ public class StructureValidationTest extends StructureValidation {
 			if (rqmtSpec.has("targetPath")) {
 				boolean isValid = validateDocStructure(rootEl, rqmtSpec);
 			}
-		} 
+		}
 		try {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
@@ -180,7 +181,7 @@ public class StructureValidationTest extends StructureValidation {
 			if (rqmtSpec.has("targetPath")) {
 				boolean isValid = validateDocStructure(rootEl, rqmtSpec);
 			}
-		} 
+		}
 		try {
 			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
@@ -192,11 +193,66 @@ public class StructureValidationTest extends StructureValidation {
 			throw e;
 		}
 	}
-	
+
+	@Test
+	public void testDigitalAsset_no_Errors() {
+		String targetFile = "common/CM_base.xml";
+		FILE_FMT srcMddfFmt =initialize(targetFile, null);
+		Map<String, String> verMap = MddfContext.getReferencedXsdVersions(srcMddfFmt);
+		JSONObject structDefs = XmlIngester.getMddfResource("structure_cm", verMap.get("MD"));
+		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
+		Iterator<String> keys = rqmtSet.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
+			// NOTE: This block of code requires a 'targetPath' be defined
+			if (rqmtSpec.has("targetPath")) {
+				boolean isValid = validateDocStructure(rootEl, rqmtSpec);
+			}
+		}
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			System.out.println("\n === FAILED TEST... dumping log ===");
+			iLog.printLog();
+			System.out.println(" === End log dump for FAILED TEST ===");
+			throw e;
+		}
+	}
+
+	@Test
+	public void testDigitalAsset_Errors() {
+		String targetFile = "common/CM_withErrors.xml";
+		FILE_FMT srcMddfFmt =initialize(targetFile, null);
+		Map<String, String> verMap = MddfContext.getReferencedXsdVersions(srcMddfFmt);
+		JSONObject structDefs = XmlIngester.getMddfResource("structure_cm", verMap.get("MD"));
+		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
+		Iterator<String> keys = rqmtSet.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
+			// NOTE: This block of code requires a 'targetPath' be defined
+			if (rqmtSpec.has("targetPath")) {
+				boolean isValid = validateDocStructure(rootEl, rqmtSpec);
+			}
+		}
+		try {
+			assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			System.out.println("\n === FAILED TEST... dumping log ===");
+			iLog.printLog();
+			System.out.println(" === End log dump for FAILED TEST ===");
+			throw e;
+		}
+	}
 	/**
 	 * 
 	 */
-	private void initialize(String testFile, String jsonFile) {
+	private FILE_FMT initialize(String testFile, String jsonFile) {
 		Document xmlDoc = loadTestArtifact(testFile);
 		rootEl = xmlDoc.getRootElement();
 		FILE_FMT srcMddfFmt = MddfContext.identifyMddfFormat(rootEl);
@@ -208,7 +264,7 @@ public class StructureValidationTest extends StructureValidation {
 		iLog.setMinLevel(iLog.LEV_DEBUG);
 		iLog.setInfoIncluded(true);
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + testFile, null, "JUnit");
-
+		return srcMddfFmt;
 	}
 
 	private Document loadTestArtifact(String fileName) {
