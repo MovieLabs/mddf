@@ -208,10 +208,7 @@ public class XsdValidation {
 		}
 
 		private void handleMessage(int level, SAXParseException exception) throws SAXException {
-			int lineNumber = exception.getLineNumber();
-			Element invalidElement = (Element) validator
-					.getProperty("http://apache.org/xml/properties/dom/current-element-node");
-			System.out.println("Invalid element: " + invalidElement);
+			int lineNumber = exception.getLineNumber(); 
 			String message = parseSaxMessage(exception);
 			String explanation = "XML at line: " + lineNumber + " does not comply with schema :: " + message;
 			loggingMgr.log(level, LogMgmt.TAG_XSD, message, srcFile, lineNumber, "XsdValidation", explanation, null);
