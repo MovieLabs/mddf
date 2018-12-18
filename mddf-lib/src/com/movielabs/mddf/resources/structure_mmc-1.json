@@ -11,7 +11,7 @@
 					"min": "1",
 					"max": "1",
 					"severity": "Error",
-					"xpath": "./@ManifestID",
+					"xpath": "./@ManifestID[normalize-space()]",
 					"msg": "Missing ManifestID"
 				},
 
@@ -24,7 +24,28 @@
 			]
 		},
 
-		"Experiences": 
+		"Presentation": 
+		{
+			"targetPath": ".//{manifest}Presentation/{manifest}TrackMetadata",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"severity": "Error",
+					"xpath": 
+					[
+						"./{manifest}VideoTrackReference",
+						"./{manifest}AudioTrackReference",
+						"./{manifest}SubtitleTrackReference"
+					],
+
+					"msg": "Missing TrackReference(s)",
+					"details": "AT LEAST ONE TrackReference (either Video, Audio, Subtitle, or Ancillary) is required "
+				}
+			]
+		},
+
+		"Experience": 
 		{
 			"targetPath": ".//{manifest}Experience",
 			"constraint": 
@@ -45,7 +66,26 @@
 					"msg": "Missing ContentID"
 				}
 			]
-		}
+		}, 
+		
+		"PictureGroup": 
+		{
+			"targetPath": ".//{manifest}Experience[not(child::{manifest}PictureGroupID)]",
+			"constraint": 
+			[
+				{
+					"$CID": "./{manifest}ContentID",
+					"max": "0",
+					"severity": "Error",
+					"xpath": 
+					[
+						"//{manifest}BasicMetadata[(descendant::{md}ArtReference) and (@ContentID = {$CID}) ]"
+					],
 
+					"msg": "Missing PictureGroupID",
+					"details": "Required when referenced Metadata includes ArtReferences"
+				}
+			]
+		}
 	}
 }
