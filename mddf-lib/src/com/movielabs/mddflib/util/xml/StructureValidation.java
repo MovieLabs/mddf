@@ -23,10 +23,13 @@
 package com.movielabs.mddflib.util.xml;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
@@ -233,15 +236,15 @@ public class StructureValidation {
 		for (Element nextTargetEl : targetElList) {
 			for (int i = 0; i < constraintSet.size(); i++) {
 				JSONObject constraint = constraintSet.getJSONObject(i);
-				isOk = validateConstraint(nextTargetEl, constraint) && isOk;
+				isOk = evaluateConstraint(nextTargetEl, constraint) && isOk;
 			}
 		}
 		return isOk;
 	}
 
-	protected boolean validateConstraint(Element target, JSONObject constraint) {
-		boolean curFileIsValid = true;
-
+	public boolean evaluateConstraint(Element target, JSONObject constraint) {
+		boolean passes = true;
+		Map<String, String> varMap = resolveVariables(target, constraint);
 		int min = constraint.optInt("min", 0);
 		int max = constraint.optInt("max", -1);
 		String severity = constraint.optString("severity", "Error");
@@ -255,14 +258,14 @@ public class StructureValidation {
 		String[] xpParts = null;
 		if (xpaths instanceof String) {
 			String xpathDef = (String) xpaths;
-			xpeList.add(resolveXPath(xpathDef));
+			xpeList.add(resolveXPath(xpathDef, varMap));
 			xpParts = xpathDef.split("\\[");
 			targetList = xpParts[0];
 		} else if (xpaths instanceof JSONArray) {
 			JSONArray xpArray = (JSONArray) xpaths;
 			for (int i = 0; i < xpArray.size(); i++) {
 				String xpathDef = xpArray.getString(i);
-				xpeList.add(resolveXPath(xpathDef));
+				xpeList.add(resolveXPath(xpathDef, varMap));
 				xpParts = xpathDef.split("\\[");
 				if (i < 1) {
 					targetList = xpParts[0];
@@ -289,6 +292,7 @@ public class StructureValidation {
 			matchedElList.addAll(nextElList);
 		}
 		String logMsg = constraint.optString("msg", "");
+		String details = constraint.optString("details", "");
 
 		// check cardinality
 		int count = matchedElList.size();
@@ -300,13 +304,15 @@ public class StructureValidation {
 			} else {
 				msg = logMsg;
 			}
-			String explanation = elName + " requires minimum of " + min + " " + targetList + " elements";
-			if (xpParts.length > 1) {
-				explanation = explanation + " matching the criteria [" + xpParts[1];
+			if (details.isEmpty()) {
+				details = elName + " requires minimum of " + min + " " + targetList + " elements";
+				if (xpParts.length > 1) {
+					details = details + " matching the criteria [" + xpParts[1];
+				}
 			}
 			LogReference srcRef = resolveDocRef(docRef);
-			logger.logIssue(LogMgmt.TAG_AVAIL, logLevel, target, msg, explanation, srcRef, logMsgSrcId);
-			curFileIsValid = false;
+			logger.logIssue(LogMgmt.TAG_MD, logLevel, target, msg, details, srcRef, logMsgSrcId);
+			passes = false;
 		}
 		if (max > -1 && (count > max)) {
 			String elName = target.getName();
@@ -316,13 +322,65 @@ public class StructureValidation {
 			} else {
 				msg = logMsg;
 			}
-			String explanation = elName + " permits maximum of " + max + "  " + targetList + " elements";
+			if (details.isEmpty()) {
+				details = elName + " permits maximum of " + max + "  " + targetList + " elements";
+			}
 			LogReference srcRef = resolveDocRef(docRef);
-			logger.logIssue(LogMgmt.TAG_AVAIL, logLevel, target, msg, explanation, srcRef, logMsgSrcId);
-			curFileIsValid = false;
+			logger.logIssue(LogMgmt.TAG_MD, logLevel, target, msg, details, srcRef, logMsgSrcId);
+			passes = false;
 		}
 
-		return curFileIsValid;
+		return passes;
+	}
+
+	/**
+	 * Assign values to any <i>variables</i> used by a <tt>constraint</tt>.
+	 * Variables are denoted by a "$" followed by an ID (e.g., <tt>$FOO</tt>) and
+	 * are assigned a value via a XPath. For example: <tt><pre>
+	 *   "$CID": "./@ContentID"
+	 * </pre></tt> They may be included in the constraint's XPath by using enclosing
+	 * the variable name in curly brackets. For example: <tt><pre>
+	 *   "xpath": 
+	 *      [
+	 *         "../..//{manifest}Experience[@ExperienceID={$CID}]/{manifest}PictureGroupID"
+	 *      ],
+	 * </pre></tt>
+	 * <p>
+	 * It is possible that the XPath used to determine a variable's value will
+	 * evaluate to a <tt>null</tt>. Any constraint XPath that references a null
+	 * variable will be skipped when evaluating the constraint criteria.
+	 * </p>
+	 * 
+	 * @param target
+	 * @param constraint
+	 * @return variable assignments as key/value entries in a Map
+	 */
+	private Map<String, String> resolveVariables(Element target, JSONObject constraint) {
+		Map<String, String> varMap = new HashMap<String, String>();
+		Set<String> keySet = constraint.keySet();
+		for (String key : keySet) {
+			if (key.startsWith("$")) {
+				String xpath = constraint.getString(key);
+				XPathExpression<?> xpe = resolveXPath(xpath);
+				String value = null;
+				if (resolvesToAttribute(xpath)) {
+					Attribute varSrc = (Attribute) xpe.evaluateFirst(target);
+					if (varSrc != null) {
+						value = varSrc.getValue();
+					}
+				} else {
+					Element varSrc = (Element) xpe.evaluateFirst(target);
+					if (varSrc != null) {
+						value = varSrc.getTextNormalize();
+					}
+				}
+				varMap.put(key, value);
+				String msg = "resolveVariables(): Var " + key + "=" + value;
+				logger.logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_DEBUG, target, msg, xpath, null, logMsgSrcId);
+
+			}
+		}
+		return varMap;
 	}
 
 	/**
@@ -359,6 +417,10 @@ public class StructureValidation {
 		return outList;
 	}
 
+	public static XPathExpression<?> resolveXPath(String xpathDef) {
+		return resolveXPath(xpathDef, null);
+	}
+
 	/**
 	 * Create a <tt>XPathExpression</tt> from a string representation. An
 	 * <tt>xpathDef</tt> is defined using the standard XPath syntax with one
@@ -373,9 +435,10 @@ public class StructureValidation {
 	 * </ul>
 	 * 
 	 * @param xpathDef
+	 * @param varMap   (optional)
 	 * @return
 	 */
-	public static XPathExpression<?> resolveXPath(String xpathDef) {
+	public static XPathExpression<?> resolveXPath(String xpathDef, Map<String, String> varMap) {
 		Set<Namespace> nspaceSet = new HashSet<Namespace>();
 
 		/*
@@ -400,6 +463,15 @@ public class StructureValidation {
 			xpathDef = xpathDef.replaceAll("\\{mdmec\\}", XmlIngester.mdmecNSpace.getPrefix() + ":");
 			nspaceSet.add(XmlIngester.mdmecNSpace);
 		}
+		if (varMap != null) {
+			Set<String> keySet = varMap.keySet();
+			for (String varID : keySet) {
+				String varValue = varMap.get(varID);
+				String regExp = "\\{\\" + varID + "\\}";
+				xpathDef = xpathDef.replaceAll(regExp, "'" + varValue + "'");
+			}
+		}
+
 		// Now compile the XPath
 		XPathExpression<?> xpExpression;
 		/**
@@ -416,13 +488,17 @@ public class StructureValidation {
 		 * </ul>
 		 */
 		XPathFactory xpfac = XPathFactory.instance();
-		if (xpathDef.matches(".*/@[\\w]++(\\[.+\\])?")) {
+		if (resolvesToAttribute(xpathDef)) {
 			// must be an attribute value we're after..
 			xpExpression = xpfac.compile(xpathDef, Filters.attribute(), null, nspaceSet);
 		} else {
 			xpExpression = xpfac.compile(xpathDef, Filters.element(), null, nspaceSet);
 		}
 		return xpExpression;
+	}
+
+	private static boolean resolvesToAttribute(String xpathDef) {
+		return xpathDef.matches(".*/@[\\w]++(\\[.+\\])?");
 	}
 
 	private LogReference resolveDocRef(String docRef) {
