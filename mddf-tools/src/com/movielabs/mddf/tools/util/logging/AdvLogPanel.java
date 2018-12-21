@@ -237,6 +237,8 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		// BUG FIX: Handle both '.xml' and '.XML' endings...
+		key = key.toLowerCase();
 		if (key.endsWith(".xml")) {
 			SimpleXmlEditor editor = EditorMgr.getSingleton().getEditor(logEntry, this);
 			if (editor != null) {
