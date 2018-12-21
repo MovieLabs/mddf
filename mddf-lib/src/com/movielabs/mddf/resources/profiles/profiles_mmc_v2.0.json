@@ -1,0 +1,37 @@
+{
+	"COMMENT": "refer to Javadoc for Profiler before editing",
+	"Profiles": 
+	{
+		"TV_Series": 
+		{
+			"COMMENT": "If the file has a top-level Experience has a ExperienceChild with the Relationship 'isseasonof' to the root Experience THEN this is a Series Manifest",
+			"ucid": "TV Series",
+			"start": "T00",
+			"tests": 
+			{
+				"T00": 
+				{
+					"merge": "AND",
+					"constraint": 
+					[
+						{
+							"xpath": 
+							[
+								".//{manifest}Experience/{manifest}ExperienceChild/{manifest}Relationship[. = 'isseasonof']"
+							],
+
+							"min": "1",
+							"severity": "Debug"
+						}
+					],
+
+					"result": 
+					{
+						"pass": "RTN:true",
+						"fail": "RTN:false"
+					}
+				}
+			}
+		}
+	}
+}
