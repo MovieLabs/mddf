@@ -160,7 +160,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		}
 
 		protected void done() {
-			try { 
+			try {
 				getTxtStatus().setText("Done");
 				get();
 			} catch (ExecutionException e) {
@@ -199,7 +199,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			getTxtStatus().setText("Starting translation.....");
 			Translator.translateAvails(target, selections, dirPath, outFileName, appendVersion, consoleLogger);
 			frame.setCursor(null); // turn off the wait cursor
-			setRunningState(false); 
+			setRunningState(false);
 			return null;
 		}
 
@@ -255,7 +255,6 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			setRunningState(false);
 		}
 	}
-	
 
 	public class CleanExcelWorker extends SwingWorker<Void, StatusMsg> {
 		private File srcFile;
@@ -403,9 +402,9 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	}
 
 	/**
-	 * Initialize the contents of the frame. This method is intended to be
-	 * generic (i.e., independent of a specific validation context) but may be
-	 * overridden by subclasses if necessary.
+	 * Initialize the contents of the frame. This method is intended to be generic
+	 * (i.e., independent of a specific validation context) but may be overridden by
+	 * subclasses if necessary.
 	 */
 	protected void initialize() {
 		frame = new JFrame();
@@ -662,9 +661,8 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					/*
-					 * get build.properties if possible. These may not be
-					 * present when running from an IDE as opposed to the jar
-					 * files.
+					 * get build.properties if possible. These may not be present when running from
+					 * an IDE as opposed to the jar files.
 					 * 
 					 */
 					Properties mddfLibProps = loadProperties("/com/movielabs/mddflib/build.properties");
@@ -677,7 +675,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 						libTimestamp = "n.a.";
 					} else {
 						libVersion = mddfLibProps.getProperty("mddf.lib.version");
-						libBuild = mddfLibProps.getProperty("mddf.lib.build"); 
+						libBuild = mddfLibProps.getProperty("mddf.lib.build");
 						libTimestamp = mddfLibProps.getProperty("mddf.lib.timestamp");
 						libTimestamp = libTimestamp.replaceAll("\\:", ":");
 					}
@@ -688,28 +686,19 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 						toolVersion = "n.a.";
 						toolBuildDate = "n.a.";
 					} else {
-						switch (context) {
-						case MANIFEST:
-							toolVersion = mddfToolProps.getProperty("versionCMM", "Not Specified");
-							break;
-						case AVAILS:
-							toolVersion = mddfToolProps.getProperty("versionAvail", "Not Specified");
-							break;
-						default:
-							toolVersion = mddfToolProps.getProperty("version", "Not Specified");
-						}
-						toolBuildDate = mddfToolProps.getProperty("buildDate") + "; "
-								+ mddfToolProps.getProperty("buildTime");
+						toolVersion = mddfToolProps.getProperty("mddf.tool.version", "Not Specified");
+						toolBuildDate = mddfToolProps.getProperty("build.timestamp");
+						toolBuildDate = toolBuildDate.replaceAll("\\:", ":");
 					}
 
 					AboutDialog dialog = new AboutDialog("CMM Preprocessing:<br/><b>" + contextName + " Validator</b>",
 							"");
 					dialog.addTab("Build");
-					dialog.addEntry("Build", "<b>App Version:</b> <tt>" + toolVersion + "</tt>");
-					dialog.addEntry("Build", "<b>App Build Date:</b> <tt>" + toolBuildDate + "</tt><hr/>");
-					dialog.addEntry("Build", "<b>mddflib S/W Version:</b> <tt>" + libVersion + "</tt>");
-					dialog.addEntry("Build", "<b>mddflib Build:</b> <tt>" + libBuild + "</tt>");
-					dialog.addEntry("Build", "<b>mddflib Timestamp:</b> <tt>" + libTimestamp + "</tt><hr/>");
+					dialog.addEntry("Build", "<b>Tool Version:</b> <tt>" + toolVersion + "</tt>");
+					dialog.addEntry("Build", "<b>Tool Build Date:</b> <tt>" + toolBuildDate + "</tt><hr/>");
+					dialog.addEntry("Build", "<b>mddf-lib S/W Version:</b> <tt>" + libVersion + "</tt>");
+					dialog.addEntry("Build", "<b>mddf-lib Build:</b> <tt>" + libBuild + "</tt>");
+					dialog.addEntry("Build", "<b>mddf-lib Timestamp:</b> <tt>" + libTimestamp + "</tt><hr/>");
 					dialog.addTab("License");
 					dialog.addEntry("License", "Copyright Motion Picture Laboratories, Inc. 2018<br/>");
 					dialog.addEntry("License", license);
@@ -922,14 +911,13 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	 * Set the file or directory that will be the focus of any actions and
 	 * synchronize all other UI widgets accordingly.
 	 * 
-	 * @param target
-	 *            the fileInputDir to set
+	 * @param target the fileInputDir to set
 	 */
 	protected void setFileInputDir(File target) {
 		if (inputSrcTFieldLocked || running) {
 			/*
-			 * runTool() locks and unlocks this field to deal with a minor but
-			 * annoying bug resulting from it's collapsing the log tree.
+			 * runTool() locks and unlocks this field to deal with a minor but annoying bug
+			 * resulting from it's collapsing the log tree.
 			 */
 			return;
 		}
@@ -1126,8 +1114,8 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	}
 
 	/**
-	 * If there is already an Editor for the specified file, update the
-	 * log-entries markers
+	 * If there is already an Editor for the specified file, update the log-entries
+	 * markers
 	 * 
 	 * @param srcPath
 	 */
@@ -1218,8 +1206,8 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 
 	}
 
-	public void runTranslation(MddfTarget target, EnumSet<FILE_FMT> selections, String outputDir, String outputFilePrefix,
-			boolean addVersion) {
+	public void runTranslation(MddfTarget target, EnumSet<FILE_FMT> selections, String outputDir,
+			String outputFilePrefix, boolean addVersion) {
 		SwingWorker<Void, StatusMsg> worker = new ValidatorTool.TranslationWorker(target, selections, outputDir,
 				outputFilePrefix, addVersion);
 		worker.execute();
