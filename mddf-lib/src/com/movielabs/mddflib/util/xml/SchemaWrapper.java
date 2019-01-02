@@ -93,8 +93,7 @@ public class SchemaWrapper {
 					cache.put(xsdRsrc, target);
 				} catch (Exception e) {
 					/*
-					 * This happens if request is for a schema we don't provide
-					 * XSD for
+					 * This happens if request is for a schema we don't provide XSD for
 					 */
 					System.out.println("SchemaWrapper.factory(): Exception for " + xsdRsrc);
 				}
@@ -104,8 +103,8 @@ public class SchemaWrapper {
 	}
 
 	/**
-	 * Return the XSD resource with the specified schema. If the requested
-	 * version is not supported a <tt>null</tt> value is returned.
+	 * Return the XSD resource with the specified schema. If the requested version
+	 * is not supported a <tt>null</tt> value is returned.
 	 * 
 	 * @param xsdRsrc
 	 * @return
@@ -163,13 +162,14 @@ public class SchemaWrapper {
 
 	/**
 	 * Return a JSON-encoded description of a type. The description is
-	 * <i>normailzed</i> in that while there are often multiple ways in
-	 * <tt>XSD</tt> to specify a given semantic structure, the JSON returned
-	 * will always may equivalent XSD to the same JSON semantics.
+	 * <i>normailzed</i> in that while there are often multiple ways in <tt>XSD</tt>
+	 * to specify a given semantic structure, the JSON returned will always may
+	 * equivalent XSD to the same JSON semantics.
 	 * </p>
 	 * <p>
 	 * For example, an <tt>&lt;xs:sequence&gt;</tt> may incorporate a
 	 * <tt>&lt;xs:complexType&gt;</tt> in one of two ways:
+	 * </p>
 	 * <ul>
 	 * <li>as a referenced to a <i>named</i>; e.g.,
 	 * 
@@ -201,14 +201,12 @@ public class SchemaWrapper {
 	  "type": "string",
 	  "nspace": "xs"
 	},</pre></tt>
-	 * </p>
 	 * 
 	 * <p>
-	 * The description is also <i>shallow</i> in the sense that it is only one
-	 * level deep (i.e., it includes only the immediate child elements and
-	 * attributes of an XML element of the specified type). Deeper descendants
-	 * must be resolved by invoking <tt>getContentStructure()</tt> for each
-	 * immediate child's type.
+	 * The description is also <i>shallow</i> in the sense that it is only one level
+	 * deep (i.e., it includes only the immediate child elements and attributes of
+	 * an XML element of the specified type). Deeper descendants must be resolved by
+	 * invoking <tt>getContentStructure()</tt> for each immediate child's type.
 	 * </p>
 	 * 
 	 * @param type
@@ -262,8 +260,8 @@ public class SchemaWrapper {
 
 	/**
 	 * Return the <tt>xs:complexType</tt> or <tt>xs:element</tt> Element whose
-	 * <tt>name</tt> attribute matches the specified value. A null value is
-	 * returned if a match can not be found.
+	 * <tt>name</tt> attribute matches the specified value. A null value is returned
+	 * if a match can not be found.
 	 * 
 	 * @param name
 	 * @return
@@ -362,10 +360,9 @@ public class SchemaWrapper {
 	}
 
 	/**
-	 * Resolve structure of a <tt>&lt;xs:complexType&gt;</tt> that is comprised
-	 * of a <tt>&lt;xs:sequence&gt;</tt>. The only assumption is that the
-	 * <tt>seqEl</tt> is the direct child of the <tt>&lt;xs:complexType&gt;</tt>
-	 * element.
+	 * Resolve structure of a <tt>&lt;xs:complexType&gt;</tt> that is comprised of a
+	 * <tt>&lt;xs:sequence&gt;</tt>. The only assumption is that the <tt>seqEl</tt>
+	 * is the direct child of the <tt>&lt;xs:complexType&gt;</tt> element.
 	 * 
 	 * @param seqEl
 	 * @return
@@ -393,8 +390,8 @@ public class SchemaWrapper {
 				int maxVal = Integer.parseInt(max);
 				JSONObject childObj = new JSONObject();
 				/*
-				 * NOTE: is subType comes back null it means we are dealing with
-				 * a complexType or a simpleType which is a union or extension.
+				 * NOTE: is subType comes back null it means we are dealing with a complexType
+				 * or a simpleType which is a union or extension.
 				 */
 				String subtype = nextEl.getAttributeValue("type");
 				String[] parts = new String[2];
@@ -428,9 +425,8 @@ public class SchemaWrapper {
 							}
 						} else {
 							/*
-							 * Looking at simpleContent that adds an attribute
-							 * to a base (e.g. add the boolean attribute
-							 * 'scheduled' to extended the base 'xs:date'
+							 * Looking at simpleContent that adds an attribute to a base (e.g. add the
+							 * boolean attribute 'scheduled' to extended the base 'xs:date'
 							 */
 							Element scEl = ctEl.getChild("simpleContent", xsNSpace);
 							String[] extType = resolveExtendedType(scEl);
@@ -545,16 +541,15 @@ public class SchemaWrapper {
 			String name = nextEl.getAttributeValue("name");
 			String type = nextEl.getAttributeValue("type");
 			/*
-			 * NOTE: is type comes back null it means we are dealing with a
-			 * complexType or simpleType which is a union or extension.
+			 * NOTE: is type comes back null it means we are dealing with a complexType or
+			 * simpleType which is a union or extension.
 			 */
 			String[] parts = new String[2];
 			if (type == null || type.isEmpty()) {
 				Element ctEl = nextEl.getChild("complexType", xsNSpace);
 				if (ctEl != null) {
 					/*
-					 * looking at complexContent or simpleContent that defines
-					 * an extension.
+					 * looking at complexContent or simpleContent that defines an extension.
 					 */
 					Element targetEl = ctEl.getChild("complexContent", xsNSpace);
 					if (targetEl == null) {
@@ -595,9 +590,8 @@ public class SchemaWrapper {
 						JSONObject innerChoiceDef = baseWrapper.getContentStructure(baseType);
 						if (innerChoiceDef.getBoolean("allFlat")) {
 							/*
-							 * A nested 'flat'choice is OK. Example: The 'Term
-							 * choices' include 'Region' which is a choice of
-							 * 'country' or 'countryRegion'
+							 * A nested 'flat'choice is OK. Example: The 'Term choices' include 'Region'
+							 * which is a choice of 'country' or 'countryRegion'
 							 */
 							break flatTest;
 						}
@@ -615,8 +609,8 @@ public class SchemaWrapper {
 			choiceStruct.put(name, childObj);
 		}
 		/*
-		 * Is this an 'anonymous' (i.e. inline) definition or does it have a
-		 * name of it's own?
+		 * Is this an 'anonymous' (i.e. inline) definition or does it have a name of
+		 * it's own?
 		 */
 		String baseType = parentEl.getAttributeValue("name");
 		if (baseType == null) {
@@ -657,9 +651,9 @@ public class SchemaWrapper {
 	private String[] resolveType(String type) {
 		String[] parts = type.split(":");
 		/*
-		 * IFF the subtype's nspace is NOT 'xs' then check for a simpleType that
-		 * is a restriction on a xs type. We treat it (for now) as in effect an
-		 * alias for the primitive.
+		 * IFF the subtype's nspace is NOT 'xs' then check for a simpleType that is a
+		 * restriction on a xs type. We treat it (for now) as in effect an alias for the
+		 * primitive.
 		 */
 		String baseNSpace = parts[0];
 		String baseType = parts[1];
@@ -717,15 +711,14 @@ public class SchemaWrapper {
 	 * Identify the <i>base type</i> that is used to define a
 	 * <tt>&lt;xs:simpleType&gt;</tt>.
 	 * <p>
-	 * A <tt>simpleType</tt> is a restriction on a base type. The restriction
-	 * may be in the form of a <i>pattern</i>, <i>enumeration</i>, or
-	 * <i>union</i>. It may also be non-existent (i.e, missing).
+	 * A <tt>simpleType</tt> is a restriction on a base type. The restriction may be
+	 * in the form of a <i>pattern</i>, <i>enumeration</i>, or <i>union</i>. It may
+	 * also be non-existent (i.e, missing).
 	 * </p>
 	 * <p>
 	 * In the case of a <tt>union</tt> no explicit base is identified. The type
-	 * returned is therefore 'xs:string' on the assumption that the member-types
-	 * are all defining a specific pattern-based restriction on a xs:string
-	 * (e.g.,
+	 * returned is therefore 'xs:string' on the assumption that the member-types are
+	 * all defining a specific pattern-based restriction on a xs:string (e.g.,
 	 * <tt> &lt;xs:union memberTypes="xs:gYear xs:date xs:dateTime"/&gt;</tt>)
 	 * </p>
 	 * 
@@ -768,8 +761,8 @@ public class SchemaWrapper {
 	 * namespace prefix (e.g. use <tt>Region-type</tt> rather than
 	 * <tt>md:Region-type</tt>).
 	 * <p>
-	 * If the schema does not contain a definition for the requested type a
-	 * value of <tt>false</tt> is returned.
+	 * If the schema does not contain a definition for the requested type a value of
+	 * <tt>false</tt> is returned.
 	 * </p>
 	 * 
 	 * @param type
@@ -790,8 +783,8 @@ public class SchemaWrapper {
 	 * namespace prefix (e.g. use <tt>Region-type</tt> rather than
 	 * <tt>md:Region-type</tt>).
 	 * <p>
-	 * If the schema does not contain a definition for the requested type a
-	 * value of <tt>false</tt> is returned.
+	 * If the schema does not contain a definition for the requested type a value of
+	 * <tt>false</tt> is returned.
 	 * </p>
 	 * 
 	 * @param type
@@ -806,16 +799,16 @@ public class SchemaWrapper {
 
 	/**
 	 * Return true if the specified <tt>type</tt> is structured as a
-	 * <tt>simpleType</tt> that has been extended with one or more attributes.
-	 * For example, a <tt>Title</tt> that is structured as a simple text string
-	 * but with a <tt>language</tt> attribute added.
+	 * <tt>simpleType</tt> that has been extended with one or more attributes. For
+	 * example, a <tt>Title</tt> that is structured as a simple text string but with
+	 * a <tt>language</tt> attribute added.
 	 * <p>
-	 * Note that the 'type' argument should NOT include a namespace prefix (e.g.
-	 * use <tt>Region-type</tt> rather than <tt>md:Region-type</tt>).
+	 * Note that the 'type' argument should NOT include a namespace prefix (e.g. use
+	 * <tt>Region-type</tt> rather than <tt>md:Region-type</tt>).
 	 * </p>
 	 * <p>
-	 * If the schema does not contain a definition for the requested type a
-	 * value of <tt>false</tt> is returned.
+	 * If the schema does not contain a definition for the requested type a value of
+	 * <tt>false</tt> is returned.
 	 * </p>
 	 * 
 	 * @param type
@@ -831,9 +824,9 @@ public class SchemaWrapper {
 	/**
 	 * @param elementName
 	 * @return
-	 * @throws IllegalArgumentException
-	 *             if <tt>schema</tt> is unrecognized or <tt>elementName</tt> is
-	 *             not defined by the <tt>schema</tt>
+	 * @throws IllegalArgumentException if <tt>schema</tt> is unrecognized or
+	 *                                  <tt>elementName</tt> is not defined by the
+	 *                                  <tt>schema</tt>
 	 */
 	public boolean isRequired(String elementName) throws IllegalStateException, IllegalArgumentException {
 		Element target = getElement(elementName);
@@ -856,12 +849,11 @@ public class SchemaWrapper {
 	/**
 	 * Return the <tt>SchemaWrapper</tt> instance associated with a namespace
 	 * prefix. This is NOT the same as using <tt>SchemaWrapper.factory()</tt> to
-	 * retrieve a <tt>SchemaWrapper</tt> as the factory method takes a full
-	 * resource identifier as it's input, thus identifying explicitly a specific
-	 * version of a mddf schema (e.g., "mdmec-v2.4"). This method, however,
-	 * takes only a prefix (e.g., "mdmec") and then maps that to a specific
-	 * version using the namespace declarations of the current
-	 * <tt>SchemaWrapper's</tt> XSD (e.g.,
+	 * retrieve a <tt>SchemaWrapper</tt> as the factory method takes a full resource
+	 * identifier as it's input, thus identifying explicitly a specific version of a
+	 * mddf schema (e.g., "mdmec-v2.4"). This method, however, takes only a prefix
+	 * (e.g., "mdmec") and then maps that to a specific version using the namespace
+	 * declarations of the current <tt>SchemaWrapper's</tt> XSD (e.g.,
 	 * <tt>xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.4"</tt>).
 	 * 
 	 * @param nspacePrefix
@@ -897,8 +889,8 @@ public class SchemaWrapper {
 				continue;
 			}
 			/*
-			 * Note an Element that is a complexType will not have the type
-			 * attribute so will return a null.
+			 * Note an Element that is a complexType will not have the type attribute so
+			 * will return a null.
 			 */
 			String type = target.getAttributeValue("type");
 			boolean process = false;
@@ -922,8 +914,7 @@ public class SchemaWrapper {
 			}
 			if (process) {
 				/*
-				 * parent may be null it target is not part of a sequence w/in a
-				 * complexType
+				 * parent may be null it target is not part of a sequence w/in a complexType
 				 */
 				Element parent = getNamedAncestor(target);
 				if (parent == null) {
@@ -953,9 +944,9 @@ public class SchemaWrapper {
 			Element target = (Element) elementList.get(i);
 			String attName = target.getAttributeValue("name");
 			/*
-			 * need the parent Element's name which can be complicated since the
-			 * XSD can have the attribute (a) in a referenced complex type, (b)
-			 * in an xs:extension, or (c) nested in other intermediate stuff.
+			 * need the parent Element's name which can be complicated since the XSD can
+			 * have the attribute (a) in a referenced complex type, (b) in an xs:extension,
+			 * or (c) nested in other intermediate stuff.
 			 * 
 			 */
 			Element parent = getNamedAncestor(target);
@@ -1021,13 +1012,13 @@ public class SchemaWrapper {
 
 	/**
 	 * Return a list of all <tt>simpleTypes</tt> used by this schema. This will
-	 * include those referenced that are defined in other schemas as well (e.g.
-	 * from Common Metadata). While <u>all</u> types defined in the current
-	 * schema will be included, only those in a referenced schema that are
-	 * actually used are included.
+	 * include those referenced that are defined in other schemas as well (e.g. from
+	 * Common Metadata). While <u>all</u> types defined in the current schema will
+	 * be included, only those in a referenced schema that are actually used are
+	 * included.
 	 * <p>
-	 * The <tt>repeatsOnly</tt> argument may be used to limit the returned list
-	 * to only those types that are repeatedly used.
+	 * The <tt>repeatsOnly</tt> argument may be used to limit the returned list to
+	 * only those types that are repeatedly used.
 	 * </p>
 	 * 
 	 * @param repeatsOnly
@@ -1069,9 +1060,8 @@ public class SchemaWrapper {
 						try {
 							Element choiceEl = target.getChild("choice", xsNSpace);
 							/*
-							 * if the individual choices are 'simple' (or
-							 * extensions of a simpleType) then they get added
-							 * in lieu of the complexTyppe defining the choice.
+							 * if the individual choices are 'simple' (or extensions of a simpleType) then
+							 * they get added in lieu of the complexTyppe defining the choice.
 							 */
 							JSONObject struct = sw.addChoiceToStructure(choiceEl);
 							Iterator<String> keys = struct.keys();

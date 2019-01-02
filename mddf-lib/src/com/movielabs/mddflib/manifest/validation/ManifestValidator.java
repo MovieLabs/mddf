@@ -21,7 +21,6 @@
  */
 package com.movielabs.mddflib.manifest.validation;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +40,6 @@ import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.CMValidator;
 import com.movielabs.mddflib.util.PathUtilities;
-import com.movielabs.mddflib.util.StringUtils;
 import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -129,7 +127,7 @@ public class ManifestValidator extends CMValidator {
 	/**
 	 * Validate everything that is fully specified via the XSD.
 	 * 
-	 * @param manifestFile
+	 * @param target
 	 */
 	protected boolean validateXml(MddfTarget target) {
 		String manifestXsdFile = XsdValidation.defaultRsrcLoc + "manifest-v" + XmlIngester.MAN_VER + ".xsd";
@@ -339,8 +337,9 @@ public class ManifestValidator extends CMValidator {
 
 	}
 
+	 
 	/**
-	 * @return
+	 * 
 	 */
 	protected void validateCMVocab() {
 		validateBasicMetadata();

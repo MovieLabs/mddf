@@ -22,7 +22,6 @@
  */
 package com.movielabs.mddflib.manifest.validation;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -478,13 +477,13 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 	 * </p>
 	 * <p>
 	 * Additional restrictions on the use of <tt>&lt;SequenceInfo&gt;</tt>:
+	 * </p>
 	 * <ul>
 	 * <li><tt>&lt;SequenceInfo&gt;</tt> elements shall be used for either all
 	 * of the children or none of the children. Mixed usage is not allowed.
 	 * <li>SequenceInfo/Number starts with one and increases monotonically for
 	 * each child</li>
 	 * </ul>
-	 * </p>
 	 * 
 	 * @param parentEl
 	 * @param childName

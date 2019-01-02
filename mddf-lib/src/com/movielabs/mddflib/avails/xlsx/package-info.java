@@ -8,6 +8,7 @@
  * <tt>mappings.json</tt> file. This specifies how the XML elements are
  * mapped to spreadsheet cells. The mappings are defined using the following
  * syntax:
+ * </p>
  * <uL>
  *
  * <li>it defines XPaths that identify the XML source for an Excel cell based on
@@ -44,8 +45,7 @@
  * <li>An '*' at the start of an XPath indicates that multiple XML values may be
  * mapped to a single Excel cell via the use of a comma separated list. Example:
  * "AvailTrans:HoldbackLanguage": "*{avail}HoldbackLanguage"</li>
- * </ul>
- * </p>
+ * </ul> 
  * 
  * @author L. Levin, Critical Architectures LLC
  *

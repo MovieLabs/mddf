@@ -131,7 +131,7 @@ public class MddfContext {
 		}
 
 		/**
-		 * @return
+		 * @return the version
 		 */
 		public String getVersion() {
 			return ver;
@@ -235,8 +235,8 @@ public class MddfContext {
 	 * <li>AVAIL-E (for XLSX only)</li>
 	 * </ul>
 	 * 
-	 * @param standard
-	 * @return
+	 * @param standard identifier for an MDDF statndard
+	 * @return an array with all know versions of the specified MDDF standard
 	 */
 	public static String[] getSupportedVersions(String standard) {
 		return stdsVersions.get(standard);
@@ -253,7 +253,7 @@ public class MddfContext {
 	 * contain a <tt>null</tt> value for that key.
 	 * 
 	 * @param standard an MDDF XML standard for Avails, Manifest, or MEC.
-	 * @return
+	 * @return map indentifying versions of supporting schemas that are to be used with the specified MDDF standard
 	 */
 	public static Map<String, String> getReferencedXsdVersions(FILE_FMT standard) {
 		Map<String, String> uses = new HashMap<String, String>();

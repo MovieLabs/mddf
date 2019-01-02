@@ -144,11 +144,12 @@ public class Translator {
 	/**
 	 * Convert an Avails file to other formats and save the translations to the
 	 * local file system.
-	 * 
-	 * @param xmlDoc
+	 *  
+	 * @param input
 	 * @param xportFmts
 	 * @param exportDir
 	 * @param filePrefix
+	 * @param appendVersion
 	 * @param logMgr
 	 * @return
 	 * @throws UnsupportedOperationException
@@ -236,8 +237,8 @@ public class Translator {
 
 	/**
 	 * Convert an Avails file to other formats
-	 * 
-	 * @param xmlDoc
+	 *  
+	 * @param input
 	 * @param selections
 	 * @param logMgr
 	 * @return

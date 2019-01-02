@@ -124,7 +124,7 @@ public abstract class XmlIngester implements IssueLogger {
 	 * 
 	 * @param rsrcId
 	 * @param rsrcVersion
-	 * @return a JSONObject or <tt>null</tt. if the resource is not accessible or is
+	 * @return a JSONObject or <tt>null</tt>. if the resource is not accessible or is
 	 *         not valid JSON
 	 */
 	protected static Object getVocabResource(String rsrcId, String rsrcVersion) {

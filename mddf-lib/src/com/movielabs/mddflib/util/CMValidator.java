@@ -285,7 +285,6 @@ public class CMValidator extends XmlIngester {
 	 * XPATHs.
 	 * </p>
 	 * 
-	 * @return
 	 * @see com.movielabs.mddflib.util.xml.StructureValidation
 	 */
 	protected void validateUsage() {
@@ -294,7 +293,7 @@ public class CMValidator extends XmlIngester {
 		 * Load JSON that defines various constraints on structure of the XML This is
 		 * version-specific but not all schema versions have their own unique struct
 		 * file (e.g., a minor release may be compatible with a previous release).
-		 */ 
+		 */
 		String structVer = null;
 		switch (CM_VER) {
 		case "2.7":
@@ -358,7 +357,7 @@ public class CMValidator extends XmlIngester {
 	 * <pre>
 	 * for each parentEl  containing a targetEl with the index attribute present:
 	 *    Set targetSet = all targetEl with (parent == parentEl)
-	 *    <i>validate sequencing/indexing of <tt>targetSet</tt>
+	 *    validate sequencing/indexing of <tt>targetSet</tt>
 	 * </pre>
 	 * 
 	 * @param targetEl
@@ -792,7 +791,6 @@ public class CMValidator extends XmlIngester {
 	 * 
 	 * @see <a href="http://www.movielabs.com/md/ratings/index.html">MovieLabs
 	 *      Common Metadata Ratings</a>
-	 * @return
 	 */
 	protected void validateRatings() {
 		XPathExpression<Element> xpExp01 = xpfac.compile(".//md:Rating", Filters.element(), null, mdNSpace);
@@ -915,23 +913,24 @@ public class CMValidator extends XmlIngester {
 	 * This code assumes that any element or attribute with a name that ends with
 	 * the string 'language' will contain an RFC5646 code. Matching is case
 	 * insensitive. For example, all of the following will be tested:
+	 * </p>
 	 * <ul>
 	 * <li>an element with the name 'AllowedLanguage'</li>
 	 * <li>an element with the name 'Spokenlanguage'</li>
 	 * <li>an attribute with the name 'assetLanguage'</li>
 	 * <li>an attribute with the name 'language'</li>
 	 * </ul>
+	 * <p>
 	 * On the other hand, an element named 'Dialect' would not be checked.
 	 * </p>
-	 * 
+	 * *
 	 * <p>
 	 * Use of RFC5646 is limited to a subset of the complete syntax in that only the
 	 * <tt>Language</tt>, <tt>Region</tt>, and <tt>Variant</tt> subtags are
 	 * supported. Use of the <tt>Script</tt> subtag is not supported.
 	 * </p>
 	 * 
-	 * @return
-	 * @see validateLanguage(Namespace primaryNS)
+	 *  
 	 */
 
 	protected void validateLanguageCodes() {

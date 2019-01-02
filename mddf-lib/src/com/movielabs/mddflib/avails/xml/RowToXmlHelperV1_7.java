@@ -110,12 +110,9 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		return pubEl;
 	}
 
-	/**
-	 * Invoked by XmlBuilder.createAsset() when a pre-existing Asset element
-	 * does not exist.
-	 * 
-	 * @param workTypePedigree
-	 * @return
+ 
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.avails.xml.AbstractRowHelper#buildAsset()
 	 */
 	protected Element buildAsset() {
 		Namespace availNS = xb.getAvailsNSpace();

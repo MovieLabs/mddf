@@ -95,7 +95,7 @@ public class MecValidator extends CMValidator {
 	/**
 	 * Validate everything that is fully specified via the XSD.
 	 * 
-	 * @param xmlFile
+	 * @param target
 	 */
 	protected boolean validateXml(MddfTarget target) {
 		String xsdFile = XsdValidation.defaultRsrcLoc + "mdmec-v" + XmlIngester.MDMEC_VER + ".xsd";

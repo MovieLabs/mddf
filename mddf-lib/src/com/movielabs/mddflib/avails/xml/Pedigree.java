@@ -38,7 +38,7 @@ public class Pedigree {
 	private Object source;
 
 	/**
-	 * @param sourceCell
+	 * @param source
 	 * @param value
 	 */
 	public Pedigree(Object source, String value) {

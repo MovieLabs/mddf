@@ -56,18 +56,16 @@ public class AvailsSheet {
 	private boolean isForTV;
 
 	/**
-	 * Create an object representing a single sheet of an Avails spreadsheet.
-	 * The spread sheet:
+	 * Create an object representing a single sheet of an Avails spreadsheet. The
+	 * spread sheet:
 	 * <ul>
 	 * <li>MUST be formatted with two rows of column headers.</li>
 	 * <li>MUST match one of the supported template versions.</li>
 	 * <li>MUST be named either 'TV' or 'Movies'.</li>
 	 * </ul>
 	 * 
-	 * @param parent
-	 *            the parent Spreadsheet object
-	 * @param name
-	 *            the name of the spreadsheet
+	 * @param parent the parent Spreadsheet object
+	 * @param excelSheet   the name of the spreadsheet
 	 */
 	public AvailsSheet(AvailsWrkBook parent, Sheet excelSheet) {
 		this.parent = parent;
@@ -82,8 +80,7 @@ public class AvailsSheet {
 	 * Convert a POI sheet from an Excel spreadsheet to an Avails spreadsheet
 	 * object.
 	 * 
-	 * @param excelSheet
-	 *            an Apache POI sheet object
+	 * @param excelSheet an Apache POI sheet object
 	 * @return created sheet object
 	 */
 	private void ingest(Sheet excelSheet) {
@@ -119,8 +116,8 @@ public class AvailsSheet {
 				parent.getFile(), logMsgSrcId);
 
 		/*
-		 * TYPE Check: Is this for movies or TV? The current rule is that this
-		 * is defined by the name of the worksheet.
+		 * TYPE Check: Is this for movies or TV? The current rule is that this is
+		 * defined by the name of the worksheet.
 		 */
 		switch (name) {
 		case "TV":
@@ -159,13 +156,12 @@ public class AvailsSheet {
 
 	private void identifyVersion() {
 		/*
-		 * There is no explicit identification in a spreadsheet of the template
-		 * version being used. Instead we need to infer based on what the column
-		 * headers are.
+		 * There is no explicit identification in a spreadsheet of the template version
+		 * being used. Instead we need to infer based on what the column headers are.
 		 * 
 		 */
 		boolean hasDirector = (this.getColumnIdx("AvailMetadata/Director") >= 0);
-		if(hasDirector){
+		if (hasDirector) {
 			version = Version.V1_7_3;
 			return;
 		}
@@ -199,14 +195,13 @@ public class AvailsSheet {
 	 * Determine if a spreadsheet row contains an avail
 	 * 
 	 * @param nextRow
-	 * @return true iff the row is an avail based on the contents of the
-	 *         Territory column
+	 * @return true iff the row is an avail based on the contents of the Territory
+	 *         column
 	 */
 	private boolean isAvail(Row nextRow) {
 		/*
-		 * Use 1st cell to determine if this is an Avails row. Other
-		 * possibilities are and empty row or a comment row, both of which
-		 * should be skipped.
+		 * Use 1st cell to determine if this is an Avails row. Other possibilities are
+		 * and empty row or a comment row, both of which should be skipped.
 		 */
 		Cell firstCell = nextRow.getCell(0);
 		DataFormatter dataF = new DataFormatter();
@@ -258,9 +253,13 @@ public class AvailsSheet {
 	}
 
 	/**
-	 * @param columnID
+	 * Returns the <tt>Cell</tt> found at the location indicated by a row number and
+	 * column identifier.
+	 * 
+	 * @param columnKey
 	 * @param row
-	 * @return
+	 * @return indicated cell or <tt>null</tt> if the location is empty or
+	 *         non-existent
 	 */
 	public Cell getCell(String columnKey, int row) {
 		if (row >= rows.size()) {
@@ -291,8 +290,8 @@ public class AvailsSheet {
 	}
 
 	/**
-	 * Hide empty columns. Unlike <tt>TemplateWorkBook.clone()</tt>, columns are
-	 * not re-ordered.
+	 * Hide empty columns. Unlike <tt>TemplateWorkBook.clone()</tt>, columns are not
+	 * re-ordered.
 	 * 
 	 * @param ssheet
 	 */
@@ -342,8 +341,8 @@ public class AvailsSheet {
 
 	/**
 	 * Determine if either one or two rows of column headers is being used and
-	 * return the identified <tt>Row</tt>. Returns <tt>null</tt> if the first
-	 * row is empty.
+	 * return the identified <tt>Row</tt>. Returns <tt>null</tt> if the first row is
+	 * empty.
 	 * 
 	 * @param ssheet
 	 * @return

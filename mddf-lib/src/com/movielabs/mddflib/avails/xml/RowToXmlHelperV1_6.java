@@ -183,13 +183,12 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelperV1_7 {
 	}
 
 	/**
-	 * Filter out deprecated PriceType terms. Since v1.6 is the 'base' version,
+	 * Flag any deprecated PriceType terms. Since v1.6 is the 'base' version,
 	 * there are no deprecated vocabulary and the implementation simply returns
-	 * the input <tt>value</tt>.
+	 * the input <tt>pg</tt> without any action taken.
 	 * 
-	 * @param colKey
-	 * @param value
-	 * @return
+	 * @param pg wrapper indicating the cell contents to filter
+	 * @return filtered input data
 	 */
 	protected Pedigree filterDeprecated(Pedigree pg) {
 		return pg;

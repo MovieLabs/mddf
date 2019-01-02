@@ -116,16 +116,14 @@ import net.sf.json.JSONObject;
  * modification. Namespaces are indicated using a variable indicating the name
  * of an MDDF schema. The appropriate namespace prefixes will be inserted by the
  * software. Supported namespaces are:
+ * </p>
  * <ul>
  * <li>{avail}</li>
  * <li>{mdmec}</li>
  * <li>{manifest}</li>
  * <li>{md}</li>
- * </ul>
- * </p>
- * 
- * For example:
- * 
+ * </ul> 
+ * For example: 
  * <pre>
  * <tt>
 		"POEST": 
@@ -178,7 +176,7 @@ import net.sf.json.JSONObject;
  * <pre>
 		"MultiChannel": 
 		{
-			"targetPath": ".//{md}Channels[. > 1]",
+			"targetPath": ".//{md}Channels[. &lt; 1]",
 			"constraint": 
 			[
 				{

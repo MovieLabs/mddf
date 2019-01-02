@@ -172,10 +172,9 @@ public class MddfTarget {
 		return streamSrc;
 	}
 
+ 
 	/**
-	 * @return the xmlDoc
-	 * @throws IOException
-	 * @throws SAXParseException
+	 * @return XML representation of the MDDF construct
 	 */
 	public Document getXmlDoc() {
 		if (xmlDoc == null) {

@@ -24,7 +24,6 @@ package com.movielabs.mddflib.logging;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * @author L. Levin, Critical Architectures LLC
@@ -76,14 +75,14 @@ public interface LogMgmt extends IssueLogger {
 	 * @param details
 	 * @param srcRef
 	 */
-	void log(int level, int ltag, String msg, File file, int lineNumber, String moduleId, String details,
+	void log(int level, int tag, String msg, File file, int lineNumber, String moduleId, String details,
 			LogReference srcRef);
 
 	/**
 	 * Log an issue with a specific construct within a file. The <tt>target</tt>
 	 * indicates the construct within the file and should be specified as either
 	 * <ul>
-	 * <li>an JDOM Element within an XML file, or</tt>
+	 * <li>an JDOM Element within an XML file, or</li>
 	 * <li>a <tt>POI Cell</tt> instance used to identify a cell in an XLSX
 	 * spreadsheet.</li>
 	 * </ul>
@@ -104,8 +103,8 @@ public interface LogMgmt extends IssueLogger {
 	public void clearLog();
 
 	/**
-	 * @param fileName
-	 * @return
+	 * @param targetFile
+	 * @return a <tt>LogEntryFolder</tt>
 	 */
 	public LogEntryFolder getFileFolder(File targetFile);
 
@@ -123,12 +122,12 @@ public interface LogMgmt extends IssueLogger {
 	 * <tt>setCurrentFile()</tt>, all subsequent log entries will be associated with
 	 * this file.
 	 * 
-	 * @param curFileID
+	 * @param srcfile
 	 */
 	public void setCurrentFile(File srcfile);
 
 	/**
-	 * @param levDebug
+	 * @param level
 	 */
 	public void setMinLevel(int level);
 

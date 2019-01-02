@@ -128,8 +128,7 @@ public class RatingSystem {
 	}
 
 	/**
-	 * @param isoCountryCode
-	 *            ISO 3166-1 Alpha-2 code
+	 * @param isoCode an ISO 3166-1 Alpha-2 code
 	 * @return
 	 */
 	public boolean isUsedInRegion(String isoCode) {
@@ -140,8 +139,7 @@ public class RatingSystem {
 	}
 
 	/**
-	 * @param isoCountryCode
-	 *            ISO 3166-2 code
+	 * @param isoCode an ISO 3166-2 code
 	 * @return
 	 */
 	public boolean isUsedInSubRegion(String isoCode) {

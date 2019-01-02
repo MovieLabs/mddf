@@ -73,6 +73,7 @@ public class AvailsWrkBook {
 	 * contents of the <tt>inStream</tt> is used.
 	 * <p>
 	 * The result <tt>Map</tt> that is returned will contain:
+	 * </p>
 	 * <ul>
 	 * <li><tt>xlsx</tt>: the xlsx File that was passed as the input argument
 	 * </li>
@@ -82,7 +83,6 @@ public class AvailsWrkBook {
 	 * <li><tt>srcFmt</tt>: the <tt>MddfContect.FILE_FMT</tt> of the ingested
 	 * file.
 	 * </ul>
-	 * </p>
 	 * 
 	 * @param xslxFile
 	 * @param inStream

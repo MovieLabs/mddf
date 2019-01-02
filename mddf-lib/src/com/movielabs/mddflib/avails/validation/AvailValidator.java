@@ -133,9 +133,10 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	}
 
 	/**
-	 * Validate everything that is fully specified via the XSD.
+	 * Validate everything that is fully specified via the XSD schemas.
 	 * 
-	 * @param xmlFile
+	 * @param target wrapper containing MDDF construct to be validated
+	 * @return true if construct passes without errors.
 	 */
 	protected boolean validateXml(MddfTarget target) {
 		String xsdFile = XsdValidation.defaultRsrcLoc + "avails-v" + availSchemaVer + ".xsd";
@@ -304,8 +305,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 	}
 
+ 
 	/**
-	 * @return
+	 * Checks values specified via enumerations that are not contained in the XSD schemas.
 	 */
 	protected void validateCMVocab() {
 		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Validating use of controlled vocabulary...", curFile,
@@ -392,7 +394,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * associate with the log entry. The target indicates a construct within a file
 	 * being validated and should be specified as either
 	 * <ul>
-	 * <li>an JDOM Element within an XML file, or</tt>
+	 * <li>an JDOM Element within an XML file, or</li>
 	 * <li>a <tt>POI Cell</tt> instance used to identify a cell in an XLSX
 	 * spreadsheet.</li>
 	 * </ul>

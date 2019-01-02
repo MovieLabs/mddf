@@ -55,8 +55,8 @@ public class XsdValidation {
 
 	static {
 		/*
-		 * This will be used with ClassLoader.getResource() so the path is
-		 * always absolute. Hence, no leading '/'
+		 * This will be used with ClassLoader.getResource() so the path is always
+		 * absolute. Hence, no leading '/'
 		 */
 		defaultRsrcLoc = SchemaWrapper.RSRC_PACKAGE;
 		if (defaultRsrcLoc.startsWith("/")) {
@@ -74,9 +74,10 @@ public class XsdValidation {
 
 	/**
 	 * Validate everything that is fully specified via the identified XSD.
+	 * 
 	 * @param target
-	 * @param xsdFile
-	 * @param logMsgSrcId
+	 * @param xsdLocation
+	 * @param moduleId
 	 * @return
 	 */
 	public boolean validateXml(MddfTarget target, String xsdLocation, String moduleId) {
@@ -108,30 +109,27 @@ public class XsdValidation {
 			validator.setErrorHandler(errHandler);
 			/**
 			 * <p>
-			 * This block of code handles a problem associated with supporting
-			 * the validation of XML generated from an Excel spreadsheet.
-			 * Regardless of whether the XML comes from an XML file or is
-			 * internally generated via the transformation of an xlsx file, we
-			 * still have (at this point in processing) a JDOM document. In
-			 * theory the obvious approach is to use a JDOMSource in all cases.
-			 * In practice, however, using a JDOMSource will result in
-			 * SaxParseException messages that lack line numbers. This greatly
-			 * reduces the value of the error messages. On the other hand, if
-			 * the MDDF file started out in a non-XML syntax and then was
-			 * converted to XML, linking an error to a specific line in the XML
-			 * has little, if any, value.
+			 * This block of code handles a problem associated with supporting the
+			 * validation of XML generated from an Excel spreadsheet. Regardless of whether
+			 * the XML comes from an XML file or is internally generated via the
+			 * transformation of an xlsx file, we still have (at this point in processing) a
+			 * JDOM document. In theory the obvious approach is to use a JDOMSource in all
+			 * cases. In practice, however, using a JDOMSource will result in
+			 * SaxParseException messages that lack line numbers. This greatly reduces the
+			 * value of the error messages. On the other hand, if the MDDF file started out
+			 * in a non-XML syntax and then was converted to XML, linking an error to a
+			 * specific line in the XML has little, if any, value.
 			 * </p>
 			 * <p>
-			 * The solution is to use a StreamSource when processing something
-			 * that started as XML on the file system even though we already
-			 * have the same XML in the form of the JDOM document. The
-			 * JDOMSource is used only if the original MDDF file was not
-			 * formatted as XML (i.e., it is an XLSX formatted Avails).
+			 * The solution is to use a StreamSource when processing something that started
+			 * as XML on the file system even though we already have the same XML in the
+			 * form of the JDOM document. The JDOMSource is used only if the original MDDF
+			 * file was not formatted as XML (i.e., it is an XLSX formatted Avails).
 			 * </p>
 			 */
 			Source src;
 			if (srcFile.getName().endsWith(".xml")) {
-				src = new StreamSource(target.getXmlStreamSrc()); 
+				src = new StreamSource(target.getXmlStreamSrc());
 			} else {
 				src = new JDOMSource(target.getXmlDoc().getRootElement());
 			}
@@ -154,7 +152,7 @@ public class XsdValidation {
 			return (false);
 		}
 	}
- 
+
 	protected static String getExceptionCause(Exception e) {
 		String description = e.getMessage();
 		Throwable cause = e.getCause();
@@ -170,12 +168,12 @@ public class XsdValidation {
 	// ###################################################################
 
 	/**
-	 * Custom error handler used while validating xml against xsd. This class
-	 * serves two purposes:
+	 * Custom error handler used while validating xml against xsd. This class serves
+	 * two purposes:
 	 * <ol>
 	 * <li>it allows validation to continue even after an error or warning
-	 * condition, thereby allowing the entire XML file to be checked in one
-	 * pass, and</li>
+	 * condition, thereby allowing the entire XML file to be checked in one pass,
+	 * and</li>
 	 * <li>it provides condensed and easy to read versions of the error message.
 	 * </li>
 	 * </ol>
@@ -208,7 +206,7 @@ public class XsdValidation {
 		}
 
 		private void handleMessage(int level, SAXParseException exception) throws SAXException {
-			int lineNumber = exception.getLineNumber(); 
+			int lineNumber = exception.getLineNumber();
 			String message = parseSaxMessage(exception);
 			String explanation = "XML at line: " + lineNumber + " does not comply with schema :: " + message;
 			loggingMgr.log(level, LogMgmt.TAG_XSD, message, srcFile, lineNumber, "XsdValidation", explanation, null);

@@ -88,7 +88,7 @@ public abstract class AbstractRowHelper {
 	 * @param elName
 	 *            the parent element to be created (i.e., Licensor or
 	 *            ServiceProvider)
-	 * @param displayName
+	 * @param colKey
 	 *            the name to be held in the DisplayName child node
 	 * @return the created element
 	 */
@@ -97,9 +97,8 @@ public abstract class AbstractRowHelper {
 	/**
 	 * Invoked by XmlBuilder.createAsset() when a pre-existing Asset element
 	 * does not exist.
-	 * 
-	 * @param workTypePedigree
-	 * @return
+	 *  
+	 * @return the created <tt>&lt;avails:Asset&gt;</tt> element
 	 */
 	abstract protected Element buildAsset();
 

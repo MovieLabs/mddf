@@ -305,7 +305,7 @@ public class LogEntryNode extends LogEntry {
 	 * Return the severity level of the log entry.
 	 * 
 	 * @return the level
-	 * @see Logger.logLevels
+	 * @see LogMgmt.logLevels
 	 */
 	public int getLevel() {
 		return level;
