@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.movielabs</groupId>
 	<artifactId>mddf-lib</artifactId>
-	<version>1.5.1.rc1</version>
+	<version>1.5.1.rc3-SNAPSHOT</version>
 	<name>mddf library</name>
 	<description>implements all core (i.e., non-UI) functionality that can be used to generate, validate, or transform MovieLabs Digital Distribution Framework (MDDF) files.</description>
 
 	<properties>
-		<mddf.lib.version>${project.version}</mddf.lib.version> 
+		<mddf.lib.version>${project.version}</mddf.lib.version>
 		<mddf.lib.build>4</mddf.lib.build>
 		<mddf.lib.timestamp>${maven.build.timestamp}</mddf.lib.timestamp>
 		<maven.build.timestamp.format>yyyy-MMM-dd HH:mm:ss z</maven.build.timestamp.format>
@@ -182,7 +182,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9.1</version>
+				<version>3.0.1</version>
+				<!-- <configuration> -->
+				<!-- THIS IS WHERE YOU CAN ADD A CUSTOM STYLESHEET -->
+				<!-- <stylesheetfilepath/to/your/resource/yourstylesheet.css</stylesheetfile> -->
+				<!-- </configuration> -->
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
