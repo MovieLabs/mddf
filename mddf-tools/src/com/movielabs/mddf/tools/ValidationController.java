@@ -311,8 +311,8 @@ public class ValidationController {
 			try {
 				validateFile(srcFile, uxProfile, useCases);
 			} catch (Exception e) {
-				e.printStackTrace();
-				String msg = e.getCause().getMessage();
+				e.printStackTrace();				
+				String msg = e.getLocalizedMessage();
 				if (msg == null) {
 					msg = "Unspecified Exception while validating";
 				}
