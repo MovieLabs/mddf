@@ -5,7 +5,25 @@
 
 ## Versioning
 
-The latest release of the core mddf-lib is v1.5
+Dev version is mddf-lib v1.5.1.
+
+#### rc3
+
+* Enhancement: CM v2.7.1 and Manifest v 1.8.1 supported in DRAFT format
+* Bug Fix: Launching of internal XML Editor required lower case file-type suffix
+* Internal: re-implemented MMC Validator to focus on JSON structures
+
+#### rc2
+
+* Bug Fix: added missing valiadtion checks for all DigitalAsset types
+* KNOWN BUG: consistency of Encoding/ChannelMapping is not checked when the number
+             of Audio channels is 1.
+
+#### rc1
+* Bug Fix: structure check of RefALID threw XML parse exception
+* Internal: Expanded scope of JUnit testing of structure validator
+
+### mddf-lib v1.5
 
 * Enhancement: support for Manifest v 1.8 added
 * Enhancement: support for CM v2.7 and MDMEC 2.7 added

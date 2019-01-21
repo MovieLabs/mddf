@@ -23,6 +23,7 @@
 ---
 ## <a name="h_News">What's New</a>
 
+* 2019-Jan-21: v1.5.1 Release Candidates available for evaluation. See ChangeLog for details
 * 2018-Nov-15: mddf-tool v1.5 has been released as both an executable jar and as native executables.
 
 __NOTE:__ Beginning with Release 1.5, pre-built executables for Windows, OS-X, and Linux will no longer
