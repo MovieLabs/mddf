@@ -31,6 +31,9 @@ import java.io.IOException;
  */
 public interface LogMgmt extends IssueLogger {
 
+	/**
+	 * Logging levels. Sequence matches associated value
+	 */
 	public static String[] logLevels = { "Debug", "Notice", "Warning", "Error", "Fatal", "Info" };
 	public static final int LEV_DEBUG = 0;
 	public static final int LEV_NOTICE = 1;

@@ -22,8 +22,6 @@
  */
 package com.movielabs.mddflib.logging;
 
-import org.jdom2.Element;
-
 /**
  * @author L. Levin, Critical Architectures LLC
  *
@@ -33,7 +31,7 @@ public interface IssueLogger {
 	 * Log an issue with a specific construct within a file. The <tt>target</tt>
 	 * indicates the construct within the file and should be specified as either
 	 * <ul>
-	 * <li>an JDOM Element within an XML file, or</tt>
+	 * <li>an JDOM Element within an XML file, or</li>
 	 * <li>a <tt>POI Cell</tt> instance used to identify a cell in an XLSX
 	 * spreadsheet.</li>
 	 * </ul>

@@ -32,8 +32,8 @@ import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
  * Create XML document from a v1.7 or v1.7.2 Excel spreadsheet. The XML
- * generated will be based on v2.2 of the Avails XSD and reflects a
- * "best effort" in that there is no guarantee that it is valid.
+ * generated will be based on v2.2 of the Avails XSD and reflects a "best
+ * effort" in that there is no guarantee that it is valid.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -55,8 +55,8 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		Element avail = xb.getAvailElement(this);
 
 		/*
-		 * Assets can be defined redundantly on multiple lines so the XmlBuilder
-		 * is used to coordinate and filter out duplicates.
+		 * Assets can be defined redundantly on multiple lines so the XmlBuilder is used
+		 * to coordinate and filter out duplicates.
 		 */
 		xb.createAsset(this);
 
@@ -86,8 +86,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.movielabs.mddflib.avails.xml.AbstractRowHelper#mPublisher(java.lang.
+	 * @see com.movielabs.mddflib.avails.xml.AbstractRowHelper#mPublisher(java.lang.
 	 * String, java.lang.String)
 	 */
 	protected Element mPublisher(String elName, String colKey) {
@@ -96,8 +95,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		process(pubEl, "DisplayName", xb.getMdNSpace(), colKey);
 
 		/*
-		 * if ContactInfo is mandatory we can't get this info from the
-		 * spreadsheet
+		 * if ContactInfo is mandatory we can't get this info from the spreadsheet
 		 */
 		if (xb.isRequired("ContactInfo", "mdmec")) {
 			Element e = new Element("ContactInfo", xb.getMdMecNSpace());
@@ -110,8 +108,9 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		return pubEl;
 	}
 
- 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.movielabs.mddflib.avails.xml.AbstractRowHelper#buildAsset()
 	 */
 	protected Element buildAsset() {
@@ -122,8 +121,8 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		xb.addToPedigree(wtEl, workTypePedigree);
 		assetEl.addContent(wtEl);
 		/*
-		 * Source key for 'contentID' depends (unfortunately) on the WorkType of
-		 * the Asset.
+		 * Source key for 'contentID' depends (unfortunately) on the WorkType of the
+		 * Asset.
 		 */
 		String cidPrefix = "";
 		switch (workType) {
@@ -161,16 +160,16 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 
 	/**
 	 * Create a Transaction Element. While the Avail XSD allows multiple
-	 * Transactions per Avail, the XLSX mechanism only allows a single
-	 * Transaction element to be defined <i>per-row</i>.
+	 * Transactions per Avail, the XLSX mechanism only allows a single Transaction
+	 * element to be defined <i>per-row</i>.
 	 * 
 	 * @return
 	 */
 	protected Element createTransaction() {
 		Element transactionEl = new Element("Transaction", xb.getAvailsNSpace());
 		/*
-		 * TransactionID is OPTIONAL. For mystical reasons lost in the mists of
-		 * time, it come from the 'AvailID' column.
+		 * TransactionID is OPTIONAL. For mystical reasons lost in the mists of time, it
+		 * come from the 'AvailID' column.
 		 */
 		Pedigree pg = getPedigreedData("Avail/AvailID");
 		if (this.isSpecified(pg)) {
@@ -214,17 +213,16 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 	 * Add 1 or more Term elements to a Transaction.
 	 * <p>
 	 * As of Excel v 1.6. Terms are a mess. There are two modes for defining:
+	 * </p>
 	 * <ol>
 	 * <li>Use 'PriceType' cell to define a <tt>termName</tt> and then get value
 	 * from 'PriceValue' cell, or</li>
-	 * <li>the use of columns implicitly linked to specific <tt>termName</tt>
-	 * </li>
+	 * <li>the use of columns implicitly linked to specific <tt>termName</tt></li>
 	 * </ol>
-	 * An example of the 2nd approach is the 'WatchDuration' column. What makes
-	 * the handling even more complex is that a term that was handled via
-	 * 'PriceType' in one version of the Excel may be handled via a dedicated
-	 * column in another version.
-	 * </p>
+	 * An example of the 2nd approach is the 'WatchDuration' column. What makes the
+	 * handling even more complex is that a term that was handled via 'PriceType' in
+	 * one version of the Excel may be handled via a dedicated column in another
+	 * version.
 	 * 
 	 * @param transactionEl
 	 */
@@ -239,7 +237,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		if (isSpecified(pg)) {
 			String tName = pg.getRawValue();
 			Element termEl = new Element("Term", xb.getAvailsNSpace());
-			/* 
+			/*
 			 * Any term may be prefixed with 'TPR-' to indicate temp price reduction
 			 */
 			String baseTName = tName.replaceFirst("TPR-", "");
@@ -260,7 +258,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 			case "SeasonWSP":
 			case "SRP":
 			case "DMRP":
-			case "SMRP": 
+			case "SMRP":
 				Element moneyEl = process(termEl, "Money", xb.getAvailsNSpace(), prefix + "PriceValue");
 				Pedigree curPGee = getPedigreedData(prefix + "PriceCurrency");
 				if (moneyEl != null && isSpecified(curPGee)) {
@@ -272,7 +270,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 			case "Season Only":
 				break;
 			default:
-				String errMsg = "Unrecognized PriceType '"+tName+"'";
+				String errMsg = "Unrecognized PriceType '" + tName + "'";
 				Cell target = (Cell) pg.getSource();
 				logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, target, errMsg, null, null, XmlBuilder.moduleId);
 				return;
@@ -296,11 +294,11 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 	}
 
 	/**
-	 * Filter out deprecated PriceType terms. This essentially means terms that
-	 * are now handled via a unique column.
+	 * Flag any deprecated PriceType terms. This essentially means terms that are
+	 * now handled via a unique column.
 	 * 
 	 * @param pg
-	 * @return
+	 * @return filtered input data
 	 */
 	protected Pedigree filterDeprecated(Pedigree pg) {
 		String value = pg.getRawValue();
@@ -333,13 +331,10 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	/**
-	 * @return
-	 */
 	protected void createSharedEntitlements() {
 		/*
-		 * SharedEntitlement is OPTIONAL. There are two 'ecosystems' supported
-		 * by the Excel format UV and DMA.
+		 * SharedEntitlement is OPTIONAL. There are two 'ecosystems' supported by the
+		 * Excel format UV and DMA.
 		 */
 		addEcosystem("UVVU", "Avail/UV_ID");
 		addEcosystem("DMA", "Avail/DMA_ID");
@@ -393,20 +388,25 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 	}
 
 	/**
-	 * Process start or end conditions for a Transaction. The expected value is
+	 * Process start or end conditions for a Transaction. The <tt>cellKey</tt> is
+	 * used to identify a cell whose expected value is
 	 * <ul>
 	 * <li>YYYY-MM-DD for a date.</li>
 	 * <li>ISO 8601 Date+Time (i.e., <tt>YYYY-MM-DDTHH:MM:SS</tt>) when time is
 	 * included, or</li>
 	 * <li>a key word such as "Immediate"</li>
 	 * </ul>
+	 * If the cell contains a date (or date/time) value, a 'Start' or 'End' element
+	 * is created. If, however, the cell contains the name of a condition (e.g.,
+	 * "Immediate"), a 'StartCondition' or 'EndCondition' element is created. If the
+	 * cell contains an invalid value, no element is created an a <tt>null</tt>
+	 * value will be returned.
 	 * 
 	 * @param parentEl
-	 * @param childName
+	 * @param childName either 'Start' or 'End'
 	 * @param ns
 	 * @param cellKey
-	 * @param row
-	 * @return
+	 * @return the created element or null
 	 */
 	protected Element processCondition(Element parentEl, String childName, Namespace ns, String cellKey) {
 		Pedigree pg = getPedigreedData(cellKey);

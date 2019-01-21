@@ -60,14 +60,16 @@ import net.sf.json.JSONObject;
  *   |
  *   +--Season
  * </pre>
- * 
+ * </p>
+ * <p>
  * Within each <tt>WorkType</tt> the entries are ordered to match the Element
  * sequence that is specified in the XSD. This will define the order in which
  * the constructed XML elements are appended to their parent.
  * </p>
  * <h3>Syntax:</h3>
  * <p>
- * Each mapping is defined as a <tt>key/value<tt> pair where
+ * Each mapping is defined as a <tt>key/value</tt> pair where
+ * </p>
  * <ul>
  * <li>the <i>key</i> will specify the <i>namespace</i> and <i>name</i> of the
  * XML element to be constructed</li>
@@ -82,8 +84,7 @@ import net.sf.json.JSONObject;
  * <li>an ordered array of column identifiers and/or functions that will be
  * evaluated until the first one that matches data in the XLSX row is found.
  * </li>
- * </ul> 
- * </p>
+ * </ul>  
  * <p>
  * The formal EBNF grammar is:
  * <tt>
@@ -108,7 +109,7 @@ import net.sf.json.JSONObject;
  *  &lt;epsiodic-work-type&gt; ::= 'Season' | 'Series'
  * </pre>
  * </tt>
- * <h5>Notes:</h5>
+ * <h4>Notes:</h4>
  * <ol>
  * <li>Column identifiers that do not match a top-level-element/sub-element pair
  * defined in the MDDF template for the version of XLSX being ingested will be
@@ -126,6 +127,7 @@ import net.sf.json.JSONObject;
  * <h4>altId</h4>
  * <p>
  * Set an <tt>AltIdentifier</tt>.
+ * </p>
  * 
  * <h5>Arguments:</h5>
  * <ul>  

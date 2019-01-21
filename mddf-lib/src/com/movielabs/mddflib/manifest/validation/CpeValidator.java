@@ -71,7 +71,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		private String cid;
 
 		/**
-		 * @param curRootEl
+		 * @param xmlEl
 		 */
 		public ExperienceNode(Element xmlEl) {
 			this.xmlEl = xmlEl;
@@ -120,8 +120,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 	protected HashMap<String, Element> cid2MDataMap;
 	private CpeIP1Validator profileIP1Val;
 
-	/**
-	 * @param validateC
+	/** 
 	 * @param loggingMgr
 	 */
 	public CpeValidator(LogMgmt loggingMgr) {
