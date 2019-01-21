@@ -29,11 +29,8 @@ import java.util.Map;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.jdom2.Element;
 import org.jdom2.Namespace;
 
-import com.movielabs.mddf.MddfContext;
-import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
