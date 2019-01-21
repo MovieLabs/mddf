@@ -206,6 +206,20 @@ public class ManifestValidatorTest extends ManifestValidator {
 	}
 
 	@Test
+	public void testFull1_v1_8_1() throws IOException, JDOMException {
+		MddfTarget target = initialize("Manifest_v1.8.1_A.xml");
+		execute(target);
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		/*
+		 * WIP:
+		 */
+//		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		iLog.clearLog();
+	}
+
+	@Test
 	public void testMEC_Usage() throws IOException, JDOMException {
 		MddfTarget target = initialize("Manifest_w_MEC_v1.6.xml");
 		execute(target);

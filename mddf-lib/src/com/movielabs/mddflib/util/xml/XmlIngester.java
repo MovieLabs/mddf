@@ -133,9 +133,15 @@ public abstract class XmlIngester implements IssueLogger {
 		 * Check to see if a version is compatible with earlier version
 		 */
 		switch (key) {
+		case "manifest_v1.8.1":
+			key = "manifest_v1.8";
+			break;
 		case "manifest_v1.6.1":
 			key = "manifest_v1.6";
 			break;
+		case "cm_v2.7.1":
+			key = "cm_v2.7";
+			break; 
 		case "cm_v2.6":
 			key = "cm_v2.5";
 			break;

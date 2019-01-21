@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TEST ARTIFACT: This file is intended to be a 'complete' Manifest in 
+	that it contains many optional elements. No errors are included. Various 
+	values may not make sense in a production environment but they are technically 
+	valid. -->
+<manifest:MediaManifest
+	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.8.1/manifest"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.7.1/md"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.8.1/manifest manifest-v1.8.1.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V"
+	updateNum="1" versionDescription="Error-free test artifact">
+	<manifest:Compatibility>
+		<manifest:SpecVersion>1.8.1</manifest:SpecVersion>
+		<manifest:System>HTML5</manifest:System>
+		<manifest:System>Roku</manifest:System>
+		<manifest:Profile>none</manifest:Profile>
+	</manifest:Compatibility>
+	<!-- manifest:Source was added for v1.7 but does not have any unique validation 
+		requirements (e.g., controlled vocab) so has not been added to test artifact. -->
+	<manifest:Inventory>
+		<manifest:Audio
+			AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Description language="en">Background music
+			</md:Description>
+			<md:Type>primary</md:Type>
+			<md:SubType>Music</md:SubType>
+			<md:Encoding>
+				<md:Codec>AAC-LC</md:Codec>
+				<md:CodecType>IANA:audio/mp4</md:CodecType>
+				<md:BitrateMax>65536</md:BitrateMax>
+				<md:BitrateAverage>65536</md:BitrateAverage>
+				<!-- VBR not supported by Codec (?) so not specified -->
+				<md:SampleRate>48000</md:SampleRate>
+				<md:ChannelMapping>L,R</md:ChannelMapping>
+				<md:ActualLength>PT10M00.0S</md:ActualLength>
+			</md:Encoding>
+			<md:Language>en</md:Language>
+			<md:Channels>2</md:Channels>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Audio>
+		<manifest:Audio
+			AudioTrackID="md:audtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer">
+			<md:Description language="en">Background music
+			</md:Description>
+			<md:Type>primary</md:Type>
+			<md:SubType>Music</md:SubType>
+			<md:Encoding>
+				<md:Codec>AAC-LC</md:Codec>
+				<md:CodecType>IANA:audio/mp4</md:CodecType>
+				<md:BitrateMax>65536</md:BitrateMax>
+				<md:BitrateAverage>65536</md:BitrateAverage>
+				<!-- VBR not supported by Codec (?) so not specified -->
+				<md:SampleRate>48000</md:SampleRate>
+				<md:ChannelMapping>L,R</md:ChannelMapping>
+				<md:ActualLength>PT10M00.0S</md:ActualLength>
+			</md:Encoding>
+			<md:Language>en</md:Language>
+			<md:Channels>2</md:Channels>
+		</manifest:Audio>
+		<manifest:Video
+			VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Description language="en">Meaningless test Case
+			</md:Description>
+			<md:Type>primary</md:Type>
+			<md:Encoding>
+				<md:Codec>H.264</md:Codec>
+				<md:CodecType>IANA:video/H264</md:CodecType>
+				<md:MPEGProfile>MP</md:MPEGProfile>
+				<md:MPEGLevel>4.2</md:MPEGLevel>
+				<md:BitRateAverage>4818000</md:BitRateAverage>
+				<md:ActualLength>PT63610M</md:ActualLength>
+			</md:Encoding>
+			<md:Picture>
+				<md:AspectRatio>16:9</md:AspectRatio>
+				<md:WidthPixels>1920</md:WidthPixels>
+				<md:HeightPixels>1080</md:HeightPixels>
+				<md:ActiveWidthPixels>1920</md:ActiveWidthPixels>
+				<md:ActiveHeightPixels>1080</md:ActiveHeightPixels>
+				<md:FrameRate multiplier="1000/1001" timecode="Drop">24
+				</md:FrameRate>
+				<md:Progressive scanOrder="BFF">false</md:Progressive>
+				<md:ColorSubsampling>4:2:0</md:ColorSubsampling>
+				<md:Colorimetry>601</md:Colorimetry>
+				<md:Type3D>Anaglyph-rg</md:Type3D>
+				<!-- MasteredColorVolume: need input from expert -->
+				<md:ColorEncoding>
+					<md:Primaries>BT709</md:Primaries>
+					<md:TransferFunction>BT1886</md:TransferFunction>
+					<md:ColorDifferencing>BT709</md:ColorDifferencing>
+				</md:ColorEncoding>
+				<!-- LightLevel: need input from expert -->
+				<md:HDRPlaybackInfo>
+					<md:SDRDownconversion>Prohibited</md:SDRDownconversion>
+				</md:HDRPlaybackInfo>
+				<md:ThreeSixty>
+					<md:Projection>cube32</md:Projection>
+					<md:Rendering>cube</md:Rendering>
+				</md:ThreeSixty>
+			</md:Picture>
+			<md:CaptureMethod>Animation</md:CaptureMethod>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Video>
+		<manifest:Video
+			VideoTrackID="md:vidtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer">
+			<md:Description language="en">Trailer with teaser for
+				sequel
+			</md:Description>
+			<md:Type>primary</md:Type>
+			<md:CaptureMethod>Animation</md:CaptureMethod>
+		</manifest:Video>
+		<manifest:Subtitle
+			SubtitleTrackID="md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0001-S">
+			<!-- attribute only allowed if Format isn't 'Text' -->
+			<md:Format SDImage="true">Image</md:Format>
+			<md:Description>Hieroglyphic commentary</md:Description>
+			<md:Type>commentary</md:Type>
+			<md:Language>egy-egyp</md:Language>
+		</manifest:Subtitle>
+		<manifest:Subtitle
+			SubtitleTrackID="md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0002-S">
+			<!-- attributes only allowed if Format isn't 'Text' -->
+			<md:Format>Text</md:Format>
+			<md:Description>English commentary, with British spellings
+			</md:Description>
+			<md:Type>commentary</md:Type>
+			<md:Language>en-br</md:Language>
+		</manifest:Subtitle>
+		<manifest:Subtitle
+			SubtitleTrackID="md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0003-S">
+			<!-- attributes only allowed if Format isn't 'Text' -->
+			<md:Format>Text</md:Format>
+			<md:Description>Intro message</md:Description>
+			<md:Type>forced</md:Type>
+			<md:Language>en</md:Language>
+		</manifest:Subtitle>
+		<!-- ########## Images used in PictureGroups ################# -->
+		<manifest:Image
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1">
+			<md:Width>1920</md:Width>
+			<md:Height>1080</md:Height>
+			<md:Encoding>image/jpeg</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>http://www.sofaspud.com/Galleries/BBB_Set_01.jpg
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<manifest:Image
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.1">
+			<md:Width>352</md:Width>
+			<md:Height>198</md:Height>
+			<md:Encoding>image/jpeg</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>http://www.sofaspud.com/Galleries/thumbnails/BBB_Set_01.jpg
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<manifest:Image
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.2">
+			<md:Width>1920</md:Width>
+			<md:Height>1080</md:Height>
+			<md:Encoding>image/jpeg</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>http://www.sofaspud.com/Galleries/BBB_Set_02.jpg
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<manifest:Image
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.2">
+			<md:Width>352</md:Width>
+			<md:Height>198</md:Height>
+			<md:Encoding>image/jpeg</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>http://www.sofaspud.com/Galleries/thumbnails/BBB_Set_02.jpg
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<manifest:Image
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.3">
+			<md:Width>1920</md:Width>
+			<md:Height>1080</md:Height>
+			<md:Encoding>image/jpeg</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>http://www.sofaspud.com/Galleries/BBB_Set_03.jpg
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<manifest:Image
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.3">
+			<md:Width>352</md:Width>
+			<md:Height>198</md:Height>
+			<md:Encoding>image/jpeg</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>http://www.sofaspud.com/Galleries/thumbnails/BBB_Set_03.jpg
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<!-- ########## ~~~~~~~~~~~~~~~~~~~~ ################# -->
+		<manifest:Metadata
+			ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+			<manifest:BasicMetadata
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+				<md:LocalizedInfo language="en" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>A large but peaceful bunny is harassed by three
+						trouble-making rodents
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:DisplayIndicators>Test</md:DisplayIndicators>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+				</md:LocalizedInfo>
+				<md:RunLength>PT10M00.0S</md:RunLength>
+				<md:ReleaseYear>2008</md:ReleaseYear>
+				<md:ReleaseHistory>
+					<md:ReleaseType>original</md:ReleaseType>
+					<md:DistrTerritory>
+						<md:country>DE</md:country>
+					</md:DistrTerritory>
+					<md:Date>2016-05-22</md:Date>
+				</md:ReleaseHistory>
+				<md:ReleaseHistory>
+					<md:ReleaseType>original</md:ReleaseType>
+					<md:DistrTerritory>
+						<md:country>US</md:country>
+					</md:DistrTerritory>
+					<md:Date>2016-09-24</md:Date>
+				</md:ReleaseHistory>
+				<md:WorkType>Movie</md:WorkType>
+				<md:RatingSet>
+					<md:Rating>
+						<md:Region>
+							<md:country>DE</md:country>
+						</md:Region>
+						<md:System>FSK</md:System>
+						<md:Value>16</md:Value>
+					</md:Rating>
+					<md:Rating>
+						<md:Region>
+							<md:country>US</md:country>
+						</md:Region>
+						<md:System>MPAA</md:System>
+						<md:Value>G</md:Value>
+					</md:Rating>
+					<md:Rating>
+						<md:Region>
+							<md:country>DE</md:country>
+						</md:Region>
+						<md:System>FSK</md:System>
+						<md:Value>16</md:Value>
+					</md:Rating>
+					<md:Rating>
+						<md:Region>
+							<md:country>ZA</md:country>
+						</md:Region>
+						<md:System>FPB</md:System>
+						<md:Value>16</md:Value>
+						<md:Reason>D</md:Reason>
+						<md:Reason>H</md:Reason>
+						<md:Reason>N</md:Reason>
+					</md:Rating>
+				</md:RatingSet>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Director</md:JobFunction>
+						<md:JobDisplay>Director</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Job>
+						<md:JobFunction>Writer</md:JobFunction>
+						<md:JobDisplay>Writer</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Sacha Goedegebure</md:DisplayName>
+					</md:Name>
+				</md:People>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Producer</md:JobFunction>
+						<md:JobDisplay>Producer</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Ton Roosendaal</md:DisplayName>
+					</md:Name>
+				</md:People>
+				<md:PrimarySpokenLanguage>de-DE</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>en-DE</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>en</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>en-1694acad</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>yee-HK</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>cmn-Hans-CN</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>sr-Latn-RS</md:PrimarySpokenLanguage>
+			</manifest:BasicMetadata>
+			<manifest:Alias
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+				<manifest:LocalizedPair>
+					<manifest:LanguageIncluded>en</manifest:LanguageIncluded>
+				</manifest:LocalizedPair>
+			</manifest:Alias>
+		</manifest:Metadata>
+		<manifest:TextObject
+			TextObjectID="md:textobjid:eidr-s:E6CA-AB58-E298-7BA0-E574-A"
+			language="egy-egyp">
+			<manifest:SubtitleID>md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0001-S
+			</manifest:SubtitleID>
+		</manifest:TextObject>
+		<manifest:TextObject
+			TextObjectID="md:textobjid:eidr-s:E6CA-AB58-E298-7BA0-E574-B">
+			<manifest:SubtitleID>md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0002-S
+			</manifest:SubtitleID>
+		</manifest:TextObject>
+		<manifest:TextObject
+			TextObjectID="md:textobjid:eidr-s:E6CA-AB58-E298-7BA0-E574-C"
+			language="en">
+			<manifest:SubtitleID>md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0003-S
+			</manifest:SubtitleID>
+		</manifest:TextObject>
+		<manifest:TextObject
+			TextObjectID="md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-EN"
+			language="en">
+			<manifest:TextString index="1">The rabbit's sister
+				Jessica became a big movie star
+			</manifest:TextString>
+			<manifest:TextString index="2"> She married Roger
+				Rabbit
+			</manifest:TextString>
+		</manifest:TextObject>
+		<manifest:TextObject
+			TextObjectID="md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-SP"
+			language="es">
+			<manifest:TextString>La hermana Jessica del conejo es una grande
+				estrella de cine
+			</manifest:TextString>
+		</manifest:TextObject>
+		<manifest:TextObject
+			TextObjectID="md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-EN"
+			language="en">
+			<manifest:TextString>Squirrels are members of the family Sciuridae, a
+				family that includes small or medium-size rodents.
+			</manifest:TextString>
+		</manifest:TextObject>
+		<manifest:TextObject
+			TextObjectID="md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-SP"
+			language="es">
+			<manifest:TextString>Las ardillas son miembros de la familia
+				Sciuridae, una familia que incluye pequeño o roedores de tamaño
+				medio.
+			</manifest:TextString>
+		</manifest:TextObject>
+		<manifest:TextObject
+			TextObjectID="md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-EN"
+			language="en">
+			<manifest:TextString>Squirrels are not really vicious animals and can
+				be very nice to others.
+			</manifest:TextString>
+		</manifest:TextObject>
+		<manifest:TextObject
+			TextObjectID="md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-SP"
+			language="es">
+			<manifest:TextString>Las ardillas no son animales realmente viciosos
+				y pueden ser muy agradables a otros.
+			</manifest:TextString>
+		</manifest:TextObject>
+		<!-- ExternalManifest: added v1.7. No validation issues at this time however 
+			in future may check that the ExternalManifest@ManifestID matches the MediaManifest@ManifestID 
+			in the referenced Container -->
+	</manifest:Inventory>
+	<manifest:Presentations>
+		<!-- the movie -->
+		<manifest:Presentation
+			PresentationID="md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:TrackMetadata>
+				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
+				<manifest:VideoTrackReference>
+					<!-- the vidtrackid must match the one used in the inventory. -->
+					<manifest:VideoTrackID>md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:VideoTrackID>
+				</manifest:VideoTrackReference>
+				<manifest:AudioTrackReference>
+					<manifest:AudioTrackID>md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:AudioTrackID>
+				</manifest:AudioTrackReference>
+				<manifest:Purpose>
+					<manifest:WorkType>Movie</manifest:WorkType>
+					<manifest:WorkTypeDetail>feature</manifest:WorkTypeDetail>
+				</manifest:Purpose>
+			</manifest:TrackMetadata>
+			<!-- TODO: add Chapters -->
+			<!-- TODO: add markers -->
+			<!-- TODO: add IMF Ref -->
+		</manifest:Presentation>
+		<!-- the trailer -->
+		<manifest:Presentation
+			PresentationID="md:presentationid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer">
+			<manifest:TrackMetadata>
+				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
+				<manifest:VideoTrackReference>
+					<!-- the vidtrackid must match the one used in the inventory. -->
+					<manifest:VideoTrackID>md:vidtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
+					</manifest:VideoTrackID>
+				</manifest:VideoTrackReference>
+				<manifest:AudioTrackReference>
+					<manifest:AudioTrackID>md:audtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
+					</manifest:AudioTrackID>
+				</manifest:AudioTrackReference>
+			</manifest:TrackMetadata>
+		</manifest:Presentation>
+	</manifest:Presentations>
+	<!-- ###############==============================################# -->
+	<manifest:PlayableSequences>
+		<manifest:PlayableSequence>
+			<manifest:Clip sequence="1">
+				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				</manifest:PresentationID>
+			</manifest:Clip>
+			<!-- for versions prior to v1.7 sequence must be continuous and sequential -->
+			<manifest:Clip sequence="2">
+				<manifest:PresentationID>md:presentationid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
+				</manifest:PresentationID>
+				<manifest:EntryPointTimecode
+					dropframe='true'>1.25</manifest:EntryPointTimecode>
+			</manifest:Clip>
+		</manifest:PlayableSequence>
+	</manifest:PlayableSequences>
+	<!-- ###############==============================################# -->
+	<manifest:PictureGroups>
+		<manifest:PictureGroup
+			PictureGroupID="md:picturegroupid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1">
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1
+				</manifest:PictureID>
+				<manifest:ImageID resolution="800x1200">md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1
+				</manifest:ImageID>
+				<manifest:ThumbnailImageID>md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.1
+				</manifest:ThumbnailImageID>
+				<manifest:Caption language="en">A very scary rabbit
+				</manifest:Caption>
+				<manifest:Caption language="es">Un conejo muy aterrador
+				</manifest:Caption>
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.2
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.2
+				</manifest:ImageID>
+				<manifest:ThumbnailImageID>md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.2
+				</manifest:ThumbnailImageID>
+				<manifest:Caption />
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.3
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.3
+				</manifest:ImageID>
+				<manifest:ThumbnailImageID>md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.3
+				</manifest:ThumbnailImageID>
+				<manifest:Caption />
+			</manifest:Picture>
+		</manifest:PictureGroup>
+	</manifest:PictureGroups>
+	<!-- ###############==============================################# -->
+	<manifest:TextGroups>
+		<manifest:TextGroup
+			TextGroupID="md:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1">
+			<manifest:TextObjectID>md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-EN
+			</manifest:TextObjectID>
+			<manifest:TextObjectID>md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-SP
+			</manifest:TextObjectID>
+		</manifest:TextGroup>
+		<manifest:TextGroup
+			TextGroupID="md:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2">
+			<manifest:TextObjectID>md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-EN
+			</manifest:TextObjectID>
+			<manifest:TextObjectID>md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-SP
+			</manifest:TextObjectID>
+		</manifest:TextGroup>
+		<manifest:TextGroup
+			TextGroupID="md:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3">
+			<manifest:TextObjectID>md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-EN
+			</manifest:TextObjectID>
+			<manifest:TextObjectID>md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-SP
+			</manifest:TextObjectID>
+		</manifest:TextGroup>
+	</manifest:TextGroups>
+	<!-- ###############==============================################# -->
+	<manifest:Experiences>
+		<manifest:Experience version="0.1"
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha">
+			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
+			</manifest:ContentID>
+			<manifest:Audiovisual
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+				<!-- feature movie -->
+				<manifest:Type>Main</manifest:Type>
+				<manifest:SubType>Feature</manifest:SubType>
+				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				</manifest:PresentationID>
+			</manifest:Audiovisual>
+		</manifest:Experience>
+	</manifest:Experiences>
+	<!-- ###############==============================################# -->
+	<!-- ###############==============================################# -->
+	<manifest:TimedEventSequences>
+		<manifest:TimedEventSequence
+			TimedSequenceID="md:timedsequenceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:related">
+			<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+			</manifest:PresentationID>
+			<manifest:TimedEvent>
+				<manifest:StartTimecode>30.000000</manifest:StartTimecode>
+				<manifest:EndTimecode>37.000000</manifest:EndTimecode>
+				<manifest:Type>Synchronous</manifest:Type>
+				<manifest:TextGroupID index="1">md:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1
+				</manifest:TextGroupID>
+			</manifest:TimedEvent>
+			<manifest:TimedEvent>
+				<manifest:StartTimecode>60.000000</manifest:StartTimecode>
+				<manifest:EndTimecode>67.000000</manifest:EndTimecode>
+				<manifest:Type>Synchronous</manifest:Type>
+				<manifest:TextGroupID index="2">md:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2
+				</manifest:TextGroupID>
+			</manifest:TimedEvent>
+			<manifest:TimedEvent>
+				<manifest:StartTimecode>182.000000</manifest:StartTimecode>
+				<manifest:EndTimecode>187.000000</manifest:EndTimecode>
+				<manifest:Type>Synchronous</manifest:Type>
+				<manifest:TextGroupID index="5">md:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3
+				</manifest:TextGroupID>
+			</manifest:TimedEvent>
+		</manifest:TimedEventSequence>
+	</manifest:TimedEventSequences>
+	<!-- ###############==============================################# -->
+	<!-- ###############==============================################# -->
+	<manifest:ALIDExperienceMaps>
+		<manifest:ALIDExperienceMap>
+			<manifest:ALID>md:alid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02
+			</manifest:ALID>
+			<manifest:ExperienceID condition="Acquired"
+				licenseType="EST">md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha
+			</manifest:ExperienceID>
+		</manifest:ALIDExperienceMap>
+	</manifest:ALIDExperienceMaps>
+</manifest:MediaManifest>
