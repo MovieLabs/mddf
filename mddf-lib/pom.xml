@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.movielabs</groupId>
 	<artifactId>mddf-lib</artifactId>
-	<version>1.5.1.rc3-SNAPSHOT</version>
+	<version>1.5.1.rc4-SNAPSHOT</version>
 	<name>mddf library</name>
 	<description>implements all core (i.e., non-UI) functionality that can be used to generate, validate, or transform MovieLabs Digital Distribution Framework (MDDF) files.</description>
 
@@ -122,6 +122,63 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>release</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>3.0.1</version>
+						<configuration>
+							<doclint>none</doclint>
+							<!-- THIS IS WHERE YOU CAN ADD A CUSTOM STYLESHEET -->
+							<!-- <stylesheetfilepath/to/your/resource/yourstylesheet.css</stylesheetfile> -->
+						</configuration>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test/src</testSourceDirectory>
@@ -166,32 +223,17 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- display active profile in compile phase -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2.1</version>
+				<artifactId>maven-help-plugin</artifactId>
+				<version>3.1.0</version>
 				<executions>
 					<execution>
-						<id>attach-sources</id>
+						<id>show-profiles</id>
+						<phase>compile</phase>
 						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.0.1</version>
-				<!-- <configuration> -->
-				<!-- THIS IS WHERE YOU CAN ADD A CUSTOM STYLESHEET -->
-				<!-- <stylesheetfilepath/to/your/resource/yourstylesheet.css</stylesheetfile> -->
-				<!-- </configuration> -->
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
+							<goal>active-profiles</goal>
 						</goals>
 					</execution>
 				</executions>
