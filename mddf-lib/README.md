@@ -18,4 +18,4 @@ Developers wishing to use mddf-lib in their own software therefore have two opti
 			<version>${mddf.lib.version}</version>
 		</dependency>
 
- 
+For further information, including the Release History and Change Log, refer to the main mddf pages.
