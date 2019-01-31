@@ -70,7 +70,7 @@ public class MddfContext {
 		// --- Supported versions of standards (in order) ---
 		String[] CM_VER = { "2.7.1", "2.7", "2.6", "2.5", "2.4" };
 		String[] MANIFEST_VER = { "1.8.1", "1.8", "1.7", "1.6.1", "1.6", "1.5" };
-		String[] MEC_VER = { "2.7", "2.6", "2.5", "2.4" };
+		String[] MEC_VER = { "2.7.1", "2.7", "2.6", "2.5", "2.4" };
 		String[] AVAILS_X_VER = { "2.3", "2.2.2", "2.2.1", "2.2", "2.1" };
 		String[] AVAILS_E_VER = { "1.7.3", "1.7.2", "1.7", "1.6" };
 		String[] MMM_BP = { "1.0" };
@@ -101,7 +101,7 @@ public class MddfContext {
 		MANIFEST_1_6("Manifest", "1.6", "xml"), MANIFEST_1_6_1("Manifest", "1.6.1", "xml"),
 		MANIFEST_1_7("Manifest", "1.7", "xml"), MANIFEST_1_8("Manifest", "1.8", "xml"),
 		MANIFEST_1_8_1("Manifest", "1.8.1", "xml"), MDMEC_2_4("MEC", "2.4", "xml"), MDMEC_2_5("MEC", "2.5", "xml"),
-		MDMEC_2_6("MEC", "2.6", "xml"), MDMEC_2_7("MEC", "2.7", "xml");
+		MDMEC_2_6("MEC", "2.6", "xml"), MDMEC_2_7("MEC", "2.7", "xml"), MDMEC_2_7_1("MEC", "2.7.1", "xml");
 
 		private String standard;
 		private String ver;
@@ -221,6 +221,8 @@ public class MddfContext {
 				return FILE_FMT.MDMEC_2_6;
 			case "2.7":
 				return FILE_FMT.MDMEC_2_7;
+			case "2.7.1":
+				return FILE_FMT.MDMEC_2_7_1;
 			}
 			break;
 		}
@@ -299,6 +301,9 @@ public class MddfContext {
 			uses.put("MD", "2.7");
 			break;
 		case MANIFEST_1_8_1:
+			uses.put("MD", "2.7.1");
+			break;
+		case MDMEC_2_7_1:
 			uses.put("MD", "2.7.1");
 			break;
 		case MDMEC_2_7:
