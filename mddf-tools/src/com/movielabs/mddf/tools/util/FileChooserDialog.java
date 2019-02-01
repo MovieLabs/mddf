@@ -22,6 +22,7 @@
 package com.movielabs.mddf.tools.util;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -86,6 +87,7 @@ public class FileChooserDialog {
 			}
 		}
 		JFileChooser myChooser = new JFileChooser(directoryPath);
+		myChooser.setPreferredSize(new Dimension(750,450));
 		myChooser.setFileSelectionMode(mode);
 		if (mode != JFileChooser.DIRECTORIES_ONLY) {
 			if (filter != null) {
