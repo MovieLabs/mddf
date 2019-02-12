@@ -64,7 +64,8 @@
 							"name": "altId",
 							"args": 
 							{
-								"col": "AvailAsset/AltID"
+								"col": "AvailAsset/AltID",
+								"filterEidr": "no"
 							}
 						}
 					},
@@ -75,7 +76,8 @@
 							"name": "altId",
 							"args": 
 							{
-								"col": "AvailMetadata/RetailerID1"
+								"col": "AvailMetadata/RetailerID1",
+								"filterEidr": "no"
 							}
 						}
 					},
@@ -86,7 +88,8 @@
 							"name": "altId",
 							"args": 
 							{
-								"col": "AvailMetadata/RetailerID2"
+								"col": "AvailMetadata/RetailerID2",
+								"filterEidr": "no"
 							}
 						}
 					},
@@ -212,6 +215,19 @@
 						}
 					}
 				},
+				
+				"{avail}TitleEIDR-URN": 
+				{
+					"%FUNCTION": 
+					{
+						"name": "eidr",
+						"args": 
+						{
+							"col": "AvailMetadata/EpisodeTitleID"
+						}
+					}
+				},
+				
 
 				"{avail}AltIdentifier": 
 				[
@@ -232,7 +248,8 @@
 							"name": "altId",
 							"args": 
 							{
-								"col": "AvailMetadata/EpisodeAltID"
+								"col": "AvailMetadata/EpisodeAltID",
+								"filterEidr": "no"
 							}
 						}
 					},
@@ -243,7 +260,8 @@
 							"name": "altId",
 							"args": 
 							{
-								"col": "AvailMetadata/RetailerEpisodeID1"
+								"col": "AvailMetadata/RetailerEpisodeID1",
+								"filterEidr": "no"
 							}
 						}
 					},
@@ -254,7 +272,7 @@
 							"name": "altId",
 							"args": 
 							{
-								"col": "AvailMetadata/RetailerEpisodeID2"
+								"col": "AvailMetadata/RetailerEpisodeID2",
 							}
 						}
 					}
