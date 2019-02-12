@@ -122,8 +122,9 @@ import net.sf.json.JSONObject;
  * <li>{mdmec}</li>
  * <li>{manifest}</li>
  * <li>{md}</li>
- * </ul> 
- * For example: 
+ * </ul>
+ * For example:
+ * 
  * <pre>
  * <tt>
 		"POEST": 
@@ -310,7 +311,9 @@ public class StructureValidation {
 			}
 			LogReference srcRef = resolveDocRef(docRef);
 			logger.logIssue(LogMgmt.TAG_MD, logLevel, target, msg, details, srcRef, logMsgSrcId);
-			passes = false;
+			if (logLevel > LogMgmt.LEV_WARN) {
+				passes = false;
+			}
 		}
 		if (max > -1 && (count > max)) {
 			String elName = target.getName();
@@ -325,7 +328,10 @@ public class StructureValidation {
 			}
 			LogReference srcRef = resolveDocRef(docRef);
 			logger.logIssue(LogMgmt.TAG_MD, logLevel, target, msg, details, srcRef, logMsgSrcId);
-			passes = false;
+
+			if (logLevel > LogMgmt.LEV_WARN) {
+				passes = false;
+			}
 		}
 
 		return passes;
