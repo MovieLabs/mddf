@@ -7,6 +7,12 @@
 
 Dev version is mddf-lib v1.5.1.
 
+#### rc4
+
+* Bug Fix: WARNINGS due to structure checks were invalidating file
+* Bug Fix: Translation of Avails to XML dropped any AltID source that used an EIDR
+* Bug Fix: Translation of Avails to XML dropped AvailMetadata/EpisodeTitleID
+
 #### rc3
 
 * Enhancement: CM v2.7.1 and Manifest v 1.8.1 supported in DRAFT format
