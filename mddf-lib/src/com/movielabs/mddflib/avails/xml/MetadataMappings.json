@@ -241,6 +241,16 @@
 								"filterEidr": "yes"
 							}
 						}
+					},{
+						"%FUNCTION": 
+						{
+							"name": "altId",
+							"args": 
+							{
+								"col": "AvailMetadata/EpisodeTitleID",
+								"filterEidr": "yes"
+							}
+						}
 					},
 					{
 						"%FUNCTION": 
@@ -273,6 +283,7 @@
 							"args": 
 							{
 								"col": "AvailMetadata/RetailerEpisodeID2",
+								"filterEidr": "no"
 							}
 						}
 					}
