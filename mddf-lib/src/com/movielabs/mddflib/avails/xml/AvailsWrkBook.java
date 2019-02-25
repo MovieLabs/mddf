@@ -46,6 +46,7 @@ import org.jdom2.Document;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.Translator;
 
 /**
  * Wrapper for an Excel spreadsheet file comprising multiple individual sheets,
@@ -67,29 +68,29 @@ public class AvailsWrkBook {
 	private XSSFWorkbook wrkBook;
 
 	/**
-	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file.
-	 * If <tt>inStream</tt> is <tt>null</tt> the <tt>xlsxFile</tt> parameter is
-	 * used to read a file accessible via the local system. Otherwise the
-	 * contents of the <tt>inStream</tt> is used.
+	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file. If
+	 * <tt>inStream</tt> is <tt>null</tt> the <tt>xlsxFile</tt> parameter is used to
+	 * read a file accessible via the local system. Otherwise the contents of the
+	 * <tt>inStream</tt> is used.
 	 * <p>
 	 * The result <tt>Map</tt> that is returned will contain:
 	 * </p>
 	 * <ul>
-	 * <li><tt>xlsx</tt>: the xlsx File that was passed as the input argument
-	 * </li>
+	 * <li><tt>xlsx</tt>: the xlsx File that was passed as the input argument</li>
 	 * <li><tt>xml</tt>: the JDOM2 Document that was created from the xlsx</li>
 	 * <li><tt>pedigree</tt>: the <tt>Pedigree</tt> map that was created by the
 	 * <tt>XmlBuilder</tt> during the conversion process.</li>
-	 * <li><tt>srcFmt</tt>: the <tt>MddfContect.FILE_FMT</tt> of the ingested
-	 * file.
+	 * <li><tt>srcFmt</tt>: the <tt>MddfContect.FILE_FMT</tt> of the ingested file.
 	 * </ul>
 	 * 
 	 * @param xslxFile
+	 * @param targetVersion
 	 * @param inStream
 	 * @param logMgr
 	 * @return a Map&lt;String, Object&gt;
 	 */
-	public static Map<String, Object> convertSpreadsheet(File xslxFile, InputStream inStream, LogMgmt logMgr) {
+	public static Map<String, Object> convertSpreadsheet(File xslxFile, Version targetVersion, InputStream inStream,
+			LogMgmt logMgr) {
 		boolean autoCorrect = false;
 		boolean exitOnError = false;
 		AvailsWrkBook ss;
@@ -118,36 +119,64 @@ public class AvailsWrkBook {
 			e.printStackTrace();
 			return null;
 		}
-		Version templateVersion = as.getVersion();
+		Version unknown = AvailsSheet.Version.valueOf("UNK");
+		if (targetVersion == null) {
+			targetVersion = unknown;
+		}
+		// does 'targetVersion' match the inferred version?
+		Version inferredVer = as.getVersion();
+		if (!inferredVer.equals(unknown)) {
+			if (targetVersion.equals(unknown)) {
+				// use inferred
+				targetVersion = inferredVer;
+			} else if (!targetVersion.equals(inferredVer)) {
+				// ERROR
+				String msg = "XLSX was identified as using " + targetVersion.name() + " but appears to be "
+						+ inferredVer.name();
+				logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, xslxFile, logMsgSrcId);
+				return null;
+			}
+		}
+		// if still UNKNOWN we can't proceed
+		if (targetVersion.equals(unknown)) { 
+			String msg = "Avails schema version MUST be provided for this file";
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, xslxFile, logMsgSrcId);
+			return null;
+		}
+
 		FILE_FMT srcMddfFmt = null;
-		XmlBuilder xBuilder = new XmlBuilder(logMgr, templateVersion);
-		switch (templateVersion) {
+		FILE_FMT targetMddfFmt = null;
+		XmlBuilder xBuilder = new XmlBuilder(logMgr, targetVersion);
+		switch (targetVersion) {
 		case V1_7_3:
 			srcMddfFmt = FILE_FMT.AVAILS_1_7_3;
+			targetMddfFmt = FILE_FMT.AVAILS_2_3;
 			xBuilder.setVersion("2.3");
 			break;
 		case V1_7_2:
 			srcMddfFmt = FILE_FMT.AVAILS_1_7_2;
+			targetMddfFmt = FILE_FMT.AVAILS_2_2_2;
 			xBuilder.setVersion("2.2.2");
 			break;
 		case V1_7:
 			srcMddfFmt = FILE_FMT.AVAILS_1_7;
+			targetMddfFmt = FILE_FMT.AVAILS_2_2;
 			xBuilder.setVersion("2.2");
 			break;
 		case V1_6:
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
-					"Version " + templateVersion + " has been deprecated and is no longer supported", xslxFile,
+					"Version " + targetVersion + " has been deprecated and is no longer supported", xslxFile,
 					logMsgSrcId);
 			return null;
 		case UNK:
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", xslxFile, logMsgSrcId);
 			break;
 		default:
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported template version " + templateVersion,
-					xslxFile, logMsgSrcId);
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported template version " + targetVersion, xslxFile,
+					logMsgSrcId);
 			return null;
 		}
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + templateVersion + " format", xslxFile,
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + targetVersion + " format", xslxFile,
 				logMsgSrcId);
 		String inFileName = xslxFile.getName();
 		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
@@ -158,6 +187,7 @@ public class AvailsWrkBook {
 				// Ingest failed
 				return null;
 			}
+			Translator.addXlateHistory(xmlJDomDoc, srcMddfFmt, targetMddfFmt);
 			Map<Object, Pedigree> pedigreeMap = xBuilder.getPedigreeMap();
 			Map<String, Object> results = new HashMap<String, Object>();
 			results.put("xlsx", xslxFile);
@@ -174,9 +204,9 @@ public class AvailsWrkBook {
 	}
 
 	/**
-	 * Compress an Avails XLSX file by hiding empty columns, then save the
-	 * resulting file in the designated location. Compression mechanism does not
-	 * require the file to be validated first.
+	 * Compress an Avails XLSX file by hiding empty columns, then save the resulting
+	 * file in the designated location. Compression mechanism does not require the
+	 * file to be validated first.
 	 * <p>
 	 * <b>NOTE:</b> This method is only usable when the Avails file is readable
 	 * from, and writable to, the local file system.
@@ -210,8 +240,8 @@ public class AvailsWrkBook {
 	}
 
 	/**
-	 * Read an XLSX file from the designated input stream, then return a
-	 * compressed version hiding empty columns.
+	 * Read an XLSX file from the designated input stream, then return a compressed
+	 * version hiding empty columns.
 	 * <p>
 	 * <b>NOTE:</b> This method is intended for use with an MDDF Avails file and
 	 * therefore assumes the workbook contains only a single sheet.
@@ -230,19 +260,15 @@ public class AvailsWrkBook {
 	}
 
 	/**
-	 * Create a Spreadsheet object from an <tt>InputStream</tt>. The
-	 * <tt>File</tt> parameter is used strictly for logging (i.e., as a source
-	 * of identifying metadata).
+	 * Create a Spreadsheet object from an <tt>InputStream</tt>. The <tt>File</tt>
+	 * parameter is used strictly for logging (i.e., as a source of identifying
+	 * metadata).
 	 * 
 	 * @param inStream
-	 * @param file
-	 *            name of the Excel Spreadsheet file
-	 * @param logger
-	 *            a log4j logger object
-	 * @param exitOnError
-	 *            true if validation errors should cause immediate failure
-	 * @param cleanupData
-	 *            true if minor validation errors should be auto-corrected
+	 * @param file        name of the Excel Spreadsheet file
+	 * @param logger      a log4j logger object
+	 * @param exitOnError true if validation errors should cause immediate failure
+	 * @param cleanupData true if minor validation errors should be auto-corrected
 	 * @throws IOException
 	 */
 	public AvailsWrkBook(InputStream inStream, File file, LogMgmt logger, boolean exitOnError, boolean cleanupData)
@@ -256,17 +282,12 @@ public class AvailsWrkBook {
 	}
 
 	/**
-	 * Create a Spreadsheet object from a File accessible via the local file
-	 * system.
+	 * Create a Spreadsheet object from a File accessible via the local file system.
 	 * 
-	 * @param file
-	 *            name of the Excel Spreadsheet file
-	 * @param logger
-	 *            a log4j logger object
-	 * @param exitOnError
-	 *            true if validation errors should cause immediate failure
-	 * @param cleanupData
-	 *            true if minor validation errors should be auto-corrected
+	 * @param file        name of the Excel Spreadsheet file
+	 * @param logger      a log4j logger object
+	 * @param exitOnError true if validation errors should cause immediate failure
+	 * @param cleanupData true if minor validation errors should be auto-corrected
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 * @throws InvalidFormatException
@@ -289,16 +310,15 @@ public class AvailsWrkBook {
 
 	/**
 	 * Ingest a sheet from the Excel spreadsheet. The ingest process will
-	 * <i>wrap</i> the Excel sheet in an instance of the <tt>AvailsSheet</tt>
-	 * class and include it in the scope of the AvailsWrkBook object.
+	 * <i>wrap</i> the Excel sheet in an instance of the <tt>AvailsSheet</tt> class
+	 * and include it in the scope of the AvailsWrkBook object.
 	 * 
-	 * @param sheetNumber
-	 *            zero-based index of sheet to add
+	 * @param sheetNumber zero-based index of sheet to add
 	 * @return created AvailsSheet object
-	 * @throws IllegalArgumentException
-	 *             if the sheet does not exist in the Excel spreadsheet
-	 * @throws Exception
-	 *             other error conditions may also throw exceptions
+	 * @throws IllegalArgumentException if the sheet does not exist in the Excel
+	 *                                  spreadsheet
+	 * @throws Exception                other error conditions may also throw
+	 *                                  exceptions
 	 */
 	public AvailsSheet ingestSheet(int sheetNumber) throws Exception {
 		Sheet excelSheet;
@@ -350,11 +370,9 @@ public class AvailsWrkBook {
 	/**
 	 * Dump raw contents of specified sheet
 	 * 
-	 * @param sheetName
-	 *            name of the sheet to dump
-	 * @throws Exception
-	 *             if any error is encountered (e.g. non-existant or corrupt
-	 *             file)
+	 * @param sheetName name of the sheet to dump
+	 * @throws Exception if any error is encountered (e.g. non-existant or corrupt
+	 *                   file)
 	 */
 	public void dumpSheet(String sheetName) throws Exception {
 		boolean foundSheet = false;
@@ -372,11 +390,9 @@ public class AvailsWrkBook {
 	/**
 	 * Dump the contents (sheet-by-sheet) of an Excel spreadsheet
 	 * 
-	 * @param file
-	 *            name of the Excel .xlsx spreadsheet
-	 * @throws Exception
-	 *             if any error is encountered (e.g. non-existant or corrupt
-	 *             file)
+	 * @param file name of the Excel .xlsx spreadsheet
+	 * @throws Exception if any error is encountered (e.g. non-existant or corrupt
+	 *                   file)
 	 */
 	public static void dumpFile(String file) throws Exception {
 		Workbook wb = new XSSFWorkbook(new FileInputStream(file));

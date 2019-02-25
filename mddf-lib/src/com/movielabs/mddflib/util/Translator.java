@@ -31,14 +31,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.jdom2.Attribute;
+import org.jdom2.Comment;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.located.LocatedComment;
 import org.jdom2.located.LocatedJDOMFactory;
 import org.jdom2.output.XMLOutputter;
 import org.jdom2.xpath.XPathExpression;
@@ -72,8 +75,8 @@ public class Translator {
 		/* identify what a given format may be translated to */
 		List<FILE_FMT> for_AVAILS_2_1 = new ArrayList<FILE_FMT>();
 		/*
-		 * Obsolete and deprecated version. Translation of this format to
-		 * another is NOT supported.
+		 * Obsolete and deprecated version. Translation of this format to another is NOT
+		 * supported.
 		 */
 		supported.put(FILE_FMT.AVAILS_2_1, for_AVAILS_2_1);
 
@@ -144,7 +147,7 @@ public class Translator {
 	/**
 	 * Convert an Avails file to other formats and save the translations to the
 	 * local file system.
-	 *  
+	 * 
 	 * @param input
 	 * @param xportFmts
 	 * @param exportDir
@@ -237,7 +240,7 @@ public class Translator {
 
 	/**
 	 * Convert an Avails file to other formats
-	 *  
+	 * 
 	 * @param input
 	 * @param selections
 	 * @param logMgr
@@ -287,8 +290,8 @@ public class Translator {
 		Document inputDoc = input.getXmlDoc();
 		Document outputDoc = null;
 		/*
-		 * what's the schema used for the existing XML representation? It may
-		 * already be a match for the desired format.
+		 * what's the schema used for the existing XML representation? It may already be
+		 * a match for the desired format.
 		 */
 		String curVersion = XmlIngester.identifyXsdVersion(inputDoc.getRootElement());
 		FILE_FMT curFmt = MddfContext.identifyMddfFormat("avails", curVersion);
@@ -307,15 +310,15 @@ public class Translator {
 				switch (curVersion) {
 				case "2.1":
 					outputDoc = avail2_1_to_2_2(inputDoc, logMgr);
-					return outputDoc;
+					break;
 				case "2.2.1":
 					outputDoc = avail2_2_1_to_2_2(inputDoc, logMgr);
-					return outputDoc;
+					break;
 				case "2.3":
 					outputDoc = avail2_3_to_2_2_2(inputDoc, logMgr);
 					outputDoc = avail2_2_2_to_2_2_1(outputDoc, logMgr);
 					outputDoc = avail2_2_1_to_2_2(inputDoc, logMgr);
-					return outputDoc;
+					break;
 				case "2.2.2":
 				default:
 					// Unsupported request
@@ -346,13 +349,13 @@ public class Translator {
 				case "2.1":
 					outputDoc = avail2_1_to_2_2(inputDoc, logMgr);
 					outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
-					return outputDoc;
+					break;
 				case "2.2":
 					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
-					return outputDoc;
+					break;
 				case "2.3":
 					outputDoc = avail2_3_to_2_2_2(inputDoc, logMgr);
-					return outputDoc;
+					break;
 				default:
 					// Unsupported request
 					break;
@@ -362,21 +365,66 @@ public class Translator {
 				case "2.1":
 					outputDoc = avail2_1_to_2_2(inputDoc, logMgr);
 					outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
-					return outputDoc;
+					break;
 				case "2.2":
 					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
-					return outputDoc;
+					break;
 				case "2.2.2":
 					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
-					return outputDoc;
+					break;
 				default:
 					// Unsupported request
 					break;
 				}
 			}
+			if (outputDoc != null) {
+				addXlateHistory(outputDoc, curFmt, targetFmt);
+				return outputDoc;
+			}
 		}
 		throw new UnsupportedOperationException("Conversion to Avails " + targetFmt.getEncoding() + " "
 				+ targetFmt.name() + " from v" + curVersion + " not supported");
+	}
+
+	/**
+	 * Add audit trail of translation stages. A <tt>&lt;Comment&gt; is added that
+	 * indicates the
+	 * <ol>
+	 * <li>encoding of the source file (e.g., 'Avails v1.7.3')</li>
+	 * <li>encoding of the translated file (e.g., 'Avails v2.3')</li>
+	 * <li>version of mddf-lib that was used</li>
+	 * <li></li>
+	 * </ol>
+	 * Note that each time a file is translated a new history Comment is added
+	 * recording the translation event but any previous records will still remain.
+	 * For example, the following indicates that a v1.7.3 Avails was first converted
+	 * to v2.3 and then the v2.3 was converted to v2.2.2:
+	 * 
+	 * <pre>
+	 *   &lt;!-- ===== Translation History::
+	       from Avails v2.3 (xml) to Avails v2.2.2 (xml)
+	       mddf-lib version=1.5.1.rc5-SNAPSHOT[4]
+	--&gt;
+	&lt;!-- ===== Translation History::
+	       from Avails v1.7.3 (xlsx) to Avails v2.3 (xml)
+	       mddf-lib version=1.5.1.rc5-SNAPSHOT[4]
+	--&gt;
+	 * </pre>
+	 * 
+	 * @param xmlDoc
+	 * @param srcFmt
+	 * @param targetFmt
+	 */
+	public static void addXlateHistory(Document xmlDoc, FILE_FMT srcFmt, FILE_FMT targetFmt) {
+		Properties mddfLibProps = MddfContext.getProperties();
+		String libVersion = mddfLibProps.getProperty("mddf.lib.version");
+		String libBuild = mddfLibProps.getProperty("mddf.lib.build");
+		String text = " ===== Translation History::\n";
+		text = text + "           from " + srcFmt.toString() + " to " + targetFmt.toString() + "\n";
+		text = text + "           mddf-lib version=" + libVersion + "[" + libBuild + "]\n";
+		Comment pedigree = new LocatedComment(text);
+		xmlDoc.getRootElement().addContent(0, pedigree);
+
 	}
 
 	/**
@@ -399,8 +447,8 @@ public class Translator {
 		FILE_FMT curFmt = MddfContext.identifyMddfFormat("avails", curVersion);
 		Version excelVer = null;
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
-				"Translating to Excel v" + targetXlsxFormat.getVersion() + " from XML v" + curVersion, input.getSrcFile(),
-				moduleId);
+				"Translating to Excel v" + targetXlsxFormat.getVersion() + " from XML v" + curVersion,
+				input.getSrcFile(), moduleId);
 		FILE_FMT targetXmlFmt = null;
 		switch (targetXlsxFormat) {
 		case AVAILS_1_6:
@@ -446,7 +494,7 @@ public class Translator {
 			/*
 			 * A v1.7.3 spreadsheet should be generated from v2.3 XML.
 			 */
-			targetXmlFmt =  FILE_FMT.AVAILS_2_3;
+			targetXmlFmt = FILE_FMT.AVAILS_2_3;
 			switch (curVersion) {
 			case "2.1":
 				xmlDoc = avail2_1_to_2_2(xmlSrcDoc, logMgr);
@@ -474,8 +522,8 @@ public class Translator {
 			break;
 		}
 		if (xmlDoc == null) {
-			throw new UnsupportedOperationException(
-					"Conversion to Avails xlsx " + targetXlsxFormat.name() + " from XML v" + curVersion + " not supported");
+			throw new UnsupportedOperationException("Conversion to Avails xlsx " + targetXlsxFormat.name()
+					+ " from XML v" + curVersion + " not supported");
 		}
 		XlsxBuilder converter = new XlsxBuilder(xmlDoc.getRootElement(), excelVer, logMgr);
 		TemplateWorkBook wrkBook = converter.getWorkbook();
@@ -490,9 +538,8 @@ public class Translator {
 	 */
 	private static Document avail2_1_to_2_2(Document xmlDocIn, LogMgmt logMgr) {
 		/*
-		 * STAGE ONE: some changes are easiest to do by converting the Doc to a
-		 * string and then doing string replacements prior to converting back to
-		 * Doc form.
+		 * STAGE ONE: some changes are easiest to do by converting the Doc to a string
+		 * and then doing string replacements prior to converting back to Doc form.
 		 */
 		XMLOutputter outputter = new XMLOutputter();
 		String inDoc = outputter.outputString(xmlDocIn);
@@ -504,20 +551,19 @@ public class Translator {
 		builder.setJDOMFactory(new LocatedJDOMFactory());
 		Document xmlDocOut = regenXml(outDoc);
 		/*
-		 * Stage TWO is to do anything that is easier to handle via manipulation
-		 * of the XML.
+		 * Stage TWO is to do anything that is easier to handle via manipulation of the
+		 * XML.
 		 */
 		// ...........
 		XPathFactory xpfac = XPathFactory.instance();
 		Namespace availsNSpace = Namespace.getNamespace("avails",
 				MddfContext.NSPACE_AVAILS_PREFIX + "2.2" + MddfContext.NSPACE_AVAILS_SUFFIX);
 		/*
-		 * Find all Transaction/Term[[@termName='HoldbackExclusionLanguage'].
-		 * These need to be removed from the XML and then replaced with a
+		 * Find all Transaction/Term[[@termName='HoldbackExclusionLanguage']. These need
+		 * to be removed from the XML and then replaced with a
 		 * Transaction/AllowedLanguage element. Luckily, the location of the new
-		 * AllowedLanguage element is easy to pinpoint.... it follows
-		 * immediately after a REQUIRED element (i.e., either an <End> or
-		 * <EndCondition>).
+		 * AllowedLanguage element is easy to pinpoint.... it follows immediately after
+		 * a REQUIRED element (i.e., either an <End> or <EndCondition>).
 		 */
 		String helTermPath = "//avails:Transaction/avails:Term[./@termName='HoldbackExclusionLanguage']";
 		XPathExpression<Element> helTermPathExp = xpfac.compile(helTermPath, Filters.element(), null, availsNSpace);
@@ -548,9 +594,8 @@ public class Translator {
 	 */
 	private static Document avail2_2_1_to_2_2(Document xmlDocIn, LogMgmt logMgr) {
 		/*
-		 * STAGE ONE: some changes are easiest to do by converting the Doc to a
-		 * string and then doing string replacements prior to converting back to
-		 * Doc form.
+		 * STAGE ONE: some changes are easiest to do by converting the Doc to a string
+		 * and then doing string replacements prior to converting back to Doc form.
 		 */
 		XMLOutputter outputter = new XMLOutputter();
 		String inDoc = outputter.outputString(xmlDocIn);
@@ -584,8 +629,8 @@ public class Translator {
 		// Change Namespace declaration
 		String t1 = inDoc.replaceFirst("/avails/v2.2.2/avails", "/avails/v2.2.1/avails");
 		/*
-		 * v2.2.2 adds several elements and attributes missing in v2.2.1. These
-		 * need to be removed
+		 * v2.2.2 adds several elements and attributes missing in v2.2.1. These need to
+		 * be removed
 		 */
 		Document xmlDocOut = regenXml(t1);
 		Element rootEl = xmlDocOut.getRootElement();
@@ -641,11 +686,11 @@ public class Translator {
 		targetPath = "/avails:AvailList/avails:Avail/avails:Transaction/avails:AssetLanguage[@metadataProvided]";
 		removeAttribute(targetPath, "metadataProvided", rootEl, logMgr, "AssetLanguage");
 		/*
-		 * v2.2.2 allows multiple instances of TitleInternalAlias for different
-		 * regions as well as multiple instances of TitleDisplayUnlimited for
-		 * different languages (also for Season and Series). If multiple
-		 * instances are present, all but 1st is removed and a WARNING is
-		 * issued. This is also true for Season and Series metadata
+		 * v2.2.2 allows multiple instances of TitleInternalAlias for different regions
+		 * as well as multiple instances of TitleDisplayUnlimited for different
+		 * languages (also for Season and Series). If multiple instances are present,
+		 * all but 1st is removed and a WARNING is issued. This is also true for Season
+		 * and Series metadata
 		 */
 		scrubTitles(rootEl, "", logMgr);
 		scrubTitles(rootEl, "Season", logMgr);
@@ -656,11 +701,11 @@ public class Translator {
 
 	private static void scrubTitles(Element rootEl, String prefix, LogMgmt logMgr) {
 		/*
-		 * v2.2.2 allows multiple instances of TitleInternalAlias for different
-		 * regions as well as multiple instances of TitleDisplayUnlimited for
-		 * different languages (also for Season and Series). If multiple
-		 * instances are present, all but 1st is removed and a WARNING is
-		 * issued. This is also true for Season and Series metadata
+		 * v2.2.2 allows multiple instances of TitleInternalAlias for different regions
+		 * as well as multiple instances of TitleDisplayUnlimited for different
+		 * languages (also for Season and Series). If multiple instances are present,
+		 * all but 1st is removed and a WARNING is issued. This is also true for Season
+		 * and Series metadata
 		 */
 		Namespace availsNSpace = rootEl.getNamespace("avails");
 		XPathFactory xpfac = XPathFactory.instance();
@@ -737,8 +782,8 @@ public class Translator {
 		}
 
 		/*
-		 * 'Transaction/WindowDuration'in v2.3 is same as 'Transaction/Duration'
-		 * in v2.2.2
+		 * 'Transaction/WindowDuration'in v2.3 is same as 'Transaction/Duration' in
+		 * v2.2.2
 		 * 
 		 */
 		targetPath = "//avails:Transaction/avails:WindowDuration";
@@ -763,8 +808,8 @@ public class Translator {
 	}
 
 	/**
-	 * Handle conversion of XML document that only requires changes to the <tt>Namespace</tt>
-	 * versions.
+	 * Handle conversion of XML document that only requires changes to the
+	 * <tt>Namespace</tt> versions.
 	 * 
 	 * @param xmlDocIn
 	 * @param srcFmt
@@ -795,15 +840,14 @@ public class Translator {
 
 	/**
 	 * Identify all elements matching the specified xpath and then detach the
-	 * identified attribute if it exists. If <tt>attName == '*'</tt> all
-	 * attributes are removed.
+	 * identified attribute if it exists. If <tt>attName == '*'</tt> all attributes
+	 * are removed.
 	 * 
 	 * @param targetPath
 	 * @param attName
 	 * @param rootEl
-	 * @param targetDesc
-	 *            used to describe targeted elements when constructing log
-	 *            message
+	 * @param targetDesc used to describe targeted elements when constructing log
+	 *                   message
 	 */
 	private static int removeAttribute(String targetPath, String attName, Element rootEl, LogMgmt logMgr,
 			String targetDesc) {
@@ -869,9 +913,8 @@ public class Translator {
 	}
 
 	/**
-	 * Returns text suitable for describing capabilities and usage of
-	 * translation functions. Text is formated for incorporation in <tt>man</tt>
-	 * and Help pages.
+	 * Returns text suitable for describing capabilities and usage of translation
+	 * functions. Text is formated for incorporation in <tt>man</tt> and Help pages.
 	 * 
 	 * @return
 	 */
