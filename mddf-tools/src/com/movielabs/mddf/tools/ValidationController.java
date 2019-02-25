@@ -37,11 +37,13 @@ import org.xml.sax.SAXParseException;
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddf.MddfContext.MDDF_TYPE;
+import com.movielabs.mddf.tools.util.VersionChooserDialog;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
 import com.movielabs.mddf.tools.util.logging.LogNavPanel;
 import com.movielabs.mddflib.Obfuscator;
 import com.movielabs.mddflib.Obfuscator.Target;
 import com.movielabs.mddflib.avails.validation.AvailValidator;
+import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -311,7 +313,7 @@ public class ValidationController {
 			try {
 				validateFile(srcFile, uxProfile, useCases);
 			} catch (Exception e) {
-				e.printStackTrace();				
+				e.printStackTrace();
 				String msg = e.getLocalizedMessage();
 				if (msg == null) {
 					msg = "Unspecified Exception while validating";
@@ -458,8 +460,11 @@ public class ValidationController {
 	 * @param xslxFile
 	 * @return
 	 */
-	private Map<String, Object> convertSpreadsheet(File xslxFile) {
-		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(xslxFile, null, logMgr);
+	private Map<String, Object> convertSpreadsheet(File xslxFile) { 
+		VersionChooserDialog vcd = new VersionChooserDialog();
+		vcd.setVisible(true);
+		Version version = vcd.getSelected(); 
+		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(xslxFile, version, null, logMgr);
 		if (results != null) {
 			FILE_FMT srcMddfFmt = (FILE_FMT) results.get("srcFmt");
 			if (logNav != null) {
@@ -656,7 +661,7 @@ public class ValidationController {
 		MDDF_TYPE type = target.getMddfType();
 		switch (type) {
 		case MANIFEST:
-			String errMsg = "Skipping validation of ExternalManifest (not yet supported)"; 
+			String errMsg = "Skipping validation of ExternalManifest (not yet supported)";
 			for (Element clocEl : list) {
 				logMgr.logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, clocEl, errMsg, null, null, MODULE_ID);
 			}
@@ -670,8 +675,8 @@ public class ValidationController {
 			validateMEC(target);
 			break;
 		default:
-			logMgr.log(LogMgmt.LEV_ERR, target.getLogTag(), "Referenced file has unrecognized MDDF type " + type.toString(), mddfFile,
-					MODULE_ID);
+			logMgr.log(LogMgmt.LEV_ERR, target.getLogTag(),
+					"Referenced file has unrecognized MDDF type " + type.toString(), mddfFile, MODULE_ID);
 
 		}
 
