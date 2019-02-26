@@ -41,7 +41,18 @@ public class AvailsSheet {
 	protected static String logMsgSrcId = "AvailsSheet";
 
 	public static enum Version {
-		V1_7_3, V1_7_2, V1_7, V1_6, UNK
+		V1_8("Version 1.8"), V1_7_3("Version 1.7.3"), V1_7_2("Version 1.7.2"), V1_7("Version 1.7"), V1_6("Version 1.6"),
+		UNK("Unkown");
+
+		private Version(String label) {
+			this.label = label;
+		}
+
+		public final String toString() {
+			return label;
+		}
+
+		private final String label;
 	};
 
 	private ArrayList<Row> rows;
@@ -53,7 +64,6 @@ public class AvailsSheet {
 	private Sheet excelSheet;
 	private Version version = Version.UNK;
 	private boolean noPrefix = true;
-	private boolean isForTV;
 
 	/**
 	 * Create an object representing a single sheet of an Avails spreadsheet. The
@@ -64,8 +74,8 @@ public class AvailsSheet {
 	 * <li>MUST be named either 'TV' or 'Movies'.</li>
 	 * </ul>
 	 * 
-	 * @param parent the parent Spreadsheet object
-	 * @param excelSheet   the name of the spreadsheet
+	 * @param parent     the parent Spreadsheet object
+	 * @param excelSheet the name of the spreadsheet
 	 */
 	public AvailsSheet(AvailsWrkBook parent, Sheet excelSheet) {
 		this.parent = parent;
@@ -119,18 +129,18 @@ public class AvailsSheet {
 		 * TYPE Check: Is this for movies or TV? The current rule is that this is
 		 * defined by the name of the worksheet.
 		 */
-		switch (name) {
-		case "TV":
-			isForTV = true;
-			break;
-		case "Movies":
-			isForTV = false;
-			break;
-		default:
-			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLSX, "Unrecognized sheet name: Must be 'TV' or 'Movies'",
-					parent.getFile(), logMsgSrcId);
-			return;
-		}
+//		switch (name) {
+//		case "TV":
+//			isForTV = true;
+//			break;
+//		case "Movies":
+//			isForTV = false;
+//			break;
+//		default:
+//			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLSX, "Unrecognized sheet name: Must be 'TV' or 'Movies'",
+//					parent.getFile(), logMsgSrcId);
+//			return;
+//		}
 
 		// VERSION check and support..
 		identifyVersion();
@@ -154,27 +164,31 @@ public class AvailsSheet {
 		}
 	}
 
-	private void identifyVersion() {
-		/*
-		 * There is no explicit identification in a spreadsheet of the template version
-		 * being used. Instead we need to infer based on what the column headers are.
-		 * 
-		 */
+	/**
+	 * Attempt to identify template version. There is no explicit identification in
+	 * a spreadsheet of the template version being used. Instead we need to infer
+	 * based on what the column headers are. This can only be done reliably <b>prior
+	 * to v1.7.3</b>. As a result, the <i>inferred</i> version for any worksheet
+	 * that can not be identified as v1.7.2 or earlier will be set to
+	 * <tt>Version.UNK</tt>
+	 * 
+	 */
+	private Version identifyVersion() {
 		boolean hasDirector = (this.getColumnIdx("AvailMetadata/Director") >= 0);
 		if (hasDirector) {
-			version = Version.V1_7_3;
-			return;
+			return Version.UNK;
 		}
 		boolean hasAltID = (this.getColumnIdx("AvailAsset/AltID") >= 0)
 				|| (this.getColumnIdx("AvailMetadata/EpisodeAltID") >= 0);
 		boolean hasALID = (this.getColumnIdx("Avail/ALID") >= 0);
 		if (hasALID && hasAltID) {
-			version = Version.V1_7_2;
+			return Version.V1_7_2;
 		} else if (hasALID && !hasAltID) {
-			version = Version.V1_7;
+			return Version.V1_7;
 		} else if (!hasALID && hasAltID) {
-			version = Version.V1_6;
+			return Version.V1_6;
 		}
+		return Version.UNK;
 	}
 
 	/**
@@ -185,25 +199,40 @@ public class AvailsSheet {
 	}
 
 	/**
-	 * @return the isForTV
+	 * Explicitly set the version.
+	 * 
+	 * @param version the version to set
 	 */
-	public boolean isForTV() {
-		return isForTV;
+	public void setVersion(Version version) {
+		this.version = version;
 	}
 
 	/**
-	 * Determine if a spreadsheet row contains an avail
+	 * Not supported from v1.7 on.
+	 * 
+	 * @return the isForTV
+	 * 
+	 * @deprecated
+	 */
+	public boolean isForTV() {
+//		return isForTV;
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Determine if a spreadsheet row contains an Avail. Determination is based on
+	 * the contents of the Disposition/EntryType column.
 	 * 
 	 * @param nextRow
-	 * @return true iff the row is an avail based on the contents of the Territory
-	 *         column
+	 * @return true iff the row is an avail
 	 */
 	private boolean isAvail(Row nextRow) {
+		int eTypeCol = getColumnIdx("Disposition/EntryType");
 		/*
 		 * Use 1st cell to determine if this is an Avails row. Other possibilities are
 		 * and empty row or a comment row, both of which should be skipped.
 		 */
-		Cell firstCell = nextRow.getCell(0);
+		Cell firstCell = nextRow.getCell(eTypeCol);
 		DataFormatter dataF = new DataFormatter();
 		String firstText = dataF.formatCellValue(firstCell);
 		if (firstText == null || (firstText.isEmpty()) || (firstText.startsWith("//"))) {

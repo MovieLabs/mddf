@@ -143,11 +143,17 @@ public class AvailsWrkBook {
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, xslxFile, logMsgSrcId);
 			return null;
 		}
+		as.setVersion(targetVersion);
 
 		FILE_FMT srcMddfFmt = null;
 		FILE_FMT targetMddfFmt = null;
 		XmlBuilder xBuilder = new XmlBuilder(logMgr, targetVersion);
 		switch (targetVersion) {
+		case V1_8:
+			srcMddfFmt = FILE_FMT.AVAILS_1_8;
+			targetMddfFmt = FILE_FMT.AVAILS_2_3;
+			xBuilder.setVersion("2.3");
+			break;
 		case V1_7_3:
 			srcMddfFmt = FILE_FMT.AVAILS_1_7_3;
 			targetMddfFmt = FILE_FMT.AVAILS_2_3;

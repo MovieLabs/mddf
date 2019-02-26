@@ -53,6 +53,8 @@ public abstract class AbstractRowHelper {
 	public static AbstractRowHelper createHelper(AvailsSheet aSheet, Row row, LogMgmt logger) {
 		Version ver = aSheet.getVersion();
 		switch (ver) {
+		case V1_8:
+			return new RowToXmlHelperV1_8(aSheet, row, logger);
 		case V1_7_3:
 			return new RowToXmlHelperV1_7_3(aSheet, row, logger);
 		case V1_7_2:
@@ -214,7 +216,8 @@ public abstract class AbstractRowHelper {
 	 */
 	protected boolean usesFormula(Cell sourceCell) {
 		if (sourceCell != null && (sourceCell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
-			String errMsg = "Use of Excel Formulas not supported";
+			String addr= sourceCell.getAddress().formatAsString();
+			String errMsg = "Cell "+addr+"- Excel Formulas not supported"; 
 			String details = "Use of formulas may prevent the use of automated workflows for ingesting and processing the Avails.";
 			logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null, XmlBuilder.moduleId);
 			return true;

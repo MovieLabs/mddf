@@ -22,10 +22,15 @@
  */
 package com.movielabs.mddf;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.jdom2.Element;
+
+import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
  * Defines constants and Enum types used to indicate the context of various MDDF
@@ -60,11 +65,15 @@ public class MddfContext {
 	 */
 	public static final String RSRC_PATH = "/com/movielabs/mddf/resources/";
 
+	public static final String PROP_PATH = "/com/movielabs/mddflib/build.properties";
+
 	public static final String CUR_RATINGS_VER = "v2.3.2";
 
 	private static Map<String, String[]> stdsVersions;
 
 	private static Map<String, FILE_FMT> map2FmtEnums = new HashMap<String, FILE_FMT>();
+
+	private static Properties buildProps;
 
 	static {
 		// --- Supported versions of standards (in order) ---
@@ -72,7 +81,7 @@ public class MddfContext {
 		String[] MANIFEST_VER = { "1.8.1", "1.8", "1.7", "1.6.1", "1.6", "1.5" };
 		String[] MEC_VER = { "2.7.1", "2.7", "2.6", "2.5", "2.4" };
 		String[] AVAILS_X_VER = { "2.3", "2.2.2", "2.2.1", "2.2", "2.1" };
-		String[] AVAILS_E_VER = { "1.7.3", "1.7.2", "1.7", "1.6" };
+		String[] AVAILS_E_VER = { "1.8", "1.7.3", "1.7.2", "1.7", "1.6" };
 		String[] MMM_BP = { "1.0" };
 
 		stdsVersions = new HashMap<String, String[]>();
@@ -95,13 +104,14 @@ public class MddfContext {
 	public enum FILE_FMT {
 		AVAILS_1_6("Avails", "1.6", "xlsx"), AVAILS_1_7("Avails", "1.7", "xlsx"),
 		AVAILS_1_7_3("Avails", "1.7.3", "xlsx"), AVAILS_1_7_2("Avails", "1.7.2", "xlsx"),
-		AVAILS_2_1("Avails", "2.1", "xml"), AVAILS_2_2("Avails", "2.2", "xml"), AVAILS_2_2_1("Avails", "2.2.1", "xml"),
-		AVAILS_2_2_2("Avails", "2.2.2", "xml"), AVAILS_2_3("Avails", "2.3", "xml"),
-		MANIFEST_1_4("Manifest", "1.4", "xml"), MANIFEST_1_5("Manifest", "1.5", "xml"),
-		MANIFEST_1_6("Manifest", "1.6", "xml"), MANIFEST_1_6_1("Manifest", "1.6.1", "xml"),
-		MANIFEST_1_7("Manifest", "1.7", "xml"), MANIFEST_1_8("Manifest", "1.8", "xml"),
-		MANIFEST_1_8_1("Manifest", "1.8.1", "xml"), MDMEC_2_4("MEC", "2.4", "xml"), MDMEC_2_5("MEC", "2.5", "xml"),
-		MDMEC_2_6("MEC", "2.6", "xml"), MDMEC_2_7("MEC", "2.7", "xml"), MDMEC_2_7_1("MEC", "2.7.1", "xml");
+		AVAILS_1_8("Avails", "1.8", "xlsx"), AVAILS_2_1("Avails", "2.1", "xml"), AVAILS_2_2("Avails", "2.2", "xml"),
+		AVAILS_2_2_1("Avails", "2.2.1", "xml"), AVAILS_2_2_2("Avails", "2.2.2", "xml"),
+		AVAILS_2_3("Avails", "2.3", "xml"), MANIFEST_1_4("Manifest", "1.4", "xml"),
+		MANIFEST_1_5("Manifest", "1.5", "xml"), MANIFEST_1_6("Manifest", "1.6", "xml"),
+		MANIFEST_1_6_1("Manifest", "1.6.1", "xml"), MANIFEST_1_7("Manifest", "1.7", "xml"),
+		MANIFEST_1_8("Manifest", "1.8", "xml"), MANIFEST_1_8_1("Manifest", "1.8.1", "xml"),
+		MDMEC_2_4("MEC", "2.4", "xml"), MDMEC_2_5("MEC", "2.5", "xml"), MDMEC_2_6("MEC", "2.6", "xml"),
+		MDMEC_2_7("MEC", "2.7", "xml"), MDMEC_2_7_1("MEC", "2.7.1", "xml");
 
 		private String standard;
 		private String ver;
@@ -199,6 +209,8 @@ public class MddfContext {
 				return FILE_FMT.AVAILS_1_7_2;
 			case "1.7.3":
 				return FILE_FMT.AVAILS_1_7_3;
+			case "1.8":
+				return FILE_FMT.AVAILS_1_8;
 			case "2.3":
 				return FILE_FMT.AVAILS_2_3;
 			case "2.2.2":
@@ -282,6 +294,12 @@ public class MddfContext {
 			uses.put("MD", "2.3");
 			uses.put("MDMEC", "2.3");
 			break;
+		// ===========================
+		case AVAILS_1_8:
+			uses.put("MD", "2.3");
+			uses.put("MDMEC", "2.3");
+			break;
+		// .......................
 		case MANIFEST_1_4:
 			uses.put("MD", "2.3");
 			break;
@@ -323,5 +341,27 @@ public class MddfContext {
 		}
 		uses.put(standard.standard.toUpperCase(), standard.ver);
 		return uses;
+	}
+
+	public static Properties getProperties() {
+		if (buildProps == null) {
+			buildProps = loadProperties();
+		}
+		return buildProps;
+	}
+
+	protected static Properties loadProperties() {
+		Properties props = new Properties();
+		InputStream inStream = XmlIngester.class.getResourceAsStream(PROP_PATH);
+		if (inStream == null) {
+			return null;
+		}
+		try {
+			props.load(inStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return props;
 	}
 }
