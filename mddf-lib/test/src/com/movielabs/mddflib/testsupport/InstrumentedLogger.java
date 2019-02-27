@@ -252,7 +252,7 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	@Override
 	public boolean isInfoIncluded() {
 		// Not used or required for JUnit tests
-		return false;
+		return true;
 	}
 
 }
