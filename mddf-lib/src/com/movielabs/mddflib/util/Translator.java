@@ -151,16 +151,16 @@ public class Translator {
 	 * @param input
 	 * @param xportFmts
 	 * @param exportDir
-	 * @param filePrefix
+	 * @param outFileName
 	 * @param appendVersion
 	 * @param logMgr
 	 * @return
 	 * @throws UnsupportedOperationException
 	 */
-	public static int translateAvails(MddfTarget input, EnumSet<FILE_FMT> xportFmts, File exportDir, String filePrefix,
+	public static int translateAvails(MddfTarget input, EnumSet<FILE_FMT> xportFmts, File exportDir, String outFileName,
 			boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
 		String dirPath = exportDir.getAbsolutePath();
-		return translateAvails(input, xportFmts, dirPath, filePrefix, appendVersion, logMgr);
+		return translateAvails(input, xportFmts, dirPath, outFileName, appendVersion, logMgr);
 	}
 
 	/**
@@ -490,9 +490,9 @@ public class Translator {
 			break;
 
 		case AVAILS_1_7_3:
-			excelVer = Version.V1_7_3;
+		case AVAILS_1_8:
 			/*
-			 * A v1.7.3 spreadsheet should be generated from v2.3 XML.
+			 * Both v1.7.3 and v1.8 spreadsheet should be generated from v2.3 XML.
 			 */
 			targetXmlFmt = FILE_FMT.AVAILS_2_3;
 			switch (curVersion) {
@@ -519,13 +519,24 @@ public class Translator {
 				// Unsupported request
 				break;
 			}
+			if (targetXlsxFormat == FILE_FMT.AVAILS_1_8) {
+				excelVer = Version.V1_8;
+			} else {
+				excelVer = Version.V1_7_3;
+			}
 			break;
 		}
 		if (xmlDoc == null) {
 			throw new UnsupportedOperationException("Conversion to Avails xlsx " + targetXlsxFormat.name()
 					+ " from XML v" + curVersion + " not supported");
 		}
-		XlsxBuilder converter = new XlsxBuilder(xmlDoc.getRootElement(), excelVer, logMgr);
+		XlsxBuilder converter = null;
+		if (excelVer == Version.V1_8) {
+			throw new UnsupportedOperationException("Not yet implemented");
+//			converter = new XlsxBuilderV1_8(xmlDoc.getRootElement(), excelVer, logMgr);
+		} else {
+			converter = new XlsxBuilder(xmlDoc.getRootElement(), excelVer, logMgr);
+		}
 		TemplateWorkBook wrkBook = converter.getWorkbook();
 		return wrkBook;
 	}

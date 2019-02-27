@@ -102,8 +102,8 @@ public class XlsxBuilder {
 	private static String warnMsg1 = "XLSX xfer dropping additional XYZ values";
 	private static String warnDetail1 = "The Excel version of Avails only allows 1 value for this field. Additional XML elements will be ignored";
 	protected XPathFactory xpfac = XPathFactory.instance();
-	private LogMgmt logger;
-	private String rootPrefix = "avails:";
+	protected LogMgmt logger;
+	protected String rootPrefix = "avails:";
 
 	private int logMsgDefaultTag = LogMgmt.TAG_XLATE;
 	protected String logMsgSrcId = "XlsxBuilder";
@@ -112,13 +112,13 @@ public class XlsxBuilder {
 	private Namespace mdNSpace;
 	private SchemaWrapper mdSchema;
 	private String AVAIL_VER;
-	private Namespace availsNSpace;
+	protected Namespace availsNSpace;
 	private SchemaWrapper availsSchema;
-	private Element rootEl;
+	protected Element rootEl;
 	private ArrayList<Element> tvAvailsList;
 	private ArrayList<Element> movieAvailsList;
 	private HashSet<XPathExpression<?>> allowsMultiples = new HashSet<XPathExpression<?>>();
-	private TemplateWorkBook workbook;
+	protected TemplateWorkBook workbook;
 	private JSONObject mappingVersion;
 	private String availPrefix;
 	private String mdPrefix;
@@ -169,6 +169,13 @@ public class XlsxBuilder {
 		setXmlVersion(schemaVer);
 		availPrefix = availsNSpace.getPrefix() + ":";
 		mdPrefix = mdNSpace.getPrefix() + ":";
+		process();
+	}
+
+	/**
+	 * 
+	 */
+	protected void process() {
 		sortAvails();
 		workbook = new TemplateWorkBook(logger);
 		addMovieAvails();
@@ -199,7 +206,7 @@ public class XlsxBuilder {
 		addAvails("TV", tvAvailsList);
 	}
 
-	private void addAvails(String category, List<Element> availList) {
+	protected void addAvails(String category, List<Element> availList) {
 		// get mappings that will be used for this specific sheet..
 		mappingDefs = mappingVersion.getJSONObject(category);
 		ArrayList<String> colIdList = new ArrayList<String>();
