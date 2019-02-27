@@ -247,7 +247,9 @@ public class AvailsSheet {
 	}
 
 	/**
-	 * Get a an array of objects representing each row of this sheet
+	 * Get a an array of objects representing each row of this sheet that contains
+	 * an Avail. This is NOT the same as the number of Excel rows as header rows
+	 * are not included in the row count being returned.
 	 * 
 	 * @return an array containing all the SheetRow objects in this sheet
 	 */
