@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
+import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
@@ -40,6 +41,10 @@ import com.movielabs.mddflib.logging.LogMgmt;
 public class AvailsSheet {
 	protected static String logMsgSrcId = "AvailsSheet";
 
+	/**
+	 * Enum for use in UI displays
+	 *
+	 */
 	public static enum Version {
 		V1_8("Version 1.8"), V1_7_3("Version 1.7.3"), V1_7_2("Version 1.7.2"), V1_7("Version 1.7"), V1_6("Version 1.6"),
 		UNK("Unkown");
@@ -54,6 +59,29 @@ public class AvailsSheet {
 
 		private final String label;
 	};
+
+	/**
+	 * Convenience method to map from a <tt>FILE_FMT</tt> to a template Version
+	 * 
+	 * @param fFmt
+	 * @return
+	 */
+	public static Version map2Version(FILE_FMT fFmt) {
+		switch (fFmt) {
+		case AVAILS_1_8:
+			return Version.V1_8;
+		case AVAILS_1_7_3:
+			return Version.V1_7_3;
+		case AVAILS_1_7_2:
+			return Version.V1_7_2;
+		case AVAILS_1_7:
+			return Version.V1_7;
+		case AVAILS_1_6:
+			return Version.V1_6;
+		default:
+			return Version.UNK;
+		}
+	}
 
 	private ArrayList<Row> rows;
 	private AvailsWrkBook parent;
@@ -248,8 +276,8 @@ public class AvailsSheet {
 
 	/**
 	 * Get a an array of objects representing each row of this sheet that contains
-	 * an Avail. This is NOT the same as the number of Excel rows as header rows
-	 * are not included in the row count being returned.
+	 * an Avail. This is NOT the same as the number of Excel rows as header rows are
+	 * not included in the row count being returned.
 	 * 
 	 * @return an array containing all the SheetRow objects in this sheet
 	 */
