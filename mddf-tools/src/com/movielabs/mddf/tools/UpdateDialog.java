@@ -60,6 +60,9 @@ public class UpdateDialog extends JDialog {
 		}
 	}
 
+	/**
+	 * [for TESTING ONLY]
+	 */
 	public UpdateDialog() {
 		String fakeStatus = "{\"latest\":{\"build.timestamp\":\"2019-Feb-27 19:16:36 UTC\",\"mddf.lib.version\":\"1.5.1.rc5-SNAPSHOT\",\"mddf.tool.build\":\"J\",\"mddf.tool.version\":\"1.5.1.rc4\"},\"jarUrl\":\"https://github.com/MovieLabs/mddf/raw/master/binaries/mddf-tools-1.5.1.rc4.jar\",\"status\":\"UPDATE\"}";
 		JsonSlurper slurper = new JsonSlurper();
