@@ -84,7 +84,7 @@ public class AvailsWrkBook {
 	 * </ul>
 	 * 
 	 * @param xslxFile
-	 * @param targetVersion
+	 * @param targetVersion xlsx template version
 	 * @param inStream
 	 * @param logMgr
 	 * @return a Map&lt;String, Object&gt;
