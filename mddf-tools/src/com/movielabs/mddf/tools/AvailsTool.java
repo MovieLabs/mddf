@@ -35,27 +35,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class AvailsTool extends ValidatorTool {
 
 	private static final String AVAIL_DOC_VER = "v1.4";
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-		} catch (Exception e) {
-			System.out.println("Error setting Java LAF: " + e);
-		}
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					tool = new AvailsTool();
-					tool.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+ 
 
 	/**
 	 * @param context
