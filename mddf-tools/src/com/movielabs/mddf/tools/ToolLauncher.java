@@ -20,6 +20,7 @@
  */
 package com.movielabs.mddf.tools;
 
+import java.awt.Component;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -39,6 +40,8 @@ import org.apache.commons.cli.ParseException;
 
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
+import com.movielabs.mddf.tools.util.FileChooserDialog;
+import com.movielabs.mddf.tools.util.UpdateMgr;
 import com.movielabs.mddflib.logging.DefaultLogging;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.Translator;
@@ -47,6 +50,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,6 +60,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Implements a framework for accessing the various MDDF <i>tools</i>. Depending
@@ -68,10 +74,13 @@ import java.util.Set;
 public class ToolLauncher {
 
 	private JFrame frame;
+	private Properties mddfPreferences;
+	private File mddfPrefFile;
 	private static Options options = null;
 	public static final String TOOL_RSRC_PATH = "/com/movielabs/mddf/tools/resources/";
-
+	private static String prefPath;
 	private static HelpFormatter formatter = new HelpFormatter();
+	private static ToolLauncher singleton;
 
 	/**
 	 * Main entry point for executable jar.
@@ -84,8 +93,8 @@ public class ToolLauncher {
 
 	private static void loadOptions() {
 		/*
-		 * create the Options. Options represents a collection of Option
-		 * instances, which describe the **POSSIBLE** options for a command-line
+		 * create the Options. Options represents a collection of Option instances,
+		 * which describe the **POSSIBLE** options for a command-line
 		 */
 		options = new Options();
 		options.addOption("h", "help", false, "Display this HELP file, then exit");
@@ -93,7 +102,7 @@ public class ToolLauncher {
 				"Launch in interactive mode with full UI. When used, this argument will result in all other arguments being ignored.");
 		options.addOption("f", "file", true, "Process a single MDDF file.");
 		options.addOption("d", "dir", true, "Process all MDDF files in a directory.");
-		 options.addOption("s", "script", true, "Run a script file.");
+		options.addOption("s", "script", true, "Run a script file.");
 		options.addOption("l", "logFile", true, "Output file for logging.");
 		options.addOption("logLevel", true,
 				"Filter for logging; valid values are: " + "\n'verbose'\n 'warn' (DEFAULT)\n 'error'\n 'info'");
@@ -143,6 +152,11 @@ public class ToolLauncher {
 					try {
 						ToolLauncher window = new ToolLauncher();
 						window.frame.setVisible(true);
+						/*
+						 * Immediately after making the Launcher visible, invoke UpdateMgr. If an update
+						 * is available, it will display a pop-up notifying the user.
+						 */
+						UpdateMgr.check(singleton);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -312,11 +326,71 @@ public class ToolLauncher {
 		System.out.println("mddf-lib build date " + buildDate);
 	}
 
+	public static ToolLauncher getSingleton() {
+		return singleton;
+	}
+
 	/**
 	 * Create the application.
 	 */
 	public ToolLauncher() {
+		ToolLauncher.singleton = this;
+		loadPreferences();
 		initialize();
+	}
+
+	/**
+	 * Load user preferences for activities relating to all MDDF activities and
+	 * tools. Additional preferences that are applicable only to a given tool may be
+	 * loaded later by specific tools.
+	 */
+	private void loadPreferences() {
+		String NAME_SETTINGSFILE = ".movielab.mddf.ini";
+		String PATH_USERSETTINGS = null;
+		try {
+			PATH_USERSETTINGS = System.getProperty("user.home") + File.separator + NAME_SETTINGSFILE;
+		} catch (SecurityException e) {
+			// ignore
+		}
+		mddfPreferences = new Properties();
+		mddfPrefFile = new File(PATH_USERSETTINGS);
+		if (mddfPrefFile.canRead()) {
+			try {
+				mddfPreferences.load(new FileReader(mddfPrefFile));
+				FileChooserDialog.setDefaultDirMap(mddfPreferences);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		getUUID();
+	}
+
+	public String getUUID() {
+		String uuidString = mddfPreferences.getProperty("mddf.tool.uuid");
+		if (uuidString == null || uuidString.isEmpty()) {
+			// create a UUID
+			UUID uuid = UUID.randomUUID();
+			uuidString = uuid.toString();
+			mddfPreferences.setProperty("mddf.tool.uuid", uuidString);
+		}
+		return uuidString;
+	}
+
+	public void saveState() {
+		try {
+			mddfPreferences.store(new FileWriter(mddfPrefFile), "MovieLabs MDDF Tool-Kit");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public String getProperty(String key) {
+		return mddfPreferences.getProperty(key);
+	}
+
+	public void setProperty(String key, String value) {
+		mddfPreferences.setProperty(key, value);
 	}
 
 	/**
@@ -404,6 +478,10 @@ public class ToolLauncher {
 		gbc_btnCancel.gridx = 7;
 		gbc_btnCancel.gridy = 3;
 		frame.getContentPane().add(btnCancel, gbc_btnCancel);
+	}
+
+	public Component getFrame() { 
+		return frame;
 	}
 
 }

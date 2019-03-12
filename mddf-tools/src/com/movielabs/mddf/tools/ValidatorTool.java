@@ -101,6 +101,7 @@ import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
 import com.movielabs.mddf.tools.util.HeaderPanel;
+import com.movielabs.mddf.tools.util.UpdateMgr;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -396,8 +397,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-
+		} 
 		initialize();
 	}
 
@@ -747,7 +747,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		}
 	}
 
-	protected static Properties loadProperties(String rsrcPath) {
+	public static Properties loadProperties(String rsrcPath) {
 		Properties props = new Properties();
 		InputStream inStream = XmlIngester.class.getResourceAsStream(rsrcPath);
 		if (inStream == null) {
@@ -1152,6 +1152,14 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		setFileRecentMenuItems(recentFileList);
 	}
 
+	public String getUserProperty(String key) {
+		return userPreferences.getProperty(key);
+	}
+
+	public void setUserProperty(String key, String value) {
+		userPreferences.setProperty(key, value);
+	}
+
 	/**
 	 * @return
 	 */
@@ -1166,6 +1174,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	 * Save properties and open files, then shut down and exit.
 	 */
 	public void shutDown() {
+		ToolLauncher.getSingleton().saveState();
 		// save user preferences
 		String flag = Boolean.toString(consoleLogger.isInfoIncluded());
 		userPreferences.setProperty(PROP_KEY_includeInfo, flag);
