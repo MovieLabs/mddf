@@ -78,6 +78,18 @@
 				<RelURL></RelURL>
 			</Version>
 		</Ref>
+		<Ref id="cm_disp">
+			<Version id="2.7">
+				<Label>Section 3.17</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="cm_gType">
+			<Version id="2.7">
+				<Label>Section 3.12</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
 	</Specification>
 	<Specification id="MMM" label="TR-META-MMM" versions="1.5, 1.6">
 		<!-- Used by ManifestValidator -->
