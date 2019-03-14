@@ -28,8 +28,7 @@
 ---
 ## <a name="h_News">1) What's New</a>
 
-* 2019-Jan-21: v1.5.1 Release Candidates available for evaluation. See ChangeLog for details
-* 2018-Nov-15: mddf-tool v1.5 has been released as both an executable jar and as native executables.
+* 2019-Mar-15: v1.5.1 released
 
 __NOTE:__ Beginning with Release 1.5, pre-built executables for Windows, OS-X, and Linux will no longer
 be supported. The executable Java jar will still be supported. See ["__Installing and Running__"](#h_Install)
@@ -181,6 +180,8 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">7) Release History:</a>
+
+* **2019-Mar-15**: mddf-tool v1.5.1 released.
 
 * **2018-Nov-15**: mddf-tool v1.5 released.
 

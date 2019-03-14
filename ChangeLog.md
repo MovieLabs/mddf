@@ -5,7 +5,22 @@
 
 ## Versioning
 
-Dev version is mddf-lib v1.5.1.
+### mddf-lib v1.5.1.
+
+#### rc6
+
+* Bug Fix: Validation of sequences and indices now allows non-zero values on case-by-case basis
+* Bug Fix: correct relative positioning of top-level UI frames
+* Enhancement: Allow on-demand checking for updates to software
+
+#### rc5
+
+* Change: removed 'main' methods from AvailTool and ManifestTool; Use of ToolLauncher is now required
+* Enhancement: When translating an Avail to XML, insert a comment providing audit trail
+* Enhancement: Prompt user for Avails version when processing XLSX file
+* Enhancement: Automatic checking for updates to software
+* Internal: Added JUnit testing of Avails format conversion
+* Internal: Reorganization of properties into generic and tool-specific sets
 
 #### rc4
 
