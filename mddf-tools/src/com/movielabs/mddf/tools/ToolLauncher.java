@@ -425,6 +425,8 @@ public class ToolLauncher {
 					public void run() {
 						try {
 							ValidatorTool.tool = new AvailsTool();
+							ValidatorTool.tool.frame.pack();
+							ValidatorTool.tool.frame.setLocationRelativeTo(frame);
 							ValidatorTool.tool.frame.setVisible(true);
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -452,6 +454,8 @@ public class ToolLauncher {
 					public void run() {
 						try {
 							ValidatorTool.tool = new ManifestTool();
+							ValidatorTool.tool.frame.pack();
+							ValidatorTool.tool.frame.setLocationRelativeTo(frame);
 							ValidatorTool.tool.frame.setVisible(true);
 						} catch (Exception e) {
 							e.printStackTrace();

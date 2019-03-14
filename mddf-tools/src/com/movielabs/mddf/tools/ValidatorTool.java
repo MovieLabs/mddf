@@ -397,7 +397,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} 
+		}
 		initialize();
 	}
 
@@ -654,6 +654,17 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 				}
 
 			});
+
+			JMenuItem updateMenuItem = new JMenuItem("Check for updates");
+			helpMenu.add(updateMenuItem);
+			updateMenuItem.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					UpdateMgr.check(ToolLauncher.getSingleton(), frame, true);
+				}
+			});
+
 			JMenuItem aboutMenuItem = new JMenuItem("About");
 			helpMenu.add(aboutMenuItem);
 			aboutMenuItem.addActionListener(new ActionListener() {

@@ -75,7 +75,6 @@ public class UpdateDialog extends JDialog {
 	}
 
 	private void initialize(JSONObject statusCheck, String curVersion, Component parent) {
-
 		setBounds(100, 100, 593, 300);
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(UpdateDialog.class.getResource("/com/movielabs/mddf/tools/images/icon_movielabs.jpg")));
@@ -132,6 +131,8 @@ public class UpdateDialog extends JDialog {
 			}
 
 		});
+		pack();
+		setLocationRelativeTo(parent);
 	}
 
 }

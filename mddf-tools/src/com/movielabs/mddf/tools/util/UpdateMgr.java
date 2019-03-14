@@ -22,6 +22,7 @@
  */
 package com.movielabs.mddf.tools.util;
 
+import java.awt.Component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -54,43 +55,48 @@ import net.sf.json.groovy.JsonSlurper;
  *
  */
 public class UpdateMgr {
-
-	private static final String updateUrl = "https://mddf.movielabs.com/updateMgr"; 
+//	private static final String updateUrl = "https://mddf.movielabs.com/updateMgr"; 
 //	private static final String updateUrl = "http://localhost:8080/mddf-svcs/updateMgr";
+	private static final String updateUrl = "http://ec2-34-229-117-160.compute-1.amazonaws.com:8080/mddf-svcs/updateMgr";
 
 	private static final int maxDaysBtwnChecks = 7;
 
 	public static boolean check(ToolLauncher framework) {
+		return check(framework, framework.getFrame(), false);
+	}
+
+	public static boolean check(ToolLauncher framework, Component uiFrame, boolean forced) {
 		Properties mddfToolProps = ValidatorTool.loadProperties("/com/movielabs/mddf/tools/build.properties");
-		// how long since last check??
-		String last = framework.getProperty("updateMgr.lastCheck");
-		if (last == null) {
-			// use the build time instead
-			last = mddfToolProps.getProperty("build.timestamp");
-		}
-		// just need yyyy-MMM-dd and can drop the hh:mm
-		String[] parts = last.split(" ");
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MMM-dd");
-		Date dateLastChecked = null;
-		try {
-			dateLastChecked = df.parse(parts[0]);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return true;
-		}
-		LocalDate then = Instant.ofEpochMilli(dateLastChecked.getTime()).atZone(ZoneId.of("UTC+0")).toLocalDate();
+		if (!forced) {
+			// how long since last check??
+			String last = framework.getProperty("updateMgr.lastCheck");
+			if (last == null) {
+				// use the build time instead
+				last = mddfToolProps.getProperty("build.timestamp");
+			}
+			// just need yyyy-MMM-dd and can drop the hh:mm
+			String[] parts = last.split(" ");
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MMM-dd");
+			Date dateLastChecked = null;
+			try {
+				dateLastChecked = df.parse(parts[0]);
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return true;
+			}
+			LocalDate then = Instant.ofEpochMilli(dateLastChecked.getTime()).atZone(ZoneId.of("UTC+0")).toLocalDate();
 
-		// compare with current date
-		LocalDate now = LocalDate.now();
-		long daysBetween = ChronoUnit.DAYS.between(then, now);
+			// compare with current date
+			LocalDate now = LocalDate.now();
+			long daysBetween = ChronoUnit.DAYS.between(then, now);
 
-		System.out.println("ELAPSED DAYS=" + daysBetween);
-		if (daysBetween <= maxDaysBtwnChecks) {
-			// no need to check 
-			return true;
+			if (daysBetween <= maxDaysBtwnChecks) {
+				// no need to check
+				return true;
+			}
 		}
 		// check with server
-		String curVersion = mddfToolProps.getProperty("mddf.tool.version"); 
+		String curVersion = mddfToolProps.getProperty("mddf.tool.version");
 		JSONObject statusCheck = getStatus(framework, "1.1.0");
 		if (statusCheck == null) {
 			/*
@@ -102,12 +108,12 @@ public class UpdateMgr {
 		String status = statusCheck.optString("status", "UPDATE");
 		if (status.equals("UPDATE")) {
 			// Notify user they need to update
-			UpdateDialog dialog = new UpdateDialog(statusCheck, curVersion, framework.getFrame());
+			UpdateDialog dialog = new UpdateDialog(statusCheck, curVersion, uiFrame);
 			dialog.setVisible(true);
 		}
 		System.out.println(statusCheck.toString(5));
 		return true;
-	} 
+	}
 
 	private static JSONObject getStatus(ToolLauncher framework, String curVersion) {
 		securityKludge();
