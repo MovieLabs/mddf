@@ -475,6 +475,7 @@ public class ToolLauncher {
 		btnCancel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				saveState();
 				System.exit(0);
 			}
 		});

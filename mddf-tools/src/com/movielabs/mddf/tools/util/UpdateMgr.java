@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Properties;
@@ -42,6 +43,8 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.swing.JOptionPane;
+
 import com.movielabs.mddf.tools.ToolLauncher;
 import com.movielabs.mddf.tools.UpdateDialog;
 import com.movielabs.mddf.tools.ValidatorTool;
@@ -98,10 +101,11 @@ public class UpdateMgr {
 		String curVersion = mddfToolProps.getProperty("mddf.tool.version");
 		JSONObject statusCheck = getStatus(framework, curVersion);
 		if (statusCheck == null) {
-			/*
-			 * In the absence of information to the contrary, assume everything is
-			 * up-to-date
-			 */
+			if (forced) {
+				JOptionPane.showMessageDialog(uiFrame,
+						"<html>Unable to connect with Update Server.<br/>Try latter</html>", "Server Unreachable",
+						JOptionPane.WARNING_MESSAGE);
+			} 
 			return true;
 		}
 		String status = statusCheck.optString("status", "UPDATE");
@@ -109,8 +113,15 @@ public class UpdateMgr {
 			// Notify user they need to update
 			UpdateDialog dialog = new UpdateDialog(statusCheck, curVersion, uiFrame);
 			dialog.setVisible(true);
-		}
-		System.out.println(statusCheck.toString(5));
+		} else {
+			if (forced) {
+				JOptionPane.showMessageDialog(uiFrame, "Software is up-to-date.");
+			}
+		} 
+		LocalDate now = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd");
+		framework.setProperty("updateMgr.lastCheck", now.format(formatter));   
+		
 		return true;
 	}
 
