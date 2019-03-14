@@ -55,9 +55,8 @@ import net.sf.json.groovy.JsonSlurper;
  *
  */
 public class UpdateMgr {
-//	private static final String updateUrl = "https://mddf.movielabs.com/updateMgr"; 
-//	private static final String updateUrl = "http://localhost:8080/mddf-svcs/updateMgr";
-	private static final String updateUrl = "http://ec2-34-229-117-160.compute-1.amazonaws.com:8080/mddf-svcs/updateMgr";
+	private static final String updateUrl = "https://mddf.movielabs.com/updateMgr";
+//	private static final String updateUrl = "http://localhost:8080/mddf-svcs/updateMgr"; 
 
 	private static final int maxDaysBtwnChecks = 7;
 
