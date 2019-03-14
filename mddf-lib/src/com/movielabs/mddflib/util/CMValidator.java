@@ -41,6 +41,7 @@ import org.jdom2.xpath.XPathExpression;
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
+import com.movielabs.mddflib.util.CMValidator.SeqEntry;
 import com.movielabs.mddflib.util.xml.RatingSystem;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.StructureValidation;
@@ -59,6 +60,44 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  *
  */
 public class CMValidator extends XmlIngester {
+
+	/**
+	 * @author L. Levin, Critical Architectures LLC
+	 *
+	 */
+	public class SeqEntry implements Comparable {
+
+		private Element seqEl;
+		private int value;
+
+		/**
+		 * @param index
+		 * @param nextChildEl
+		 */
+		public SeqEntry(int value, Element seqEl) {
+			this.value = value;
+			this.seqEl = seqEl;
+		}
+
+		Element getSeqEl() {
+			return seqEl;
+		}
+
+		int getValue() {
+			return value;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
+		@Override
+		public int compareTo(Object other) {
+			int result = this.value - ((SeqEntry) other).getValue();
+			return result;
+		}
+	}
 
 	/**
 	 * Used to facilitate keeping track of cross-references and identifying 'orphan'
@@ -365,9 +404,13 @@ public class CMValidator extends XmlIngester {
 	 * @param idxAttribute
 	 * @param parentEl
 	 * @param parentNSpace
+	 * @param unique       if <tt>true</tt> values must be unique
+	 * @param negOK        if <tt>true</tt> non-negative values are allowed
+	 * @param continuous   if <tt>true</tt> sequence range must be continuous
+	 * @param inclZero     if <tt>true</tt> sequence must include a zero value
 	 */
 	protected void validateIndexing(String targetEl, Namespace targetNSpace, String idxAttribute, String parentEl,
-			Namespace parentNSpace) {
+			Namespace parentNSpace, boolean unique, boolean negOK, boolean continuous, boolean inclZero) {
 		String childPath = targetNSpace.getPrefix() + ":" + targetEl + "[@" + idxAttribute + "]";
 		String xpath = ".//" + parentNSpace.getPrefix() + ":" + parentEl + "[" + childPath + "]";
 		XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, parentNSpace,
@@ -380,42 +423,79 @@ public class CMValidator extends XmlIngester {
 			if (childList.isEmpty()) {
 				continue;
 			}
-			int[] indexValues = new int[childList.size()];
-			Arrays.fill(indexValues, Integer.MAX_VALUE);
+			SeqEntry[] indexValues = new SeqEntry[childList.size()];
+			Arrays.fill(indexValues, null);
 			int ivCnt = 0;
-			Boolean[] validIndex = new Boolean[childList.size()];
-			Arrays.fill(validIndex, Boolean.FALSE);
 			for (int cPtr = 0; cPtr < childList.size(); cPtr++) {
 				Element nextChildEl = childList.get(cPtr);
 				/*
 				 * Each child Element must have @index attribute
 				 */
 				String indexAsString = nextChildEl.getAttributeValue(idxAttribute);
-				if (!isValidIndex(indexAsString)) {
-					String msg = "Invalid value for indexing attribute (non-negative integer required)";
+				if (!isValidIndex(indexAsString, negOK)) {
+					String msg = "Invalid value for indexing attribute";
+					if (!negOK) {
+						msg = msg + " (non-negative integer required)";
+					}
 					logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, nextChildEl, msg, null, null, logMsgSrcId);
 					curFileIsValid = false;
 				} else {
 					int index = Integer.parseInt(indexAsString);
-					indexValues[ivCnt++] = index;
+					SeqEntry next = new SeqEntry(index, nextChildEl);
+					indexValues[ivCnt++] = next;
 				}
 			}
-			// now make sure all values were covered..
+			// now make sure all constraints are met
 			Arrays.sort(indexValues);
-			if (childList.size() == ivCnt) {
-				/* we have correct number of valid index values but are they sequential? */
-				int lastValue = indexValues[0];
-				check: for (int next = 1; next < ivCnt; next++) {
-					if ((lastValue + 1) == indexValues[next]) {
-						lastValue = indexValues[next];
-					} else {
-						String msg = "Invalid indexing of " + targetEl + " sequence: must be continuous";
-						logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, nextParent, msg, null, null, logMsgSrcId);
-						curFileIsValid = false;
-						break;
+			boolean hasZero = false;
+			for (int ptr = 0; ptr < indexValues.length; ptr++) {
+				SeqEntry next = indexValues[ptr];
+				if (next.getValue() == 0) {
+					hasZero = true;
+				}
+				if (ptr > 0) {
+					SeqEntry previous = indexValues[ptr - 1];
+					if (unique) {
+						if (previous.getValue() == next.getValue()) {
+							String msg = "Duplicate value (must be unique within sequence)";
+							logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, next.getSeqEl(), msg, null, null, logMsgSrcId);
+							curFileIsValid = false;
+						}
+					}
+					if (continuous) {
+						if (previous.getValue() != (next.getValue() - 1)) {
+							String msg = "Invalid indexing of " + targetEl + " sequence: must be continuous";
+							logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, next.getSeqEl(), msg, null, null, logMsgSrcId);
+							curFileIsValid = false;
+						}
 					}
 				}
 			}
+			if (inclZero && !hasZero) {
+				String msg = "Invalid indexing of " + targetEl + " sequence: ZERO index value not defined";
+				logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, nextParent, msg, null, null, logMsgSrcId);
+				curFileIsValid = false;
+
+			}
+		}
+	}
+
+	/**
+	 * returns true if string defines a non-negative integer value
+	 * 
+	 * @param indexValue
+	 * @return
+	 */
+	public boolean isValidIndex(String indexValue, boolean negOK) {
+		try {
+			int iv = Integer.parseInt(indexValue);
+			if (negOK) {
+				return true;
+			} else {
+				return (iv >= 0);
+			}
+		} catch (NumberFormatException e) {
+			return false;
 		}
 	}
 
@@ -730,21 +810,6 @@ public class CMValidator extends XmlIngester {
 
 	}
 
-	/**
-	 * returns true if string defines a non-negative integer value
-	 * 
-	 * @param indexValue
-	 * @return
-	 */
-	public boolean isValidIndex(String indexValue) {
-		try {
-			int iv = Integer.parseInt(indexValue);
-			return (iv >= 0);
-		} catch (NumberFormatException e) {
-			return false;
-		}
-	}
-
 	// ########################################################################
 
 	/**
@@ -930,7 +995,7 @@ public class CMValidator extends XmlIngester {
 	 * supported. Use of the <tt>Script</tt> subtag is not supported.
 	 * </p>
 	 * 
-	 *  
+	 * 
 	 */
 
 	protected void validateLanguageCodes() {

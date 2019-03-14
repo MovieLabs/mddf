@@ -169,7 +169,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		switch (availSchemaVer) {
 		case "2.4":
 			/* Validate indexed sequences that must be continuously increasing */
-			validateIndexing("BundledAsset", availsNSpace, "sequence", "Asset", availsNSpace);
+			validateIndexing("BundledAsset", availsNSpace, "sequence", "Asset", availsNSpace, true, true, true, false);
 		case "2.3":
 		case "2.2.2":
 		case "2.2.1":
@@ -302,9 +302,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 	}
 
- 
 	/**
-	 * Checks values specified via enumerations that are not contained in the XSD schemas.
+	 * Checks values specified via enumerations that are not contained in the XSD
+	 * schemas.
 	 */
 	protected void validateCMVocab() {
 		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Validating use of controlled vocabulary...", curFile,

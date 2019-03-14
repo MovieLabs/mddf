@@ -146,14 +146,17 @@ public class ManifestValidator extends CMValidator {
 		validateNotEmpty(targetSchema);
 
 		/* Validate indexed sequences that must be monotonically increasing */
-		validateIndexing("Chapter", manifestNSpace, "index", "Chapters", manifestNSpace);
-		validateIndexing("Clip", manifestNSpace, "sequence", "PlayableSequence", manifestNSpace);
-		validateIndexing("ImageClip", manifestNSpace, "sequence", "PlayableSequence", manifestNSpace);
+		validateIndexing("Chapter", manifestNSpace, "index", "Chapters", manifestNSpace, true, false, true, true);
+		validateIndexing("Clip", manifestNSpace, "sequence", "PlayableSequence", manifestNSpace, false, true, false,
+				true);
+		validateIndexing("ImageClip", manifestNSpace, "sequence", "PlayableSequence", manifestNSpace, false, true,
+				false, true);
 		// ?? PictureGroup/Picture/Sequence
-		validateIndexing("TextString", manifestNSpace, "index", "TextObject", manifestNSpace);
+		validateIndexing("TextString", manifestNSpace, "index", "TextObject", manifestNSpace, false, true, false, false);
 		// ?? ExperienceChild/SequenceInfo/{md}Number ??? Note other 3 domain-specific
 		// numbers
-		validateIndexing("TextGroupID", manifestNSpace, "index", "TimedEvent", manifestNSpace);
+		validateIndexing("TextGroupID", manifestNSpace, "index", "TimedEvent", manifestNSpace, false, true, false,
+				false);
 
 		// -------------------------------------------------------------------------------------
 
@@ -176,7 +179,7 @@ public class ManifestValidator extends CMValidator {
 		validateMetadata();
 
 		validateUsage();
-		
+
 		validateDigitalAssets();
 	}
 
@@ -337,7 +340,6 @@ public class ManifestValidator extends CMValidator {
 
 	}
 
-	 
 	/**
 	 * 
 	 */
@@ -361,9 +363,6 @@ public class ManifestValidator extends CMValidator {
 			break;
 		}
 	}
-	
-	
-
 
 	// ########################################################################
 
@@ -518,40 +517,40 @@ public class ManifestValidator extends CMValidator {
 	protected void validateDigitalAssets() {
 		String structVer = null;
 		switch (CM_VER) {
-		case "2.7": 
-		case "2.6": 
-		case "2.5": 
+		case "2.7":
+		case "2.6":
+		case "2.5":
 			structVer = CM_VER;
 			break;
 		default:
 			// Not supported for the version
 			return;
-		} 
+		}
 		JSONObject structDefs = XmlIngester.getMddfResource("vocab_digAsset", structVer);
 		if (structDefs == null) {
 			// LOG a FATAL problem.
 			String msg = "Unable to process; missing structure definitions for vocab_digAsset v" + structVer;
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 			return;
-		} 
+		}
 		String pre = manifestNSpace.getPrefix();
-		JSONObject rqmtSet = structDefs.getJSONObject("Audio"); 
-		validateDigitalAsset(".//"+ pre + ":Audio", curRootEl,rqmtSet);
-		
-		rqmtSet = structDefs.getJSONObject("Video"); 
-		validateDigitalAsset(".//"+ pre + ":Video", curRootEl, rqmtSet);
-		
-		rqmtSet = structDefs.getJSONObject("Subtitle"); 		
-		validateDigitalAsset(".//"+ pre + ":Subtitle", curRootEl, rqmtSet);
-		
-		rqmtSet = structDefs.getJSONObject("Image");		
-		validateDigitalAsset(".//"+ pre + ":Image", curRootEl, rqmtSet);
-		
-		rqmtSet = structDefs.getJSONObject("Interactive"); 
-		validateDigitalAsset(".//"+ pre + ":Interactive", curRootEl, rqmtSet);
-		
-		rqmtSet = structDefs.getJSONObject("Ancillary"); 
-		validateDigitalAsset(".//"+ pre + ":Ancillary", curRootEl, rqmtSet);
+		JSONObject rqmtSet = structDefs.getJSONObject("Audio");
+		validateDigitalAsset(".//" + pre + ":Audio", curRootEl, rqmtSet);
+
+		rqmtSet = structDefs.getJSONObject("Video");
+		validateDigitalAsset(".//" + pre + ":Video", curRootEl, rqmtSet);
+
+		rqmtSet = structDefs.getJSONObject("Subtitle");
+		validateDigitalAsset(".//" + pre + ":Subtitle", curRootEl, rqmtSet);
+
+		rqmtSet = structDefs.getJSONObject("Image");
+		validateDigitalAsset(".//" + pre + ":Image", curRootEl, rqmtSet);
+
+		rqmtSet = structDefs.getJSONObject("Interactive");
+		validateDigitalAsset(".//" + pre + ":Interactive", curRootEl, rqmtSet);
+
+		rqmtSet = structDefs.getJSONObject("Ancillary");
+		validateDigitalAsset(".//" + pre + ":Ancillary", curRootEl, rqmtSet);
 	}
 
 	/**
