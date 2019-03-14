@@ -19,13 +19,15 @@ Note that adding support for a new version of the Avails XLSX format requires a 
 
 ### 2. How do you add support for a new version of the Avails XLSX template?
 
-Step 1: update the enum `AvailsSheet.Version`
+Step 1: update the functions, constants, and enums in `com.movielabs.mddf.MddfContext`
 
-Step 2: add any required code to `AvailsSheet.identifyVersion()`
+Step 2: update the enum `AvailsSheet.Version`
 
-Step 3: the code in `AvailsWrkBook.convertSpreadsheet()` determines which XML version is matched with an XLSX version when validating. This will also need to be updated.
+Step 3: add any required code to `AvailsSheet.identifyVersion()`
 
-Step 4: `XmlBuilder.makeXmlAsJDom()` must be updated to match the XLSX version to the correct
+Step 4: the code in `AvailsWrkBook.convertSpreadsheet()` determines which XML version is matched with an XLSX version when validating. This will also need to be updated.
+
+Step 5: `XmlBuilder.makeXmlAsJDom()` must be updated to match the XLSX version to the correct
 class of `AbstractRowHelper`. It may also be necessary to create a new subclass of `AbstractRowHelper`.
 
 
