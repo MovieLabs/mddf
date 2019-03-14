@@ -6,7 +6,7 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="Shortcut Icon" href="/images/ml_icon.ico" />
       <!-- InstanceBeginEditable name="doctitle" -->
-      <title>MDDF Tools Release Notes</title> <!-- InstanceEndEditable -->
+      <title>Avails - MovieLabs</title> <!-- InstanceEndEditable -->
       <!-- InstanceBeginEditable name="head" -->
       <!-- InstanceEndEditable -->
       <style type="text/css">
@@ -43,7 +43,7 @@ body {
 }
 -->
 </style>
-      <link href="https://www.movielabs.com/style/movielab-2017.css" rel="stylesheet" type="text/css" />
+      <link href="../../../../style/movielab-2017.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
    <div class="site-header">
@@ -142,7 +142,7 @@ body {
       style="background: url(http://movielabs.com/images/interior-hero-bg.jpg); background-size: cover; background-position: center center;">
       <div class="page-center">
          <!-- InstanceBeginEditable name="Title" -->
-         <h1>MDDF Validator Tool (v1.5)</h1>
+         <h1>Avails Validator (v1.4)</h1>
          <!-- InstanceEndEditable -->
       </div>
    </div>
@@ -155,87 +155,49 @@ body {
                   <td width="25%" valign="top">
                      <!-- #BeginLibraryItem "/Library/LeftNav_Meta.lbi" -->
                      <ul class="leftnavbullets">
-                        <li><a href="http://www.movielabs.com/md">Home</a></li>
-                        <li><a href="http://www.movielabs.com/md/md">Common Metadata</a></li>
-                        <li><a href="http://www.movielabs.com/md/ratings">Common Ratings</a></li>
-                        <li><a href="http://www.movielabs.com/extras"> Extras and Interactivity</a></li>
-                        <li><a href="http://www.movielabs.com/md/manifest">Media Manifest</a></li>
-                        <li><a href="http://www.movielabs.com/md/mmc">Media Manifest Core</a></li>
-                        <li><a href="http://www.movielabs.com/md/mec">Media Entertainment Core</a></li>
-                        <li><a href="http://www.movielabs.com/md/avails">Avails</a></li>
-                        <li><a href="http://www.movielabs.com/cpe">Cross Platform Extras</a></li>
-                        <li><a href="http://www.movielabs.com/crmd">Content Recognition </a></li>
+                        <li><a href="/md">Home</a></li>
+                        <li><a href="/md/md">Common Metadata</a></li>
+                        <li><a href="/md/ratings">Common Ratings</a></li>
+                        <li><a href="/extras"> Extras and Interactivity</a></li>
+                        <li><a href="/md/manifest">Media Manifest</a></li>
+                        <li><a href="/md/mmc">Media Manifest Core</a></li>
+                        <li><a href="/md/mec">Media Entertainment Core</a></li>
+                        <li><a href="/md/avails">Avails</a></li>
+                        <li><a href="/cpe">Cross Platform Extras</a></li>
+                        <li><a href="/crmd">Content Recognition </a></li>
                      </ul> <!-- #EndLibraryItem -->
                   </td>
-                  <td width="75%" valign="top" id="primaryContent">
-                     <h3 class="title">Release Notes</h3>
-                     <h3 class="subtitle">Release 1.5</h3>
+                  <td width="75%" valign="top">
+                     <h3 class="title">Release Notes and Executables</h3>
+                     <h3 class="subtitle">Release 1.5.1</h3>
                      <div class="entry">
                         <h4>Status: Released</h4>
                         <p>
                            <strong>Documentation:</strong>
                         </p>
                         <ul>
-                           <li><a href="./UsersGuide.html">User's Guide</a></li>
+                           <li><a href='../v1.5.1/UsersGuide.html'>Version 1.5.1 User's Guide</a></li>
+                           <li>Main page for <a href="../">Avails Validator</a></li>
                         </ul>
-                        <h4>
-                           <strong>Executable</strong>
-                        </h4>
-                        <p>
-                           This release is available as an executable Java jar which supports the processing of either
-                           Avails or Manifest files. The latest jar may be downloaded from the project's <a
-                              href="https://github.com/MovieLabs/mddf/tree/master/binaries">GitHub repository</a>.
+                        <h4>Executable</h4>
+                        An executable Java jar as well as source code is available on the <a
+                           href='https://github.com/MovieLabs/mddf'>Movie Labs mddf GitHub repository</a>. If you would
+                        like more information, please contact us.
                         </p>
-                        <p>Support for native executables for OS-X, Windows, and Linux has been dropped as of this
-                           release. Note that the executable Java jar provides support for both the Avails and Manifest
-                           Validators, in contrast to the OS-specific executables in which there was a separate
-                           executable for each validation tool.</p>
+                        <h4>Change Log</h4>
                         <p>
-                           Users who do not wish to download and install the desktop version of the MDDF Tool Suite may
-                           still access the tools by using the <a href="https://mddf.movielabs.com/">on-line MDDF
-                              Services</a>. While primarily intended for browser-based usage, they may also be accessed via
-                           scripts (e.g. using curl ) or by any other software with the ability to make use of a REST
-                           API.
+                           Overview information, including the change log for this release, is available on the <a
+                              href="https://movielabs.com/md/validator/v1.5/">MovieLab web-page for the MDDF
+                              Validator Tool</a>
                         </p>
-                        <h4>
-                           <strong>Source Code</strong>
-                        </h4>
-                        <p>
-                           Source code is available on the <a href='https://github.com/MovieLabs/mddf'>Movie Labs
-                              mddf GitHub repository </a> and is under an open source license. If you would like more
-                           information, please contact us.
-                        </p>
-                        <h4>
-                           <strong>Change Log</strong>
-                        </h4>
-                        <p>
-                           This release of the desktop Validation tool has been upgraded to use the latest
-                           <tt>mddf-lib</tt>
-                           release. Changes are:
-                           <ul>
-                              <li>Enhancement: support for Manifest v 1.8 added</li>
-                              <li>Enhancement: support for CM v2.7 and MDMEC 2.7 added</li>
-                              <li>Enhancement: currency codes checked for conformance with ISO-4217</li>
-                              <li>Bug Fix: When mapping Avails to/from Excel, the GroupingEntity/Type should be
-                                 'channel', not 'SVOD channel'</li>
-                              <li>Bug Fix: cross-references from TextGroup/TextObjectID to TextObject were not
-                                 being checked</li>
-                              <li>Bug Fix: cross-references from ExperienceChild to ExternalManifest were not being
-                                 checked</li>
-                              <li>Bug Fix: Avails Transaction with TVOD-based LicenseType and no pricing Term was
-                                 flagged as ERROR (now a WARNING)</li>
-                              <li>Bug Fix: All violations of structure constraints were flagged as ERROR regardless
-                                 of actual severity level.</li>
-                              <li>Bug Fix: when indexing is optional, index usage must be consistent for all child
-                                 elements</li>
-                              <li>Bug Fix: Verify exactly 1 instance of TrackMetadata with TrackSelectionNumber='0'
-                                 per Presentation"</li>
-                              <li>Bug Fix: Elimination of race-condition in initialization of code validating ID
-                                 types.</li>
-                              <li>Bug Fix: non-MDDF files (e.g. jpg) were included in list of supporting files to
-                                 validate</li>
-                           </ul>
-                        </p>
+                        <h4>Known Issues</h4>
+                        <ul>
+                           <li>Excel files must be in <tt>xlsx</tt> format.
+                           </li>
+                           <li>Validation of Excel Avails files is limited to a single sheet.</li>
+                        </ul>
+                        <h4>Other Changes</h4>
+                        <p>N.A.</p>
                      </div>
                   </td>
                </tr>

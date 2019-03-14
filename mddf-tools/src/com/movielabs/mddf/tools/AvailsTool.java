@@ -23,9 +23,7 @@
 package com.movielabs.mddf.tools;
 
 import java.awt.Cursor;
-import java.awt.EventQueue;
 import javax.swing.JToolBar;
-import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -34,7 +32,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class AvailsTool extends ValidatorTool {
 
-	private static final String AVAIL_DOC_VER = "v1.4";
+	private static final String AVAIL_DOC_VER = "v1.5.1";
  
 
 	/**
