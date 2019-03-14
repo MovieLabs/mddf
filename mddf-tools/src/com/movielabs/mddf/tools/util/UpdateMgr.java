@@ -96,7 +96,7 @@ public class UpdateMgr {
 		}
 		// check with server
 		String curVersion = mddfToolProps.getProperty("mddf.tool.version");
-		JSONObject statusCheck = getStatus(framework, "1.1.0");
+		JSONObject statusCheck = getStatus(framework, curVersion);
 		if (statusCheck == null) {
 			/*
 			 * In the absence of information to the contrary, assume everything is
