@@ -40,7 +40,7 @@ public class AvailsTool extends ValidatorTool {
 	 */
 	public AvailsTool() {
 		super(Context.AVAILS);
-		htmlDocUrl = "http://www.movielabs.com/md/avails/validator/" + AVAIL_DOC_VER + "/";
+		htmlDocUrl = "http://www.movielabs.com/md/validator/" + AVAIL_DOC_VER + "/avails/";
 		/*
 		 * allow use of XLSX formatted Avails files..
 		 */

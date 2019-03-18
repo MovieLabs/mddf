@@ -39,15 +39,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  */
 public class ManifestTool extends ValidatorTool { 
-	private static final String MANIFEST_DOC_VER = "v1.4";
+	private static final String MANIFEST_DOC_VER = "v1.5.1";
 
 
 	/**
 	 * @param context
 	 */
 	public ManifestTool() {
-		super(Context.MANIFEST); 
-		htmlDocUrl = "http://www.movielabs.com/md/manifest/validator/" + MANIFEST_DOC_VER + "/";
+		super(Context.MANIFEST);  
+		htmlDocUrl = "http://www.movielabs.com/md/validator/" + MANIFEST_DOC_VER + "/avails/";
 		inputFileFilter = new FileNameExtensionFilter("XML file", "xml");
 	}
 
