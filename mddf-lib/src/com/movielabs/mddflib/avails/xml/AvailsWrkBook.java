@@ -60,6 +60,11 @@ import com.movielabs.mddflib.util.Translator;
  */
 public class AvailsWrkBook {
 	protected static String logMsgSrcId = "AvailsWrkBook";
+
+	public enum RESULT_STATUS {
+		CANCELLED, COMPLETED
+	};
+
 	private File file;
 	private ArrayList<AvailsSheet> sheets;
 	private LogMgmt logger;
@@ -138,7 +143,7 @@ public class AvailsWrkBook {
 			}
 		}
 		// if still UNKNOWN we can't proceed
-		if (targetVersion.equals(unknown)) { 
+		if (targetVersion.equals(unknown)) {
 			String msg = "Avails schema version MUST be provided for this file";
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, xslxFile, logMsgSrcId);
 			return null;
@@ -200,6 +205,7 @@ public class AvailsWrkBook {
 			results.put("xml", xmlJDomDoc);
 			results.put("pedigree", pedigreeMap);
 			results.put("srcFmt", srcMddfFmt);
+			results.put("status", RESULT_STATUS.COMPLETED);
 
 			return results;
 		} catch (Exception e) {

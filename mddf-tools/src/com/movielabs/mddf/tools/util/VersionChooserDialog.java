@@ -36,16 +36,24 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.tools.GenericTool;
 import com.movielabs.mddflib.avails.xml.AvailsSheet;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
+import java.awt.FlowLayout;
 
+/**
+ * Dialog used to designate file version when submitting an Avails in XLSX
+ * format.
+ * 
+ * @author L. Levin, Critical Architectures LLC
+ *
+ */
 public class VersionChooserDialog extends JDialog implements ActionListener {
 	private JPanel choicePanel = null;
 	private JPanel buttonPanel;
 	private ButtonGroup btnGroup;
 	private AvailsSheet.Version selectedVersion;
+	protected boolean cancelled;
 	private static String title = "Version Chooser";
 	private static String logoPath = GenericTool.imageRsrcPath + "logo_movielabs.jpg";
 
@@ -65,19 +73,30 @@ public class VersionChooserDialog extends JDialog implements ActionListener {
 		getContentPane().add(getChoicePanel(), BorderLayout.CENTER);
 
 		// Adds the button panel
-		buttonPanel = new JPanel(new BorderLayout());
+		buttonPanel = new JPanel();
 		buttonPanel.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY), BorderFactory.createEmptyBorder(16, 8, 8, 8)));
 		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 		// Adds OK button to close window
 		JButton okButton = new JButton("OK");
-		buttonPanel.add(okButton, BorderLayout.EAST);
+		buttonPanel.add(okButton);
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				cancelled = false;
 				setVisible(false);
 			}
 		});
 		getRootPane().setDefaultButton(okButton);
+		
+		JButton btnCancel = new JButton("Cancel");
+		buttonPanel.add(btnCancel);
+		btnCancel.addActionListener(new ActionListener() { 
+			public void actionPerformed(ActionEvent e) {
+				cancelled = true;
+				setVisible(false);
+			}
+		});
 	}
 
 	private void initialize() {
@@ -129,9 +148,15 @@ public class VersionChooserDialog extends JDialog implements ActionListener {
 		return selectedVersion;
 	}
 
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String value = e.getActionCommand();
 		selectedVersion = AvailsSheet.Version.valueOf(value);
 	}
+	
+	
 }

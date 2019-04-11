@@ -24,6 +24,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ import com.movielabs.mddflib.Obfuscator.Target;
 import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
+import com.movielabs.mddflib.avails.xml.AvailsWrkBook.RESULT_STATUS;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.CpeValidator;
@@ -366,6 +368,10 @@ public class ValidationController {
 				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, srcFile, -1, MODULE_ID, null, null);
 				return;
 			} else {
+				RESULT_STATUS completionStatus = (RESULT_STATUS) results.get("status");
+				if (completionStatus == RESULT_STATUS.CANCELLED) {
+					return;
+				}
 				srcFile = (File) results.get("xlsx");
 				pedigreeMap = (Map<Object, Pedigree>) results.get("pedigree");
 				xmlDoc = (Document) results.get("xml");
@@ -460,10 +466,16 @@ public class ValidationController {
 	 * @param xslxFile
 	 * @return
 	 */
-	private Map<String, Object> convertSpreadsheet(File xslxFile) { 
+	private Map<String, Object> convertSpreadsheet(File xslxFile) {
 		VersionChooserDialog vcd = new VersionChooserDialog();
+		vcd.setLocationRelativeTo(logNav);
 		vcd.setVisible(true);
-		Version version = vcd.getSelected(); 
+		if (vcd.isCancelled()) {
+			Map<String, Object> results = new HashMap<String, Object>();
+			results.put("status", RESULT_STATUS.CANCELLED);
+			return results;
+		}
+		Version version = vcd.getSelected();
 		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(xslxFile, version, null, logMgr);
 		if (results != null) {
 			FILE_FMT srcMddfFmt = (FILE_FMT) results.get("srcFmt");
