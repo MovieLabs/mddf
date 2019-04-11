@@ -23,6 +23,7 @@
 package com.movielabs.mddflib.avails.xlsx;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
@@ -39,6 +40,8 @@ import com.movielabs.mddflib.logging.LogMgmt;
  */
 public class XlsxBuilderV1_8 extends XlsxBuilder {
 
+	public static final String DEFAULT_CONTEXT = "-default-";
+
 	/**
 	 * @param docRootEl
 	 * @param xlsxVersion
@@ -46,11 +49,12 @@ public class XlsxBuilderV1_8 extends XlsxBuilder {
 	 */
 	public XlsxBuilderV1_8(Element docRootEl, Version xlsxVersion, LogMgmt logger) {
 		super(docRootEl, xlsxVersion, logger);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * 
+	 * Prior to v1.8, Avails were sorted into two sets: Movies and TV. Each had it's
+	 * own sheet in the workbook. Starting with v1.8, all Avails are entered on a
+	 * single sheet.
 	 */
 	protected void process() {
 		workbook = new TemplateWorkBook(logger);
@@ -58,6 +62,19 @@ public class XlsxBuilderV1_8 extends XlsxBuilder {
 		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + rootPrefix + "Avail", Filters.element(), null,
 				availsNSpace);
 		List<Element> availList = xpExp01.evaluate(rootEl);
-		addAvails("AllAvails",  availList);
+		addAvails("AllAvails", availList);
+	}
+
+	protected Map<String, String> extractData(Element baseEl, Map<String, List<XPathExpression>> categoryMappings,
+			String workType) {
+		switch (workType) {
+		case "Episode":
+		case "Season":
+		case "Series":
+			break;
+		default:
+			workType = DEFAULT_CONTEXT;
+		}
+		return super.extractData(baseEl, categoryMappings, workType);
 	}
 }

@@ -672,8 +672,7 @@
 			"AvailTrans:WCG": "{avail}FormatProfile/@WCG"
 		}
 	},
-	
-	
+
 	"V1_7_3": 
 	{
 		"Movies": 
@@ -729,6 +728,7 @@
 					"name": "caption"
 				}
 			},
+
 			"AvailMetadata:CompanyDisplayCredit": "{avail}Metadata/{avail}CompanyDisplayCredit/{md}DisplayString",
 			"AvailMetadata:Director": "{avail}Metadata/{avail}People[//{md}JobFunction='Director']/{md}Name/{md}DisplayName",
 			"AvailMetadata:GroupIdentity": "{avail}Metadata/{avail}GroupingEntity[./{md}Type='channel']/{md}DisplayName",
@@ -758,6 +758,7 @@
 				"{avail}End",
 				"{avail}EndCondition"
 			],
+
 			"AvailTrans:EndLag": "{avail}EndCondition/@lag",
 			"AvailTrans:Exclusive": "{avail}Term/{avail}Boolean[../@termName='Exclusive']",
 			"AvailTrans:ExclusiveAttributes": "{avail}Term/{avail}Text[../@termName='ExclusiveAttributes']",
@@ -778,6 +779,7 @@
 				"{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
 				"{avail}Term[@termName[.='NA' or .='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
 			],
+
 			"AvailTrans:RentalDuration": "{avail}Term/{avail}Duration[../@termName='RentalDuration']",
 			"AvailTrans:RequiredFulfillmentLanguages": "*{avail}AssetLanguage[@assetProvided='true']",
 			"AvailTrans:SpecialPreOrderFulfillDate": "{avail}Term/{avail}Event[../@termName='PreOrderFulfillDate']",
@@ -787,19 +789,21 @@
 				"{avail}Start",
 				"{avail}StartCondition"
 			],
-			"AvailTrans:StartLag": "{avail}StartCondition/@lag",
 
+			"AvailTrans:StartLag": "{avail}StartCondition/@lag",
 			"AvailTrans:SuppressionLiftDate": "{avail}Term/{avail}Event[../@termName='SuppressionLiftDate']",
 			"AvailTrans:Territory": 
 			[
 				"{avail}Territory/{md}country",
 				"{avail}Territory/{md}countryRegion"
 			],
+
 			"AvailTrans:TerritoryExclusion": 
 			[
 				"{avail}TerritoryExcluded/{md}country",
 				"{avail}TerritoryExcluded/{md}countryRegion"
 			],
+
 			"AvailTrans:TitleStatus": "{avail}Term/{avail}Text[../@termName='TitleStatus']",
 			"AvailTrans:WatchDuration": "{avail}Term/{avail}Duration[../@termName='WatchDuration']",
 			"AvailTrans:WCG": "{avail}FormatProfile/@WCG",
@@ -857,11 +861,13 @@
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString",
 				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString"
 			},
+
 			"AvailMetadata:Director": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}People[//{md}JobFunction='Director']/{md}Name/{md}DisplayName",
 				"Episode": "{avail}EpisodeMetadata/{avail}People[//{md}JobFunction='Director']/{md}Name/{md}DisplayName"
 			},
+
 			"AvailMetadata:DistributionNumber": "n.a",
 			"AvailMetadata:EpisodeCount": 
 			{
@@ -893,14 +899,17 @@
 					}
 				}
 			},
+
 			"AvailMetadata:EpisodeTitleInternalAlias": 
 			{
 				"Episode": "{avail}EpisodeMetadata/{avail}TitleInternalAlias"
 			},
+
 			"AvailMetadata:GroupIdentity": 
 			{
-				"Episode":"{avail}EpisodeMetadata/{avail}GroupingEntity[./{md}Type='channel']/{md}DisplayName"
+				"Episode": "{avail}EpisodeMetadata/{avail}GroupingEntity[./{md}Type='channel']/{md}DisplayName"
 			},
+
 			"AvailMetadata:LocalizationType": "{avail}EpisodeMetadata/{avail}LocalizationOffering",
 			"AvailMetadata:RatingReason": 
 			{
@@ -1017,18 +1026,19 @@
 			"AvailTrans:AnnounceDate": "{avail}Term/{avail}Event[../@termName='AnnounceDate']",
 			"AvailTrans:AssetLanguage": "{avail}AssetLanguage",
 			"AvailTrans:BrandingRights": "{avail}Term/{avail}Boolean[../@termName='BrandingRights']",
-			"AvailTrans:BrandingRightsAttributes": "{avail}Term/{avail}Text[../@termName='BrandingRightsAttributes']",			
+			"AvailTrans:BrandingRightsAttributes": "{avail}Term/{avail}Text[../@termName='BrandingRightsAttributes']",
 			"AvailTrans:ContractID": "{avail}ContractID",
-			"AvailTrans:Description": "{avail}Description", 
+			"AvailTrans:Description": "{avail}Description",
 			"AvailTrans:Download": "{avail}Term/{avail}Text[../@termName='Download']",
 			"AvailTrans:End": 
 			[
 				"{avail}End",
 				"{avail}EndCondition"
 			],
+
 			"AvailTrans:EndLag": "{avail}EndCondition/@lag",
 			"AvailTrans:Exclusive": "{avail}Term/{avail}Boolean[../@termName='Exclusive']",
-			"AvailTrans:ExclusiveAttributes": "{avail}Term/{avail}Text[../@termName='ExclusiveAttributes']", 
+			"AvailTrans:ExclusiveAttributes": "{avail}Term/{avail}Text[../@termName='ExclusiveAttributes']",
 			"AvailTrans:FixedEndDate": "{avail}Term/{avail}Event[../@termName='FixedEndDate']",
 			"AvailTrans:FormatProfile": "{avail}FormatProfile",
 			"AvailTrans:HDR": "{avail}FormatProfile/@HDR",
@@ -1046,8 +1056,9 @@
 				"{avail}Term[@termName[.='WSP' or .='SeasonWSP' or .='EpisodeWSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
 				"{avail}Term[@termName[.='NA' or .='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
 			],
-			"AvailTrans:RentalDuration": "{avail}Term/{avail}Duration[../@termName='RentalDuration']",			
-			"AvailTrans:RequiredFulfillmentLanguages": "*{avail}AssetLanguage[@assetProvided='true']",			
+
+			"AvailTrans:RentalDuration": "{avail}Term/{avail}Duration[../@termName='RentalDuration']",
+			"AvailTrans:RequiredFulfillmentLanguages": "*{avail}AssetLanguage[@assetProvided='true']",
 			"AvailTrans:SpecialPreOrderFulfillDate": "{avail}Term/{avail}Event[../@termName='PreOrderFulfillDate']",
 			"AvailTrans:SRP": "{avail}Term/{avail}Money[../@termName='SRP']",
 			"AvailTrans:Start": 
@@ -1055,6 +1066,7 @@
 				"{avail}Start",
 				"{avail}StartCondition"
 			],
+
 			"AvailTrans:StartLag": "{avail}StartCondition/@lag",
 			"AvailTrans:SuppressionLiftDate": "{avail}Term/{avail}Event[../@termName='SuppressionLiftDate']",
 			"AvailTrans:Territory": 
@@ -1062,17 +1074,345 @@
 				"{avail}Territory/{md}country",
 				"{avail}Territory/{md}countryRegion"
 			],
+
 			"AvailTrans:TerritoryExclusion": 
 			[
 				"{avail}TerritoryExcluded/{md}country",
 				"{avail}TerritoryExcluded/{md}countryRegion"
 			],
+
+			"AvailTrans:TitleStatus": "{avail}Term/{avail}Text[../@termName='TitleStatus']",
+			"AvailTrans:WatchDuration": "{avail}Term/{avail}Duration[../@termName='WatchDuration']",
+			"AvailTrans:WCG": "{avail}FormatProfile/@WCG",
+			"AvailTrans:WindowDuration": "{avail}WindowDuration"
+		}
+	},
+
+	"V1_8": 
+	{
+		"AllAvails": 
+		{
+			"Avail:ALID": "{avail}ALID",
+			"Avail:AvailID": "@TransactionID",
+			"Avail:BundledALIDs": "*{avail}Asset[./{avail}WorkType/text()='Collection']/{avail}BundledAsset/{avail}BundledALID",
+			"Avail:Licensee": "{avail}Transaction/{avail}Licensee/{md}DisplayName",
+			"Avail:RetailerSpare1": "n.a",
+			"Avail:RetailerSpare2": "n.a",
+			"Avail:RetailerSpare3": "n.a",
+			"Disposition:EntryType": "{avail}Disposition/{avail}EntryType",
+			"Avail:DisplayName": "{avail}Licensor/{md}DisplayName",
+			"Avail:DMA_ID": "{avail}SharedEntitlement[@ecosystem='DMA']/{avail}EcosystemID",
+			"Avail:ExceptionFlag": "{avail}ExceptionFlag",
+			"Avail:ReportingID": "{avail}ReportingID",
+			"Avail:ServiceProvider": "{avail}ServiceProvider/{md}DisplayName",
+			"Avail:UV_ID": "{avail}SharedEntitlement[@ecosystem='UVVU']/{avail}EcosystemID",
+			"AvailAsset:AltID": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'AltID')]",
+			"AvailAsset:ContentID": "@contentID[../{avail}WorkType[.='Movie' or .='Collection' or .='Short']]",
+			"AvailAsset:EpisodeContentID": "@contentID[../{avail}WorkType='Episode']",
+			"AvailAsset:EditID": 
+			{
+				"%FUNCTION": 
+				{
+					"name": "eidr",
+					"args": 
+					{
+						"xpath": "{avail}Metadata/{avail}EditEIDR-URN"
+					}
+				}
+			},
+
+			"AvailAsset:SeasonContentID": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeasonContentID",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonContentID"
+			},
+
+			"AvailAsset:SeriesContentID": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesContentID",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesContentID"
+			},
+
+			"AvailAsset:Metadata": "n.a",
+			"AvailAsset:TitleID": 
+			{
+				"%FUNCTION": 
+				{
+					"name": "eidr",
+					"args": 
+					{
+						"xpath": "{avail}Metadata/{avail}TitleEIDR-URN"
+					}
+				}
+			},
+
+			"AvailAsset:WorkType": "{avail}WorkType",
+			"AvailMetadata:Any": "n.a",
+			"AvailMetadata:CaptionExemption": 
+			{
+				"-default-": "{avail}Metadata/{avail}USACaptionsExemptionReason",
+				"Episode": "{avail}EpisodeMetadata/{avail}USACaptionsExemptionReason",
+				"Season": "{avail}SeasonMetadata/{avail}USACaptionsExemptionReason",
+				"Series": "{avail}SeriesMetadata/{avail}USACaptionsExemptionReason"
+			},
+
+			"AvailMetadata:CaptionIncluded": 
+			{
+				"%FUNCTION": 
+				{
+					"name": "caption"
+				}
+			},
+
+			"AvailMetadata:CompanyDisplayCredit": 
+			{
+				"-default-": "{avail}Metadata/{avail}CompanyDisplayCredit/{md}DisplayString",
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString"
+			},
+
+			"AvailMetadata:Director": 
+			{
+				"-default-": "{avail}Metadata/{avail}People[//{md}JobFunction='Director']/{md}Name/{md}DisplayName",
+				"Season": "{avail}SeasonMetadata/{avail}People[//{md}JobFunction='Director']/{md}Name/{md}DisplayName",
+				"Episode": "{avail}EpisodeMetadata/{avail}People[//{md}JobFunction='Director']/{md}Name/{md}DisplayName"
+			},
+
+			"AvailMetadata:DistributionNumber": "n.a",
+			"AvailMetadata:EpisodeCount": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}NumberOfEpisodes",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}NumberOfEpisodes"
+			},
+
+			"AvailMetadata:EpisodeID": 
+			[
+				"{avail}EpisodeMetadata/{avail}EditEIDR-URN",
+				"{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'EpisodeID')]"
+			],
+
+			"AvailMetadata:EpisodeAltID": "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'EpisodeAltID')]",
+			"AvailMetadata:EpisodeNumber": 
+			{
+				"Episode": "{avail}EpisodeMetadata/{avail}EpisodeNumber/{md}Number"
+			},
+
+			"AvailMetadata:EpisodeTitleDisplayUnlimited": "{avail}EpisodeMetadata/{avail}TitleDisplayUnlimited",
+			"AvailMetadata:EpisodeTitleID": 
+			{
+				"%FUNCTION": 
+				{
+					"name": "eidr",
+					"args": 
+					{
+						"xpath": "{avail}EpisodeMetadata/{avail}TitleEIDR-URN"
+					}
+				}
+			},
+
+			"AvailMetadata:EpisodeTitleInternalAlias": 
+			{
+				"Episode": "{avail}EpisodeMetadata/{avail}TitleInternalAlias"
+			},
+
+			"AvailMetadata:GroupIdentity": 
+			{
+				"-default-": "{avail}Metadata/{avail}GroupingEntity[./{md}Type='channel']/{md}DisplayName",
+				"Episode": "{avail}EpisodeMetadata/{avail}GroupingEntity[./{md}Type='channel']/{md}DisplayName"
+			},
+
+			"AvailMetadata:LocalizationType": "{avail}Metadata/{avail}LocalizationOffering",
+			"AvailMetadata:LocalizationType": "{avail}EpisodeMetadata/{avail}LocalizationOffering",
+			"AvailMetadata:RatingReason": 
+			{
+				"-default-": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Reason",
+				"Season": "{avail}SeasonMetadata/{avail}Ratings/{md}Rating/{md}Reason",
+				"Episode": "{avail}EpisodeMetadata/{avail}Ratings/{md}Rating/{md}Reason"
+			},
+
+			"AvailMetadata:RatingSystem": 
+			{
+				"-default-": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}System",
+				"Season": "{avail}SeasonMetadata/{avail}Ratings/{md}Rating/{md}System",
+				"Episode": "{avail}EpisodeMetadata/{avail}Ratings/{md}Rating/{md}System"
+			},
+
+			"AvailMetadata:RatingValue": 
+			{
+				"-default-": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Value",
+				"Season": "{avail}SeasonMetadata/{avail}Ratings/{md}Rating/{md}Value",
+				"Episode": "{avail}EpisodeMetadata/{avail}Ratings/{md}Rating/{md}Value"
+			},
+
+			"AvailMetadata:ReleaseHistoryOriginal": 
+			{
+				"-default-": "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='original']",
+				"Season": "{avail}SeasonMetadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='original']",
+				"Episode": "{avail}EpisodeMetadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='original']"
+			},
+
+			"AvailMetadata:ReleaseHistoryPhysicalHV": 
+			{
+				"-default-": "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']",
+				"Season": "{avail}SeasonMetadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']",
+				"Episode": "{avail}EpisodeMetadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']"
+			},
+
+			"AvailMetadata:ReleaseYear": 
+			{
+				"-default-": "{avail}Metadata/{avail}ReleaseDate",
+				"Season": "{avail}SeasonMetadata/{avail}ReleaseDate",
+				"Episode": "{avail}EpisodeMetadata/{avail}ReleaseDate"
+			},
+
+			"AvailMetadata:RetailerID1": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID1')]",
+			"AvailMetadata:RetailerID2": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID2')]",
+			"AvailMetadata:RetailerID3": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID3')]",
+			"AvailMetadata:RetailerEpisodeID1": "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerEpisodeID1')]",
+			"AvailMetadata:RetailerEpisodeID2": "{avail}EpisodeMetadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerEpisodeID2')]",
+			"AvailMetadata:RetailerSeasonID": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeasonID')]",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeasonID')]"
+			},
+
+			"AvailMetadata:RetailerSeriesID": 
+			{
+				"Season": "{avail}SeasonMetadata//{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeriesID')]",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata//{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeriesID')]"
+			},
+
+			"AvailMetadata:SeasonCount": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons"
+			},
+
+			"AvailMetadata:SeasonID": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonID')]",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonID')]"
+			},
+
+			"AvailMetadata:SeasonAltID": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonAltID')]",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonAltID')]"
+			},
+
+			"AvailMetadata:SeasonNumber": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeasonNumber/{md}Number",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonNumber/{md}Number"
+			},
+
+			"AvailMetadata:SeasonTitleDisplayUnlimited": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeasonTitleDisplayUnlimited",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonTitleDisplayUnlimited"
+			},
+
+			"AvailMetadata:SeasonTitleInternalAlias": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeasonTitleInternalAlias",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonTitleInternalAlias"
+			},
+
+			"AvailMetadata:SeriesID": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesID')]",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesID')]"
+			},
+
+			"AvailMetadata:SeriesAltID": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesAltID')]",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesAltID')]"
+			},
+
+			"AvailMetadata:SeriesTitleDisplayUnlimited": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleDisplayUnlimited",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleDisplayUnlimited"
+			},
+
+			"AvailMetadata:SeriesTitleInternalAlias": 
+			{
+				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleInternalAlias",
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleInternalAlias"
+			},
+
+			"AvailMetadata:TitleDisplayUnlimited": "{avail}Metadata/{avail}TitleDisplayUnlimited",
+			"AvailMetadata:TitleInternalAlias": "{avail}Metadata/{avail}TitleInternalAlias",
+			"AvailMetadata:TotalRunTime": 
+			[
+				"{avail}Metadata/{avail}RunLength",
+				"{avail}EpisodeMetadata/{avail}RunLength"
+			],
+
+			"AvailTrans:AllowedLanguages": "*{avail}AllowedLanguage",
+			"AvailTrans:AnnounceDate": "{avail}Term/{avail}Event[../@termName='AnnounceDate']",
+			"AvailTrans:AssetLanguage": "*{avail}AssetLanguage",
+			"AvailTrans:BrandingRights": "{avail}Term/{avail}Boolean[../@termName='BrandingRights']",
+			"AvailTrans:BrandingRightsAttributes": "{avail}Term/{avail}Text[../@termName='BrandingRightsAttributes']",
+			"AvailTrans:ContractID": "{avail}ContractID",
+			"AvailTrans:Description": "{avail}Description",
+			"AvailTrans:Download": "{avail}Term/{avail}Text[../@termName='Download']",
+			"AvailTrans:End": 
+			[
+				"{avail}End",
+				"{avail}EndCondition"
+			],
+
+			"AvailTrans:EndLag": "{avail}EndCondition/@lag",
+			"AvailTrans:Exclusive": "{avail}Term/{avail}Boolean[../@termName='Exclusive']",
+			"AvailTrans:ExclusiveAttributes": "{avail}Term/{avail}Text[../@termName='ExclusiveAttributes']",
+			"AvailTrans:FixedEndDate": "{avail}Term/{avail}Event[../@termName='FixedEndDate']",
+			"AvailTrans:FormatProfile": "{avail}FormatProfile",
+			"AvailTrans:HDR": "{avail}FormatProfile/@HDR",
+			"AvailTrans:HFR": "{avail}FormatProfile/@HFR",
+			"AvailTrans:HoldbackLanguage": "*{avail}HoldbackLanguage",
+			"AvailTrans:LicenseRightsDescription": "{avail}LicenseRightsDescription",
+			"AvailTrans:LicenseType": "{avail}LicenseType",
+			"AvailTrans:NGAudio": "{avail}FormatProfile/@NGAudio",
+			"AvailTrans:OtherInstructions": "{avail}OtherInstructions",
+			"AvailTrans:OtherTerms": "n.a",
+			"AvailTrans:PriceCurrency": "{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money/@currency",
+			"AvailTrans:PriceType": "{avail}Term/@termName[.='NA' or .='Tier' or .='WSP' or .='DMRP' or .='SMRP' or .='Category' or .='LicenseFee' or .='TPR-Tier' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' or .='TPR-Category']",
+			"AvailTrans:PriceValue": 
+			[
+				"{avail}Term[@termName[.='WSP' or .='DMRP' or .='SMRP' or .='TPR-WSP' or .='TPR-DMRP' or .='TPR-SMRP' ]]/{avail}Money",
+				"{avail}Term[@termName[.='NA' or .='Tier' or .='LicenseFee' or .='Category' or .='TPR-Tier' or .='TPR-LicenseFee' or .='TPR-Category' ]]/{avail}Text"
+			],
+
+			"AvailTrans:RentalDuration": "{avail}Term/{avail}Duration[../@termName='RentalDuration']",
+			"AvailTrans:RequiredFulfillmentLanguages": "*{avail}AssetLanguage[@assetProvided='true']",
+			"AvailTrans:SpecialPreOrderFulfillDate": "{avail}Term/{avail}Event[../@termName='PreOrderFulfillDate']",
+			"AvailTrans:SRP": "{avail}Term/{avail}Money[../@termName='SRP']",
+			"AvailTrans:Start": 
+			[
+				"{avail}Start",
+				"{avail}StartCondition"
+			],
+
+			"AvailTrans:StartLag": "{avail}StartCondition/@lag",
+			"AvailTrans:SuppressionLiftDate": "{avail}Term/{avail}Event[../@termName='SuppressionLiftDate']",
+			"AvailTrans:Territory": 
+			[
+				"{avail}Territory/{md}country",
+				"{avail}Territory/{md}countryRegion"
+			],
+
+			"AvailTrans:TerritoryExclusion": 
+			[
+				"{avail}TerritoryExcluded/{md}country",
+				"{avail}TerritoryExcluded/{md}countryRegion"
+			],
+
 			"AvailTrans:TitleStatus": "{avail}Term/{avail}Text[../@termName='TitleStatus']",
 			"AvailTrans:WatchDuration": "{avail}Term/{avail}Duration[../@termName='WatchDuration']",
 			"AvailTrans:WCG": "{avail}FormatProfile/@WCG",
 			"AvailTrans:WindowDuration": "{avail}WindowDuration"
 		}
 	}
-	
-	
 }

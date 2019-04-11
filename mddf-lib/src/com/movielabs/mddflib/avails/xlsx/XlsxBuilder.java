@@ -281,7 +281,7 @@ public class XlsxBuilder {
 	 * @param context
 	 * @return
 	 */
-	private Map<String, String> extractData(Element baseEl, Map<String, List<XPathExpression>> categoryMappings,
+	protected Map<String, String> extractData(Element baseEl, Map<String, List<XPathExpression>> categoryMappings,
 			String context) {
 		Map<String, String> dataMap = new HashMap<String, String>();
 		/* Now continue with everything else */

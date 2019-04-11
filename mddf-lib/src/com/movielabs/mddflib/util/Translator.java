@@ -51,6 +51,7 @@ import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xlsx.TemplateWorkBook;
 import com.movielabs.mddflib.avails.xlsx.XlsxBuilder;
+import com.movielabs.mddflib.avails.xlsx.XlsxBuilderV1_8;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.MddfTarget;
@@ -87,6 +88,7 @@ public class Translator {
 		// for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7_2);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7_3);
+		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_8);
 		supported.put(FILE_FMT.AVAILS_2_2, for_AVAILS_2_2);
 
 		List<FILE_FMT> for_AVAILS_2_2_1 = new ArrayList<FILE_FMT>();
@@ -95,6 +97,7 @@ public class Translator {
 		// for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7_2);
 		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7_3);
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_8);
 		supported.put(FILE_FMT.AVAILS_2_2_1, for_AVAILS_2_2_1);
 
 		List<FILE_FMT> for_AVAILS_2_2_2 = new ArrayList<FILE_FMT>();
@@ -103,6 +106,7 @@ public class Translator {
 		// for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7_2);
 		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7_3);
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_8);
 		supported.put(FILE_FMT.AVAILS_2_2_2, for_AVAILS_2_2_2);
 
 		List<FILE_FMT> for_AVAILS_2_3 = new ArrayList<FILE_FMT>();
@@ -112,6 +116,7 @@ public class Translator {
 		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2);
 		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_7_2);
 		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_7_3);
+		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_8);
 		supported.put(FILE_FMT.AVAILS_2_3, for_AVAILS_2_3);
 
 		List<FILE_FMT> for_AVAILS_1_7 = new ArrayList<FILE_FMT>();
@@ -121,6 +126,7 @@ public class Translator {
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_3);
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_1_7_2);
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_1_7_3);
+		for_AVAILS_1_7.add(FILE_FMT.AVAILS_1_8);
 		supported.put(FILE_FMT.AVAILS_1_7, for_AVAILS_1_7);
 
 		List<FILE_FMT> for_AVAILS_1_7_2 = new ArrayList<FILE_FMT>();
@@ -130,7 +136,17 @@ public class Translator {
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_3);
 		// for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_7_3);
-		supported.put(FILE_FMT.AVAILS_1_7_2, for_AVAILS_1_7_2);
+		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_8);
+		supported.put(FILE_FMT.AVAILS_1_7_2, for_AVAILS_1_7_2);		
+
+		List<FILE_FMT> for_AVAILS_1_8 = new ArrayList<FILE_FMT>();
+		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_2);
+		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_2_1);
+		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_2_2);
+		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_3); 
+		for_AVAILS_1_8.add(FILE_FMT.AVAILS_1_7_2);
+		for_AVAILS_1_8.add(FILE_FMT.AVAILS_1_7_3);
+		supported.put(FILE_FMT.AVAILS_1_8, for_AVAILS_1_8);
 	}
 
 	/**
@@ -532,8 +548,8 @@ public class Translator {
 		}
 		XlsxBuilder converter = null;
 		if (excelVer == Version.V1_8) {
-			throw new UnsupportedOperationException("Not yet implemented");
-//			converter = new XlsxBuilderV1_8(xmlDoc.getRootElement(), excelVer, logMgr);
+//			throw new UnsupportedOperationException("Not yet implemented");
+			converter = new XlsxBuilderV1_8(xmlDoc.getRootElement(), excelVer, logMgr);
 		} else {
 			converter = new XlsxBuilder(xmlDoc.getRootElement(), excelVer, logMgr);
 		}

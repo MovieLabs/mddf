@@ -335,6 +335,12 @@ public class TranslatorDialog extends JDialog {
 			cBoxList.add(cbXlsxV1_7_3);
 			cBoxMap.put(FILE_FMT.AVAILS_1_7_3, cbXlsxV1_7_3);
 			xlateCBoxes.add(cbXlsxV1_7_3);
+
+			JCheckBox cbXlsxV1_8 = new JCheckBox("XLSX 1.8");
+			excelFmtMenu.add(cbXlsxV1_8);
+			cBoxList.add(cbXlsxV1_8);
+			cBoxMap.put(FILE_FMT.AVAILS_1_8, cbXlsxV1_8);
+			xlateCBoxes.add(cbXlsxV1_8);
 		}
 		return excelFmtMenu;
 	}
