@@ -126,6 +126,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		 */
 		String cidPrefix = "";
 		switch (workType) {
+		case "Series":
 		case "Season":
 		case "Episode":
 			cidPrefix = workType;
