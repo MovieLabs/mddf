@@ -32,11 +32,13 @@ import org.jdom2.JDOMException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.avails.xml.Pedigree;
-import com.movielabs.mddflib.logging.LogMgmt; 
+import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.xml.MddfTarget;
 
@@ -80,6 +82,8 @@ public class AvailsValidatorTest extends AvailValidator {
 	protected MddfTarget initialize(String testFileName) {
 		String srcFilePath = rsrcPath + testFileName;
 		srcFile = new File(srcFilePath);
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
+
 		try {
 			MddfTarget target = new MddfTarget(srcFile, iLog);
 			return target;
@@ -90,70 +94,113 @@ public class AvailsValidatorTest extends AvailValidator {
 		}
 
 	}
- 
 
 	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
+	 * @throws JDOMException
+	 * @throws IOException
 	 * 
 	 */
 	@Test
-	public void testNoErrors_2_2_2() throws IOException, JDOMException { 
+	public void testNoErrors_2_2_2() throws IOException, JDOMException {
 		MddfTarget target = initialize("Avails_noErrors_v2.2.2.xml");
-		execute(target, false);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
+	 * @throws JDOMException
+	 * @throws IOException
 	 * 
 	 */
 	@Test
-	public void testNoErrors_2_3() throws IOException, JDOMException { 
+	public void testNoErrors_2_3() throws IOException, JDOMException {
 		MddfTarget target = initialize("Avails_noErrors_v2.3.xml");
-		execute(target, false);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(12, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(12, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
+	 * @throws JDOMException
+	 * @throws IOException
 	 * 
 	 */
-	//@Test
-	public void testNoErrors_2_4() throws IOException, JDOMException { 
+	// @Test
+	public void testNoErrors_2_4() throws IOException, JDOMException {
 		MddfTarget target = initialize("Avails_noErrors_v2.4.xml");
-		execute(target, true);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+
+	/**
+	 * @throws JDOMException
+	 * @throws IOException
+	 * 
+	 */
+	@Test
+	public void testVolumeErrors() throws IOException, JDOMException {
+		MddfTarget target = initialize("Avails_Volume_error_v2.4.xml");
+		execute(target);
+		try {
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 	
+
 	/**
-	 * @throws JDOMException 
-	 * @throws IOException 
+	 * @throws JDOMException
+	 * @throws IOException
 	 * 
 	 */
 	@Test
 	public void testWithErrors() throws IOException, JDOMException {
-		MddfTarget target = initialize("Avails_withErrors.xml");  
-		iLog.setMinLevel(LogMgmt.LEV_NOTICE);
-		execute(target, false);
-		assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		MddfTarget target = initialize("Avails_withErrors.xml"); 
+		execute(target);
+		try {
+			assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
-
-	protected void execute(MddfTarget target, boolean logToConsole) throws IOException, JDOMException {
-		iLog.setPrintToConsole(logToConsole);
+	protected void execute(MddfTarget target) throws IOException, JDOMException {
+		iLog.setPrintToConsole(true);
+		iLog.setMinLevel(LogMgmt.LEV_DEBUG);
 		Map<Object, Pedigree> pedigreeMap = null;
-		super.process(target, pedigreeMap);
-		iLog.setPrintToConsole(false);
+		super.process(target, pedigreeMap); 
+	}
+
+	private void dumpLog() {
+		System.out.println("\n === FAILED TEST... dumping log ===");
+		iLog.printLog();
+		System.out.println(" === End log dump for FAILED TEST ===");
 	}
 }
