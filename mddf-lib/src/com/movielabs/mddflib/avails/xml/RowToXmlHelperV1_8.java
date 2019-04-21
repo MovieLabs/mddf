@@ -24,6 +24,7 @@ package com.movielabs.mddflib.avails.xml;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 import com.movielabs.mddflib.logging.LogMgmt;
 
@@ -39,15 +40,54 @@ public class RowToXmlHelperV1_8 extends RowToXmlHelperV1_7_3 {
 	 * @param logger
 	 */
 	RowToXmlHelperV1_8(AvailsSheet sheet, Row row, LogMgmt logger) {
-		super(sheet, row, logger); 
+		super(sheet, row, logger);
+	}
+
+	protected Element buildAsset() {
+		Element assetEl = super.buildAsset();
+		// is this an Episode??
+		Namespace availNS = xb.getAvailsNSpace();
+		String wt = assetEl.getChildText("WorkType", availNS);
+		if (!wt.equals("Episode")) {
+			return assetEl;
+		}
+		Pedigree pg = getPedigreedData("AvailMetadata/VolumeNumber");
+		if (isSpecified(pg)) {
+			String volNum = pg.getRawValue();
+			// add TEMPORARY attribute that will be removed during finalization
+			assetEl.setAttribute("volNum", volNum);
+		}
+		return assetEl;
 	}
 
 	protected void addAllTerms(Element transactionEl) {
 		super.addAllTerms(transactionEl);
 
-		/* Now add Terms that are new for v1.8*/ 
-		addTerm(transactionEl, "AvailTrans/Bonus", "Bonus", "Text"); 
+		/* Now add Terms that are new for v1.8 */
+		addTerm(transactionEl, "AvailTrans/Bonus", "Bonus", "Text");
 		addTerm(transactionEl, "AvailAsset/PackageLabel", "PackageLabel", "Text");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.avails.xml.AbstractRowHelper#locateContentID(java.lang.
+	 * String)
+	 */
+	@Override
+	protected String locateContentID(String workType) {
+		String cidPrefix = "";
+		switch (workType) {
+		case "Series":
+		case "Season":
+		case "Episode":
+		case "Volume":
+			cidPrefix = workType;
+			break;
+		default:
+		}
+		String colKey = "AvailAsset/" + cidPrefix + "ContentID";
+		return colKey;
+	}
 }

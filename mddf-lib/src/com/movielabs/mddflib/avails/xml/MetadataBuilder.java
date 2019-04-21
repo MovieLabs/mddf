@@ -56,6 +56,8 @@ import net.sf.json.JSONObject;
  *   |
  *   +--Episode
  *   |
+ *   +--Volume
+ *   |
  *   +--Series
  *   |
  *   +--Season
@@ -241,17 +243,21 @@ public class MetadataBuilder {
 		 * Asset/WorkType
 		 */
 		switch (assetWorkType) {
+		case "Volume":
+			mapping4type = mapping4Version.getJSONObject("Volume");
+			break;
 		case "Season":
 			mapping4type = mapping4Version.getJSONObject("Season");
 			break;
 		case "Episode":
 			mapping4type = mapping4Version.getJSONObject("Episode");
 			break;
-		case "Series":
-			break;
-		default:
-			// must be a Movie
+		case "Collection":
+		case "Movie":
+		case "Short":
 			mapping4type = mapping4Version.getJSONObject("Movies");
+			break;
+		default: 
 			break;
 		}
 		if (mapping4type != null) {
@@ -629,10 +635,9 @@ public class MetadataBuilder {
 	private void func_eidr(JSONObject functionDef, String curKey, Element parentEl) {
 		JSONObject functionArgs = functionDef.getJSONObject("args");
 		Pedigree pg = row.getPedigreedData(functionArgs.getString("col"));
-		if (pg.isEmpty() && !isRequired(curKey)) {
-			return;
+		if (!AbstractRowHelper.isSpecified(pg)){ 
+				return; 
 		}
-
 		String idValue = pg.getRawValue();
 		// what's the namespace (i.e., encoding fmt)?
 		String namespace = parseIdFormat(idValue);

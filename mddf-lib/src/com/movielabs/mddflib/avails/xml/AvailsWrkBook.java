@@ -156,8 +156,8 @@ public class AvailsWrkBook {
 		switch (targetVersion) {
 		case V1_8:
 			srcMddfFmt = FILE_FMT.AVAILS_1_8;
-			targetMddfFmt = FILE_FMT.AVAILS_2_3;
-			xBuilder.setVersion("2.3");
+			targetMddfFmt = FILE_FMT.AVAILS_2_4;
+			xBuilder.setVersion("2.4");
 			break;
 		case V1_7_3:
 			srcMddfFmt = FILE_FMT.AVAILS_1_7_3;
@@ -310,7 +310,7 @@ public class AvailsWrkBook {
 	}
 
 	public AvailsSheet ingestSheet(String sheetName) throws Exception {
-		Sheet excelSheet = wrkBook.getSheet(sheetName);
+		XSSFSheet excelSheet = wrkBook.getSheet(sheetName);
 		if (excelSheet == null) {
 			wrkBook.close();
 			throw new IllegalArgumentException(file + ":" + sheetName + " not found");
@@ -333,7 +333,7 @@ public class AvailsWrkBook {
 	 *                                  exceptions
 	 */
 	public AvailsSheet ingestSheet(int sheetNumber) throws Exception {
-		Sheet excelSheet;
+		XSSFSheet excelSheet;
 		try {
 			excelSheet = wrkBook.getSheetAt(sheetNumber);
 		} catch (IllegalArgumentException e) {

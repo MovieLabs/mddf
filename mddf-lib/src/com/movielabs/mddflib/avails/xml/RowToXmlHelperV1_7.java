@@ -124,23 +124,15 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		 * Source key for 'contentID' depends (unfortunately) on the WorkType of the
 		 * Asset.
 		 */
-		String cidPrefix = "";
-		switch (workType) {
-		case "Series":
-		case "Season":
-		case "Episode":
-			cidPrefix = workType;
-			break;
-		default:
-		}
-		String colKey = "AvailAsset/" + cidPrefix + "ContentID";
+		String colKey = locateContentID(workType);
 		Pedigree pg = getPedigreedData(colKey);
-		String contentID = pg.getRawValue();
-		Attribute attEl = new Attribute("contentID", contentID);
-		assetEl.setAttribute(attEl);
-		xb.addToPedigree(attEl, pg);
-		xb.addToPedigree(assetEl, pg);
-
+		if (isSpecified(pg)) {
+			String contentID = pg.getRawValue();
+			Attribute attEl = new Attribute("contentID", contentID);
+			assetEl.setAttribute(attEl);
+			xb.addToPedigree(attEl, pg);
+			xb.addToPedigree(assetEl, pg);
+		}
 		xb.createAssetMetadata(assetEl, workType, this);
 
 		pg = getPedigreedData("Avail/BundledALIDs");
@@ -157,6 +149,28 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 			}
 		}
 		return assetEl;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.avails.xml.AbstractRowHelper#locateContentID(java.lang.
+	 * String)
+	 */
+	@Override
+	protected String locateContentID(String workType) {
+		String cidPrefix = "";
+		switch (workType) {
+		case "Series":
+		case "Season":
+		case "Episode":
+			cidPrefix = workType;
+			break;
+		default:
+		}
+		String colKey = "AvailAsset/" + cidPrefix + "ContentID";
+		return colKey;
 	}
 
 	/**

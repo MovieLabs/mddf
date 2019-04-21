@@ -87,30 +87,35 @@ public abstract class AbstractRowHelper {
 	 * Create an <tt>mdmec:Publisher-type</tt> XML element with a md:DisplayName
 	 * element child, and populate the latter with the DisplayName
 	 * 
-	 * @param elName
-	 *            the parent element to be created (i.e., Licensor or
-	 *            ServiceProvider)
-	 * @param colKey
-	 *            the name to be held in the DisplayName child node
+	 * @param elName the parent element to be created (i.e., Licensor or
+	 *               ServiceProvider)
+	 * @param colKey the name to be held in the DisplayName child node
 	 * @return the created element
 	 */
 	abstract protected Element mPublisher(String elName, String colKey);
 
 	/**
-	 * Invoked by XmlBuilder.createAsset() when a pre-existing Asset element
-	 * does not exist.
-	 *  
+	 * Invoked by XmlBuilder.createAsset() when a pre-existing Asset element does
+	 * not exist.
+	 * 
 	 * @return the created <tt>&lt;avails:Asset&gt;</tt> element
 	 */
 	abstract protected Element buildAsset();
 
 	/**
+	 * Source key for 'contentID' depends (unfortunately) on the WorkType of the
+	 * Asset.
+	 * 
+	 * @param workType
+	 * @return
+	 */
+	abstract protected String locateContentID(String workType);
+
+	/**
 	 * Create an XML element
 	 * 
-	 * @param name
-	 *            the name of the element
-	 * @param val
-	 *            the value of the element
+	 * @param name the name of the element
+	 * @param val  the value of the element
 	 * @return the created element, or null
 	 */
 	Element mGenericElement(String name, String val, Namespace ns) {
@@ -142,11 +147,11 @@ public abstract class AbstractRowHelper {
 	}
 
 	/**
-	 * Add zero or more child elements with the specified name and namespace.
-	 * The number of child elements created will be determined by the contents
-	 * of the indicated cell. If <tt>separator</tt> is not <tt>null</tt>, then
-	 * it will be used to split the string value in the cell with each resulting
-	 * sub-string being used to create a distinct child element.
+	 * Add zero or more child elements with the specified name and namespace. The
+	 * number of child elements created will be determined by the contents of the
+	 * indicated cell. If <tt>separator</tt> is not <tt>null</tt>, then it will be
+	 * used to split the string value in the cell with each resulting sub-string
+	 * being used to create a distinct child element.
 	 * 
 	 * @param parentEl
 	 * @param childName
@@ -187,6 +192,7 @@ public abstract class AbstractRowHelper {
 	abstract protected String getData(String colKey);
 
 	/**
+	 * 
 	 * @param colKey
 	 * @return
 	 */
@@ -194,6 +200,8 @@ public abstract class AbstractRowHelper {
 		int cellIdx = sheet.getColumnIdx(colKey);
 		if (cellIdx < 0) {
 			return null;
+//			Pedigree ped = new Pedigree(null, "");
+//			return ped;
 		}
 		Cell sourceCell = row.getCell(cellIdx);
 		String value = dataF.formatCellValue(sourceCell);
@@ -207,17 +215,17 @@ public abstract class AbstractRowHelper {
 	}
 
 	/**
-	 * Return <tt>true</tt> if the cell value is the result of an Excel formula.
-	 * Use of formulas may prevent the use of automated workflows for ingesting
-	 * and processing the Avails.
+	 * Return <tt>true</tt> if the cell value is the result of an Excel formula. Use
+	 * of formulas may prevent the use of automated workflows for ingesting and
+	 * processing the Avails.
 	 * 
 	 * @param sourceCell
 	 * @return
 	 */
 	protected boolean usesFormula(Cell sourceCell) {
 		if (sourceCell != null && (sourceCell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
-			String addr= sourceCell.getAddress().formatAsString();
-			String errMsg = "Cell "+addr+"- Excel Formulas not supported"; 
+			String addr = sourceCell.getAddress().formatAsString();
+			String errMsg = "Cell " + addr + "- Excel Formulas not supported";
 			String details = "Use of formulas may prevent the use of automated workflows for ingesting and processing the Avails.";
 			logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null, XmlBuilder.moduleId);
 			return true;
@@ -229,8 +237,7 @@ public abstract class AbstractRowHelper {
 	/**
 	 * Returns <tt>true</tt> if the valueSrc is both non-null and not empty. The
 	 * value source must be an instance of either the <tt>String</tt> or
-	 * <tt>Pedigree</tt> class or an <tt>IllegalArgumentException</tt> is
-	 * thrown.
+	 * <tt>Pedigree</tt> class or an <tt>IllegalArgumentException</tt> is thrown.
 	 * 
 	 * @param valueSrc
 	 * @throws IllegalArgumentException

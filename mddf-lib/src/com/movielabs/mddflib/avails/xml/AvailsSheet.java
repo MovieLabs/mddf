@@ -30,6 +30,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -89,7 +90,7 @@ public class AvailsSheet {
 	private ArrayList<String> headerList;
 	private HashMap<String, Integer> headerMap;
 	private LogMgmt logger;
-	private Sheet excelSheet;
+	private XSSFSheet excelSheet;
 	private Version version = Version.UNK;
 	private boolean noPrefix = true;
 
@@ -105,7 +106,7 @@ public class AvailsSheet {
 	 * @param parent     the parent Spreadsheet object
 	 * @param excelSheet the name of the spreadsheet
 	 */
-	public AvailsSheet(AvailsWrkBook parent, Sheet excelSheet) {
+	public AvailsSheet(AvailsWrkBook parent, XSSFSheet excelSheet) {
 		this.parent = parent;
 		this.excelSheet = excelSheet;
 		logger = parent.getLogger();
@@ -135,7 +136,7 @@ public class AvailsSheet {
 		headerList = new ArrayList<String>();
 		headerMap = new HashMap<String, Integer>();
 		for (Cell headerCell : headerRow2) {
-			int idx = headerCell.getColumnIndex();
+			int idx = headerCell.getColumnIndex(); 
 			String value = dataF.formatCellValue(headerCell);
 			if ((value != null) && !value.isEmpty()) {
 				String prefix;

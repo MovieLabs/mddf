@@ -36,7 +36,10 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
 import org.jdom2.output.DOMOutputter;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
@@ -82,11 +85,11 @@ public class XmlBuilder {
 	private Version templateVersion;
 	private File curSrcXslxFile;
 	private MetadataBuilder mdBuilder;
+	private XPathFactory xpfac = XPathFactory.instance();
 
 	/**
 	 * @param logger
-	 * @param sstVersion
-	 *            the template version used by the spreadsheet
+	 * @param sstVersion the template version used by the spreadsheet
 	 */
 	public XmlBuilder(LogMgmt logger, Version sstVersion) {
 		this.logger = logger;
@@ -136,14 +139,24 @@ public class XmlBuilder {
 		return xsdVersion;
 	}
 
+	public org.w3c.dom.Document makeXmlAsW3C(AvailsSheet aSheet, String shortDesc) throws IllegalStateException {
+		Document jdomDoc = makeXmlAsJDom(aSheet, shortDesc, null);
+		DOMOutputter domOut = new DOMOutputter();
+		try {
+			return domOut.output(jdomDoc);
+		} catch (JDOMException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	/**
 	 * Create an Avails XML document based on the data in the spreadsheet.
 	 * 
 	 * @param aSheet
-	 * @param shortDesc
-	 *            a short description that will appear in the document
-	 * @param srcXslxFile
-	 *            original file (used for logging; may be <tt>null</tt>
+	 * @param shortDesc   a short description that will appear in the document
+	 * @param srcXslxFile original file (used for logging; may be <tt>null</tt>
 	 * @return a JAXP document
 	 * @throws IllegalStateException
 	 */
@@ -165,7 +178,7 @@ public class XmlBuilder {
 		entitlement2IdMap = new HashMap<Element, List<String>>();
 		element2SrcRowMap = new HashMap<Element, AbstractRowHelper>();
 
-		mdBuilder = new MetadataBuilder( logger, this);
+		mdBuilder = new MetadataBuilder(logger, this);
 
 		// Create and initialize Document...
 		String xsdUri = "http://www.movielabs.com/schema/avails/v" + xsdVersion + "/avails";
@@ -218,29 +231,18 @@ public class XmlBuilder {
 			finalizeAssetMetadata(nextAvailEl);
 			root.addContent(nextAvailEl);
 		}
+		finalizeDocument(doc, aSheet.getVersion());
 		msg = "Completed ingesting XLSX file";
 		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
 		return doc;
 	}
 
-	public org.w3c.dom.Document makeXmlAsW3C(AvailsSheet aSheet, String shortDesc) throws IllegalStateException {
-		Document jdomDoc = makeXmlAsJDom(aSheet, shortDesc, null);
-		DOMOutputter domOut = new DOMOutputter();
-		try {
-			return domOut.output(jdomDoc);
-		} catch (JDOMException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-	}
-
 	/**
-	 * Returns the <tt>JDom Element</tt> instantiating the <i>Avail</i>
-	 * associated with the ALID specified by the row. If this is the first
-	 * request for the specified Avail a new element is constructed and
-	 * returned. Otherwise, a previously created element will be returned. Thus,
-	 * there is never more than one XML element per ALID value.
+	 * Returns the <tt>JDom Element</tt> instantiating the <i>Avail</i> associated
+	 * with the ALID specified by the row. If this is the first request for the
+	 * specified Avail a new element is constructed and returned. Otherwise, a
+	 * previously created element will be returned. Thus, there is never more than
+	 * one XML element per ALID value.
 	 * 
 	 * @param curRow
 	 * @return
@@ -248,8 +250,8 @@ public class XmlBuilder {
 	Element getAvailElement(AbstractRowHelper curRow) {
 		Pedigree alidPedigree = curRow.getPedigreedData("Avail/ALID");
 		/*
-		 * TODO: next line throws a NullPtrException if column is missing. How
-		 * do we handle?
+		 * TODO: next line throws a NullPtrException if column is missing. How do we
+		 * handle?
 		 */
 		String alid = alidPedigree.getRawValue();
 		logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, curSrcXslxFile,
@@ -260,18 +262,18 @@ public class XmlBuilder {
 					"Building Avail with ALID=[" + alid + "]", null, null, moduleId);
 			availEL = new Element("Avail", getAvailsNSpace());
 			/*
-			 * No data value for the Avail element itself but for purposes of
-			 * error logging we link it to the ALID
+			 * No data value for the Avail element itself but for purposes of error logging
+			 * we link it to the ALID
 			 */
 			addToPedigree(availEL, alidPedigree);
 			/*
-			 * availEl will get added to document at completion of sheet
-			 * processing. For now, just store in HashMap.
+			 * availEl will get added to document at completion of sheet processing. For
+			 * now, just store in HashMap.
 			 */
 			availElRegistry.put(alid, availEL);
 			/*
-			 * Keeping track of row will facilitate later check to make sure any
-			 * other row for same Avail has identical values where required.
+			 * Keeping track of row will facilitate later check to make sure any other row
+			 * for same Avail has identical values where required.
 			 */
 			element2SrcRowMap.put(availEL, curRow);
 
@@ -295,8 +297,8 @@ public class XmlBuilder {
 			curRow.process(availEL, "ExceptionFlag", getAvailsNSpace(), "Avail/ExceptionFlag");
 
 			/*
-			 * Initialize data structures for collecting Assets, Transactions,
-			 * and Entitlements.
+			 * Initialize data structures for collecting Assets, Transactions, and
+			 * Entitlements.
 			 */
 			avail2AssetMap.put(availEL, new ArrayList<Element>());
 			avail2TransMap.put(availEL, new ArrayList<Element>());
@@ -311,8 +313,8 @@ public class XmlBuilder {
 			checkForMatch("Avail/ServiceProvider", srcRow, curRow, "Avail");
 			checkForMatch("Avail/ExceptionFlag", srcRow, curRow, "Avail");
 			/*
-			 * AvailAsset/WorkType is special case as different WorkTypes may
-			 * map to same AvailType
+			 * AvailAsset/WorkType is special case as different WorkTypes may map to same
+			 * AvailType
 			 */
 
 			String definedValue = mapWorkType(srcRow);
@@ -370,6 +372,7 @@ public class XmlBuilder {
 		case "Short":
 			availType = "single";
 			break;
+		case "Volume":
 		case "Season":
 		case "Episode":
 		case "Collection":
@@ -404,11 +407,11 @@ public class XmlBuilder {
 	 * @param elementName
 	 * @param schema
 	 * @return
-	 * @throws IllegalStateException
-	 *             if supported schema version was not previously set
-	 * @throws IllegalArgumentException
-	 *             if <tt>schema</tt> is unrecognized or <tt>elementName</tt> is
-	 *             not defined by the <tt>schema</tt>
+	 * @throws IllegalStateException    if supported schema version was not
+	 *                                  previously set
+	 * @throws IllegalArgumentException if <tt>schema</tt> is unrecognized or
+	 *                                  <tt>elementName</tt> is not defined by the
+	 *                                  <tt>schema</tt>
 	 */
 	boolean isRequired(String elementName, String schema) throws IllegalStateException, IllegalArgumentException {
 		if (xsdVersion == null) {
@@ -463,9 +466,6 @@ public class XmlBuilder {
 		}
 		return formattedValue;
 	}
-
-
- 
 
 	private SchemaWrapper getSchema(String schema) {
 		switch (schema) {
@@ -530,15 +530,15 @@ public class XmlBuilder {
 	 */
 	void createAsset(AbstractRowHelper curRow) {
 		/*
-		 * Gen unique key and see if there is a matching Element. Unfortunately
-		 * the key's structure is based on contentID which is sensitive to the
-		 * WorkType.
+		 * Gen unique key and see if there is a matching Element. Unfortunately the
+		 * key's structure is based on contentID which is sensitive to the WorkType.
 		 */
 		String workType = curRow.getData("AvailAsset/WorkType");
 		String cidPrefix = "";
 		switch (workType) {
 		case "Season":
 		case "Episode":
+		case "Volume":
 			cidPrefix = workType;
 			break;
 		default:
@@ -560,8 +560,8 @@ public class XmlBuilder {
 			return;
 		}
 		/*
-		 * Check the consistency of the Asset info as originally specified with
-		 * the same fields in the current row.
+		 * Check the consistency of the Asset info as originally specified with the same
+		 * fields in the current row.
 		 */
 		AbstractRowHelper srcRow = element2SrcRowMap.get(assetEl);
 		boolean match = true;
@@ -579,24 +579,7 @@ public class XmlBuilder {
 			Cell sourceCell = curRow.sheet.getCell(cidColKey, curRow.getRowNumber());
 			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, sourceCell, msg, details, null, moduleId);
 		}
-		/*
-		 * When dealing with a Movie or Episode, more that 1 ReleaseHistory and
-		 * Rating may be specified per-Asset. We therefore need to check for new
-		 * data on the current row and, if unique, append it to existing Asset
-		 * Metadata. The WorkType will determine which type of Metadata element
-		 * we are looking for.
-		 */
-		// Element metadataEl = null;
-		// switch (workType) {
-		// case "Movie":
-		// metadataEl =mdBuilder.buildMovieMData(curRow);
-		// break;
-		// case "Episode":
-		// metadataEl =mdBuilder.buildTvMData(curRow);
-		// break;
-		// default:
-		// }
-		// assetEl.addContent(metadataEl);
+
 	}
 
 	/**
@@ -649,7 +632,106 @@ public class XmlBuilder {
 		}
 	}
 
-//	void appendToLog(String msg, int logLevel, Cell target) {
-//		logger.logIssue(LogMgmt.TAG_XLATE, logLevel, target, msg, null, null, moduleId);
-//	}
+	/**
+	 * Finalization deals with any issue requiring multiple rows and/or Avails be
+	 * examined collectively. This can best be done when the entire XML document has
+	 * been assembled.
+	 * 
+	 * @param doc     the XML generated from the xlsx
+	 * @param version the version of the xlsx file
+	 */
+	protected void finalizeDocument(Document doc, Version version) {
+		switch (version) {
+		case V1_8:
+			finalizeVolumes(doc);
+			break;
+		default:
+			return;
+		}
+	}
+
+	/**
+	 * If any <tt>Volumes</tt> are defined then the <tt>VolumeMetadata</tt> needs to
+	 * be completed by identifying the correct number of Episodes it contains.
+	 * 
+	 * @param doc
+	 */
+	private void finalizeVolumes(Document doc) {
+		String avPrefix = availsNSpace.getPrefix();
+		String xpath_VolMD = "//" + avPrefix + ":VolumeMetadata";
+		XPathExpression<Element> xpExp_VolMetadata = xpfac.compile(xpath_VolMD, Filters.element(), null, availsNSpace);
+		String xpath_EpisodeNum = "./" + avPrefix + ":EpisodeMetadata/" + avPrefix + ":EpisodeNumber/"+ mdNSpace.getPrefix() + ":Number";
+		XPathExpression<Element> xpExp_EpisodeNum = xpfac.compile(xpath_EpisodeNum, Filters.element(), null,
+				availsNSpace, mdNSpace);
+
+		List<Element> volList = xpExp_VolMetadata.evaluate(doc.getRootElement());
+		if (volList.isEmpty()) {
+			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, null, "No Volumes found", null, null, moduleId);
+			return;
+		}
+		logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_INFO, null, "Finalizing " + volList.size() + " Volume(s)", null,
+				null, moduleId);
+		/**
+		 * For each Volume we need to find all Assets with
+		 * <ul>
+		 * <li>WorkType of 'Episode' and with SeasonContentID that matches the Volume's
+		 * SeasonContentID AND</li>
+		 * <li>with a @volumeNumber that matches the
+		 * <tt>VolumeMetadata/VolumeNumber</tt></li>
+		 * </ul>
+		 */
+		String xpath_SeasonCID = "./" + avPrefix + ":SeasonMetadata/" + avPrefix + ":SeasonContentID";
+		String xpath_VolNum = "./" + avPrefix + ":VolumeNumber/" + mdNSpace.getPrefix() + ":Number";
+		XPathExpression<Element> xpExp_scid = xpfac.compile(xpath_SeasonCID, Filters.element(), null, availsNSpace);
+		XPathExpression<Element> xpExp_vNum = xpfac.compile(xpath_VolNum, Filters.element(), null, availsNSpace,
+				mdNSpace);
+		for (Element volMdEl : volList) {
+			String scid = null;
+			String vNum = null;
+			Element scidEl = xpExp_scid.evaluateFirst(volMdEl);
+			if (scidEl != null) {
+				scid = scidEl.getTextNormalize();
+			}
+			Element vNumEl = xpExp_vNum.evaluateFirst(volMdEl);
+			if (vNumEl != null) {
+				vNum = vNumEl.getTextNormalize();
+			}
+			if ((scid == null) || (vNum == null)) {
+				// missing key info. This will get flagged downstream when XML is validated
+				continue;
+			}
+			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, null, "Finalizing Volume " + vNum + ", scid=" + scid,
+					null, null, moduleId);
+			// find matching Episode Assets
+			String xpath_Episodes = "//" + avPrefix + ":Asset[@volNum='" + vNum + "' and ./" + avPrefix
+					+ ":EpisodeMetadata/" + avPrefix + ":SeasonMetadata[" + avPrefix + ":SeasonContentID/text()='"
+					+ scid + "']]";
+			XPathExpression<Element> xpExp_episodes = xpfac.compile(xpath_Episodes, Filters.element(), null,
+					availsNSpace);
+			List<Element> episodeList = xpExp_episodes.evaluate(doc.getRootElement());
+			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, null,
+					"Found " + episodeList.size() + " matching Episode Assets", null, null, moduleId);
+			/*
+			 * Identify 1st Episode. At the remove the temporary @volNum attribute since it
+			 * violates the XSD
+			 * 
+			 */
+			int first = Integer.MAX_VALUE;
+			for (Element assetEl : episodeList) {
+				assetEl.removeAttribute("volNum");
+				Element episodeNumEl = xpExp_EpisodeNum.evaluateFirst(assetEl);
+				if (episodeNumEl != null) {
+					int eNum = Integer.parseInt(episodeNumEl.getTextNormalize());
+					first = Integer.min(first, eNum);
+				}
+			}
+			Element volNoEpEl = volMdEl.getChild("VolumeNumberOfEpisodes", availsNSpace);
+			volNoEpEl.setText(Integer.toString(episodeList.size()));
+			// VolumeFirstEpisodeNumber goes immediately before the VolumeNumberOfEpisodes
+			int index = volMdEl.indexOf(volNoEpEl);
+			Element vFirstEl = new Element("VolumeFirstEpisodeNumber", availsNSpace);
+			vFirstEl.setText(Integer.toString(first));
+			volMdEl.addContent(index, vFirstEl);
+		}
+	}
 }
