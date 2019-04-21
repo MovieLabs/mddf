@@ -88,10 +88,7 @@ public class RowToXmlHelperV1_7_2 extends RowToXmlHelperV1_7 {
 	 * @param cellKey
 	 */
 	protected void addArgument(Element parentEl, String attribute, String cellKey) {
-		Pedigree pg = getPedigreedData(cellKey);
-		if (pg == null) {
-			return;
-		}
+		Pedigree pg = getPedigreedData(cellKey); 
 		String value = pg.getRawValue();
 		if (isSpecified(value)) {
 			parentEl.setAttribute(attribute, value);
