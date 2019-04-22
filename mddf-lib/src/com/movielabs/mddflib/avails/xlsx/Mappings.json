@@ -1146,6 +1146,8 @@
 				}
 			},
 
+			"AvailAsset:VolumeContentID":  "{avail}VolumeMetadata/{avail}VolumeContentID",
+			
 			"AvailAsset:WorkType": "{avail}WorkType",
 			"AvailMetadata:Any": "n.a",
 			"AvailMetadata:CaptionExemption": 
@@ -1282,6 +1284,8 @@
 				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata//{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeriesID')]"
 			},
 
+			"AvailMetadata:RetailerVolumeID": "{avail}VolumeMetadata//{avail}VolumeAltIdentifier/{md}Identifier[starts-with(., 'RetailerVolumeID')]",
+
 			"AvailMetadata:SeasonCount": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons",
@@ -1349,6 +1353,24 @@
 				"{avail}Metadata/{avail}RunLength",
 				"{avail}EpisodeMetadata/{avail}RunLength"
 			],
+			
+			"AvailMetadata:VolumeDistributionNumber": "{avail}VolumeMetadata/{avail}VolumeNumber/{md}DistributionNumber",
+
+			"AvailMetadata:VolumeID": 
+			{
+				"%FUNCTION": 
+				{
+					"name": "eidr",
+					"args": 
+					{
+						"xpath": "{avail}VolumeMetadata/{avail}VolumeEIDR-URN"
+					}
+				}
+			},
+
+			"AvailMetadata:VolumeNumber": "{avail}VolumeMetadata/{avail}VolumeNumber/{md}Number",
+			"AvailMetadata:VolumeTitleDisplayUnlimited": "{avail}VolumeMetadata/{avail}VolumeTitleDisplayUnlimited",
+			"AvailMetadata:VolumeTitleInternalAlias": "{avail}VolumeMetadata/{avail}VolumeTitleInternalAlias",
 
 			"AvailTrans:AllowedLanguages": "*{avail}AllowedLanguage",
 			"AvailTrans:AnnounceDate": "{avail}Term/{avail}Event[../@termName='AnnounceDate']",
