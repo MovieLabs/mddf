@@ -331,8 +331,8 @@ public class MddfContext {
 			uses.put("MD", "2.7.1");
 			break;
 		case MDMEC_2_7_1:
-//			uses.put("MD", "2.7.1");
-//			break;
+			uses.put("MD", "2.7.1");
+			break;
 		case MDMEC_2_7:
 			uses.put("MD", "2.7");
 			break;
