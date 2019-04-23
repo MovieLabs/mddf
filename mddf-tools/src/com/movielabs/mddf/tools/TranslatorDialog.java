@@ -370,6 +370,12 @@ public class TranslatorDialog extends JDialog {
 		if (xmlFmtMenu == null) {
 			xmlFmtMenu = new JPopupMenu();
 
+			JCheckBox cbXmlV2_4 = new JCheckBox("XML 2.4");
+			xmlFmtMenu.add(cbXmlV2_4);
+			cBoxList.add(cbXmlV2_4);
+			cBoxMap.put(FILE_FMT.AVAILS_2_4, cbXmlV2_4);
+			xlateCBoxes.add(cbXmlV2_4);
+			
 			JCheckBox cbXmlV2_3 = new JCheckBox("XML 2.3");
 			xmlFmtMenu.add(cbXmlV2_3);
 			cBoxList.add(cbXmlV2_3);
