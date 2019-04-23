@@ -89,12 +89,12 @@ public class AvailsWrkBook {
 	 * </ul>
 	 * 
 	 * @param xslxFile
-	 * @param targetVersion xlsx template version
+	 * @param xlsxVersion xlsx template version
 	 * @param inStream
 	 * @param logMgr
 	 * @return a Map&lt;String, Object&gt;
 	 */
-	public static Map<String, Object> convertSpreadsheet(File xslxFile, Version targetVersion, InputStream inStream,
+	public static Map<String, Object> convertSpreadsheet(File xslxFile, Version xlsxVersion, InputStream inStream,
 			LogMgmt logMgr) {
 		boolean autoCorrect = false;
 		boolean exitOnError = false;
@@ -125,35 +125,35 @@ public class AvailsWrkBook {
 			return null;
 		}
 		Version unknown = AvailsSheet.Version.valueOf("UNK");
-		if (targetVersion == null) {
-			targetVersion = unknown;
+		if (xlsxVersion == null) {
+			xlsxVersion = unknown;
 		}
 		// does 'targetVersion' match the inferred version?
 		Version inferredVer = as.getVersion();
 		if (!inferredVer.equals(unknown)) {
-			if (targetVersion.equals(unknown)) {
+			if (xlsxVersion.equals(unknown)) {
 				// use inferred
-				targetVersion = inferredVer;
-			} else if (!targetVersion.equals(inferredVer)) {
+				xlsxVersion = inferredVer;
+			} else if (!xlsxVersion.equals(inferredVer)) {
 				// ERROR
-				String msg = "XLSX was identified as using " + targetVersion.name() + " but appears to be "
+				String msg = "XLSX was identified as using " + xlsxVersion.name() + " but appears to be "
 						+ inferredVer.name();
 				logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, xslxFile, logMsgSrcId);
 				return null;
 			}
 		}
 		// if still UNKNOWN we can't proceed
-		if (targetVersion.equals(unknown)) {
+		if (xlsxVersion.equals(unknown)) {
 			String msg = "Avails schema version MUST be provided for this file";
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, xslxFile, logMsgSrcId);
 			return null;
 		}
-		as.setVersion(targetVersion);
+		as.setVersion(xlsxVersion);
 
 		FILE_FMT srcMddfFmt = null;
 		FILE_FMT targetMddfFmt = null;
-		XmlBuilder xBuilder = new XmlBuilder(logMgr, targetVersion);
-		switch (targetVersion) {
+		XmlBuilder xBuilder = new XmlBuilder(logMgr, xlsxVersion);
+		switch (xlsxVersion) {
 		case V1_8:
 			srcMddfFmt = FILE_FMT.AVAILS_1_8;
 			targetMddfFmt = FILE_FMT.AVAILS_2_4;
@@ -176,18 +176,18 @@ public class AvailsWrkBook {
 			break;
 		case V1_6:
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
-					"Version " + targetVersion + " has been deprecated and is no longer supported", xslxFile,
+					"Version " + xlsxVersion + " has been deprecated and is no longer supported", xslxFile,
 					logMsgSrcId);
 			return null;
 		case UNK:
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", xslxFile, logMsgSrcId);
 			break;
 		default:
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported template version " + targetVersion, xslxFile,
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported template version " + xlsxVersion, xslxFile,
 					logMsgSrcId);
 			return null;
 		}
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + targetVersion + " format", xslxFile,
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + xlsxVersion + " format", xslxFile,
 				logMsgSrcId);
 		String inFileName = xslxFile.getName();
 		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
