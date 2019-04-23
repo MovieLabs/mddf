@@ -436,6 +436,10 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	protected void append(int level, int tag, String msg, File xmlFile, int line, String moduleID, String tooltip,
 			LogReference srcRef) {
 
+		if (level == LogMgmt.LEV_FATAL) {
+			String consoleMsg = "================\nFATAL Error:\n"+msg+"\n"+tooltip+"\n"+"================";
+			System.out.println(consoleMsg);
+		}
 		if (level < minLevel) {
 			return;
 		}
