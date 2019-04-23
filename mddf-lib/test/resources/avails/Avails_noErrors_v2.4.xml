@@ -1,0 +1,956 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<avails:AvailList 
+  xmlns:avails="http://www.movielabs.com/schema/avails/v2.4/avails" 
+  xmlns:md="http://www.movielabs.com/schema/md/v2.7.1/md" 
+  xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7.1" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <!-- AVAILS TEST Artifact: error-free test case for v2.4 complaint Avails. 
+		Contains wide range of Avail structures including Movies, TV Episodes/Seasons/Series, 
+		and Collections. -->
+  <avails:Avail>
+    <avails:ALID>md:pseudoalid:wprid.fox.com:001143</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>20th Century Fox</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>single</avails:AvailType>
+    <avails:ShortDescription>generated XML from
+			MOVIES_ANYWHERE_Avails_GoodHeader.xlsx:Sheet_0 on 2017.10.23.14.06.11</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:eidr-s:8FF3-1C20-84F5-F247-8BCD-E">
+      <avails:WorkType>Movie</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleDisplayUnlimited>THE BRAVADOS</avails:TitleDisplayUnlimited>
+        <avails:TitleInternalAlias>Bravados, The</avails:TitleInternalAlias>
+        <avails:EditEIDR-URN>urn:eidr:10.5240:77C5-ED35-8FC2-7D9D-9531-1</avails:EditEIDR-URN>
+        <avails:TitleEIDR-URN>urn:eidr:10.5240:8FF3-1C20-84F5-F247-8BCD-E</avails:TitleEIDR-URN>
+        <avails:AltIdentifier scope="Title">
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>AltID:001143</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:ReleaseDate>1958</avails:ReleaseDate>
+        <avails:RunLength>PT01H37M49S</avails:RunLength>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>DVD</md:ReleaseType>
+          <md:Date>2005-05-24</md:Date>
+        </avails:ReleaseHistory>
+        <avails:USACaptionsExemptionReason>2</avails:USACaptionsExemptionReason>
+        <avails:LocalizationOffering>any</avails:LocalizationOffering>
+      </avails:Metadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="1431081">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>1917-09-24T23:59:59</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>ar</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cmn</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cs</avails:AllowedLanguage>
+      <avails:AllowedLanguage>da</avails:AllowedLanguage>
+      <avails:AllowedLanguage>de</avails:AllowedLanguage>
+      <avails:AllowedLanguage>el</avails:AllowedLanguage>
+      <avails:AssetLanguage>EN</avails:AssetLanguage>
+      <avails:LicenseRightsDescription>Library</avails:LicenseRightsDescription>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:ReportingID>001143</avails:ReportingID>
+      <avails:Term termName="SRP">
+        <avails:Money currency="XTS">1000.00</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="1432642">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>1917-09-24T23:59:59</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>ar</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cmn</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cs</avails:AllowedLanguage>
+      <avails:AllowedLanguage>da</avails:AllowedLanguage>
+      <avails:AllowedLanguage>de</avails:AllowedLanguage>
+      <avails:AllowedLanguage>el</avails:AllowedLanguage>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es-419</avails:AllowedLanguage>
+      <avails:AllowedLanguage>fi</avails:AllowedLanguage>
+      <avails:AllowedLanguage>fr</avails:AllowedLanguage>
+      <avails:AssetLanguage>EN</avails:AssetLanguage>
+      <avails:LicenseRightsDescription>Library</avails:LicenseRightsDescription>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:ReportingID>001143</avails:ReportingID>
+      <avails:Term termName="SRP">
+        <avails:Money currency="XTS">1000.00</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:SharedEntitlement ecosystem="UVVU">
+      <avails:EcosystemID>urn:dece:alid:eidr-s:77C5-ED35-8FC2-7D9D-9531-1</avails:EcosystemID>
+    </avails:SharedEntitlement>
+    <avails:SharedEntitlement ecosystem="DMA">
+      <avails:EcosystemID>10.5240/77C5-ED35-8FC2-7D9D-9531-1</avails:EcosystemID>
+    </avails:SharedEntitlement>
+  </avails:Avail>
+  <!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+  <avails:Avail>
+    <avails:ALID>030434</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>20th Century Fox</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>single</avails:AvailType>
+    <avails:ShortDescription>generated XML from Amazon Avail
+			011317-nopricevalue_v1.xlsx:Sheet_0 on 2017.02.03.17.55.10</avails:ShortDescription>
+    <avails:Asset contentID="030434">
+      <avails:WorkType>Movie</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleDisplayUnlimited>Voll auf die Nüsse</avails:TitleDisplayUnlimited>
+        <avails:TitleInternalAlias>Dodgeball: A True Underdog Story</avails:TitleInternalAlias>
+        <avails:EditEIDR-URN>10.5240/2156-FA16-777A-20BF-AF2B-C</avails:EditEIDR-URN>
+        <avails:TitleEIDR-URN>10.5240/6FE7-5382-637F-2E34-7518-O</avails:TitleEIDR-URN>
+        <avails:ReleaseDate>2004</avails:ReleaseDate>
+        <avails:RunLength>PT01H32M03S</avails:RunLength>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>DVD</md:ReleaseType>
+          <md:Date>2005-02-10</md:Date>
+        </avails:ReleaseHistory>
+        <avails:Ratings>
+          <md:Rating>
+            <md:Region>
+              <md:country>DE</md:country>
+            </md:Region>
+            <md:System>FSK</md:System>
+            <md:Value>6</md:Value>
+          </md:Rating>
+        </avails:Ratings>
+        <avails:LocalizationOffering>subdub</avails:LocalizationOffering>
+      </avails:Metadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="957373">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>1917-09-24T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>ar</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cmn</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cs</avails:AllowedLanguage>
+      <avails:AllowedLanguage>da</avails:AllowedLanguage>
+      <avails:AllowedLanguage>de</avails:AllowedLanguage>
+      <avails:AllowedLanguage>el</avails:AllowedLanguage>
+      <avails:AssetLanguage>EN</avails:AssetLanguage>
+      <avails:LicenseRightsDescription>Library</avails:LicenseRightsDescription>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:Term termName="WSP">
+        <avails:Money>999.99</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="957355">
+      <avails:LicenseType>VOD</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2007-05-01T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>ar</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cmn</avails:AllowedLanguage>
+      <avails:AllowedLanguage>cs</avails:AllowedLanguage>
+      <avails:AllowedLanguage>da</avails:AllowedLanguage>
+      <avails:AllowedLanguage>de</avails:AllowedLanguage>
+      <avails:AssetLanguage>EN</avails:AssetLanguage>
+      <avails:LicenseRightsDescription>Library</avails:LicenseRightsDescription>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="Category">
+        <avails:Text>NR</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>33603_OV</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>BVVOD</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>single</avails:AvailType>
+    <avails:ShortDescription>generated XML from 172bundle.xlsx:Sheet_0 on
+			2018.10.24.11.02.57</avails:ShortDescription>
+    <avails:Asset contentID="33603_OV">
+      <avails:WorkType>Movie</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleDisplayUnlimited>Star Wars: Revenge Of The Sith</avails:TitleDisplayUnlimited>
+        <avails:TitleInternalAlias>Star Wars: Revenge Of The Sith</avails:TitleInternalAlias>
+        <avails:EditEIDR-URN>urn:eidr:10.5240:AB00-7928-1A3D-3923-B063-Q</avails:EditEIDR-URN>
+        <avails:TitleEIDR-URN>urn:eidr:10.5240:0C6B-73A7-3D92-3950-76BD-Q</avails:TitleEIDR-URN>
+        <avails:AltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>AltID:33603_OV</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:ReleaseDate>2005</avails:ReleaseDate>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>original</md:ReleaseType>
+          <md:Date>2005-05-19</md:Date>
+        </avails:ReleaseHistory>
+        <avails:CompanyDisplayCredit>
+          <md:DisplayString />
+        </avails:CompanyDisplayCredit>
+      </avails:Metadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="573991-427591-6477-16623-338899-409927-US-EHVL-EN-HD">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Description>wBonus</avails:Description>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es-419</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:ContractID>16623</avails:ContractID>
+      <avails:Term termName="LicenseFee">
+        <avails:Text>FooBar-5</avails:Text>
+      </avails:Term>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="AnnounceDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="573991-427591-6477-16623-338895-409925-US-EHVL-EN-SD">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Description>wBonus</avails:Description>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es-419</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:ContractID>16623</avails:ContractID>
+      <avails:Term termName="LicenseFee">
+        <avails:Text>FooBar-5</avails:Text>
+      </avails:Term>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="AnnounceDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <!-- ======================================================== -->
+  <!-- Collection with Bundled Assets -->
+  <!-- ======================================================== -->
+  <avails:Avail>
+    <avails:ALID>596509</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>BVVOD</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>collection</avails:AvailType>
+    <avails:ShortDescription>generated XML from 172bundle.xlsx:Sheet_0 on
+			2018.10.24.11.02.57</avails:ShortDescription>
+    <avails:Asset contentID="596509">
+      <avails:WorkType>Collection</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleDisplayUnlimited>Star Wars: The Digital Movie
+					Collection (5)</avails:TitleDisplayUnlimited>
+        <avails:TitleInternalAlias>Star Wars: The Digital Movie Collection
+					(5)</avails:TitleInternalAlias>
+        <avails:AltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>AltID:596509</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:CompanyDisplayCredit>
+          <md:DisplayString />
+        </avails:CompanyDisplayCredit>
+      </avails:Metadata>
+      <avails:BundledAsset sequence="0">
+        <avails:BundledALID>33483_OV</avails:BundledALID>
+      </avails:BundledAsset>
+      <avails:BundledAsset sequence="1">
+        <avails:BundledALID>33600_OV</avails:BundledALID>
+      </avails:BundledAsset>
+      <avails:BundledAsset sequence="2">
+        <avails:BundledALID>33601_OV</avails:BundledALID>
+      </avails:BundledAsset>
+      <avails:BundledAsset sequence="4">
+        <avails:BundledALID>33602_OV</avails:BundledALID>
+      </avails:BundledAsset>
+      <avails:BundledAsset sequence="5">
+        <avails:BundledALID>33603_OV</avails:BundledALID>
+      </avails:BundledAsset>
+    </avails:Asset>
+    <avails:Transaction TransactionID="596509-429281-6477-16724-339326-409933-US-EHVL-EN-HD">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:ContractID>16724</avails:ContractID>
+      <avails:Term termName="LicenseFee">
+        <avails:Text>FooBar-6</avails:Text>
+      </avails:Term>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-03-23</avails:Event>
+      </avails:Term>
+      <avails:Term termName="AnnounceDate">
+        <avails:Event>2015-03-23</avails:Event>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="596509-429281-6477-16724-339325-409935-US-EHVL-EN-SD">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:ContractID>16724</avails:ContractID>
+      <avails:Term termName="LicenseFee">
+        <avails:Text>FooBar-6</avails:Text>
+      </avails:Term>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-03-23</avails:Event>
+      </avails:Term>
+      <avails:Term termName="AnnounceDate">
+        <avails:Event>2015-03-23</avails:Event>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>33602_OV</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>BVVOD</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>single</avails:AvailType>
+    <avails:ShortDescription>generated XML from 172bundle.xlsx:Sheet_0 on
+			2018.10.24.11.02.57</avails:ShortDescription>
+    <avails:Asset contentID="33602_OV">
+      <avails:WorkType>Movie</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleDisplayUnlimited>Star Wars: The Phantom Menace</avails:TitleDisplayUnlimited>
+        <avails:TitleInternalAlias>Star Wars: The Phantom Menace</avails:TitleInternalAlias>
+        <avails:EditEIDR-URN>urn:eidr:10.5240:F8D9-519E-6883-AEF4-706A-W</avails:EditEIDR-URN>
+        <avails:TitleEIDR-URN>urn:eidr:10.5240:0C5B-71BC-CFBF-4B09-2D29-7</avails:TitleEIDR-URN>
+        <avails:AltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>AltID:33602_OV</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:ReleaseDate>1999</avails:ReleaseDate>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>original</md:ReleaseType>
+          <md:Date>1999-05-19</md:Date>
+        </avails:ReleaseHistory>
+        <avails:CompanyDisplayCredit>
+          <md:DisplayString />
+        </avails:CompanyDisplayCredit>
+      </avails:Metadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="573990-427585-6477-16623-338894-409915-US-EHVL-EN-HD">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Description>wBonus</avails:Description>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es-419</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:ContractID>16623</avails:ContractID>
+      <avails:Term termName="LicenseFee">
+        <avails:Text>FooBar-5</avails:Text>
+      </avails:Term>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="AnnounceDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="573990-427585-6477-16623-338892-409913-US-EHVL-EN-SD">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Description>wBonus</avails:Description>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es-419</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:ContractID>16623</avails:ContractID>
+      <avails:Term termName="LicenseFee">
+        <avails:Text>FooBar-5</avails:Text>
+      </avails:Term>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="AnnounceDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>33483_OV</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>BVVOD</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>single</avails:AvailType>
+    <avails:ShortDescription>generated XML from 172bundle.xlsx:Sheet_0 on
+			2018.10.24.11.02.57</avails:ShortDescription>
+    <avails:Asset contentID="33483_OV">
+      <avails:WorkType>Movie</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleDisplayUnlimited>Star Wars: Attack Of The Clones</avails:TitleDisplayUnlimited>
+        <avails:TitleInternalAlias>Star Wars: Attack Of The Clones</avails:TitleInternalAlias>
+        <avails:EditEIDR-URN>urn:eidr:10.5240:7D50-589D-587B-7FDA-EEBC-H</avails:EditEIDR-URN>
+        <avails:TitleEIDR-URN>urn:eidr:10.5240:03E7-AD56-0F60-2392-A1FF-K</avails:TitleEIDR-URN>
+        <avails:AltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>AltID:33483_OV</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:ReleaseDate>2002</avails:ReleaseDate>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>original</md:ReleaseType>
+          <md:Date>2002-05-16</md:Date>
+        </avails:ReleaseHistory>
+        <avails:CompanyDisplayCredit>
+          <md:DisplayString />
+        </avails:CompanyDisplayCredit>
+      </avails:Metadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="573986-427588-6477-16623-338898-409917-US-EHVL-EN-HD">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Description>wBonus</avails:Description>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es-419</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:ContractID>16623</avails:ContractID>
+      <avails:Term termName="LicenseFee">
+        <avails:Text>FooBar-5</avails:Text>
+      </avails:Term>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="AnnounceDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="573986-427588-6477-16623-338893-409919-US-EHVL-EN-SD">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Description>wBonus</avails:Description>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es-419</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:ContractID>16623</avails:ContractID>
+      <avails:Term termName="LicenseFee">
+        <avails:Text>FooBar-5</avails:Text>
+      </avails:Term>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="AnnounceDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>33601_OV</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>BVVOD</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>single</avails:AvailType>
+    <avails:ShortDescription>generated XML from 172bundle.xlsx:Sheet_0 on
+			2018.10.24.11.02.57</avails:ShortDescription>
+    <avails:Asset contentID="33601_OV">
+      <avails:WorkType>Movie</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleDisplayUnlimited>Star Wars: Return Of The Jedi</avails:TitleDisplayUnlimited>
+        <avails:TitleInternalAlias>Star Wars: Return Of The Jedi</avails:TitleInternalAlias>
+        <avails:EditEIDR-URN>urn:eidr:10.5240:25B6-6070-47EA-716F-B03D-Y</avails:EditEIDR-URN>
+        <avails:TitleEIDR-URN>urn:eidr:10.5240:2BC3-32F8-A5E2-969E-0368-2</avails:TitleEIDR-URN>
+        <avails:AltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>AltID:33601_OV</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:ReleaseDate>1983</avails:ReleaseDate>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>original</md:ReleaseType>
+          <md:Date>1983-05-25</md:Date>
+        </avails:ReleaseHistory>
+        <avails:CompanyDisplayCredit>
+          <md:DisplayString />
+        </avails:CompanyDisplayCredit>
+      </avails:Metadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="573989-427597-6477-16623-338901-409921-US-EHVL-EN-HD">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Description>wBonus</avails:Description>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es-419</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:ContractID>16623</avails:ContractID>
+      <avails:Term termName="LicenseFee">
+        <avails:Text>FooBar-5</avails:Text>
+      </avails:Term>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="AnnounceDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="573989-427597-6477-16623-338897-409923-US-EHVL-EN-SD">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Description>wBonus</avails:Description>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es-419</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:ContractID>16623</avails:ContractID>
+      <avails:Term termName="LicenseFee">
+        <avails:Text>FooBar-5</avails:Text>
+      </avails:Term>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="AnnounceDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>33600_OV</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>BVVOD</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>single</avails:AvailType>
+    <avails:ShortDescription>generated XML from 172bundle.xlsx:Sheet_0 on
+			2018.10.24.11.02.57</avails:ShortDescription>
+    <avails:Asset contentID="33600_OV">
+      <avails:WorkType>Movie</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleDisplayUnlimited>Star Wars: The Empire Strikes Back</avails:TitleDisplayUnlimited>
+        <avails:TitleInternalAlias>Star Wars: The Empire Strikes Back</avails:TitleInternalAlias>
+        <avails:EditEIDR-URN>urn:eidr:10.5240:83F7-2FA8-E20F-1E67-0505-J</avails:EditEIDR-URN>
+        <avails:TitleEIDR-URN>urn:eidr:10.5240:0728-15BC-4706-83CB-7D55-W</avails:TitleEIDR-URN>
+        <avails:AltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>AltID:33600_OV</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:ReleaseDate>1980</avails:ReleaseDate>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>original</md:ReleaseType>
+          <md:Date>1980-05-21</md:Date>
+        </avails:ReleaseHistory>
+        <avails:CompanyDisplayCredit>
+          <md:DisplayString />
+        </avails:CompanyDisplayCredit>
+      </avails:Metadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="573988-427594-6477-16623-338900-409931-US-EHVL-EN-HD">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Description>wBonus</avails:Description>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es-419</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:ContractID>16623</avails:ContractID>
+      <avails:Term termName="LicenseFee">
+        <avails:Text>FooBar-5</avails:Text>
+      </avails:Term>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="AnnounceDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="573988-427594-6477-16623-338896-409929-US-EHVL-EN-SD">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Description>wBonus</avails:Description>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AllowedLanguage>es-419</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:ContractID>16623</avails:ContractID>
+      <avails:Term termName="LicenseFee">
+        <avails:Text>FooBar-5</avails:Text>
+      </avails:Term>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="AnnounceDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <!-- ======================================================== -->
+  <!-- TV Avails with Episodes and Seasons; License Type = SVOD -->
+  <!-- ======================================================== -->
+  <avails:Avail>
+    <avails:ALID>md:alid:disney.com:jake-s01e01</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Disney</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>episode</avails:AvailType>
+    <avails:ShortDescription>generated XML from
+			TV_v1.7.2-20180525.xlsx:Sheet_0 on 2018.07.12.16.38.26</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:disney.com:jake-s01e01">
+      <avails:WorkType>Episode</avails:WorkType>
+      <avails:EpisodeMetadata>
+        <avails:TitleInternalAlias>Hide The Hideout! /The Old Shell Game</avails:TitleInternalAlias>
+        <avails:EditEIDR-URN>urn:eidr:10.5240:F926-336C-2666-0201-54E9-I</avails:EditEIDR-URN>
+        <avails:AltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>EpisodeAltID:jake-s01e01</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:EpisodeNumber>
+          <md:Number>1</md:Number>
+        </avails:EpisodeNumber>
+        <avails:SeasonMetadata>
+          <avails:SeasonContentID>md:cid:disney.com:jake-s01</avails:SeasonContentID>
+          <avails:SeasonNumber>
+            <md:Number>1</md:Number>
+          </avails:SeasonNumber>
+          <avails:SeasonAltIdentifier>
+            <md:Namespace>org:mddf</md:Namespace>
+            <md:Identifier>SeasonAltID:jake-s01</md:Identifier>
+          </avails:SeasonAltIdentifier>
+          <avails:SeriesMetadata>
+            <avails:SeriesContentID>md:cid:disney.com:jake</avails:SeriesContentID>
+            <avails:SeriesTitleDisplayUnlimited>Jake and the Neverland Pirates</avails:SeriesTitleDisplayUnlimited>
+            <avails:SeriesTitleInternalAlias>Jake and the Neverland Pirates</avails:SeriesTitleInternalAlias>
+            <avails:SeriesAltIdentifier>
+              <md:Namespace>org:mddf</md:Namespace>
+              <md:Identifier>SeriesAltID:jake</md:Identifier>
+            </avails:SeriesAltIdentifier>
+            <avails:CompanyDisplayCredit>
+              <md:DisplayString />
+            </avails:CompanyDisplayCredit>
+          </avails:SeriesMetadata>
+        </avails:SeasonMetadata>
+      </avails:EpisodeMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="6c1169aa-6038-11e8-9c2d-fa7ae01bbebc">
+      <avails:LicenseType>SVOD</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2018-05-01T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="NA">
+        <avails:Text>NA</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="6c116d2e-6038-11e8-9c2d-fa7ae01bbebc">
+      <avails:LicenseType>SVOD</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2018-05-01T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:Term termName="NA">
+        <avails:Text>NA</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>md:alid:disney.com:jake-s01e02</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Disney</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>episode</avails:AvailType>
+    <avails:ShortDescription>generated XML from
+			TV_v1.7.2-20180525.xlsx:Sheet_0 on 2018.07.12.16.38.26</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:disney.com:jake-s01e02">
+      <avails:WorkType>Episode</avails:WorkType>
+      <avails:EpisodeMetadata>
+        <avails:TitleInternalAlias>Hats Off to Hook! / Escape From Belch</avails:TitleInternalAlias>
+        <avails:EditEIDR-URN>urn:eidr:10.5240:2327-7906-3CEE-8AC4-5486-A</avails:EditEIDR-URN>
+        <avails:AltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>EpisodeAltID:jake-s01e02</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:EpisodeNumber>
+          <md:Number>2</md:Number>
+        </avails:EpisodeNumber>
+        <avails:SeasonMetadata>
+          <avails:SeasonContentID>md:cid:disney.com:jake-s01</avails:SeasonContentID>
+          <avails:SeasonNumber>
+            <md:Number>1</md:Number>
+          </avails:SeasonNumber>
+          <avails:SeasonAltIdentifier>
+            <md:Namespace>org:mddf</md:Namespace>
+            <md:Identifier>SeasonAltID:jake-s01</md:Identifier>
+          </avails:SeasonAltIdentifier>
+          <avails:SeriesMetadata>
+            <avails:SeriesContentID>md:cid:disney.com:jake</avails:SeriesContentID>
+            <avails:SeriesTitleDisplayUnlimited>Jake and the Neverland Pirates</avails:SeriesTitleDisplayUnlimited>
+            <avails:SeriesTitleInternalAlias>Jake and the Neverland Pirates</avails:SeriesTitleInternalAlias>
+            <avails:SeriesAltIdentifier>
+              <md:Namespace>org:mddf</md:Namespace>
+              <md:Identifier>SeriesAltID:jake</md:Identifier>
+            </avails:SeriesAltIdentifier>
+            <avails:CompanyDisplayCredit>
+              <md:DisplayString />
+            </avails:CompanyDisplayCredit>
+          </avails:SeriesMetadata>
+        </avails:SeasonMetadata>
+      </avails:EpisodeMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="6c116f72-6038-11e8-9c2d-fa7ae01bbebc">
+      <avails:LicenseType>SVOD</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2018-05-01T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="NA">
+        <avails:Text>NA</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="6c1171a2-6038-11e8-9c2d-fa7ae01bbebc">
+      <avails:LicenseType>SVOD</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2018-05-01T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:Term termName="NA">
+        <avails:Text>NA</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>md:alid:disney.com:jake-s01e03</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Disney</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>episode</avails:AvailType>
+    <avails:ShortDescription>generated XML from
+			TV_v1.7.2-20180525.xlsx:Sheet_0 on 2018.07.12.16.38.26</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:disney.com:jake-s01e03">
+      <avails:WorkType>Episode</avails:WorkType>
+      <avails:EpisodeMetadata>
+        <avails:TitleInternalAlias>Off the Hook / Never Say Never!</avails:TitleInternalAlias>
+        <avails:EditEIDR-URN>urn:eidr:10.5240:B34C-BCDB-481A-52A5-290C-W</avails:EditEIDR-URN>
+        <avails:AltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>EpisodeAltID:jake-s01e03</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:EpisodeNumber>
+          <md:Number>3</md:Number>
+        </avails:EpisodeNumber>
+        <avails:SeasonMetadata>
+          <avails:SeasonContentID>md:cid:disney.com:jake-s01</avails:SeasonContentID>
+          <avails:SeasonNumber>
+            <md:Number>1</md:Number>
+          </avails:SeasonNumber>
+          <avails:SeasonAltIdentifier>
+            <md:Namespace>org:mddf</md:Namespace>
+            <md:Identifier>SeasonAltID:jake-s01</md:Identifier>
+          </avails:SeasonAltIdentifier>
+          <avails:SeriesMetadata>
+            <avails:SeriesContentID>md:cid:disney.com:jake</avails:SeriesContentID>
+            <avails:SeriesTitleDisplayUnlimited>Jake and the Neverland Pirates</avails:SeriesTitleDisplayUnlimited>
+            <avails:SeriesTitleInternalAlias>Jake and the Neverland Pirates</avails:SeriesTitleInternalAlias>
+            <avails:SeriesAltIdentifier>
+              <md:Namespace>org:mddf</md:Namespace>
+              <md:Identifier>SeriesAltID:jake</md:Identifier>
+            </avails:SeriesAltIdentifier>
+            <avails:CompanyDisplayCredit>
+              <md:DisplayString />
+            </avails:CompanyDisplayCredit>
+          </avails:SeriesMetadata>
+        </avails:SeasonMetadata>
+      </avails:EpisodeMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="6c1176e8-6038-11e8-9c2d-fa7ae01bbebc">
+      <avails:LicenseType>SVOD</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2018-05-01T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="NA">
+        <avails:Text>NA</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="6c11794a-6038-11e8-9c2d-fa7ae01bbebc">
+      <avails:LicenseType>SVOD</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2018-05-01T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:Term termName="NA">
+        <avails:Text>NA</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>md:alid:disney.com:jake-s01</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Disney</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>season</avails:AvailType>
+    <avails:ShortDescription>generated XML from
+			TV_v1.7.2-20180525.xlsx:Sheet_0 on 2018.07.12.16.38.26</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:disney.com:jake-s01">
+      <avails:WorkType>Season</avails:WorkType>
+      <avails:SeasonMetadata>
+        <avails:SeasonContentID>md:cid:disney.com:jake-s01</avails:SeasonContentID>
+        <avails:SeasonNumber>
+          <md:Number>1</md:Number>
+        </avails:SeasonNumber>
+        <avails:SeasonAltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>SeasonAltID:jake-s01</md:Identifier>
+        </avails:SeasonAltIdentifier>
+        <avails:SeriesMetadata>
+          <avails:SeriesContentID>md:cid:disney.com:jake</avails:SeriesContentID>
+          <avails:SeriesTitleDisplayUnlimited>Jake and the Neverland Pirates</avails:SeriesTitleDisplayUnlimited>
+          <avails:SeriesTitleInternalAlias>Jake and the Neverland Pirates</avails:SeriesTitleInternalAlias>
+          <avails:SeriesAltIdentifier>
+            <md:Namespace>org:mddf</md:Namespace>
+            <md:Identifier>SeriesAltID:jake</md:Identifier>
+          </avails:SeriesAltIdentifier>
+          <avails:CompanyDisplayCredit>
+            <md:DisplayString />
+          </avails:CompanyDisplayCredit>
+        </avails:SeriesMetadata>
+      </avails:SeasonMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="49cf2ab2-44f4-11e8-842f-0ed5f89f718b">
+      <avails:LicenseType>SVOD</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2018-05-01T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="NA">
+        <avails:Text>NA</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction TransactionID="49cf2d78-44f4-11e8-842f-0ed5f89f718b">
+      <avails:LicenseType>SVOD</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2018-05-01T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:Term termName="NA">
+        <avails:Text>NA</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+</avails:AvailList>

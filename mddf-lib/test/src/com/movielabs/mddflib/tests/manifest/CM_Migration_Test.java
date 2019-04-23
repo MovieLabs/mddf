@@ -20,15 +20,20 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.avails;
+package com.movielabs.mddflib.tests.manifest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Set;
 
+import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,9 +41,8 @@ import org.opentest4j.AssertionFailedError;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.movielabs.mddflib.avails.validation.AvailValidator;
-import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.manifest.validation.ManifestValidator;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.xml.MddfTarget;
 
@@ -46,12 +50,12 @@ import com.movielabs.mddflib.util.xml.MddfTarget;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class AvailsValidatorTest extends AvailValidator {
+public class CM_Migration_Test extends ManifestValidator {
 
-	private static String rsrcPath = "./test/resources/avails/";
+	private static String rsrcPath = "./test/resources/manifest/";
 	private InstrumentedLogger iLog;
 
-	public AvailsValidatorTest() {
+	public CM_Migration_Test() {
 		super(true, new InstrumentedLogger());
 		iLog = (InstrumentedLogger) loggingMgr;
 	}
@@ -76,14 +80,16 @@ public class AvailsValidatorTest extends AvailValidator {
 		iLog.clearLog();
 	}
 
+	@AfterEach
+	public void tearDown() { 
+	}
+
 	/**
 	 * @param string
 	 */
 	protected MddfTarget initialize(String testFileName) {
 		String srcFilePath = rsrcPath + testFileName;
 		srcFile = new File(srcFilePath);
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
-
 		try {
 			MddfTarget target = new MddfTarget(srcFile, iLog);
 			return target;
@@ -95,112 +101,68 @@ public class AvailsValidatorTest extends AvailValidator {
 
 	}
 
-	/**
-	 * @throws JDOMException
-	 * @throws IOException
-	 * 
-	 */
 	@Test
-	public void testNoErrors_2_2_2() throws IOException, JDOMException {
-		MddfTarget target = initialize("Avails_noErrors_v2.2.2.xml");
+	public void testFull1_v1_8() throws IOException, JDOMException {
+		// v1.8 with schemaLocation
+		MddfTarget target = initialize("Manifest_v1.8_A.xml");
 		execute(target);
 		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
 			throw e;
 		}
 	}
 
-	/**
-	 * @throws JDOMException
-	 * @throws IOException
-	 * 
-	 */
 	@Test
-	public void testNoErrors_2_3() throws IOException, JDOMException {
-		MddfTarget target = initialize("Avails_noErrors_v2.3.xml");
+	public void testFull1_v1_8_B() throws IOException, JDOMException {
+		// v1.8 with out schemaLocation
+		MddfTarget target = initialize("Manifest_v1.8_B.xml");
 		execute(target);
 		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(12, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
 			throw e;
 		}
 	}
 
-	/**
-	 * @throws JDOMException
-	 * @throws IOException
-	 * 
-	 */
 	@Test
-	public void testNoErrors_2_4() throws IOException, JDOMException {
-		MddfTarget target = initialize("Avails_noErrors_v2.4.xml");
+	public void testFull1_v1_8_1_A() throws IOException, JDOMException {
+		MddfTarget target = initialize("Manifest_v1.8.1_A.xml");
 		execute(target);
 		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
 			throw e;
 		}
 	}
-
-	/**
-	 * @throws JDOMException
-	 * @throws IOException
-	 * 
-	 */
 	@Test
-	public void testVolumeErrors() throws IOException, JDOMException {
-		MddfTarget target = initialize("Avails_Volume_error_v2.4.xml");
+	public void testFull1_v1_8_1_B() throws IOException, JDOMException {
+		MddfTarget target = initialize("Manifest_v1.8.1_B.xml");
 		execute(target);
 		try {
-			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 		} catch (AssertionFailedError e) {
 			dumpLog();
 			throw e;
 		}
 	}
-
-	/**
-	 * @throws JDOMException
-	 * @throws IOException
-	 * 
-	 */
-	@Test
-	public void testWithErrors() throws IOException, JDOMException {
-		MddfTarget target = initialize("Avails_withErrors.xml");
-		execute(target);
-		try {
-			assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		} catch (AssertionFailedError e) {
-			dumpLog();
-			throw e;
-		}
-	}
-
 	protected void execute(MddfTarget target) throws IOException, JDOMException {
+		Element rootEl = target.getXmlDoc().getRootElement();
+		List<Namespace> nsList = rootEl.getNamespacesInScope();
 		iLog.setPrintToConsole(true);
-		iLog.setMinLevel(LogMgmt.LEV_DEBUG);
+		iLog.setMinLevel(iLog.LEV_DEBUG);
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + target.getSrcFile().getCanonicalPath(), null,
 				"JUnit");
-		Map<Object, Pedigree> pedigreeMap = null;
-		try {
-			super.process(target, pedigreeMap);
-		} catch (Exception e) {
-			throw new AssertionFailedError();
-		}
+		super.process(target);
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Test completed", null, "JUnit");
+		iLog.setPrintToConsole(false);
 	}
 
 	private void dumpLog() {

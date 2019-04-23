@@ -4,10 +4,10 @@
 	values may not make sense in a production environment but they are technically 
 	valid. -->
 <manifest:MediaManifest
-	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.8.1/manifest"
-	xmlns:md="http://www.movielabs.com/schema/md/v2.7.1/md"
+	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.8/manifest"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.7/md"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.8.1/manifest manifest-v1.8.1.xsd"
+	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.8/manifest manifest-v1.8.1.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V"
 	updateNum="1" versionDescription="Error-free test artifact">
@@ -426,12 +426,12 @@
 	<!-- ###############==============================################# -->
 	<manifest:PlayableSequences>
 		<manifest:PlayableSequence>
-			<manifest:Clip sequence="1">
+			<manifest:Clip sequence="0">
 				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 				</manifest:PresentationID>
 			</manifest:Clip>
 			<!-- for versions prior to v1.7 sequence must be continuous and sequential -->
-			<manifest:Clip sequence="2">
+			<manifest:Clip sequence="0">
 				<manifest:PresentationID>md:presentationid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
 				</manifest:PresentationID>
 				<manifest:EntryPointTimecode

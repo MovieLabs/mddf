@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <avails:AvailList xmlns:avails="http://www.movielabs.com/schema/avails/v2.4/avails" 
-		  xmlns:md="http://www.movielabs.com/schema/md/v2.7.1/md" 
-		  xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7.1" 
+		  xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
+		  xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" 
 		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <!-- ===== Translation History::
            from Avails v1.8 (xlsx) to Avails v2.4 (xml)
@@ -17,7 +17,7 @@
     </avails:Licensor>
     <avails:ServiceProvider />
     <avails:AvailType>episode</avails:AvailType>
-    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.22.16.01.53</avails:ShortDescription>
     <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e06">
       <avails:WorkType>Episode</avails:WorkType>
       <avails:EpisodeMetadata>
@@ -77,7 +77,7 @@
     </avails:Licensor>
     <avails:ServiceProvider />
     <avails:AvailType>episode</avails:AvailType>
-    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.22.16.01.53</avails:ShortDescription>
     <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e07">
       <avails:WorkType>Episode</avails:WorkType>
       <avails:EpisodeMetadata>
@@ -137,11 +137,11 @@
     </avails:Licensor>
     <avails:ServiceProvider />
     <avails:AvailType>episode</avails:AvailType>
-    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.22.16.01.53</avails:ShortDescription>
     <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e04">
       <avails:WorkType>Episode</avails:WorkType>
       <avails:EpisodeMetadata>
-        <avails:TitleInternalAlias>I'ld Kill for a Carrot</avails:TitleInternalAlias>
+        <avails:TitleInternalAlias>I'd Kill for a Carrot</avails:TitleInternalAlias>
         <avails:ReleaseDate>2010</avails:ReleaseDate>
         <avails:People>
           <md:Job>
@@ -197,7 +197,7 @@
     </avails:Licensor>
     <avails:ServiceProvider />
     <avails:AvailType>episode</avails:AvailType>
-    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.22.16.01.53</avails:ShortDescription>
     <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e05">
       <avails:WorkType>Episode</avails:WorkType>
       <avails:EpisodeMetadata>
@@ -257,7 +257,7 @@
     </avails:Licensor>
     <avails:ServiceProvider />
     <avails:AvailType>volume</avails:AvailType>
-    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.22.16.01.53</avails:ShortDescription>
     <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01.2">
       <avails:WorkType>Volume</avails:WorkType>
       <avails:VolumeMetadata>
@@ -269,7 +269,7 @@
           <md:Number>2</md:Number>
         </avails:VolumeNumber>
         <avails:ReleaseDate>2010</avails:ReleaseDate>
-        <avails:VolumeFirstEpisodeNumber>3</avails:VolumeFirstEpisodeNumber>
+        <avails:VolumeFirstEpisodeNumber>5</avails:VolumeFirstEpisodeNumber>
         <avails:VolumeNumberOfEpisodes>2</avails:VolumeNumberOfEpisodes>
         <avails:SeasonMetadata>
           <avails:SeasonContentID>md:cid:sofaspud.com:krfs-s01</avails:SeasonContentID>
@@ -326,11 +326,11 @@
     </avails:Licensor>
     <avails:ServiceProvider />
     <avails:AvailType>episode</avails:AvailType>
-    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.22.16.01.53</avails:ShortDescription>
     <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e02">
       <avails:WorkType>Episode</avails:WorkType>
       <avails:EpisodeMetadata>
-        <avails:TitleInternalAlias>This Ain't no Ordinary Easter Rabbit</avails:TitleInternalAlias>
+        <avails:TitleInternalAlias>This Ain't no Ordinary Easter Bunny</avails:TitleInternalAlias>
         <avails:ReleaseDate>2010</avails:ReleaseDate>
         <avails:People>
           <md:Job>
@@ -386,7 +386,7 @@
     </avails:Licensor>
     <avails:ServiceProvider />
     <avails:AvailType>volume</avails:AvailType>
-    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.22.16.01.53</avails:ShortDescription>
     <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01.1">
       <avails:WorkType>Volume</avails:WorkType>
       <avails:VolumeMetadata>
@@ -455,7 +455,7 @@
     </avails:Licensor>
     <avails:ServiceProvider />
     <avails:AvailType>episode</avails:AvailType>
-    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.22.16.01.53</avails:ShortDescription>
     <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e03">
       <avails:WorkType>Episode</avails:WorkType>
       <avails:EpisodeMetadata>
@@ -515,7 +515,7 @@
     </avails:Licensor>
     <avails:ServiceProvider />
     <avails:AvailType>episode</avails:AvailType>
-    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.22.16.01.53</avails:ShortDescription>
     <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e01">
       <avails:WorkType>Episode</avails:WorkType>
       <avails:EpisodeMetadata>
