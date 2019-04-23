@@ -306,9 +306,21 @@ public class ManifestValidator extends CMValidator {
 	 * 
 	 */
 	private void validateManifestVocab() {
+		/*
+		 * handle any case of backwards (or forwards) compatibility between versions.
+		 */
+		String vocabVer = MAN_VER;
+		switch (MAN_VER) { 
+		case "1.8.1":
+			vocabVer = "1.8";
+			break; 
+		}
 
-		JSONObject manifestVocab = (JSONObject) getVocabResource("manifest", MAN_VER);
+		JSONObject manifestVocab = (JSONObject) getVocabResource("manifest", vocabVer);
 		if (manifestVocab == null) {
+			String msg = "Unable to validate controlled vocab: missing resource file vocab_manifest_v"+vocabVer;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
+			curFileIsValid = false;
 			return;
 		}
 
@@ -480,13 +492,21 @@ public class ManifestValidator extends CMValidator {
 		 */
 		String structVer = null;
 		switch (MAN_VER) {
+		case "1.5":
 		case "1.6":
+			structVer = "1.6";
+			break;
 		case "1.7":
+			structVer = "1.7";
+			break;
 		case "1.8":
-			structVer = MAN_VER;
+		case "1.8.1":
+			structVer = "1.8";
 			break;
 		default:
 			// Not supported for the version
+			String msg = "Unable to process; missing structure definitions for Manifest v" + MAN_VER;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 			return;
 		}
 
