@@ -57,9 +57,9 @@ public class DigitalAssetTest extends AbstractCmmTester {
 			System.out.println(" === End log dump for FAILED TEST ===");
 			throw e;
 		}
-		System.out.println("\n === DEBUGGING ... dumping log ===");
-		iLog.printLog();
-		System.out.println(" === End log dump ===");
+//		System.out.println("\n === DEBUGGING ... dumping log ===");
+//		iLog.printLog();
+//		System.out.println(" === End log dump ===");
 	
 	}
 
