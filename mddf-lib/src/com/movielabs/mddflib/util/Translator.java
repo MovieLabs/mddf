@@ -73,7 +73,7 @@ public class Translator {
 	private static Map<FILE_FMT, List<FILE_FMT>> supported = new HashMap<FILE_FMT, List<FILE_FMT>>();
 
 	static {
-		/* identify what a given format may be translated to */
+		/* identify what a given format may be translated TO */
 		List<FILE_FMT> for_AVAILS_2_1 = new ArrayList<FILE_FMT>();
 		/*
 		 * Obsolete and deprecated version. Translation of this format to another is NOT
@@ -85,6 +85,7 @@ public class Translator {
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_2_1);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_2_2);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_3);
+		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_4);
 		// for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7_2);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7_3);
@@ -103,6 +104,7 @@ public class Translator {
 		List<FILE_FMT> for_AVAILS_2_2_2 = new ArrayList<FILE_FMT>();
 		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_2_1);
 		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_3);
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_4);
 		// for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7_2);
 		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7_3);
@@ -114,10 +116,22 @@ public class Translator {
 		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2_2);
 		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2_1);
 		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2);
+		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_4);
 		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_7_2);
 		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_7_3);
 		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_8);
 		supported.put(FILE_FMT.AVAILS_2_3, for_AVAILS_2_3);
+
+		List<FILE_FMT> for_AVAILS_2_4 = new ArrayList<FILE_FMT>();
+		// formats that a v2.4 file may xlated TO...
+//		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2_2);
+//		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2_1);
+//		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2);
+//		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_4);
+//		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_7_2);
+//		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_7_3);
+		for_AVAILS_2_4.add(FILE_FMT.AVAILS_1_8);
+		supported.put(FILE_FMT.AVAILS_2_4, for_AVAILS_2_4);
 
 		List<FILE_FMT> for_AVAILS_1_7 = new ArrayList<FILE_FMT>();
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_2);
@@ -137,13 +151,14 @@ public class Translator {
 		// for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_7_3);
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_8);
-		supported.put(FILE_FMT.AVAILS_1_7_2, for_AVAILS_1_7_2);		
+		supported.put(FILE_FMT.AVAILS_1_7_2, for_AVAILS_1_7_2);
 
 		List<FILE_FMT> for_AVAILS_1_8 = new ArrayList<FILE_FMT>();
 		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_2);
 		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_2_1);
 		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_2_2);
-		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_3); 
+		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_3);
+		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_4);
 		for_AVAILS_1_8.add(FILE_FMT.AVAILS_1_7_2);
 		for_AVAILS_1_8.add(FILE_FMT.AVAILS_1_7_3);
 		supported.put(FILE_FMT.AVAILS_1_8, for_AVAILS_1_8);
@@ -392,6 +407,21 @@ public class Translator {
 					// Unsupported request
 					break;
 				}
+			case AVAILS_2_4:
+				switch (curVersion) {
+				case "2.1":
+					outputDoc = avail2_1_to_2_2(inputDoc, logMgr);
+					outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
+					break;
+				case "2.2":
+				case "2.2.2":
+				case "2.2.3":
+					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
+					break;
+				default:
+					// Unsupported request
+					break;
+				}
 			}
 			if (outputDoc != null) {
 				addXlateHistory(outputDoc, curFmt, targetFmt);
@@ -531,6 +561,10 @@ public class Translator {
 			case "2.3":
 				xmlDoc = xmlSrcDoc;
 				break;
+			case "2.4":
+				// need to clone due to possible mods inserted during pre-processing
+				xmlDoc = xmlSrcDoc.clone();
+				break;
 			default:
 				// Unsupported request
 				break;
@@ -548,7 +582,6 @@ public class Translator {
 		}
 		XlsxBuilder converter = null;
 		if (excelVer == Version.V1_8) {
-//			throw new UnsupportedOperationException("Not yet implemented");
 			converter = new XlsxBuilderV1_8(xmlDoc.getRootElement(), excelVer, logMgr);
 		} else {
 			converter = new XlsxBuilder(xmlDoc.getRootElement(), excelVer, logMgr);

@@ -21,15 +21,22 @@
  */
 package com.movielabs.mddflib.avails.validation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
+import org.jdom2.xpath.XPathExpression;
 
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.IssueLogger;
@@ -170,6 +177,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		case "2.4":
 			/* Validate indexed sequences that must be continuously increasing */
 			validateIndexing("BundledAsset", availsNSpace, "sequence", "Asset", availsNSpace, true, true, true, false);
+			validateVolumes();
 		case "2.3":
 		case "2.2.2":
 		case "2.2.1":
@@ -209,7 +217,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 		JSONObject availVocab = (JSONObject) getVocabResource("avail", vocabVer);
 		if (availVocab == null) {
-			String msg = "Unable to validate controlled vocab: missing resource file";
+			String msg = "Unable to validate controlled vocab: missing resource file vocab_avail_v" + vocabVer;
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
 			curFileIsValid = false;
 			return;
@@ -346,6 +354,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 */
 		String structVer = null;
 		switch (availSchemaVer) {
+		case "2.4":
+			structVer = "2.4";
+			break;
 		case "2.3":
 			structVer = "2.3";
 			break;
@@ -355,10 +366,13 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		case "2.1":
 		case "2.2":
 		case "2.2.1":
-		default:
 			structVer = "2.2";
+		default:
+			// LOG a FATAL problem.
+			String msg = "Unable to process; missing structure definitions for Avails v" + availSchemaVer;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
+			return;
 		}
-
 		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL,
 				"Validating structure using v" + structVer + " requirements", curFile, LOGMSG_ID);
 
@@ -384,6 +398,68 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		}
 		return;
 	}
+
+	/**
+	 * Validate <tt>Volumes</tt> are properly specified. A Volume is defined to be a
+	 * proper subset of a Season with consecutive Episodes. A given <tt>Episode</tt>
+	 * may appear in at most one <tt>Volume</tt>. Episodes, however, are not
+	 * <i>explicitly</i> linked to a Volume. Instead the linkage must be inferred
+	 * using the <tt>VolumeMetadata</tt>.
+	 */
+	private void validateVolumes() {
+
+		String avPrefix = availsNSpace.getPrefix();
+		/*
+		 * Step 1: find all VolumeMetadata elements and group by SeasonContentID
+		 */
+		String xpath_VolMD = "//" + avPrefix + ":VolumeMetadata";
+		XPathExpression<Element> xpExp_VolMetadata = xpfac.compile(xpath_VolMD, Filters.element(), null, availsNSpace);
+		List<Element> volList = xpExp_VolMetadata.evaluate(curRootEl);
+		if (volList.isEmpty()) {
+			return;
+		}
+		HashMap<String, List<Element>> volBySeason = new HashMap<String, List<Element>>();
+		String xpath_SeasonCID = "./" + avPrefix + ":SeasonMetadata/" + avPrefix + ":SeasonContentID";
+		XPathExpression<Element> xpExp_scid = xpfac.compile(xpath_SeasonCID, Filters.element(), null, availsNSpace);
+		for (Element volMdEl : volList) {
+			Element scidEl = xpExp_scid.evaluateFirst(volMdEl);
+			String scid = scidEl.getTextNormalize();
+			List<Element> scidVolList = volBySeason.get(scid);
+			if (scidVolList == null) {
+				scidVolList = new ArrayList<Element>();
+			}
+			scidVolList.add(volMdEl);
+			volBySeason.put(scid, scidVolList);
+		}
+		/*
+		 * Step 2: check for overlaps within each Season's Volumes using the
+		 * VolumeMetadata's VolumeFirstEpisodeNumber and VolumeNumberOfEpisodes
+		 */
+		Set<String> scidSet = volBySeason.keySet();
+		for (String scid : scidSet) {
+			List<Element> scidVolList = volBySeason.get(scid);
+			/* a crude way to check for overlaps but what the hell.. it works :) */
+			HashSet<String> episodeSet = new HashSet<String>();
+			for (Element nextVolEl : scidVolList) {
+				Element volNoEpEl = nextVolEl.getChild("VolumeNumberOfEpisodes", availsNSpace);
+				int episodeCnt = Integer.parseInt(volNoEpEl.getTextNormalize());
+				Element volFirstEpEl = nextVolEl.getChild("VolumeFirstEpisodeNumber", availsNSpace);
+				int firstEpisode = Integer.parseInt(volFirstEpEl.getTextNormalize());
+				for (int index = firstEpisode; index < firstEpisode + episodeCnt; index++) {
+					String episodeID = Integer.toString(index);
+					if (!episodeSet.add(episodeID)) {
+						String msg = "Volume contains an Episode already in another Volume";
+						String explanation = "Episode# " + episodeID
+								+ " is within the range of a previously processed Volume";
+						//TODO: pass srcRef to Sec 2.2.7.1 of Avail spec
+						logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, nextVolEl, msg, explanation, null, logMsgSrcId);
+					}
+				}
+			}
+		}
+
+	}
+
 	// ########################################################################
 
 	/**
