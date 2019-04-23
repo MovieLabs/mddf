@@ -243,9 +243,18 @@ public class CMValidator extends XmlIngester {
 	 * <tt>md:BasicMetadata-type</tt>
 	 */
 	protected void validateBasicMetadata() {
-		JSONObject cmVocab = (JSONObject) getVocabResource("cm", CM_VER);
-		if (cmVocab == null) {
-			String msg = "Unable to validate controlled vocab: missing resource file";
+		/*
+		 * handle any case of backwards (or forwards) compatibility between versions.
+		 */
+		String vocabVer = CM_VER;
+		switch (CM_VER) { 
+		case "2.7.1":
+			vocabVer = "2.7";
+			break; 
+		}
+		JSONObject cmVocab = (JSONObject) getVocabResource("cm", vocabVer);
+		if (cmVocab == null) { 
+			String msg = "Unable to validate controlled vocab: missing resource file vocab_cm_v"+vocabVer;
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 			curFileIsValid = false;
 			return;
