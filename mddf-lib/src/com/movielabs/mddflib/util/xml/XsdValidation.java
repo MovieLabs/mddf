@@ -25,6 +25,9 @@ package com.movielabs.mddflib.util.xml;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.XMLConstants;
@@ -35,11 +38,13 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 import org.jdom2.transform.JDOMSource;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
@@ -82,8 +87,9 @@ public class XsdValidation {
 	 */
 	public boolean validateXml(MddfTarget target, String xsdLocation, String moduleId) {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		URL xsdUrl = getClass().getClassLoader().getResource(xsdLocation);
+		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); 
+		URL xsdUrl = assignXSD(target);
+
 		String genericTooltip = "XML does not conform to schema as defined in " + xsdLocation;
 		File srcFile = target.getSrcFile(); // used for logging
 		Schema schema;
@@ -151,6 +157,87 @@ public class XsdValidation {
 					srcFile, -1, moduleId, null, null);
 			return (false);
 		}
+	}
+
+	/**
+	 * Handle a situation specific to Common Metadata 2.7.1 usage
+	 * 
+	 * @param target
+	 * @return
+	 */
+	private URL assignXSD(MddfTarget target) {
+		Element rootEl = target.getXmlDoc().getRootElement();
+		List<Namespace> nsList = rootEl.getNamespacesInScope();
+		Map<String, Namespace> nsMap = new HashMap();
+		for (Namespace nextNs : nsList) {
+			nsMap.put(nextNs.getPrefix(), nextNs);
+		}
+		// first ns in the list is the main one
+		String mddfType = nsList.get(0).getPrefix();
+		String xsdVer = XmlIngester.identifyXsdVersion(rootEl);
+		// get the version used in the URI with the 'md' prefix:
+		String mdUri = nsMap.get("md").getURI();
+		String mdVer = extractVersionFromUri(mdUri, "md");
+		switch (mddfType) {
+		case "manifest":
+			switch (xsdVer) {
+			case "1.8":
+				switch (mdVer) {
+				case "2.7":
+					// is schema location used to 'alias v1.8.1?
+					String schemaLoc = rootEl.getAttributeValue("schemaLocation", nsMap.get("xsi"));
+					if ((schemaLoc != null) && (schemaLoc.contains("v1.8.1"))) {
+						xsdVer = "1.8.1_D";
+					} else {
+						xsdVer = "1.8";
+					}
+					break;
+				case "2.7.1":
+					xsdVer = "1.8.1_A";
+					break;
+				}
+				break;
+
+			case "1.8.1":
+				switch (mdVer) {
+				case "2.7":
+					xsdVer = "1.8.1_B";
+					break;
+				case "2.7.1":
+					xsdVer = "1.8.1_C";
+					break;
+				}
+				break;
+			}
+			break;
+		case "mdmec":
+			break;
+		case "avails":
+//			if(xsdVer.equals("2.4")) {
+//				switch (mdVer) {
+//				case "2.7":
+//					xsdVer = "2.4_Aliased";
+//					break;
+//				case "2.7.1":
+//					xsdVer = "2.4";
+//					break;
+//				}
+//				break;
+//			}
+			break;
+		default:
+			break;
+		}
+		String xsdFile = XsdValidation.defaultRsrcLoc + mddfType + "-v" + xsdVer + ".xsd";
+		URL xsdUrl = getClass().getClassLoader().getResource(xsdFile);
+		return xsdUrl;
+	}
+
+	protected String extractVersionFromUri(String nSpaceUri, String mddfType ) {
+		String schemaPrefix = MddfContext.SCHEMA_PREFIX + mddfType + "/v";
+		String schemaVer = nSpaceUri.replace(schemaPrefix, "");
+		schemaVer = schemaVer.replace("/" + mddfType, "");
+		return schemaVer;
 	}
 
 	protected static String getExceptionCause(Exception e) {

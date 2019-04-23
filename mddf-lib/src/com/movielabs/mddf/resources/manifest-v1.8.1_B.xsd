@@ -1,0 +1,1122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2019 sp1 (x64) (http://www.altova.com) by Craig Seidel (Private) -->
+<xs:schema xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.8/manifest" 
+	   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	   xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
+	   targetNamespace="http://www.movielabs.com/schema/manifest/v1.8/manifest"
+	   elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.movielabs.com/schema/md/v2.7/md" schemaLocation="md-v2.7.1.xsd"/>
+	<!--Manifest v1.8.1-->
+	<!-- *************** D A T A   D E F I N I T I O N S ****************-->
+	<!--*** IDENTIFIERS ***-->
+	<xs:simpleType name="ExperienceID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="ProgramID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="AppGroupID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="PictureGroupID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="TextGroupID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="PlayableSequenceID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="PresentationID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="VideoTrackID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="AudioTrackID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="SubtitleTrackID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="InteractiveTrackID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="AncillaryTrackID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="ImageID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="TextObjectID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="PictureID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="GalleryID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:simpleType name="TimedSequenceID-type">
+		<xs:restriction base="md:id-type"/>
+	</xs:simpleType>
+	<xs:complexType name="OtherID-type">
+		<xs:annotation>
+			<xs:documentation>This uses the Content type for structure.  There is no implication what is referenced is Content.</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="md:ContentIdentifier-type"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<!--*** GENERAL TYPES ***-->
+	<xs:complexType name="Location-type">
+		<xs:simpleContent>
+			<xs:extension base="xs:anyURI">
+				<xs:attribute name="priority" type="xs:nonNegativeInteger"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:simpleType name="TimecodePattern-type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]+\.[0-9]+"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Timecode-type">
+		<xs:simpleContent>
+			<xs:extension base="manifest:TimecodePattern-type">
+				<xs:attribute name="dropframe" type="xs:boolean"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="ContainerReference-type">
+		<xs:sequence>
+			<xs:element name="ContainerLocation" type="manifest:Location-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ParentContainer" type="manifest:ContainerReference-type" minOccurs="0"/>
+			<xs:element name="ContainerIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Length" type="xs:nonNegativeInteger" minOccurs="0"/>
+			<xs:element name="Hash" type="md:Hash-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AudiovisualClipRef-type">
+		<xs:sequence>
+			<xs:element name="PresentationID" type="manifest:PresentationID-type"/>
+			<xs:element name="EntryPointTimecode" type="manifest:Timecode-type" minOccurs="0"/>
+			<xs:element name="ExitPointTimecode" type="manifest:Timecode-type" minOccurs="0"/>
+			<xs:element name="Region" type="md:Region-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="sequence" type="xs:integer"/>
+		<xs:attribute name="seamless" type="xs:boolean"/>
+		<xs:attribute name="audioLanguage" type="md:language-redefine"/>
+	</xs:complexType>
+	<xs:complexType name="AudioClipRef-type">
+		<xs:sequence>
+			<xs:element name="AudioTrackID" type="manifest:AudioTrackID-type"/>
+			<xs:element name="EntryPointTimecode" type="manifest:Timecode-type" minOccurs="0"/>
+			<xs:element name="ExitPointTimecode" type="manifest:Timecode-type" minOccurs="0"/>
+			<xs:element name="Region" type="md:Region-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="sequence" type="xs:integer"/>
+		<xs:attribute name="seamless" type="xs:boolean"/>
+	</xs:complexType>
+	<xs:complexType name="ImageClipRef-type">
+		<xs:sequence>
+			<xs:element name="ImageID" type="manifest:ImageID-type"/>
+			<xs:element name="Duration" type="xs:duration"/>
+			<xs:element name="Region" type="md:Region-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="sequence" type="xs:integer"/>
+		<xs:attribute name="seamless" type="xs:boolean"/>
+		<xs:attribute name="audioLanguage" type="md:language-redefine"/>
+	</xs:complexType>
+	<xs:complexType name="MediaProfile-type">
+		<xs:sequence>
+			<xs:element name="Namespace" type="xs:string"/>
+			<xs:element name="Profile" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** INVENTORY ***-->
+	<xs:complexType name="InventoryAudio-type">
+		<xs:complexContent>
+			<xs:extension base="md:DigitalAssetAudioData-type">
+				<xs:sequence>
+					<xs:element name="ContainerReference" type="manifest:ContainerReference-type" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute name="AudioTrackID" type="manifest:AudioTrackID-type" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="InventoryVideo-type">
+		<xs:complexContent>
+			<xs:extension base="md:DigitalAssetVideoData-type">
+				<xs:sequence>
+					<xs:element name="ContainerReference" type="manifest:ContainerReference-type" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute name="VideoTrackID" type="manifest:VideoTrackID-type" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="InventorySubtitle-type">
+		<xs:complexContent>
+			<xs:extension base="md:DigitalAssetSubtitleData-type">
+				<xs:sequence>
+					<xs:element name="ContainerReference" type="manifest:ContainerReference-type" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute name="SubtitleTrackID" type="manifest:SubtitleTrackID-type" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="InventoryAncillary-type">
+		<xs:complexContent>
+			<xs:extension base="md:DigitalAssetAncillaryData-type">
+				<xs:sequence>
+					<xs:element name="ContainerReference" type="manifest:ContainerReference-type" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute name="AncillaryTrackID" type="manifest:AncillaryTrackID-type" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="InventoryImage-type">
+		<xs:complexContent>
+			<xs:extension base="md:DigitalAssetImageData-type">
+				<xs:sequence>
+					<xs:element name="ContainerReference" type="manifest:ContainerReference-type" minOccurs="0"/>
+					<xs:element name="VideoFrameTimecode" minOccurs="0">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="manifest:Timecode-type">
+									<xs:attribute name="VideoTrackID" type="manifest:VideoTrackID-type" use="required"/>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="InitialView" type="md:DigitalAssetVideoPicture360Initial-type" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute name="ImageID" type="manifest:ImageID-type"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="InventoryMediaManifest-type">
+		<xs:sequence>
+			<xs:element name="Compatibility" type="manifest:Compatibility-type" minOccurs="0"/>
+			<xs:element name="Inventory" type="manifest:Inventory-type" minOccurs="0"/>
+			<xs:element name="Presentations" type="manifest:PresentationList-type" minOccurs="0"/>
+			<xs:element name="PlayableSequences" type="manifest:PlayableSequenceList-type" minOccurs="0"/>
+			<xs:element name="PictureGroups" type="manifest:PictureGroupList-type" minOccurs="0"/>
+			<xs:element name="AppGroups" type="manifest:AppGroupList-type" minOccurs="0"/>
+			<xs:element name="TextGroups" type="manifest:TextGroupList-type" minOccurs="0"/>
+			<xs:element name="Experiences" type="manifest:ExperienceList-type"/>
+			<xs:element name="TimedEventSequences" type="manifest:TimedEventSequenceList-type" minOccurs="0"/>
+			<xs:element name="ALIDExperienceMaps" type="manifest:ALIDExperienceMapList-type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="ManifestID" type="md:id-type"/>
+		<xs:attribute name="updateNum" type="xs:integer"/>
+		<xs:attribute name="ExtraVersionReference" type="xs:string"/>
+		<xs:attribute name="updateDeliveryType" type="xs:string"/>
+		<xs:attribute name="profile" type="xs:anyURI"/>
+	</xs:complexType>
+	<xs:complexType name="InventoryInteractive-type">
+		<xs:complexContent>
+			<xs:extension base="md:DigitalAssetInteractiveData-type">
+				<xs:sequence>
+					<xs:element name="ContainerReference" type="manifest:ContainerReference-type" minOccurs="0"/>
+					<xs:element name="ManifestApp" type="manifest:InventoryMediaManifest-type" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element name="PictureID" type="manifest:PictureID-type" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute name="InteractiveTrackID" type="manifest:InteractiveTrackID-type"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="InventoryMetadataLocalizedPair-type">
+		<xs:sequence>
+			<xs:element name="LanguageIncluded" type="xs:language"/>
+			<xs:element name="RegionIncluded" type="md:Region-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InventoryMetadataAlias-type">
+		<xs:sequence>
+			<xs:element name="LocalizedPair" type="manifest:InventoryMetadataLocalizedPair-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="ContentID" type="md:ContentID-type" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="InventoryMetadata-type">
+		<xs:sequence>
+			<xs:element name="ContainerReference" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="manifest:ContainerReference-type">
+							<xs:attribute name="type" type="xs:string"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BasicMetadata" type="md:BasicMetadata-type" minOccurs="0"/>
+			<xs:element name="Alias" type="manifest:InventoryMetadataAlias-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="ContentID" type="md:ContentID-type" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="InventoryTextObject-type">
+		<xs:choice>
+			<xs:element name="ContainerReference">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="manifest:ContainerReference-type">
+							<xs:attribute name="type" type="xs:string"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SubtitleID">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="manifest:SubtitleTrackID-type">
+							<xs:attribute name="time" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TextString" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="index" type="xs:integer"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="TextObjectID" type="manifest:TextObjectID-type" use="required"/>
+		<xs:attribute name="language" type="xs:language"/>
+	</xs:complexType>
+	<xs:complexType name="InventoryManifest-type">
+		<xs:sequence>
+			<xs:element name="ContainerReference">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="manifest:ContainerReference-type">
+							<xs:attribute name="type" type="xs:string"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="ManifestID" type="manifest:TextObjectID-type" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="Inventory-type">
+		<xs:sequence>
+			<xs:element name="Audio" type="manifest:InventoryAudio-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Video" type="manifest:InventoryVideo-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Subtitle" type="manifest:InventorySubtitle-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Image" type="manifest:InventoryImage-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Interactive" type="manifest:InventoryInteractive-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Ancillary" type="manifest:InventoryAncillary-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Metadata" type="manifest:InventoryMetadata-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TextObject" type="manifest:InventoryTextObject-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ExternalManifest" type="manifest:InventoryManifest-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MediaInventory-type">
+		<xs:complexContent>
+			<xs:extension base="manifest:Inventory-type">
+				<xs:sequence>
+					<xs:element name="Source" type="manifest:ManifestSource-type"/>
+				</xs:sequence>
+				<xs:attribute name="type" type="xs:string"/>
+				<xs:attribute name="reference" type="xs:string"/>
+				<xs:attribute name="ManifestID" type="md:id-type"/>
+				<xs:attribute name="updateDeliveryType" type="xs:string"/>
+				<xs:attribute name="updateNum" type="xs:integer"/>
+				<xs:attribute name="workflow" type="xs:string"/>
+				<xs:attribute name="versionDescription" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="MediaInventory" type="manifest:MediaInventory-type"/>
+	<!--*** TRACK GROUP ***-->
+	<xs:complexType name="VideoTrackReference-type">
+		<xs:sequence>
+			<xs:element name="VideoTrackID" type="manifest:VideoTrackID-type" maxOccurs="unbounded"/>
+			<xs:element name="AdaptationSetID" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="md:id-type"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TrackProfile" type="manifest:MediaProfile-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="priority" type="xs:positiveInteger"/>
+	</xs:complexType>
+	<xs:complexType name="AudioTrackReference-type">
+		<xs:sequence>
+			<xs:element name="AudioTrackID" type="manifest:AudioTrackID-type" maxOccurs="unbounded"/>
+			<xs:element name="AdaptationSetID" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="md:id-type"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TrackProfile" type="manifest:MediaProfile-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="priority" type="xs:positiveInteger"/>
+	</xs:complexType>
+	<xs:complexType name="SubtitleTrackReference-type">
+		<xs:sequence>
+			<xs:element name="SubtitleTrackID" type="manifest:SubtitleTrackID-type" maxOccurs="unbounded"/>
+			<xs:element name="AdaptationSetID" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="md:id-type"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TrackProfile" type="manifest:MediaProfile-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="priority" type="xs:positiveInteger"/>
+	</xs:complexType>
+	<xs:complexType name="AncillaryTrackReference-type">
+		<xs:sequence>
+			<xs:element name="AncillaryTrackID" type="manifest:AncillaryTrackID-type" maxOccurs="unbounded"/>
+			<xs:element name="AdaptationSetID" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="md:id-type"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TrackProfile" type="manifest:MediaProfile-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="priority" type="xs:positiveInteger"/>
+	</xs:complexType>
+	<xs:complexType name="PresentationLanguagePair-type">
+		<xs:sequence>
+			<xs:element name="SystemLanguage" type="xs:language"/>
+			<xs:element name="AudioLanguage" type="xs:language"/>
+			<xs:element name="SubtitleLanguage" type="xs:language"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TrackMetadataPurpose-type">
+		<xs:sequence>
+			<xs:element name="EncodingIntent" type="xs:string" minOccurs="0"/>
+			<xs:element name="WorkType" type="md:string-WorkType" minOccurs="0"/>
+			<xs:element name="WorkTypeDetail" type="md:string-WorkTypeDetail" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TrackMetadata-type">
+		<xs:sequence>
+			<xs:element name="TrackSelectionNumber" type="xs:nonNegativeInteger"/>
+			<xs:element name="VideoTrackReference" type="manifest:VideoTrackReference-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AudioTrackReference" type="manifest:AudioTrackReference-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SubtitleTrackReference" type="manifest:SubtitleTrackReference-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AncillaryTrackReference" type="manifest:AncillaryTrackReference-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Purpose" type="manifest:TrackMetadataPurpose-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PresentationIMFRef-type">
+		<xs:sequence>
+			<xs:element name="CPLID"/>
+			<xs:element name="OPLID" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ContainerReference" type="manifest:ContainerReference-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Presentation-type">
+		<xs:sequence>
+			<xs:element name="TrackMetadata" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="manifest:TrackMetadata-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="LanguagePair" type="manifest:PresentationLanguagePair-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Chapters" type="manifest:ChapterList-type" minOccurs="0"/>
+			<xs:element name="Markers" type="manifest:MarkerList-type" minOccurs="0"/>
+			<xs:element name="IMFRef" type="manifest:PresentationIMFRef-type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="PresentationID" type="manifest:PresentationID-type" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="PresentationList-type">
+		<xs:sequence>
+			<xs:element name="Presentation" type="manifest:Presentation-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="MediaPresentation" type="manifest:Presentation-type"/>
+	<xs:complexType name="PresentationManifest-type">
+		<xs:sequence>
+			<xs:element name="Inventory" type="manifest:Inventory-type"/>
+			<xs:element name="Presentation" type="manifest:Presentation-type"/>
+			<xs:element name="PictureGroups" type="manifest:PictureGroupList-type" minOccurs="0"/>
+			<xs:element name="TextGroups" type="manifest:TextGroupList-type" minOccurs="0"/>
+			<xs:element name="TimedEventSequences" type="manifest:TimedEventSequenceList-type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="updateNum" type="xs:integer"/>
+	</xs:complexType>
+	<xs:element name="MediaPresentationManifest" type="manifest:PresentationManifest-type"/>
+	<!--*** CHAPTER and MARKER ***-->
+	<xs:complexType name="Chapter-type">
+		<xs:sequence>
+			<xs:element name="EntryTimecode" type="manifest:Timecode-type"/>
+			<xs:element name="DisplayLabel" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="language" type="xs:language"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ImageID" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="manifest:ImageID-type">
+							<xs:attribute name="language" type="xs:language"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="index" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="ChapterList-type">
+		<xs:sequence>
+			<xs:element name="Chapter" type="manifest:Chapter-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Marker-type">
+		<xs:sequence>
+			<xs:element name="Timecode" type="manifest:Timecode-type"/>
+			<xs:element name="DisplayLabel" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="language" type="xs:language"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Label">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="namespace" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MarkerList-type">
+		<xs:sequence>
+			<xs:element name="Marker" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="manifest:Marker-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** APP GROUP ***-->
+	<xs:complexType name="InteractiveTrackReference-type">
+		<xs:sequence>
+			<xs:element name="InteractiveTrackID" type="manifest:InteractiveTrackID-type"/>
+			<xs:element name="Compatibility" type="md:DigitalAssetInteractiveEncoding-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="priority" type="xs:positiveInteger"/>
+	</xs:complexType>
+	<xs:complexType name="AppGroup-type">
+		<xs:sequence>
+			<xs:element name="InteractiveTrackReference" type="manifest:InteractiveTrackReference-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="AppGroupID" type="manifest:AppGroupID-type" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="AppGroupList-type">
+		<xs:sequence>
+			<xs:element name="AppGroup" type="manifest:AppGroup-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** PICTURE GROUP ***-->
+	<xs:complexType name="Picture-type">
+		<xs:sequence>
+			<xs:element name="PictureID" type="manifest:PictureID-type"/>
+			<xs:element name="ImageID" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="manifest:ImageID-type">
+							<xs:attribute name="resolution" type="md:string-ArtReference_resolution"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ThumbnailImageID" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="manifest:ImageID-type">
+							<xs:attribute name="resolution" type="md:string-ArtReference_resolution"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="LanguageInImage" type="xs:language" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AlternateText" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="language"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Caption" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="language" type="xs:language"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Sequence" type="xs:nonNegativeInteger" minOccurs="0"/>
+			<xs:element name="Purpose" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PictureGroup-type">
+		<xs:sequence>
+			<xs:element name="Picture" type="manifest:Picture-type" maxOccurs="unbounded"/>
+			<xs:element name="Type" type="xs:string" minOccurs="0"/>
+			<xs:element name="SubType" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="StyleRef" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="PictureGroupID" type="manifest:PictureGroupID-type"/>
+	</xs:complexType>
+	<xs:complexType name="PictureGroupList-type">
+		<xs:sequence>
+			<xs:element name="PictureGroup" type="manifest:PictureGroup-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** TEXT GROUP ***-->
+	<xs:complexType name="TextGroup-type">
+		<xs:sequence>
+			<xs:element name="TextObjectID" type="manifest:TextObjectID-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="TextGroupID" type="manifest:AppGroupID-type" use="required"/>
+		<xs:attribute name="language" type="md:language-redefine"/>
+	</xs:complexType>
+	<xs:complexType name="TextGroupList-type">
+		<xs:sequence>
+			<xs:element name="TextGroup" type="manifest:TextGroup-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** PRESENTATIONS ***-->
+	<xs:complexType name="PlayableSequence-type">
+		<xs:sequence>
+			<xs:element name="Clip" type="manifest:AudiovisualClipRef-type" maxOccurs="unbounded"/>
+			<xs:element name="ImageClip" type="manifest:ImageClipRef-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ReferenceID" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PlayableSequenceList-type">
+		<xs:sequence>
+			<xs:element name="PlayableSequence" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="manifest:PlayableSequence-type">
+							<xs:attribute name="PlayableSequenceID" type="manifest:PlayableSequenceID-type"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** COMPATIBILITY***-->
+	<xs:complexType name="Compatibility-type">
+		<xs:sequence>
+			<xs:element name="SpecVersion" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Version of the specification to which this document is authored</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="System" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Profile" type="xs:anyURI"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--***  EXPERIENCE ***-->
+	<!--***  Audiovisual ***-->
+	<xs:simpleType name="AudiovisualType-string">
+		<xs:annotation>
+			<xs:documentation> used to redefine a controlled vocabulary</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:complexType name="Audiovisual-type">
+		<xs:sequence>
+			<xs:element name="Type" type="manifest:AudiovisualType-string">
+				<xs:annotation>
+					<xs:documentation>Type=Main, Trailer, Bonus, ...</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SubType" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="PresentationID" type="manifest:PresentationID-type"/>
+				<xs:element name="PlayableSequenceID" type="manifest:PlayableSequenceID-type"/>
+				<xs:element name="PlayableSequence" type="manifest:PlayableSequence-type"/>
+			</xs:choice>
+			<xs:element name="ContentID" type="md:ContentID-type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="ContentID" type="md:ContentID-type" use="required"/>
+	</xs:complexType>
+	<!-- *** App ***-->
+	<xs:complexType name="ExperienceApp-type">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:string"/>
+			<xs:element name="SubType" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AppGroupID" type="manifest:AppGroupID-type" minOccurs="0"/>
+			<xs:element name="AppName" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="language" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Rating" type="md:ContentRating-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ContentID" type="md:ContentID-type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="AppID" type="md:id-type"/>
+	</xs:complexType>
+	<!-- *** Gallery/Slide Show ***-->
+	<xs:complexType name="Gallery-type">
+		<xs:sequence>
+			<xs:element name="Type"/>
+			<xs:element name="SubType" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PictureGroupID" type="manifest:PictureGroupID-type" minOccurs="0"/>
+			<xs:element name="GalleryName" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="language" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ContentID" type="md:ContentID-type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="GalleryID" type="manifest:GalleryID-type"/>
+	</xs:complexType>
+	<!--***  Experience ***-->
+	<xs:attributeGroup name="ExperienceAttributes-type">
+		<xs:attribute name="ExperienceID" type="manifest:ExperienceID-type"/>
+		<xs:attribute name="version" type="xs:string" use="required"/>
+	</xs:attributeGroup>
+	<xs:complexType name="ExperienceChild-type">
+		<xs:sequence>
+			<xs:element name="Relationship" type="xs:string"/>
+			<xs:element name="SequenceInfo" type="md:ContentSequenceInfo-type" minOccurs="0"/>
+			<xs:choice>
+				<xs:element name="ExperienceID" type="manifest:ExperienceID-type"/>
+				<xs:element name="ALID" type="md:AssetLogicalID-type"/>
+			</xs:choice>
+			<xs:element name="ExternalManifestID" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="md:id-type"/>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Experience-type">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:string" minOccurs="0"/>
+			<xs:element name="SubType" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="Language" type="xs:language" maxOccurs="unbounded"/>
+				<xs:element name="ExcludedLanguage" type="xs:language" maxOccurs="unbounded"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="Region" type="md:Region-type" maxOccurs="unbounded"/>
+				<xs:element name="ExcludedRegion" type="md:Region-type" maxOccurs="unbounded"/>
+			</xs:choice>
+			<xs:element name="ContentID" type="md:ContentID-type" minOccurs="0"/>
+			<xs:element name="Audiovisual" type="manifest:Audiovisual-type" minOccurs="0"/>
+			<xs:element name="App" type="manifest:ExperienceApp-type" minOccurs="0"/>
+			<xs:element name="Gallery" type="manifest:Gallery-type" minOccurs="0"/>
+			<xs:element name="PictureGroupID" type="manifest:PictureGroupID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TextGroupID" type="manifest:TextGroupID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TimedSequenceID" type="manifest:TimedSequenceID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ExperienceChild" type="manifest:ExperienceChild-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="manifest:ExperienceAttributes-type"/>
+		<xs:attribute name="updateNum" type="xs:integer"/>
+	</xs:complexType>
+	<xs:complexType name="ExperienceList-type">
+		<xs:sequence>
+			<xs:element name="Experience" type="manifest:Experience-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** ALID TO EXPERIENCE MAP ***-->
+	<xs:complexType name="ALIDExperienceMap-type">
+		<xs:sequence>
+			<xs:element name="ALID" type="md:AssetLogicalID-type" maxOccurs="unbounded"/>
+			<xs:element name="ExperienceID" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="manifest:ExperienceID-type">
+							<xs:attribute name="condition" type="xs:string"/>
+							<xs:attribute name="licenseType" type="xs:string"/>
+							<xs:attribute name="deprecated" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="RelatedExperienceID" type="manifest:ExperienceChild-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ALIDExperienceMapList-type">
+		<xs:sequence>
+			<xs:element name="ALIDExperienceMap" type="manifest:ALIDExperienceMap-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** Timed Event ***-->
+	<xs:complexType name="TimedEvent-type">
+		<xs:sequence>
+			<xs:element name="StartTimecode" type="manifest:Timecode-type"/>
+			<xs:element name="EndTimecode" type="manifest:Timecode-type"/>
+			<xs:element name="Type" type="xs:string"/>
+			<xs:element name="SubType" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:choice>
+				<xs:element name="PresentationID" type="manifest:PresentationID-type"/>
+				<xs:element name="PlayableSequenceID" type="manifest:PlayableSequenceID-type"/>
+				<xs:element name="ExperienceID" type="manifest:ExperienceID-type"/>
+				<xs:element name="PictureID" type="manifest:PictureID-type"/>
+				<xs:element name="GalleryID" type="manifest:GalleryID-type"/>
+				<xs:element name="AppGroupID" type="manifest:AppGroupID-type"/>
+				<xs:element name="AppID" type="md:id-type"/>
+				<xs:element name="TextGroupID" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="manifest:TextGroupID-type">
+								<xs:attribute name="index" type="xs:integer"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="URL" type="xs:anyURI"/>
+				<xs:element name="AdID">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern value="[a-zA-Z1-9][a-zA-Z0-9]{10}[hHdD]?"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="ISRC">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern value="[A-Z0-9]{2}-[A-Z0-9]{3}-[0-9]{2}-[0-9]{5}"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="ProductID" type="manifest:OtherID-type"/>
+				<xs:element name="OtherID" type="manifest:OtherID-type"/>
+				<xs:element name="TimePeriod" type="manifest:EventPeriod-type"/>
+				<xs:element name="Location" type="manifest:EventLocation-type"/>
+				<xs:element name="People" type="md:BasicMetadataPeople-type"/>
+				<xs:element name="UPC" type="xs:string"/>
+			</xs:choice>
+			<xs:choice minOccurs="0">
+				<xs:element name="Offset" type="xs:integer"/>
+				<xs:element name="TimecodeOffset" type="manifest:Timecode-type"/>
+				<xs:element name="Initialization" type="xs:string"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TimedEventSequence-type">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="PresentationID" type="manifest:PresentationID-type"/>
+				<xs:element name="PlayableSequenceID" type="manifest:PlayableSequenceID-type"/>
+			</xs:choice>
+			<xs:element name="TimedEvent" type="manifest:TimedEvent-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="TimedSequenceID" type="manifest:TimedSequenceID-type" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="TimedEventSequenceList-type">
+		<xs:sequence>
+			<xs:element name="TimedEventSequence" type="manifest:TimedEventSequence-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** Time and Space *** (experimental)-->
+	<xs:complexType name="EventLocationEarthCoordinate-type">
+		<xs:sequence>
+			<xs:sequence minOccurs="0">
+				<xs:element name="Latitude" type="xs:double"/>
+				<xs:element name="Longitude" type="xs:double"/>
+			</xs:sequence>
+			<xs:element name="ElevationMeters" type="xs:double" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EventLocationOtherCoordinate-type">
+		<xs:sequence>
+			<xs:element name="Coordinate" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="label" type="xs:string" use="required"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="system" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="EventLocation-type">
+		<xs:sequence>
+			<xs:element name="Type">
+				<xs:complexType>
+					<xs:attribute name="fictional" type="xs:boolean"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Name" type="xs:string" minOccurs="0"/>
+			<xs:element name="Address" minOccurs="0"/>
+			<xs:element name="EarthCoordinate" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="manifest:EventLocationEarthCoordinate-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="OtherCoordinates" minOccurs="0">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="manifest:EventLocationOtherCoordinate-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EventPeriod-type">
+		<xs:sequence>
+			<xs:element name="Type" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="fictional" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Name" type="xs:string" minOccurs="0"/>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element name="Start" type="md:YearDateOrTime-type"/>
+					<xs:element name="End" type="md:YearDateOrTime-type" minOccurs="0"/>
+				</xs:sequence>
+				<xs:sequence>
+					<xs:element name="FictionalStart">
+						<xs:complexType>
+							<xs:simpleContent>
+								<xs:extension base="xs:string">
+									<xs:attribute name="units" type="xs:string"/>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="FictionalEnd" minOccurs="0">
+						<xs:complexType>
+							<xs:simpleContent>
+								<xs:extension base="xs:string"/>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="absolute" type="xs:boolean"/>
+	</xs:complexType>
+	<!--*** Manifest Source ****-->
+	<xs:complexType name="ManifestSourceLicensor-type">
+		<xs:complexContent>
+			<xs:extension base="md:OrgName-type">
+				<xs:sequence>
+					<xs:element name="ALID" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ManifestSource-type">
+		<xs:sequence>
+			<xs:element name="ServiceProvider" type="md:OrgName-type" minOccurs="0"/>
+			<xs:element name="Licensor" type="manifest:ManifestSourceLicensor-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="DeliveryContact" type="md:ContactInfo-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** MEDIA MANIFEST ***-->
+	<xs:complexType name="MediaManifest-type">
+		<xs:sequence>
+			<xs:element name="Compatibility" type="manifest:Compatibility-type"/>
+			<xs:element name="Source" type="manifest:ManifestSource-type" minOccurs="0"/>
+			<xs:element name="Inventory" type="manifest:Inventory-type"/>
+			<xs:element name="Presentations" type="manifest:PresentationList-type" minOccurs="0"/>
+			<xs:element name="PlayableSequences" type="manifest:PlayableSequenceList-type" minOccurs="0"/>
+			<xs:element name="PictureGroups" type="manifest:PictureGroupList-type" minOccurs="0"/>
+			<xs:element name="AppGroups" type="manifest:AppGroupList-type" minOccurs="0"/>
+			<xs:element name="TextGroups" type="manifest:TextGroupList-type" minOccurs="0"/>
+			<xs:element name="Experiences" type="manifest:ExperienceList-type"/>
+			<xs:element name="TimedEventSequences" type="manifest:TimedEventSequenceList-type" minOccurs="0"/>
+			<xs:element name="ALIDExperienceMaps" type="manifest:ALIDExperienceMapList-type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="ManifestID" type="md:id-type"/>
+		<xs:attribute name="updateNum" type="xs:integer"/>
+		<xs:attribute name="ExtraVersionReference" type="xs:string"/>
+		<xs:attribute name="updateDeliveryType" type="xs:string"/>
+		<xs:attribute name="workflow" type="xs:string"/>
+		<xs:attribute name="versionDescription" type="xs:string"/>
+	</xs:complexType>
+	<xs:element name="MediaManifest" type="manifest:MediaManifest-type"/>
+	<!--*** Media Manifest Edit ***-->
+	<xs:complexType name="MediaManifestEditLocRef-type">
+		<xs:annotation>
+			<xs:documentation>MediaManifestEdit LocalizedInfo Reference</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ContentID" type="md:ContentID-type"/>
+			<xs:element name="Language" type="md:language-redefine"/>
+			<xs:element name="Region" type="md:Region-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MediaManifestEditAdd-type">
+		<xs:sequence>
+			<xs:element name="Compatibility" type="manifest:Compatibility-type" minOccurs="0"/>
+			<xs:element name="Inventory" type="manifest:Inventory-type" minOccurs="0"/>
+			<xs:element name="Presentations" type="manifest:PresentationList-type" minOccurs="0"/>
+			<xs:element name="PlayableSequences" type="manifest:PlayableSequenceList-type" minOccurs="0"/>
+			<xs:element name="PictureGroups" type="manifest:PictureGroupList-type" minOccurs="0"/>
+			<xs:element name="AppGroups" type="manifest:AppGroupList-type" minOccurs="0"/>
+			<xs:element name="Metadata" type="manifest:InventoryMetadata-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TextObject" type="manifest:TextObjectID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TextGroup" type="manifest:TextGroup-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TextGroups" type="manifest:TextGroupList-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TimedEventSequence" type="manifest:TimedEventSequence-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Experiences" type="manifest:ExperienceList-type" minOccurs="0"/>
+			<xs:element name="ALIDExperienceMaps" type="manifest:ALIDExperienceMapList-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MediaManifestEditDelete-type">
+		<xs:sequence>
+			<xs:element name="AudioTrackID" type="manifest:AudioTrackID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="VideoTrackID" type="manifest:VideoTrackID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SubtitleTrackID" type="manifest:SubtitleTrackID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ImageID" type="manifest:ImageID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="InteractiveTrackID" type="manifest:InteractiveTrackID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TextObjectID" type="manifest:TextObjectID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PlayableSequenceID" type="manifest:PlayableSequenceID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PresentationID" type="manifest:PictureID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="PictureID" type="manifest:PictureID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="GalleryID" type="manifest:GalleryID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AppGroupID" type="manifest:AppGroupID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TextGroupID" type="manifest:TextGroupID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TimedSequenceID" type="manifest:TimedSequenceID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ExperienceID" type="manifest:ExperienceID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ALIDExperienceMap" type="manifest:ALIDExperienceMap-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ContentID" type="md:ContentID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="LocalizedInfoRef" type="manifest:MediaManifestEditLocRef-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MediaManifestEdit-type">
+		<xs:sequence>
+			<xs:element name="Source" type="manifest:ManifestSource-type" minOccurs="0"/>
+			<xs:element name="DeleteObjects" type="manifest:MediaManifestEditDelete-type" minOccurs="0"/>
+			<xs:element name="AddObjects" type="manifest:MediaManifestEditAdd-type" minOccurs="0"/>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+			<xs:element name="Instructions" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="type" type="xs:string"/>
+		<xs:attribute name="reference" type="xs:string"/>
+		<xs:attribute name="ManifestID" type="md:id-type"/>
+		<xs:attribute name="updateDeliveryType" type="xs:string"/>
+		<xs:attribute name="updateNum" type="xs:integer"/>
+		<xs:attribute name="workflow" type="xs:string"/>
+		<xs:attribute name="ExtraVersionReference" type="xs:string"/>
+		<xs:attribute name="versionDescription" type="xs:string"/>
+	</xs:complexType>
+	<xs:element name="MediaManifestEdit" type="manifest:MediaManifestEdit-type"/>
+	<!--*** FILE MANIFEST ***-->
+	<xs:complexType name="FileInfo-type">
+		<xs:sequence>
+			<xs:element name="Location" type="manifest:Location-type" maxOccurs="unbounded"/>
+			<xs:element name="Identifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="FileVersion" type="xs:nonNegativeInteger" minOccurs="0"/>
+			<xs:element name="FiileDate" minOccurs="0">
+				<xs:simpleType>
+					<xs:union memberTypes="xs:date xs:dateTime"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Type">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="manifest"/>
+						<xs:enumeration value="metadata"/>
+						<xs:enumeration value="media"/>
+						<xs:enumeration value="transaction"/>
+						<xs:enumeration value="ancillary"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Length" type="xs:nonNegativeInteger" minOccurs="0"/>
+			<xs:element name="Hash" type="md:Hash-type" minOccurs="0"/>
+			<xs:element name="MIMEType" type="xs:string" minOccurs="0"/>
+			<xs:element name="WrapperFormat" type="xs:string" minOccurs="0"/>
+			<xs:element name="ContainerMetadata" type="md:ContainerMetadata-type" minOccurs="0"/>
+			<xs:element name="Delivery" type="manifest:FileDelivery-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FileManifestInfo-type">
+		<xs:sequence>
+			<xs:element name="PackageID" type="xs:string"/>
+			<xs:element name="PackageDateTime" type="xs:dateTime"/>
+			<xs:element name="Publisher" type="md:OrgName-type"/>
+			<xs:element name="AvailsEntryID" type="md:id-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TotalFilesInPackage" type="xs:int"/>
+			<xs:element name="FileInfo" type="manifest:FileInfo-type" maxOccurs="unbounded"/>
+			<xs:element name="ExceptionFlag" type="xs:boolean" default="true" minOccurs="0"/>
+			<xs:element name="Comments" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FileManifest-type">
+		<xs:complexContent>
+			<xs:extension base="manifest:FileManifestInfo-type"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="FileDelivery-type">
+		<xs:sequence>
+			<xs:element name="UpdateNum" minOccurs="0"/>
+			<xs:element name="DeliveryMethod" type="xs:string"/>
+			<xs:element name="TransferLocation" type="xs:anyURI" minOccurs="0"/>
+			<xs:element name="Organization" type="md:OrgName-type" minOccurs="0"/>
+			<xs:element name="Contact" type="md:ContactInfo-type" minOccurs="0"/>
+			<xs:element name="EstDeliveryDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="OtherInstructions" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="FileDeleteManifest-type">
+		<xs:complexContent>
+			<xs:extension base="manifest:FileManifest-type">
+				<xs:sequence>
+					<xs:element name="Description" type="xs:string" minOccurs="0"/>
+					<xs:element name="Instructions" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute name="type" type="xs:string" use="required"/>
+				<xs:attribute name="reference" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="FileManifest" type="manifest:FileManifest-type"/>
+	<xs:element name="FileDeleteManifest" type="manifest:FileDeleteManifest-type"/>
+</xs:schema>

@@ -2,11 +2,11 @@
 <!-- edited with XMLSpy v2019 sp2 (x64) (http://www.altova.com) by Craig Seidel (Private) -->
 <xs:schema xmlns:avails="http://www.movielabs.com/schema/avails/v2.4/avails" 
 	   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-	   xmlns:md="http://www.movielabs.com/schema/md/v2.7.1/md" 
-	   xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7.1" 
+	   xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
+	   xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" 
 	   xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.movielabs.com/schema/avails/v2.4/avails" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.4">
-	<xs:import namespace="http://www.movielabs.com/schema/md/v2.7.1/md" schemaLocation="md-v2.7.1.xsd"/>
-	<xs:import namespace="http://www.movielabs.com/schema/mdmec/v2.7.1" schemaLocation="mdmec-v2.7.1.xsd"/>
+	<xs:import namespace="http://www.movielabs.com/schema/md/v2.7/md" schemaLocation="md-v2.7.1_Aliased.xsd"/>
+	<xs:import namespace="http://www.movielabs.com/schema/mdmec/v2.7" schemaLocation="mdmec-v2.7.1_Aliased.xsd"/>
 	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
 	<!-- XMLDSIG Schema can be found at http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd#%20%20%20%20xmldsig-core-schema.xsd -->
 	<!--CONTENT AVAILABILITY METADATA (Avails and Title List)-->
