@@ -109,7 +109,7 @@ public class XlsxBuilder {
 	protected String logMsgSrcId = "XlsxBuilder";
 	private String MD_VER;
 	private String MDMEC_VER;
-	private Namespace mdNSpace;
+	protected Namespace mdNSpace;
 	private SchemaWrapper mdSchema;
 	private String AVAIL_VER;
 	protected Namespace availsNSpace;
@@ -120,8 +120,8 @@ public class XlsxBuilder {
 	private HashSet<XPathExpression<?>> allowsMultiples = new HashSet<XPathExpression<?>>();
 	protected TemplateWorkBook workbook;
 	private JSONObject mappingVersion;
-	private String availPrefix;
-	private String mdPrefix;
+	protected String availPrefix;
+	protected String mdPrefix;
 	private HashMap<String, JSONObject> functionList;
 	private JSONObject mappingDefs;
 
@@ -843,6 +843,13 @@ public class XlsxBuilder {
 	 */
 	private void setXmlVersion(String availSchemaVer) throws IllegalArgumentException {
 		switch (availSchemaVer) {
+		case "2.4":
+			// TODO: resolve the md-v2.7.1 import issue.....
+//<xs:import namespace="http://www.movielabs.com/schema/md/v2.7/md" schemaLocation="md-v2.7.1.xsd"/>
+//<xs:import namespace="http://www.movielabs.com/schema/mdmec/v2.7" schemaLocation="mdmec-v2.7.1.xsd"/> 
+			MD_VER = "2.7";
+			MDMEC_VER = "2.7";
+			break;
 		case "2.3":
 			MD_VER = "2.6";
 			MDMEC_VER = "2.6";

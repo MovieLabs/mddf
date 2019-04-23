@@ -1368,7 +1368,10 @@
 				}
 			},
 
-			"AvailMetadata:VolumeNumber": "{avail}VolumeMetadata/{avail}VolumeNumber/{md}Number",
+			"AvailMetadata:VolumeNumber": [
+				"{avail}VolumeMetadata/{avail}VolumeNumber/{md}Number",
+				"@volNumber"
+			],
 			"AvailMetadata:VolumeTitleDisplayUnlimited": "{avail}VolumeMetadata/{avail}VolumeTitleDisplayUnlimited",
 			"AvailMetadata:VolumeTitleInternalAlias": "{avail}VolumeMetadata/{avail}VolumeTitleInternalAlias",
 
