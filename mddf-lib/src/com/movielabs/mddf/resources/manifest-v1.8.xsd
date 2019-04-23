@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2019 (x64) (http://www.altova.com) by Craig Seidel (Private) -->
-<xs:schema xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.8/manifest" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" targetNamespace="http://www.movielabs.com/schema/manifest/v1.8/manifest" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.8/manifest" 
+		xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+		xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
+		targetNamespace="http://www.movielabs.com/schema/manifest/v1.8/manifest" 
+		elementFormDefault="qualified" 
+		attributeFormDefault="unqualified">
 	<xs:import namespace="http://www.movielabs.com/schema/md/v2.7/md" schemaLocation="md-v2.7.xsd"/>
 	<!--Manifest v1.8-->
 	<!-- *************** D A T A   D E F I N I T I O N S ****************-->
