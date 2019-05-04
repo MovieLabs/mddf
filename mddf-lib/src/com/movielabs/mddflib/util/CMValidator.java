@@ -880,6 +880,12 @@ public class CMValidator extends XmlIngester {
 				curFileIsValid = false;
 				continue;
 			}
+			if(system.startsWith("Custom:")) {
+				String msg = "Ignoring custom Rating System '"+system+"'";
+				String explanation = null;
+				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_DEBUG, rSysEl, msg, explanation, null, logMsgSrcId);
+				continue;
+			}			
 			RatingSystem rSystem = RatingSystem.factory(system);
 			if (rSystem == null) {
 				String msg = "Unrecognized Rating System '" + system + "'";
