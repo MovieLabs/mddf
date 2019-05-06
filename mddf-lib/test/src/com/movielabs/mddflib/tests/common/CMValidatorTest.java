@@ -22,15 +22,18 @@
  */
 package com.movielabs.mddflib.tests.common;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.jdom2.JDOMException;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -225,5 +228,7 @@ public class CMValidatorTest extends AbstractCmmTester {
 		validateVocab(mdNSpace, "ReleaseHistory", mdNSpace, "ReleaseType", allowed, null, true);
 		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 	}
+
+
 
 }

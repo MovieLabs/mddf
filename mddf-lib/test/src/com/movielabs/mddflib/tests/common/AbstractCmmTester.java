@@ -37,6 +37,7 @@ import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.CMValidator;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 import net.sf.json.JSONObject;
@@ -57,6 +58,19 @@ public abstract class AbstractCmmTester extends CMValidator {
 	public AbstractCmmTester() {
 		super(true, new InstrumentedLogger());
 		iLog = (InstrumentedLogger) loggingMgr;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.util.CMValidator#process(com.movielabs.mddflib.util.xml
+	 * .MddfTarget)
+	 */
+	@Override
+	public boolean process(MddfTarget target) throws IOException, JDOMException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	/**
@@ -97,9 +111,9 @@ public abstract class AbstractCmmTester extends CMValidator {
 	protected void initialize(String mddfFile) {
 		try {
 			initialize(mddfFile, null);
-		} catch ( Exception e) { 
+		} catch (Exception e) {
 			e.printStackTrace();
-		}  
+		}
 	}
 
 	/**

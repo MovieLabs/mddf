@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdmec:CoreMetadata xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7"
+                    xmlns:md="http://www.movielabs.com/schema/md/v2.7/md"
+		    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		    xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.1.xsd">
+   <mdmec:Basic ContentID="md:cid:org:disney.com:radar:189274">
+      <md:UpdateNum>1546605936</md:UpdateNum>
+      <md:LocalizedInfo default="false" language="nl">
+         <md:TitleDisplayUnlimited>Standing Up in The Milky Way</md:TitleDisplayUnlimited>
+         <md:TitleSort>Standing Up in The Milky Way</md:TitleSort>
+         <md:Summary190>A thrilling, new adventure across space and time begins.</md:Summary190>
+         <md:Summary400>Het Schip van de Verbeelding, dat niet zich niet aan de ketting laat leggen en dat de lokroep van de hemelse harmonieën volgt , kan ons naar elke plek in het ruimte-tijdcontinuüm voeren.</md:Summary400>
+         <md:Summary4000>Het Schip van de Verbeelding, dat niet zich niet aan de ketting laat leggen en dat de lokroep van de hemelse harmonieën volgt , kan ons naar elke plek in het ruimte-tijdcontinuüm voeren.</md:Summary4000>
+         <md:DisplayIndicators>productPlacement</md:DisplayIndicators>
+         <md:DisplayIndicators>isMickey</md:DisplayIndicators>
+         <md:DisplayIndicators>isAnimated</md:DisplayIndicators>
+         <md:Genre id="166" source="Disney-BOLT">Documentary</md:Genre>
+         <md:Keyword>Cosmos: A Spacetime Odyssey</md:Keyword>
+         <md:Keyword>stars</md:Keyword>
+      </md:LocalizedInfo>
+      <md:LocalizedInfo default="true" language="en">
+         <md:TitleDisplayUnlimited>Standing Up in The Milky Way</md:TitleDisplayUnlimited>
+         <md:TitleSort>Standing Up in The Milky Way</md:TitleSort>
+         <md:Summary190>A thrilling, new adventure across space and time begins.</md:Summary190>
+         <md:Summary400>A thrilling, new adventure across space and time begins.</md:Summary400>
+         <md:Summary4000>More than three decades after the debut of Carl Sagan’s groundbreaking and iconic series, “Cosmos: A Personal Voyage,” it’s time once again to set sail for the stars. Host and astrophysicist Neil deGrasse Tyson sets off on the Ship of the Imagination to discover earth’s Cosmic Address and its coordinates in space and time. Viewers meet Renaissance Italy’s Giordano Bruno, who had a spiritual epiphany about the infinite expanse of the universe. Then, Tyson walks across the Cosmic Calendar, on which all of time has been compressed into a year-at-a-glance calendar, from the Big Bang to the moment humans first make their appearance on the planet.</md:Summary4000>
+         <md:DisplayIndicators>productPlacement</md:DisplayIndicators>
+         <md:DisplayIndicators>isMickey</md:DisplayIndicators>
+         <md:DisplayIndicators>isAnimated</md:DisplayIndicators>
+         <md:Genre id="166" source="Disney-BOLT">Documentary</md:Genre>
+         <md:Keyword>Cosmos: A Spacetime Odyssey</md:Keyword>
+         <md:Keyword>stars</md:Keyword>
+      </md:LocalizedInfo>
+      <md:ReleaseYear>2014</md:ReleaseYear>
+      <md:ReleaseDate>2014-03-09</md:ReleaseDate>
+      <md:ReleaseHistory>
+         <md:ReleaseType>Broadcast</md:ReleaseType>
+         <md:DistrTerritory>
+            <md:country>US</md:country>
+         </md:DistrTerritory>
+         <md:Date>2014-03-09</md:Date>
+      </md:ReleaseHistory>
+      <md:WorkType>Episode</md:WorkType>
+      <md:AltIdentifier>
+         <md:Namespace>EIDR</md:Namespace>
+         <md:Identifier>urn:eidr:10.5240/1C32-9E3E-2EA6-A115-FC43-U</md:Identifier>
+         <md:Scope>Title</md:Scope>
+      </md:AltIdentifier>
+      <md:People>
+         <md:Job>
+            <md:JobFunction>Actor</md:JobFunction>
+            <md:JobDisplay>Actor</md:JobDisplay>
+            <md:BillingBlockOrder>1</md:BillingBlockOrder>
+            <md:Character>Host</md:Character>
+            <md:Guest>false</md:Guest>
+         </md:Job>
+         <md:Name>
+            <md:DisplayName>Neil Degrasse Tyson</md:DisplayName>
+            <md:SortName>Tyson, Neil Degrasse</md:SortName>
+            <md:FirstGivenName>Neil</md:FirstGivenName>
+            <md:SecondGivenName>Degrasse</md:SecondGivenName>
+            <md:FamilyName>Tyson</md:FamilyName>
+         </md:Name>
+         <md:Identifier>
+            <md:Identifier>3507</md:Identifier>
+            <md:Namespace>CharacterID</md:Namespace>
+         </md:Identifier>
+         <md:Identifier>
+            <md:Identifier>4427414</md:Identifier>
+            <md:Namespace>NameID</md:Namespace>
+         </md:Identifier>
+      </md:People>
+      <md:People>
+         <md:Job>
+            <md:JobFunction>Actor</md:JobFunction>
+            <md:JobDisplay>Actor</md:JobDisplay>
+            <md:BillingBlockOrder>2</md:BillingBlockOrder>
+            <md:Character>George Tilton</md:Character>
+            <md:Guest>false</md:Guest>
+         </md:Job>
+         <md:Name>
+            <md:DisplayName>Stoney Emshwiller</md:DisplayName>
+            <md:SortName>Emshwiller, Stoney</md:SortName>
+            <md:FirstGivenName>Stoney</md:FirstGivenName>
+            <md:FamilyName>Emshwiller</md:FamilyName>
+         </md:Name>
+         <md:Identifier>
+            <md:Identifier>49556541</md:Identifier>
+            <md:Namespace>CharacterID</md:Namespace>
+         </md:Identifier>
+         <md:Identifier>
+            <md:Identifier>49555694</md:Identifier>
+            <md:Namespace>NameID</md:Namespace>
+         </md:Identifier>
+      </md:People>
+      <md:People>
+         <md:Job>
+            <md:JobFunction>Executive Producer</md:JobFunction>
+            <md:JobDisplay>Executive Producer</md:JobDisplay>
+            <md:BillingBlockOrder>1</md:BillingBlockOrder>
+         </md:Job>
+         <md:Name>
+            <md:DisplayName>Seth MacFarlane</md:DisplayName>
+            <md:SortName>MacFarlane, Seth</md:SortName>
+            <md:FirstGivenName>Seth</md:FirstGivenName>
+            <md:FamilyName>MacFarlane</md:FamilyName>
+         </md:Name>
+         <md:Identifier>
+            <md:Identifier>41487876</md:Identifier>
+            <md:Namespace>NameID</md:Namespace>
+         </md:Identifier>
+      </md:People>
+      <md:People>
+         <md:Job>
+            <md:JobFunction>Director</md:JobFunction>
+            <md:JobDisplay>Director</md:JobDisplay>
+            <md:BillingBlockOrder>2</md:BillingBlockOrder>
+         </md:Job>
+         <md:Name>
+            <md:DisplayName>Ann Druyan</md:DisplayName>
+            <md:SortName>Druyan, Ann</md:SortName>
+            <md:FirstGivenName>Ann</md:FirstGivenName>
+            <md:FamilyName>Druyan</md:FamilyName>
+         </md:Name>
+         <md:Identifier>
+            <md:Identifier>49555695</md:Identifier>
+            <md:Namespace>NameID</md:Namespace>
+         </md:Identifier>
+      </md:People>
+      <md:People>
+         <md:Job>
+            <md:JobFunction>Executive Producer</md:JobFunction>
+            <md:JobDisplay>Executive Producer</md:JobDisplay>
+            <md:BillingBlockOrder>5</md:BillingBlockOrder>
+         </md:Job>
+         <md:Name>
+            <md:DisplayName>Brannon Braga</md:DisplayName>
+            <md:SortName>Braga, Brannon</md:SortName>
+            <md:FirstGivenName>Brannon</md:FirstGivenName>
+            <md:FamilyName>Braga</md:FamilyName>
+         </md:Name>
+         <md:Identifier>
+            <md:Identifier>3286711</md:Identifier>
+            <md:Namespace>NameID</md:Namespace>
+         </md:Identifier>
+      </md:People>
+      <md:People>
+         <md:Job>
+            <md:JobFunction>Executive Producer</md:JobFunction>
+            <md:JobDisplay>Executive Producer</md:JobDisplay>
+            <md:BillingBlockOrder>3</md:BillingBlockOrder>
+         </md:Job>
+         <md:Name>
+            <md:DisplayName>Ann Druyan</md:DisplayName>
+            <md:SortName>Druyan, Ann</md:SortName>
+            <md:FirstGivenName>Ann</md:FirstGivenName>
+            <md:FamilyName>Druyan</md:FamilyName>
+         </md:Name>
+         <md:Identifier>
+            <md:Identifier>49555695</md:Identifier>
+            <md:Namespace>NameID</md:Namespace>
+         </md:Identifier>
+      </md:People>
+      <md:People>
+         <md:Job>
+            <md:JobFunction>Director</md:JobFunction>
+            <md:JobDisplay>Director</md:JobDisplay>
+            <md:BillingBlockOrder>4</md:BillingBlockOrder>
+         </md:Job>
+         <md:Name>
+            <md:DisplayName>Brannon Braga</md:DisplayName>
+            <md:SortName>Braga, Brannon</md:SortName>
+            <md:FirstGivenName>Brannon</md:FirstGivenName>
+            <md:FamilyName>Braga</md:FamilyName>
+         </md:Name>
+         <md:Identifier>
+            <md:Identifier>3286711</md:Identifier>
+            <md:Namespace>NameID</md:Namespace>
+         </md:Identifier>
+      </md:People>
+      <md:People>
+         <md:Job>
+            <md:JobFunction>Executive Producer</md:JobFunction>
+            <md:JobDisplay>Executive Producer</md:JobDisplay>
+            <md:BillingBlockOrder>6</md:BillingBlockOrder>
+         </md:Job>
+         <md:Name>
+            <md:DisplayName>Mitchell Cannold</md:DisplayName>
+            <md:SortName>Cannold, Mitchell</md:SortName>
+            <md:FirstGivenName>Mitchell</md:FirstGivenName>
+            <md:FamilyName>Cannold</md:FamilyName>
+         </md:Name>
+         <md:Identifier>
+            <md:Identifier>49555696</md:Identifier>
+            <md:Namespace>NameID</md:Namespace>
+         </md:Identifier>
+      </md:People>
+      <md:CountryOfOrigin>
+         <md:country>US</md:country>
+      </md:CountryOfOrigin>
+      <md:OriginalLanguage>en</md:OriginalLanguage>
+      <md:AssociatedOrg role="licensor">
+         <md:DisplayName>Disney</md:DisplayName>
+      </md:AssociatedOrg>
+      <md:SequenceInfo>
+         <md:Number>1</md:Number>
+      </md:SequenceInfo>
+      <md:Parent relationshipType="isepisodeof">
+         <md:ParentContentID>md:cid:org:disney.com:radar:13636</md:ParentContentID>
+      </md:Parent>
+   </mdmec:Basic>
+</mdmec:CoreMetadata>
