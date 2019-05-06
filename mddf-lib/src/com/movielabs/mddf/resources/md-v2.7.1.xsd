@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2019 sp1 (x64) (http://www.altova.com) by Craig Seidel (Private) -->
-<xs:schema xmlns:md="http://www.movielabs.com/schema/md/v2.7.1/md" 
-	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-	targetNamespace="http://www.movielabs.com/schema/md/v2.7.1/md" 
-	elementFormDefault="qualified" attributeFormDefault="unqualified" 
-	version="2.7.1">
+<xs:schema 
+   xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
+   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+   targetNamespace="http://www.movielabs.com/schema/md/v2.7/md" 
+   elementFormDefault="qualified" attributeFormDefault="unqualified" 
+   version="2.7">
 	<!--Common Metadata-->
-	<!-- ============================ -->
-	<!--Verson 2.7.1 DRAFT 2019-01-15 -->
-	<!-- ============================ -->
+	<!--Verson 2.7.1-->
 	<!-- *** Metadata References ***-->
 	<xs:simpleType name="id-type">
 		<xs:restriction base="xs:anyURI"/>
