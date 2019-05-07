@@ -332,7 +332,7 @@
 				{
 					"xpath": 
 					[
-						"../{avail}Term[@termName[.='Tier' or .='Category' ]]",
+						"../{avail}Term[@termName[.='Tier' or .='Category' or .='LicenseFee']]",
 						"../{avail}Term/{avail}Money"
 					],
 
