@@ -18,7 +18,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<mddf.lib.version>1.5.2.rc1-SNAPSHOT</mddf.lib.version>
 		<mddf.tool.version>${project.version}</mddf.tool.version>
-		<mddf.tool.build>L</mddf.tool.build>
+		<mddf.tool.build>M</mddf.tool.build>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
 		<maven.build.timestamp.format>yyyy-MMM-dd HH:mm:ss z</maven.build.timestamp.format>
 	</properties>
@@ -58,6 +58,7 @@
 		<resources>
 			<resource>
 				<directory>src</directory>
+				<filtering>true</filtering>
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
@@ -84,22 +85,6 @@
 						<goals>
 							<goal>single</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>properties-maven-plugin</artifactId>
-				<version>1.0.0</version>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>write-project-properties</goal>
-						</goals>
-						<configuration>
-							<outputFile>${project.build.outputDirectory}/com/movielabs/mddf/tools/build.properties</outputFile>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
