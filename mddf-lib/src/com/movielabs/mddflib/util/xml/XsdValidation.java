@@ -87,9 +87,11 @@ public class XsdValidation {
 	 */
 	public boolean validateXml(MddfTarget target, String xsdLocation, String moduleId) {
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI); 
+		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		URL xsdUrl = assignXSD(target);
-
+		if (!validateHeader(target, xsdUrl)) {
+			return false;
+		}
 		String genericTooltip = "XML does not conform to schema as defined in " + xsdLocation;
 		File srcFile = target.getSrcFile(); // used for logging
 		Schema schema;
@@ -182,58 +184,91 @@ public class XsdValidation {
 		case "manifest":
 			switch (xsdVer) {
 			case "1.8":
-				switch (mdVer) {
-				case "2.7":
-					// is schema location used to 'alias v1.8.1?
-					String schemaLoc = rootEl.getAttributeValue("schemaLocation", nsMap.get("xsi"));
-					if ((schemaLoc != null) && (schemaLoc.contains("v1.8.1"))) {
-						xsdVer = "1.8.1_D";
-					} else {
-						xsdVer = "1.8";
-					}
-					break;
-				case "2.7.1":
-					xsdVer = "1.8.1_A";
-					break;
+				// is schema location used to 'alias v1.8.1?
+				String schemaLoc = rootEl.getAttributeValue("schemaLocation", nsMap.get("xsi"));
+				if ((schemaLoc != null) && (schemaLoc.contains("v1.8.1"))) {
+					xsdVer = "1.8.1";
+				} else {
+					xsdVer = "1.8";
 				}
-				break;
-
-			case "1.8.1":
-				switch (mdVer) {
-				case "2.7":
-					xsdVer = "1.8.1_B";
-					break;
-				case "2.7.1":
-					xsdVer = "1.8.1_C";
-					break;
-				}
-				break;
 			}
 			break;
 		case "mdmec":
+			switch (xsdVer) {
+			case "2.7":
+				// is schema location used to 'alias v2.7.1?
+				String schemaLoc = rootEl.getAttributeValue("schemaLocation", nsMap.get("xsi"));
+				if ((schemaLoc != null) && (schemaLoc.contains("v2.7.1"))) {
+					xsdVer = "2.7.1";
+				} else {
+					xsdVer = "2.7";
+				}
+			}
 			break;
-		case "avails":
-//			if(xsdVer.equals("2.4")) {
-//				switch (mdVer) {
-//				case "2.7":
-//					xsdVer = "2.4_Aliased";
-//					break;
-//				case "2.7.1":
-//					xsdVer = "2.4";
-//					break;
-//				}
-//				break;
-//			}
+		case "avails": 
 			break;
 		default:
 			break;
 		}
 		String xsdFile = XsdValidation.defaultRsrcLoc + mddfType + "-v" + xsdVer + ".xsd";
+
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Assigned XSD file " + xsdFile, target.getSrcFile(), -1,
+				"XsdValidation", null, null);
+
 		URL xsdUrl = getClass().getClassLoader().getResource(xsdFile);
 		return xsdUrl;
 	}
 
-	protected String extractVersionFromUri(String nSpaceUri, String mddfType ) {
+	/**
+	 * Check that the namespace declarations in the MDDF XML file match those used
+	 * in the XSD. This is explicitly verified so as to provide an unambiguous error
+	 * message in situations where the namespaces do NOT match.
+	 * 
+	 * @param target
+	 * @param xsdUrl
+	 * @return
+	 */
+	private boolean validateHeader(MddfTarget target, URL xsdUrl) {
+		boolean status = true;
+		Element xmlRoot = target.getXmlDoc().getRootElement();
+		String xsdPath = xsdUrl.getPath();
+		String xsd = new File(xsdPath).getName();
+		xsd = xsd.replace(".xsd", "");
+		SchemaWrapper schema = SchemaWrapper.factory(xsd);
+		List<Namespace> usedNSpaceList = xmlRoot.getNamespacesInScope();
+		for (Namespace nextNSpace : usedNSpaceList) {
+			String prefix = nextNSpace.getPrefix();
+			switch (prefix) {
+			case "":
+			case "xml":
+			case "xs":
+			case "xsi":
+				continue;
+
+			}
+			SchemaWrapper refSchema = schema.getReferencedSchema(prefix);
+			if (refSchema == null) {
+				// XML refers to an unknown schema
+				loggingMgr.log(LogMgmt.LEV_FATAL, logMsgDefaultTag, "Use of unsupported Namespace: prefix=" + prefix,
+						target.getSrcFile(), -1, "XsdValidation", null, null);
+				status = false;
+				continue;
+			}
+			// make sure the two URIs match
+			String uriInXml = nextNSpace.getURI();
+			String uriInXsd = refSchema.getTargetNamespace().getURI();
+			if (!uriInXml.equals(uriInXsd)) {
+				String errMsg = "Invalid URI for Namespace: URI=" + uriInXml;
+				String details = "The URI must exactly match the URI used in the XSD";
+				loggingMgr.log(LogMgmt.LEV_FATAL, logMsgDefaultTag, errMsg, target.getSrcFile(), -1, "XsdValidation",
+						null, null);
+				status = false;
+			}
+		}
+		return status;
+	}
+
+	protected String extractVersionFromUri(String nSpaceUri, String mddfType) {
 		String schemaPrefix = MddfContext.SCHEMA_PREFIX + mddfType + "/v";
 		String schemaVer = nSpaceUri.replace(schemaPrefix, "");
 		schemaVer = schemaVer.replace("/" + mddfType, "");
