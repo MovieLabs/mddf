@@ -88,6 +88,10 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		id2typeMap = avail_id2typeMap;
 	}
 
+	public boolean process(MddfTarget target) {
+		return process(target, null);
+	}
+
 	/**
 	 * Validate a single Avails document. The Avails data is structured as an XML
 	 * document regardless of the original source file's format. This means that
@@ -451,7 +455,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 						String msg = "Volume contains an Episode already in another Volume";
 						String explanation = "Episode# " + episodeID
 								+ " is within the range of a previously processed Volume";
-						//TODO: pass srcRef to Sec 2.2.7.1 of Avail spec
+						// TODO: pass srcRef to Sec 2.2.7.1 of Avail spec
 						logIssue(LogMgmt.TAG_AVAIL, LogMgmt.LEV_ERR, nextVolEl, msg, explanation, null, logMsgSrcId);
 					}
 				}

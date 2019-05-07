@@ -21,6 +21,7 @@
  */
 package com.movielabs.mddflib.util;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import net.sf.json.JSONObject;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
@@ -42,6 +44,7 @@ import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.CMValidator.SeqEntry;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.RatingSystem;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 import com.movielabs.mddflib.util.xml.StructureValidation;
@@ -59,7 +62,7 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class CMValidator extends XmlIngester {
+public abstract class CMValidator extends XmlIngester {
 
 	/**
 	 * @author L. Levin, Critical Architectures LLC
@@ -224,6 +227,8 @@ public class CMValidator extends XmlIngester {
 		this.validateC = validateC;
 		logMsgSrcId = LOGMSG_ID;
 	}
+	
+	public abstract boolean process(MddfTarget target) throws IOException, JDOMException;
 
 	/**
 	 * Validate everything that is not fully specified via the XSD. This method
