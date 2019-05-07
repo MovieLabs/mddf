@@ -279,9 +279,6 @@ public class MddfContext {
 		Map<String, String> uses = new HashMap<String, String>();
 		switch (standard) {
 		case AVAILS_2_4:
-			// TODO: resolve the md-v2.7.1 import issue.....
-//<xs:import namespace="http://www.movielabs.com/schema/md/v2.7/md" schemaLocation="md-v2.7.1.xsd"/>
-//<xs:import namespace="http://www.movielabs.com/schema/mdmec/v2.7" schemaLocation="mdmec-v2.7.1.xsd"/> 
 			uses.put("MD", "2.7");
 			uses.put("MDMEC", "2.7");
 			break;
