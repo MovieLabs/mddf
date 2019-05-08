@@ -31,7 +31,7 @@
 * 2019-Mar-15: v1.5.1 released
 
 __NOTE:__ Starting with v1.5.1, releases of mddf-lib are available via the Maven Central Repository. Refer to
-the [mddf-lib README](./blob/master/mddf-lib/README.md) for information on adding dependancy information to pom files.
+the [mddf-lib README](./mddf-lib/README.md) for information on adding dependancy information to pom files.
 
 __NOTE:__ Beginning with Release 1.5, pre-built executables for Windows, OS-X, and Linux will no longer
 be supported. The executable Java jar will still be supported. See ["__Installing and Running__"](#h_Install)
