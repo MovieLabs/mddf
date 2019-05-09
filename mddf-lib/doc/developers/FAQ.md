@@ -49,3 +49,12 @@ While the above changes will implement the necessary functionality, UI support i
 ### 4. How do you update the global ratings DB?
 
 Add the XML file to the `com.movielabs.mddf.resources` package and then update `MddfContext.CUR_RATINGS_VER`
+
+### 5. How to coordinate new releases:
+
+* the `mddf.lib.version` in all the `pom.xml` files needs to be set correctly.
+* In addition to being available via GitHub,  `mdsdf-lib` will be available vai Maven Central. Release to the central repository
+ is handled by the Maven build process for mddf-lib.
+* The file `mddf/binaries/status.json` should always be updated to contain the `build.properties` for the
+most recent stable release. This file is used by the `UpdateMgr` to determine if a user should be informed that
+a more recent version is available.
