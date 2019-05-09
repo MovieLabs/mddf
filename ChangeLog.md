@@ -5,6 +5,19 @@
 
 ## Versioning
 
+### mddf-lib v1.5.2
+
+#### rc1
+* Bug Fix: allow use of LicenseFee to meet TVOD-based LicenseType requirement
+* Bug Fix: xfer of SeriesContentID from XLSX to XML was missing
+* Enhancement: added full support for ingest of Avails v1.8 Volume data
+* Enhancement: allow use of "Custom:"  rating system.
+* Enhancement: full support of CM 2.7.1 usage
+* Enhancement: explicit check of namespace declarations in all XML headers 
+* Enhancement: support for Avails v 2.4 added
+* Enhancement: added support for translating Avails v2.4 to/from v1.8 
+* Other: added ability to cancel XLSX-related processing via the VersionChooserDialog
+
 ### mddf-lib v1.5.1.
 
 #### rc6
@@ -12,6 +25,7 @@
 * Bug Fix: Validation of sequences and indices now allows non-zero values on case-by-case basis
 * Bug Fix: correct relative positioning of top-level UI frames
 * Enhancement: Allow on-demand checking for updates to software
+* Enhancement: Added support for Avails v1.8
 
 #### rc5
 
