@@ -54,19 +54,44 @@ import net.sf.json.JSONObject;
 import net.sf.json.groovy.JsonSlurper;
 
 /**
+ * Handles checking to see if a more recent version of the toolkit is available
+ * for download. The <tt>UpdateMgr</tt> can be invoked at any time but is
+ * typically used on startup. A query is sent to the <tt>UPDATE_SERVER</tt>
+ * which will respond with a message indicating if an update is available. If
+ * one is, a pop-up notifying the user is displayed.
+ * 
+ * 
+ * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
 public class UpdateMgr {
-	private static final String updateUrl = "https://mddf.movielabs.com/updateMgr";
-//	private static final String updateUrl = "http://localhost:8080/mddf-svcs/updateMgr"; 
+	public static final String UPDATE_SERVER = "https://mddf.movielabs.com/updateMgr";
+//	private static final String UPDATE_SERVER = "http://localhost:8080/mddf-svcs/updateMgr"; 
 
-	private static final int maxDaysBtwnChecks = 7;
+	public static final int maxDaysBtwnChecks = 7;
 
+	/**
+	 * Check with <tt>UPDATE_SERVER</tt> to see if an update is available. Check is
+	 * only made if the elapsed number of days since last check exceeds
+	 * <tt>maxDaysBtwnChecks</tt>.
+	 * 
+	 * @param framework ToolLauncher
+	 * @return
+	 */
 	public static boolean check(ToolLauncher framework) {
 		return check(framework, framework.getFrame(), false);
 	}
 
+	/**
+	 * Check with <tt>UPDATE_SERVER</tt> to see if an update is available.
+	 * 
+	 * @param framework ToolLauncher
+	 * @param uiFrame   parent component used to position dialog
+	 * @param forced    if <tt>true</tt>, check will be made regardless of time
+	 *                  elapsed since previous check.
+	 * @return
+	 */
 	public static boolean check(ToolLauncher framework, Component uiFrame, boolean forced) {
 		Properties mddfToolProps = ValidatorTool.loadProperties("/com/movielabs/mddf/tools/build.properties");
 		if (!forced) {
@@ -105,7 +130,7 @@ public class UpdateMgr {
 				JOptionPane.showMessageDialog(uiFrame,
 						"<html>Unable to connect with Update Server.<br/>Try latter</html>", "Server Unreachable",
 						JOptionPane.WARNING_MESSAGE);
-			} 
+			}
 			return true;
 		}
 		String status = statusCheck.optString("status", "UPDATE");
@@ -117,18 +142,18 @@ public class UpdateMgr {
 			if (forced) {
 				JOptionPane.showMessageDialog(uiFrame, "Software is up-to-date.");
 			}
-		} 
+		}
 		LocalDate now = LocalDate.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd");
-		framework.setProperty("updateMgr.lastCheck", now.format(formatter));   
-		
+		framework.setProperty("updateMgr.lastCheck", now.format(formatter));
+
 		return true;
 	}
 
 	private static JSONObject getStatus(ToolLauncher framework, String curVersion) {
 		securityKludge();
 		String uuid = framework.getUUID();
-		String fullUrl = updateUrl + "?uuid=" + uuid + "&curVer=" + curVersion;
+		String fullUrl = UPDATE_SERVER + "?uuid=" + uuid + "&curVer=" + curVersion;
 		try {
 			URL netUrl = new URL(fullUrl);
 			InputStream is = netUrl.openStream();
