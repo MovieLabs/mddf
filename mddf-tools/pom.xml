@@ -16,7 +16,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<mddf.lib.version>1.5.2.rc1-SNAPSHOT</mddf.lib.version>
+		<mddf.lib.version>1.5.2.rc1</mddf.lib.version>
 		<mddf.tool.version>${project.version}</mddf.tool.version>
 		<mddf.tool.build>M</mddf.tool.build>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
