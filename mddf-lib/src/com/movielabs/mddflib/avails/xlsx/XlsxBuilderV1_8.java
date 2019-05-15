@@ -158,6 +158,7 @@ public class XlsxBuilderV1_8 extends XlsxBuilder {
 		case "Episode":
 		case "Season":
 		case "Series":
+		case "Volume":
 			break;
 		default:
 			workType = DEFAULT_CONTEXT;

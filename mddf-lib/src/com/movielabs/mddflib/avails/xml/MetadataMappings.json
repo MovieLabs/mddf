@@ -404,9 +404,9 @@
 				"{avail}VolumeTitleInternalAlias": "AvailMetadata/VolumeTitleInternalAlias",
 				"{avail}VolumeNumber": 
 				{
-					"{md}Number": "AvailMetadata/VolumeNumber"
-				},
-
+					"{md}Number": "AvailMetadata/VolumeNumber",
+					"{md}DistributionNumber": "AvailMetadata/VolumeDistributionNumber"
+				}, 
 				"{avail}ReleaseDate": "AvailMetadata/ReleaseYear",
 				"{avail}ReleaseHistory": 
 				[

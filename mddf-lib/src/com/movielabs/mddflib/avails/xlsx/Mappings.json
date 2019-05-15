@@ -1124,13 +1124,15 @@
 			"AvailAsset:SeasonContentID": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeasonContentID",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonContentID"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonContentID",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeasonContentID"
 			},
 
 			"AvailAsset:SeriesContentID": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesContentID",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesContentID"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesContentID",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesContentID"
 			},
 
 			"AvailAsset:Metadata": "n.a",
@@ -1146,8 +1148,7 @@
 				}
 			},
 
-			"AvailAsset:VolumeContentID":  "{avail}VolumeMetadata/{avail}VolumeContentID",
-			
+			"AvailAsset:VolumeContentID": "{avail}VolumeMetadata/{avail}VolumeContentID",
 			"AvailAsset:WorkType": "{avail}WorkType",
 			"AvailMetadata:Any": "n.a",
 			"AvailMetadata:CaptionExemption": 
@@ -1155,7 +1156,8 @@
 				"-default-": "{avail}Metadata/{avail}USACaptionsExemptionReason",
 				"Episode": "{avail}EpisodeMetadata/{avail}USACaptionsExemptionReason",
 				"Season": "{avail}SeasonMetadata/{avail}USACaptionsExemptionReason",
-				"Series": "{avail}SeriesMetadata/{avail}USACaptionsExemptionReason"
+				"Series": "{avail}SeriesMetadata/{avail}USACaptionsExemptionReason",
+				"Volume": "{avail}VolumeMetadata/{avail}USACaptionsExemptionReason"
 			},
 
 			"AvailMetadata:CaptionIncluded": 
@@ -1170,12 +1172,14 @@
 			{
 				"-default-": "{avail}Metadata/{avail}CompanyDisplayCredit/{md}DisplayString",
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}CompanyDisplayCredit/{md}DisplayString"
 			},
 
 			"AvailMetadata:Director": 
 			{
 				"-default-": "{avail}Metadata/{avail}People[//{md}JobFunction='Director']/{md}Name/{md}DisplayName",
+				"Volume": "{avail}VolumeMetadata/{avail}People[//{md}JobFunction='Director']/{md}Name/{md}DisplayName",
 				"Season": "{avail}SeasonMetadata/{avail}People[//{md}JobFunction='Director']/{md}Name/{md}DisplayName",
 				"Episode": "{avail}EpisodeMetadata/{avail}People[//{md}JobFunction='Director']/{md}Name/{md}DisplayName"
 			},
@@ -1183,6 +1187,7 @@
 			"AvailMetadata:DistributionNumber": "n.a",
 			"AvailMetadata:EpisodeCount": 
 			{
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}NumberOfEpisodes",
 				"Season": "{avail}SeasonMetadata/{avail}NumberOfEpisodes",
 				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}NumberOfEpisodes"
 			},
@@ -1229,42 +1234,48 @@
 			{
 				"-default-": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Reason",
 				"Season": "{avail}SeasonMetadata/{avail}Ratings/{md}Rating/{md}Reason",
-				"Episode": "{avail}EpisodeMetadata/{avail}Ratings/{md}Rating/{md}Reason"
+				"Episode": "{avail}EpisodeMetadata/{avail}Ratings/{md}Rating/{md}Reason",
+				"Volume": "{avail}VolumeMetadata/{avail}Ratings/{md}Rating/{md}Reason"
 			},
 
 			"AvailMetadata:RatingSystem": 
 			{
 				"-default-": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}System",
 				"Season": "{avail}SeasonMetadata/{avail}Ratings/{md}Rating/{md}System",
-				"Episode": "{avail}EpisodeMetadata/{avail}Ratings/{md}Rating/{md}System"
+				"Episode": "{avail}EpisodeMetadata/{avail}Ratings/{md}Rating/{md}System",
+				"Volume": "{avail}VolumeMetadata/{avail}Ratings/{md}Rating/{md}System"
 			},
 
 			"AvailMetadata:RatingValue": 
 			{
 				"-default-": "{avail}Metadata/{avail}Ratings/{md}Rating/{md}Value",
 				"Season": "{avail}SeasonMetadata/{avail}Ratings/{md}Rating/{md}Value",
-				"Episode": "{avail}EpisodeMetadata/{avail}Ratings/{md}Rating/{md}Value"
+				"Episode": "{avail}EpisodeMetadata/{avail}Ratings/{md}Rating/{md}Value",
+				"Volume": "{avail}VolumeMetadata/{avail}Ratings/{md}Rating/{md}Value"
 			},
 
 			"AvailMetadata:ReleaseHistoryOriginal": 
 			{
 				"-default-": "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='original']",
 				"Season": "{avail}SeasonMetadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='original']",
-				"Episode": "{avail}EpisodeMetadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='original']"
+				"Episode": "{avail}EpisodeMetadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='original']",
+				"Volume": "{avail}VolumeMetadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='original']"
 			},
 
 			"AvailMetadata:ReleaseHistoryPhysicalHV": 
 			{
 				"-default-": "{avail}Metadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']",
 				"Season": "{avail}SeasonMetadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']",
-				"Episode": "{avail}EpisodeMetadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']"
+				"Episode": "{avail}EpisodeMetadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']",
+				"Volume": "{avail}VolumeMetadata/{avail}ReleaseHistory/{md}Date[../{md}ReleaseType/text()='DVD']"
 			},
 
 			"AvailMetadata:ReleaseYear": 
 			{
 				"-default-": "{avail}Metadata/{avail}ReleaseDate",
 				"Season": "{avail}SeasonMetadata/{avail}ReleaseDate",
-				"Episode": "{avail}EpisodeMetadata/{avail}ReleaseDate"
+				"Episode": "{avail}EpisodeMetadata/{avail}ReleaseDate",
+				"Volume": "{avail}VolumeMetadata/{avail}ReleaseDate"
 			},
 
 			"AvailMetadata:RetailerID1": "{avail}Metadata/{avail}AltIdentifier/{md}Identifier[starts-with(., 'RetailerID1')]",
@@ -1275,75 +1286,86 @@
 			"AvailMetadata:RetailerSeasonID": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeasonID')]",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeasonID')]"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeasonID')]",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeasonID')]"
 			},
 
 			"AvailMetadata:RetailerSeriesID": 
 			{
 				"Season": "{avail}SeasonMetadata//{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeriesID')]",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata//{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeriesID')]"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata//{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeriesID')]",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata//{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'RetailerSeriesID')]"
 			},
 
 			"AvailMetadata:RetailerVolumeID": "{avail}VolumeMetadata//{avail}VolumeAltIdentifier/{md}Identifier[starts-with(., 'RetailerVolumeID')]",
-
 			"AvailMetadata:SeasonCount": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}NumberOfSeasons"
 			},
 
 			"AvailMetadata:SeasonID": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonID')]",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonID')]"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonID')]",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonID')]"
 			},
 
 			"AvailMetadata:SeasonAltID": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonAltID')]",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonAltID')]"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonAltID')]",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeasonAltIdentifier/{md}Identifier[starts-with(., 'SeasonAltID')]"
 			},
 
 			"AvailMetadata:SeasonNumber": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeasonNumber/{md}Number",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonNumber/{md}Number"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonNumber/{md}Number",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeasonNumber/{md}Number"
 			},
 
 			"AvailMetadata:SeasonTitleDisplayUnlimited": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeasonTitleDisplayUnlimited",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonTitleDisplayUnlimited"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonTitleDisplayUnlimited",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeasonTitleDisplayUnlimited"
 			},
 
 			"AvailMetadata:SeasonTitleInternalAlias": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeasonTitleInternalAlias",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonTitleInternalAlias"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeasonTitleInternalAlias",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeasonTitleInternalAlias"
 			},
 
 			"AvailMetadata:SeriesID": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesID')]",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesID')]"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesID')]",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesID')]"
 			},
 
 			"AvailMetadata:SeriesAltID": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesAltID')]",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesAltID')]"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesAltID')]",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesAltIdentifier/{md}Identifier[starts-with(., 'SeriesAltID')]"
 			},
 
 			"AvailMetadata:SeriesTitleDisplayUnlimited": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleDisplayUnlimited",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleDisplayUnlimited"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleDisplayUnlimited",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleDisplayUnlimited"
 			},
 
 			"AvailMetadata:SeriesTitleInternalAlias": 
 			{
 				"Season": "{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleInternalAlias",
-				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleInternalAlias"
+				"Episode": "{avail}EpisodeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleInternalAlias",
+				"Volume": "{avail}VolumeMetadata/{avail}SeasonMetadata/{avail}SeriesMetadata/{avail}SeriesTitleInternalAlias"
 			},
 
 			"AvailMetadata:TitleDisplayUnlimited": "{avail}Metadata/{avail}TitleDisplayUnlimited",
@@ -1353,9 +1375,8 @@
 				"{avail}Metadata/{avail}RunLength",
 				"{avail}EpisodeMetadata/{avail}RunLength"
 			],
-			
-			"AvailMetadata:VolumeDistributionNumber": "{avail}VolumeMetadata/{avail}VolumeNumber/{md}DistributionNumber",
 
+			"AvailMetadata:VolumeDistributionNumber": "{avail}VolumeMetadata/{avail}VolumeNumber/{md}DistributionNumber",
 			"AvailMetadata:VolumeID": 
 			{
 				"%FUNCTION": 
@@ -1368,13 +1389,14 @@
 				}
 			},
 
-			"AvailMetadata:VolumeNumber": [
+			"AvailMetadata:VolumeNumber": 
+			[
 				"{avail}VolumeMetadata/{avail}VolumeNumber/{md}Number",
 				"@volNumber"
 			],
+
 			"AvailMetadata:VolumeTitleDisplayUnlimited": "{avail}VolumeMetadata/{avail}VolumeTitleDisplayUnlimited",
 			"AvailMetadata:VolumeTitleInternalAlias": "{avail}VolumeMetadata/{avail}VolumeTitleInternalAlias",
-
 			"AvailTrans:AllowedLanguages": "*{avail}AllowedLanguage",
 			"AvailTrans:AnnounceDate": "{avail}Term/{avail}Event[../@termName='AnnounceDate']",
 			"AvailTrans:AssetLanguage": "*{avail}AssetLanguage",
