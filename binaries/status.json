@@ -1,6 +1,6 @@
 {
-  "build.timestamp": "2019-Mar-18 15:05:08 UTC",
-  "mddf.lib.version": "1.5.1-SNAPSHOT",
-  "mddf.tool.build": "L",
-  "mddf.tool.version": "1.5.1"
+  "build.timestamp": "2019-May-24 18:59:03 UTC",
+  "mddf.lib.version": "1.5.2",
+  "mddf.tool.build": "M",
+  "mddf.tool.version": "1.5.2"  
 }

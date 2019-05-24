@@ -1,0 +1,831 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- InstanceBegin template="/Templates/MovieLab_template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="Shortcut Icon" href="/images/ml_icon.ico" />
+      <!-- InstanceBeginEditable name="doctitle" -->
+      <title>MovieLabs Avails Validator</title> <!-- InstanceEndEditable -->
+      <!-- InstanceBeginEditable name="head" -->
+      <!-- InstanceEndEditable -->
+      <style type="text/css">
+<!--
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+-->
+</style>
+      <!-- InstanceBeginEditable name="script" -->
+      <!-- fill in scripts here  -->
+      <!-- InstanceEndEditable -->
+      <script src="https://use.typekit.net/rjt6miv.js"></script>
+      <script>
+							try {
+								Typekit.load({
+									async : false
+								});
+							} catch (e) {
+							}
+						</script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <style type="text/css">
+<!--
+.linkwhite {
+	color: #FFFFFF
+}
+
+.linkgray {
+	color: #333333
+}
+-->
+</style>
+      <link href="/style/movielab-2017.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+   <div class="site-header">
+      <div class="site-header-main">
+         <div class="page-center">
+            <div class="site-branding">
+               <p class="site-title">
+                  <a href="http://movielabs.com" rel="home">Movie Labs</a>
+               </p>
+            </div>
+            <button id="menu-toggle" class="menu-toggle">Menu</button>
+            <div id="site-header-menu" class="site-header-menu">
+               <nav id="site-navigation" class="main-nav" role="navigation" aria-label="Primary Menu">
+               <div class="menu-main-container">
+                  <ul id="menu-main" class="primary-menu">
+                     <li id="menu-item-24"
+                        class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-24"
+                        aria-haspopup="true"><a href="/who-we-are/">Who We Are</a>
+                        <button class="dropdown-toggle" aria-expanded="false">
+                           <span class="screen-reader-text">expand child menu</span>
+                        </button>
+                        <ul class="sub-menu">
+                           <li id="menu-item-26"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26"><a
+                              href="/who-we-are/team/">Team</a></li>
+                           <li id="menu-item-212"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-212"><a
+                              href="/who-we-are/how-we-run">How We Run</a></li>
+                           <li id="menu-item-211"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-211"><a
+                              href="/who-we-are/partners/">Partners</a></li>
+                           <li id="menu-item-27"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-27"><a
+                              href="/who-we-are/careers/">Careers</a></li>
+                        </ul></li>
+                     <li id="menu-item-28" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-28"><a
+                        href="/what-we-do/">What We Do</a></li>
+                     <li id="menu-item-271"
+                        class="menu-item menu-item-type-post_type menu-item-object-page current-page-ancestor current-menu-ancestor current-menu-parent current-page-parent current_page_parent current_page_ancestor menu-item-has-children menu-item-271"
+                        aria-haspopup="true"><a href="/solutions-specifications/">Solutions &amp;
+                           Specifications</a>
+                        <button class="dropdown-toggle" aria-expanded="false">
+                           <span class="screen-reader-text">expand child menu</span>
+                        </button>
+                        <ul class="sub-menu">
+                           <li id="menu-item-223"
+                              class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-141 current_page_item menu-item-223"><a
+                              href="/md/">MovieLabs Digital Distribution Framework (MDDF)</a></li>
+                           <li id="menu-item-229"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-229"><a
+                              href="/solutions-specifications/ultra-hd-and-hdr/">Ultra HD and HDR</a></li>
+                           <li id="menu-item-232"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-232"><a
+                              href="/solutions-specifications/enhanced-content-protection-ecp/">Enhanced Content
+                                 Protection (ECP)</a></li>
+                           <li id="menu-item-235"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-235"><a
+                              href="/cpe/">Digital extras</a></li>
+                           <li id="menu-item-241"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-241"><a
+                              href="/md/md/">Common Metadata</a></li>
+                           <li id="menu-item-244"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-244"><a
+                              href="/md/avails/">EMA Avails</a></li>
+                           <li id="menu-item-247"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-247"><a
+                              href="/md/manifest/">Media Manifest</a></li>
+                           <li id="menu-item-251"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-251"><a
+                              href="/md/mmc/">Media Manifest Core</a></li>
+                           <li id="menu-item-254"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-254"><a
+                              href="/md/mec/">Media Entertainment Core Metadata</a></li>
+                           <li id="menu-item-257"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-257"><a
+                              href="/md/ratings/">Ratings</a></li>
+                           <li id="menu-item-260"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-260"><a
+                              href="http://acns.net">Automated Content Notification System</a></li>
+                        </ul></li>
+                     <li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a
+                        href="/outreach/">Outreach</a></li>
+                     <li id="menu-item-31" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-31"><a
+                        href="/news/">News</a></li>
+                     <li id="menu-item-32" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-32"><a
+                        href="/contact-us/">Contact Us</a></li>
+                  </ul>
+               </div>
+               </nav>
+               <!-- .main-navigation -->
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="hero"
+      style="background: url(http://movielabs.com/images/interior-hero-bg.jpg); background-size: cover; background-position: center center;">
+      <div class="page-center">
+         <!-- InstanceBeginEditable name="Title" -->
+         <h1>Avails Validator (1.5.2)</h1>
+         <!-- InstanceEndEditable -->
+      </div>
+   </div>
+   <table class="main-content" width="800" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <!-- InstanceBeginEditable name="Body" -->&nbsp;
+            <table width="100%" border="0" cellspacing="0" cellpadding="10">
+               <tr>
+                  <td width="75%" valign="top">
+                     <h1 style="margin-bottom: 10px;" class="title">User's Guide: Avails Validator</h1>
+                     <hr />
+                     <h2 class="title">Contents:</h2> <tt>
+                        <ol>
+                           <a href="#OV"><li>Overview</li></a>
+                           <ol>
+                              <a href="#OV_f"><li>Functionality</li></a>
+                              <a href="#OV_ui"><li>User Interface</li></a>
+                           </ol>
+                           <a href="#USE"><li>Using the Validator</li></a>
+                           <ol>
+                              <a href="#USE_opts"><li>Selecting Processing Options</li></a>
+                              <a href="#USE_run"><li>Running the Validator and Interpreting Output</li></a>
+                              <a href="#USE_Edit"><li>Editing XML</li></a>
+                              <ol>
+                                 <a href="#USE_Edit_1"><li>Overview</li></a>
+                                 <a href="#USE_Edit_2"><li>Launching the Editor</li></a>
+                                 <a href="#USE_Edit_3"><li>User Interface</li></a>
+                                 <a href="#USE_Edit_4"><li>Saving Changes and Re-Validating</li></a>
+                              </ol>
+                           </ol>
+                           <a href="#USE_XLATE"><li>Format Conversion</li></a>
+                           <ol>
+                              <a href="#USE_XLATE_O"><li>Overview</li></a>
+                              <a href="#USE_XLATE2XLSX"><li>Converting XML to XLSX</li></a>
+                              <a href="#USE_XLATE2XML"><li>Converting XLSX to XML</li></a>
+                              <a href="#USE_XLATE_UI"><li>User Interface</li></a>
+                           </ol>
+                           <a href="#SCRIPT"><li>Running Scripts</li></a>
+                           <ol>
+                              <a href="#SCRIPT_func"><li>Functionality</li></a>
+                              <a href="#SCRIPT_write"><li>Writing Command Scripts</li></a>
+                              <a href="#SCRIPT_ui"><li>User Interface</li></a>
+                           </ol>
+                        </ol>
+                     </tt>
+                     <hr />
+                     <h2 id="OV" class="title">1) Overview</h2>
+                     <p>
+                        This User's Guide covers the stand-alone desktop version of the MDDF Tool for Avails validation
+                        and translation. A web-based version of these tools is also available at <a
+                           href="https://mddf.movielabs.com/services">https://mddf.movielabs.com/services</a>.
+                     </p>
+                     <h3 id="OV_f" class="title">1.1) Functionality</h3>
+                     <p>
+                        The
+                        <tt>Validator</tt>
+                        is a standalone application that is intended to be used during the pre-processing of an <a
+                           href="http://www.movielabs.com/md/avails/" target="_blank">Avails Metadata</a> file.
+                        Capabilities include:
+                        <ul>
+                           <li>Validates that one or more Avails files are in conformance with the Avails
+                              specification.</li>
+                           <li>Validation of Avails file in either XML or XLSX format.</li>
+                           <li>Optional checks for conformance with applicable <i>best practices</i> or similar
+                              guidance.
+                           </li>
+                           <li>Integrated XML Editor with linkage to any errors or warnings detected.</li>
+                           <li>Conversion of XLSX formatted Avails into XML.</li>
+                           <li>Conversion of XML formatted Avails into XLSX.</li>
+                           <li>Ability to run in a scripted mode for batch processing of multiple files.</li>
+                           <li>Ability to run as either a native binary )installers for Windows, Mac OSX, and Linux
+                              platforms) or as an executable Java jar.</li>
+                        </ul>
+                     </p> <!-- ####################################################################### -->
+                     <h3 id="OV_ui" class="title">1.2) User Interface</h3>
+                     <div class="imgDiv">
+                        <img src="./images/ug01.jpg" width="571" height="294" style="max-width: 700px;" />
+                        <p class="imgCaption">Figure 1: Validator UI</p>
+                     </div> The user interface is shown in Figure 1. From top to bottom, the main components are:
+                     <ul>
+                        <li>Menus providing access to generic capabilities. The primary one is the "Processing"
+                           menu. This allows the user to select the types of validation checks to be performed and the
+                           level of logging output desired.</li>
+                        <li>The Tool Bar, which is used for:
+                           <ul>
+                              <li>selection of one or more files to be validated, and</li>
+                              <li>access to the integrated Manifest Editor.</li>
+                           </ul>
+                        </li>
+                        <li>The Logging panel used to display and filter the messages resulting from the validation
+                           process</li>
+                     </ul> <!-- ####################################################################### --> <!-- ####################################################################### -->
+                     <hr />
+                     <h2 id="USE" class="title">2) Using the Validator</h2>
+                     <h3 id="USE_opts" class="title">2.1) Selecting Processing Options</h3>
+                     <ol>
+                        <li>The first step is to configure basic options and preferences (e.g., logging output).
+                           This is done via the check boxes in the <tt>Processing</tt> menu (Fig 2). The user may:
+                           <ul>
+                              <li>filter validation-related messages based on their severity and</li>
+                              <li>enable or disable informational and status messages.</li>
+                           </ul>
+                        </li>
+                        <div class="imgDiv">
+                           <img src="./images/ug02.jpg" style="max-width: 700px;" />
+                           <p class="imgCaption">Figure 2: Logging Menu</p>
+                        </div>
+                        <li>The next step is to select which files will be validated. There are three mechanisms
+                           provided:
+                           <ul>
+                              <li>Use the <tt>Open File...</tt> menu item to select an Avails file in either XML or
+                                 Excel format: <br /> <img src="./images/ug02b.jpg" /></li>
+                              <li>The <tt>Recent..</tt> menu item may be used to select from a history of recently
+                                 accessed files.
+                              </li>
+                              <li>A <i>left-click</i> on the 'File' text area (to the right of the <img
+                                 src="./images/run.jpg" style="vertical-align: middle" , max-height: 10px; "/> button)
+                                 will pop open a File Chooser dialog.
+                              </li>
+                           </ul>
+                           <p>If a directory is selected, all Avails files found in the directory will be processed.
+                              Alternatively a single file may be selected. Note, however, that if the selected source is
+                              a directory containing multiple Avails files, then all files will be validated against the
+                              same set of options.</p>
+                        </li>
+                        <!--
+								<li>If the selected Profile(s) support <i>use cases</i>,
+									the user has the option of selecting one or more Use Cases for
+									inclusion in the validation process. At this time, the only
+									Profile that does support use cases is 'MMC-1'.
+								</li>
+								  -->
+                     </ol> <!-- ####################################################################### -->
+                     <h3 id="USE_run" class="title">2.2) Running the Validator and Interpreting Output</h3>
+                     <p>
+                        Once all validation options have been set, the validation process may be executed via the
+                        <tt>RUN</tt>
+                        button.
+                        <ul>
+                           <li>If the selected Avails is an XLSX file, the user will be prompted to select
+                              from a list the template version the file is based on (e.g. "Avails v1.7.1"). If the XLSX
+                              version is unknown (i.e., "UNK") the software will attempt to identify the version. If,
+                              however, it incorrectly identifies the template version, further processing may return
+                              invalid results.</li>
+                           <li>If the Avails is an XML file, processing proceeds without the need for this additional
+                              input.</li>
+                        </ul>
+                     </p>
+                     <p>When the validation process completes, the results will be displayed in the Logging panel
+                        (see Figure 3).
+                     <div class="imgDiv">
+                        <img src="./images/ug03.jpg" width="563" />
+                        <p class="imgCaption">Figure 3: Validation Results</p>
+                     </div> The <i>navigation pane</i> on the left side allows the user to select a sub-set of messages to be
+                     displayed on the right side. Messages are hierarchically grouped first by the Avails file they
+                     apply to, then by the severity level, and finally by the type of validation check resulting in the
+                     message (e.g., CMD). The levels, in order of decreasing severity, are:
+                     <ul>
+                        <li><tt>
+                              <b>Fatal</b>
+                           </tt>: Indicates the inability to perform any processing on a file. For example, attempting to
+                           process an Avails based on an unsupported version of the schema would result in a FATAL log
+                           entry.</li>
+                        <li><tt>
+                              <b>Error</b>
+                           </tt>: a problem that must be corrected. An example would be the absence of a required property or
+                           the use of an unrecognized value for an enumerated type (e.g., an invalid language code)</li>
+                        <li><tt>
+                              <b>Warning</b>
+                           </tt>: a problem or inconsistency that does not have to be corrected but may be worth looking
+                           into. For example, a Transaction with more than one SuppressionLiftDate terms is
+                           contradictory but may still be processable by a retailer.</li>
+                        <li><tt>
+                              <b>Notice</b>
+                           </tt>: indicates that a recommended <i>Best practice</i> was not followed (e.g. the use of
+                           non-EIDR ID values for IDs)</li>
+                        <li><tt>
+                              <b>Debug</b>
+                           </tt>: diagnostic output that should only be produced when requested by Movie Labs.</li>
+                     </ul>
+                     <p>
+                        The last type of log entry is an
+                        <tt>
+                           <b>Info</b>
+                        </tt>
+                        message. These are used to provide a user with summary and status information about the file
+                        being validated. The generation of Info messages may be enabled or disabled via the
+                        <tt>Processing -> Logging</tt>
+                        menu (see Fig 2 above).
+                     </p>
+                     <p>Icons are used to indicate the most severe problem found in any branch of the message
+                        hierarchy. For example, Figure 3b shows that only one of the two files that were processed
+                        contains errors.</p>
+                     <div class="imgDiv">
+                        <img src="./images/ug03b.jpg" />
+                        <p class="imgCaption">Figure 3b: Severity of Log Messages</p>
+                     </div>
+                     </p>
+                     <p>
+                        The <i>message display pane</i> on the right provides a table showing all the messages in which
+                        ever branch of the message hierarchy has been selected in the navigation pane. Some log messages
+                        will provide additional information via <i>tool tips</i>. Where possible, this will include
+                        references to specific sections of the documentation that cover the identified problem.
+                     </p>
+                     <p>
+                        The interpretation of the
+                        <tt>Line</tt>
+                        entry will depend on the type of Avails file being processed. For XML files it will be the line
+                        number in the file while for XLSX files it is actually the row number in the sheet being
+                        processed.
+                     </p>
+                     <p>
+                        The displayed log messages may be sorted by means of a <i>left-click</i> on any of the column
+                        headers. Subsequent left-clicks will reverse the sort order.
+                     </p>
+                     <p>
+                        By <i>right-clicking</i> on the message display pane, a pop-up menu may be accessed (see Figure
+                        4). Available actions are:
+                        <ul>
+                           <li>show the XML associated with the error in an Editor window [for XML-formatted Avails
+                              files only],</li>
+                           <li>clear the entire contents of the message log, or</li>
+                           <li>save to a file the currently displayed group of messages in CSV format</li>
+                        </ul>
+                     </p>
+                     <div class="imgDiv">
+                        <img src="./images/ug04.jpg" width="535" />
+                        <p class="imgCaption">Figure 4: Message Log Pop-up Menu</p>
+                     </div>
+                     <p>The saving and/or clearing of the log file are simple operations and the user interface for
+                        both of these is self-explanatory. Usage of the Editor is covered in detail in the next section.</p>
+                     <!-- ####################################################################### -->
+                     <h3 id="USE_Edit" class="title">2.3) Editing [XML files only]</h3>
+                     <h4 id="USE_Edit_1" class="title">2.3.1) Overview</h4>
+                     <p>
+                        The Avails Validator includes a built-in XML Editor that may be used to correct any errors found
+                        during the validation process. Note that this is not intended to provide a full-featured XML
+                        authoring capability similar to those provided by tools such as <a
+                           href="http://www.altova.com/xmlspy.html" target="_blank">XML Spy</a> or <a
+                           href="https://www.oxygenxml.com/xml_editor.html" target="_blank">Oxygen-XML</a>. Rather it is
+                        focused on providing an easy-to-use and integrated capability for quickly correcting errors and
+                        then re-running the validation tests.
+                     </p>
+                     <p>The Editor UI is implemented as a separate window (see Figure 5). Multiple Editor windows
+                        may be opened at the same time, with each displaying a different XML file. Note, however, that
+                        there may only be one Editor window for any given file.</p>
+                     <div class="imgDiv">
+                        <img src="./images/ug05.jpg" width="562" />
+                        <p class="imgCaption">Figure 5: XML Editor</p>
+                     </div>
+                     <h4 id="USE_Edit_2" class="title">2.3.2) Launching the Editor</h4>
+                     <p>There are three ways to launch the XML Editor:</p>
+                     <ol>
+                        <li>As described in Section 2..2, an Editor may be launched by the context menu displayed
+                           when the user right-clicks on a log entry. <br /> <img style="vertical-align: middle"
+                           src="./images/ug04b.jpg" /> <br />The editor will scroll the display to the line associated
+                           with the log entry.
+                        </li>
+                        <li>An Editor may be launched by right-clicking on the file name displayed in the <i>navigation
+                              pane</i>: <img style="vertical-align: middle" src="./images/ug04c.jpg" vspace="5" />.
+                        </li>
+                        <li>An Editor may also be launched using the EDIT button in the tool bar: <img
+                           style="vertical-align: middle" src="./images/ug06b.jpg" />
+                        </li>
+                     </ol>
+                     <p>
+                        When an editor is launched for a specific Avails file:
+                        <ul>
+                           <li>if an editor window for the file has not been previously accessed, a new Editor will
+                              be created and displayed.</li>
+                           <li>if an editor for the file already exists but has been minimized (i.e., iconified) by
+                              the user, it will be opened and brought to the foreground.</li>
+                           <li>if an editor for the file already exists, it will scroll to display the selected
+                              line in that file.</li>
+                           <li>if the log message used to access the editor does not have a specific location
+                              associated with it, or the editor was launched using the Menu Bar, the current line will
+                              be set to the first line in the file.</li>
+                        </ul>
+                     </p>
+                     <h4 id="USE_Edit_3" class="title">2.3.3) User Interface</h4>
+                     <p>
+                        The Editor window has the following components:
+                        <ul>
+                           <li>a text pane which uses colors for syntax highlighting,</li>
+                           <li>a menu bar providing access to the available editing functions</li>
+                           <li>line numbers displayed on the left edge that includes markers indicating errors and
+                              warnings, and</li>
+                           <li>display of status messages across the bottom of the editor window.</li>
+                        </ul>
+                        These are shown in Figure 6.
+                     </p>
+                     <div class="imgDiv">
+                        <img src="./images/ug06.jpg" width="512" height="265" />
+                        <p class="imgCaption">Figure 6: Editor UI</p>
+                     </div>
+                     <p>The status messages are linked to the marker icons displayed along side the line numbers. A
+                        single left or right click on a marker will result in the associated log entry being displayed
+                        in the status panel.</p>
+                     <h4 id="USE_Edit_4" class="title">2.3.4) Saving Changes and Re-Validating</h4>
+                     <p>
+                        To save changes, simply use either the pull down menu or the
+                        <tt>&lt;Ctrl&gt;S</tt>
+                        shortcut. Once the Avails file has been saved the XML may be re-validated.
+                     </p>
+                     <p>
+                        The changed Avails may also be saved under a new name using the
+                        <tt>Save As</tt>
+                        menu option. If the Avails is saved under a new name then the user must explicitly identify the
+                        new Avails file as the Validator's
+                        <tt style="color: #0000dd;">Source</tt>
+                        before it can be validated. Also it is important to remember that the <u>existing</u> Editor
+                        window will still be displaying the original Avails file. In order to edit the newly saved file,
+                        the user must:
+                        <ol>
+                           <li>select the new file as the source file to validate,</li>
+                           <li>run the validation, and then</li>
+                           <li>select one of the resulting log messages to open an Editor window for the new XML
+                              file.</li>
+                        </ol>
+                     </p> <!-- ####################################################################### --> <!-- ####################################################################### -->
+                     <hr />
+                     <h2 id="USE_XLATE" class="title">3) Format Conversion</h2>
+                     <h3 id="USE_XLATE_O" class="title">3.1) Overview</h3>
+                     <p>
+                        The Avails Validator provides a <i>translation</i> capability that may be used to convert an
+                        Avails file from one format to another. The current version of the software supports the
+                        conversions:
+                        <ul>
+                           <li>from XML to XLSX (e.g., from XML v2.2 to XLSX v1.7.3),</li>
+                           <li>from XLSX to XML (e.g., from v1.7.2 to XML v2.3),</li>
+                           <li>from one XLSX version to another (e.g. v1.7.2 to v1.7.3), or</li>
+                           <li>from one XML version to another (e.g. v2.2 to v2.3).</li>
+                        </ul>
+                        Regardless of the specific conversion being performed, the following guidelines apply:
+                        <ol>
+                           <li>An Avails file <b>must</b> be valid before it can be translated. The Validator UI
+                              will disable the <tt>Translate</tt> option for any file that contains validation errors or
+                              has yet to be validated.
+                           </li>
+                           <li>Any Avails file generated by the Translation function <b>should be</b> validated
+                              before using. Translation is a <i>best effort</i> capability. Due to inconsistencies when
+                              translating between different formats (e.g. XML to XLSX) or different versions of the same
+                              format (e.g., XLSX 1.7.1 to XLSX 1.7.3) the translated Avails may not be valid even though
+                              the original Avails file was.
+                           </li>
+                        </ol>
+                        The following sections provide general guidance for conversion. Detailed guidance for specific
+                        conversions is provided in the
+                        <tt>Avails Version Mapping</tt>
+                        document.
+                     </p>
+                     <h3 id="USE_XLATE2XLSX" class="title">3.2) Converting XML to Excel</h3>
+                     <p>
+                        The Avails XML schema supports all of the capabilities and constructs defined by the EMA Avails
+                        Metadata standards. In contrast, the semantics supported by the Excel version of an Avails are
+                        very limited. As a result, information present in an XML file may not be supportable in an Excel
+                        file. Not all XML Avails will, therefore, be supportable as an Excel file. Refer to the
+                        <tt>Avails Version Mapping</tt>
+                        document for specific limitations and assumptions associated with each conversion.
+                     </p>
+                     <h4>Conversion to v1.7.3 or older</h4>
+                     <p>
+                        <span style="background: #E6FA04;">Prior to v1.8</span>, the Excel format required that
+                        the Avails to be organized by
+                        <tt>Asset/WorkType</tt>
+                        in that the contents of a spreadsheet will consist entirely of Movie-related or TV-related
+                        Avails. When converting XML to a pre-v1.8 format, the conversion process will, therefore, 
+                        generate for each XML document a single Excel
+                        workbook containing exactly two spreadsheet: one for movies and one for TV. Note, however, that
+                        the Excel standard for Avails requires a workbook to contain <u>a single sheet</u>. <span
+                           style="background: #E6FA04;">The user is responsible for splitting the generated Excel
+                           file into two separate workbooks with one spreadsheet each</span>.
+                     </p>
+                     <h3 id="USE_XLATE2XML" class="title">3.3) Converting Excel to XML</h3>
+                     <p>
+                        The Avails Validator can translate a valid Excel Avails file into an XML Avails. The process is
+                        fairly simple as the XML format will support any Avails structure that can be specified via
+                        Excel. The sole issue is that an XML Avail requires a
+                        <tt>ShortDescription</tt>
+                        which is absent from the Excel version. The translator will therefore create a description that
+                        indicates the XLSX file and worksheet that the XML was generated along with a timestamp. The
+                        full syntax is:
+                        <div style="padding-left: 4em;">
+                           <tt>generated XML from {file-name}:Sheet_n on yyyy.mm.dd.hh.mm.ss</tt>
+                        </div>
+                     </p>
+                     <h3 id="USE_XLATE_UI" class="title">3.4) User Interface</h3>
+                     <p>To translate a file:</p>
+                     <ol>
+                        <li><p>First validate the file using the normal mechanisms. Correct any errors
+                              identified.</p></li>
+                        <li><p>Open the pop-up menu via a right-click on the file name displayed in the
+                              navigation pane:</p>
+                           <div class="imgDiv">
+                              <img src="./images/ugX01.jpg" />
+                              <p class="imgCaption">Figure 7: File Context Pop-up Menu</p>
+                           </div> If all validation errors have been corrected, the '<tt>Translate</tt>' action will be
+                           enabled.</li>
+                        <li><p>
+                              Selecting '
+                              <tt>Translate</tt>
+                              ' will result in the display of the Avails Translation Dialog:
+                              <p>
+                                 <div class="imgDiv">
+                                    <img src="./images/ugX02.jpg" />
+                                    <p class="imgCaption">Figure 8: Avails Translation Dialog</p>
+                                 </div>
+                                 The checkboxes should be used to select one or more output formats. A checkbox will be
+                                 disabled if the software does not support conversion from the input format to that
+                                 particular output format.</li>
+                        <li><p>
+                              Output files will saved to the indicated folder. The name of Excel file will be used as
+                              the base name for the XML but the user has the option of changing this if desired. There
+                              is also the option of appending a <i>version suffix</i> to the output file's name. For
+                              example, the settings shown in Fig 8 will produce two output files:
+                              <ul>
+                                 <li><tt>EMA_Avails-TV_v1-7.3_v2.2.xml</tt>, and</li>
+                                 <li><tt>EMA_Avails-TV_v1-7.3_v2.3.xml</tt></li>
+                              </ul>
+                           </p></li>
+                        <li><p>
+                              The translator will log any changes it makes to the Avail specifications as a result of
+                              limitations in the conversion process (see Sections 3.2 and 3.3). Figure 9 shows an
+                              example output:
+                              <div class="imgDiv">
+                                 <img src="./images/ugX03.jpg" />
+                                 <p class="imgCaption">Figure 9: Avails Translation Log Report</p>
+                              </div>
+                           </p></li>
+                     </ol> <!-- ####################################################################### -->
+                     <hr />
+                     <h2 id="SCRIPT" class="title">4) Running Scripts</h2>
+                     <h3 id="SCRIPT_func" class="title">4.1) Functionality</h3>
+                     <p>Validation of multiple Avails files may be performed using scripts that can specify any of
+                        same options and settings available thru the user interface. A script may easily be used to
+                        process a set of manifests with specified sub-sets being handled using different options. All
+                        results are automatically displayed in the GUI's log display but the script engine supports the
+                        option of also writing the log to a file.</p>
+                     <h3 id="SCRIPT_write" class="title">4.2) Writing Command Scripts</h3>
+                     <h4 id="SCRIPT_struct" class="title">4.2.1) Structure</h4>
+                     <p>
+                        A script file is written using the <a href="http://www.json.org/" target="_blank">JSON</a>
+                        syntax. The structure for a <i>validation</i> script is as follows:
+                     </p>
+                     <ul>
+                        <li>Command: should be specified as <tt>validate</tt> . The validation command has OPTIONAL
+                           sub-elements followed by a list of files to process.
+                           <ul>
+                              <li>Options in the following sub-elements will apply to all files that will be
+                                 processed. These are:
+                                 <ul>
+                                    <li><p>
+                                          <tt>pathPrefix</tt>
+                                          : [OPTIONAL] a root folder for locating all Avails files. The path may be
+                                          absolute or relative. If relative, the location of the script file is the
+                                          starting point for resolving the full path to each file or folder. If a
+                                          <tt>pathPrefix</tt>
+                                          is <i>not</i> specified, the present working directory will be used as the
+                                          starting point for resolving the full path to each file or folder.
+                                       </p></li>
+                                    <li><p>
+                                          <tt>logging</tt>
+                                          :
+                                          <ul>
+                                             <li><p>
+                                                   <tt>level</tt>
+                                                   : [OPTIONAL] the minimum level of messages to be included in the
+                                                   output log. Allowed values are:<br />
+                                                   <tt>{ "Verbose", "Warning", "Error", "Info"}</tt>
+                                                   <br />The default when not specified is
+                                                   <tt>Warning</tt>
+                                                   .
+                                                </p></li>
+                                             <li><p>
+                                                   <tt>output</tt>
+                                                   : [OPTIONAL] file to write the log to. If not specified, the log is
+                                                   not saved. The path may be absolute or relative. If relative, the
+                                                   location of the script file is the starting point for resolving the
+                                                   full path.
+                                                </p></li>
+                                          </ul>
+                                 </ul>
+                                 <li><p>A set of XML-formatted Avails files to be processed. These are
+                                       specified as a JSON Array. Properties are:</p>
+                                    <ul>
+                                       <li><p>
+                                             <tt>file</tt>
+                                             : [REQUIRED] Path to a either a file or a directory containing one or more
+                                             files. If relative, the starting point for resolving the full path is the
+                                             <tt>pathPrefix</tt>
+                                             .
+                                          </p></li>
+                                    </ul></li>
+                           </ul></li>
+                     </ul>
+                     <h4 id="SCRIPT_ex" class="title">4.2.2) Examples</h4>
+                     <p>The following is an example of script that validates two files plus any additional Avails
+                        found in a specific folder and then saves the message log in a single output file:</p> <pre>
+{  
+  "validate":{  
+    "pathPrefix":"./AvailsDemos/",
+    "logging":{  
+      "level":"Warning",
+      "output":"./scriptLog01.xml"
+      },
+    "avails":[  
+      {  
+        "file":"si_tests/CMM_BBB_v0.1.xml" 
+      },
+      {  
+        "file":"si_tests/CMM_Sita_v0.1.xml" 
+      },
+      {  
+        "file":"studioFoo" 
+      }
+      ]
+    }
+}
+	</pre>
+                     <p>
+                        The next two examples illustrate the use, or non-use, of the
+                        <tt>pathPrefix</tt>
+                        . In the first example, all relative paths are resolved using the present working directory as
+                        the base. Both
+                        <tt>foo1.xml</tt>
+                        and
+                        <tt>foo2.xml</tt>
+                        should therefore be in the
+                        <tt>pwd</tt>
+                        .
+                     </p> <pre>
+{  
+  "validate":{   
+    "avails":[
+      {  
+        "file":"foo1.xml" 
+      },
+      {  
+        "file":"./foo2.xml" 
+      },
+      {  
+        "file":"/foo3.xml" 
+      }
+    ]
+  }
+}
+	</pre>
+                     <p>
+                        In the next example,
+                        <tt>foo1.xml</tt>
+                        and
+                        <tt>foo2.xml</tt>
+                        are still co-located but are now in in a sub-directory of the directory containing the script
+                        file.
+                        <tt>foo3.xml</tt>
+                        should still be in the same location as the previous examples since it is specified using an
+                        absolute path.
+                     </p> <pre>
+{  
+  "validate":{   
+    "pathPrefix":"./AvailsDemos/",
+    "avails":[
+      {  
+        "file":"foo1.xml" 
+      },
+      {  
+        "file":"./foo2.xml" 
+      },
+      {  
+        "file":"/foo3.xml" 
+      }
+    ]
+  }
+}
+	</pre>
+                     <h3 id="SCRIPT_ui" class="title">4.3) User Interface</h3>
+                     <p>
+                        Selection and execution of a script is via the
+                        <tt>Run Script..</tt>
+                        menu entry. Script files are <b>not</b> selectable using the
+                        <tt>File</tt>
+                        text-entry field used to specify an Avails XML file.
+                     </p>
+                     <p>Once a script file has been selected the execution is automatic. It is recommended that the
+                        contents of the log display be cleared prior to executing a script. Failure to do so will result
+                        in any previous messages being included in the saved log file.</p>
+                     <div class="imgDiv">
+                        <img src="./images/ug07.jpg" />
+                        <p class="imgCaption">Figure 10: Script Selection and Execution</p>
+                     </div>
+                  </td>
+               </tr>
+            </table>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+               <tr>
+                  <td>&nbsp;</td>
+               </tr>
+            </table> <!-- InstanceEndEditable -->
+         </td>
+      </tr>
+   </table>
+   <footer id="colophon" class="site-footer bg-blue ta-center" role="contentinfo">
+   <div class="page-center">
+      <span class="footer-logo"><a href="/" rel="home">Movie Labs</a></span>
+      <nav class="footer-nav" role="navigation" aria-label="Footer Menu">
+      <div class="menu-footer-container">
+         <ul id="menu-footer" class="footer-menu">
+            <li id="menu-item-33" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33"><a
+               href="/who-we-are/">Who We Are</a></li>
+            <li id="menu-item-34" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-34"><a
+               href="/what-we-do/">What We Do</a></li>
+            <li id="menu-item-35"
+               class="menu-item menu-item-type-post_type menu-item-object-page current-page-ancestor menu-item-35"><a
+               href="/solutions-specifications/">Solutions &amp; Specifications</a></li>
+            <li id="menu-item-36" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-36"><a
+               href="/outreach/">Outreach</a></li>
+            <li id="menu-item-37" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-37"><a
+               href="/news/">News</a></li>
+            <li id="menu-item-38" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-38"><a
+               href="/contact-us/">Contact Us</a></li>
+         </ul>
+      </div>
+      </nav>
+      <!-- .footer-nav -->
+      <aside id="footer-2" class="footer-widget widget-area" role="complementary"> <section id="text-2"
+         class="widget widget_text">
+      <div class="textwidget">
+         <p class="copyrights">© 2019 Motion Picture Laboratories, Inc. All rights reserved.</p>
+      </div>
+      </section> <section id="nav_menu-2" class="widget widget_nav_menu">
+      <div class="menu-terms-policy-container">
+         <ul id="menu-terms-policy" class="menu">
+            <li id="menu-item-43" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-43"><a
+               href="/terms-of-use/">Terms of Use</a></li>
+            <li id="menu-item-44" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-44"><a
+               href="/privacy-policy/">Privacy Policy</a></li>
+         </ul>
+      </div>
+      </section> </aside>
+      <!-- .footer-widget .widget-area -->
+   </div>
+   </footer>
+   <script>
+				$(document).ready(
+						function() {
+							//$('.hero h1').text( $(document).find("title").text().split('-')[0] );
+
+							$('#menu-toggle').click(
+									function() {
+										if ($('.site-header').hasClass(
+												'toggled-on')) {
+											$('.site-header').removeClass(
+													'toggled-on');
+											$('.site-header-menu').removeClass(
+													'toggled-on');
+											$('.primary-menu').removeClass(
+													'toggled-on');
+										} else {
+											$('.site-header').addClass(
+													'toggled-on');
+											$('.site-header-menu').addClass(
+													'toggled-on');
+											$('.primary-menu').addClass(
+													'toggled-on');
+										}
+									});
+
+							$('.dropdown-toggle').click(
+									function() {
+										if ($(this).hasClass('toggled-on')) {
+											$(this).removeClass('toggled-on');
+											$(this).siblings('.sub-menu')
+													.removeClass('toggled-on');
+										} else {
+											$(this).addClass('toggled-on');
+											$(this).siblings('.sub-menu')
+													.addClass('toggled-on');
+										}
+									});
+
+						});
+			</script>
+</body>
+<!-- InstanceEnd -->
+</html>

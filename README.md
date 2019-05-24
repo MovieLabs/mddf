@@ -12,8 +12,8 @@
   1. [mddf-lib](#h_mddf-lib)
   2. [mddf-tools](#h_mddf-tools)
   3. [Versioning](#h_versionMgmt)
-  
-5) [Using mddf-lib](#h_building)
+
+5 [Using mddf-lib](#h_building)
 
 6 [Installing and Running mddf-tools](#h_Install)
   1. [Java](#h_Install_Java)
@@ -27,6 +27,7 @@
 
 ---
 ## <a name="h_News">1) What's New</a>
+* 2019-May-24: v1.5.2 released
 * 2019-May-09: v1.5.2_rc1 released for testing and evaluation.
 * 2019-Mar-15: v1.5.1 released
 
@@ -81,11 +82,13 @@ The mddf-tools software currently implements two applications:
      - a specific *profile*
 
 
-Releases of the mddf-tools are available as an executable Java jar which supports the processing of either Avails or Manifest files. In addition to an interactive mode, the jar provides a command
-line interface (CLI) that may be used either from a terminal window or in conjunction with scheduled jobs (e.g., via crontab).
+Releases of the mddf-tools are available as an executable Java jar which supports the processing of either Avails or 
+Manifest files. In addition to an interactive mode, the jar provides a command line interface (CLI) that may be used 
+either from a terminal window or in conjunction with scheduled jobs (e.g., via crontab).
 [NOTE: Releases prior to v1.1.3 did not include pre-built executable jars.]
 
-Prior to v1.5, releases included Native Executables for Windows, OS-X, and Linux systems. Each executable is specific to the processing of either Avails or Manifest files.
+Prior to v1.5, releases included Native Executables for Windows, OS-X, and Linux systems. Each executable is specific 
+to the processing of either Avails or Manifest files.
  
 Refer to ChangeLog.md for a list of specific enhancements and bug fixes for any given release.
 
@@ -116,8 +119,9 @@ Prior to July 2017 and the release of v1.3 of the mddf-lib, the native executabl
 independent of the mddf-lib version. 
 
 ## <a name="h_building">5) Using mddf-lib:</a>
-The mddf-tools described in the next section are implemented on top of mddf-lib. Starting with v1.5.1, releases of mddf-lib are available via the Maven Central Repository. 
-Developers wishing to use mddf-lib in their own software therefore have two options: building from the source or adding a dependency to their pom.xml:
+The mddf-tools described in the next section are implemented on top of mddf-lib. Starting with v1.5.1, releases of mddf-lib are 
+available via the [Maven Central Repository](https://search.maven.org/search?q=a:mddf-lib). Developers wishing to use mddf-lib in their own 
+software therefore have two options: building from the source or adding a dependency to their build scripts, e.g.:
 
 		<dependency>
 			<groupId>com.movielabs</groupId>
@@ -183,6 +187,7 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">7) Release History:</a>
+* **2019-May-24**: mddf-tool v1.5.2 released.
 
 * **2019-May-07**: mddf-tool v1.5.2_rc1 released for testing and evaluation.
 
