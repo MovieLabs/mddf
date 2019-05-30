@@ -24,14 +24,11 @@ package com.movielabs.mddf.tools;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
-
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -39,11 +36,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  */
 public class ManifestTool extends ValidatorTool { 
-	private static final String MANIFEST_DOC_VER = "v1.5.1";
+	private static final String MANIFEST_DOC_VER = "v1.5.2";
 
 
 	/**
-	 * @param context
+	 *  @wbp.parser.entryPoint
 	 */
 	public ManifestTool() {
 		super(Context.MANIFEST);  

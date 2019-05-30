@@ -26,18 +26,26 @@ import java.awt.Cursor;
 import javax.swing.JToolBar;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.movielabs.mddflib.logging.DefaultLogging;
+
 /**
  * @author L. Levin, Critical Architectures LLC
  *
  */
 public class AvailsTool extends ValidatorTool {
 
-	private static final String AVAIL_DOC_VER = "v1.5.1";
+	private static final String AVAIL_DOC_VER = "v1.5.2";
+	private static AvailsTool AvTool;
  
 
 	/**
-	 * @param context
+	 * @wbp.parser.entryPoint
 	 */
+	public static void main(String[] args) {
+		tool = new AvailsTool();
+
+	}
+ 
 	public AvailsTool() {
 		super(Context.AVAILS);
 		htmlDocUrl = "http://www.movielabs.com/md/validator/" + AVAIL_DOC_VER + "/avails/";
