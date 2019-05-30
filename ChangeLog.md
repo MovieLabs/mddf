@@ -7,6 +7,9 @@
 
 ### mddf-lib v1.5.2
 
+#### rc2
+* Bug Fix: translation of Avails Volume properties dropped several fields
+
 #### rc1
 * Bug Fix: allow use of LicenseFee to meet TVOD-based LicenseType requirement
 * Bug Fix: xfer of SeriesContentID from XLSX to XML was missing
