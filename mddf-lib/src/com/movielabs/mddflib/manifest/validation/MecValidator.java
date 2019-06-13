@@ -23,6 +23,8 @@ package com.movielabs.mddflib.manifest.validation;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
+
 import org.jdom2.JDOMException;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
@@ -121,6 +123,7 @@ public class MecValidator extends CMValidator {
 		 */
 		validateMecVocab();
 		validateCMVocab();
+		validateUsage();
 	}
 
 	/**
@@ -138,6 +141,60 @@ public class MecValidator extends CMValidator {
 		 * There is no MEC-specific terminology so this is a pass-thru method.
 		 */
 
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.util.CMValidator#validateUsage()
+	 */
+	protected void validateUsage() {
+		super.validateUsage();
+		/*
+		 * Load JSON that defines various constraints on structure of the XML This is
+		 * version-specific but not all schema versions have their own unique struct
+		 * file (e.g., a minor release may be compatible with a previous release).
+		 */
+		String structVer = null;
+		switch (MDMEC_VER) {
+		case "2.4":
+			structVer = "2.4";
+			break;
+		case "2.5": 
+		case "2.6": 
+		case "2.7":
+		case "2.7.1":
+//			structVer = "1.8";
+			break;
+		default:
+			// Not supported for the version
+			String msg = "Unable to process; missing structure definitions for MEC v" + MDMEC_VER;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MEC, msg, curFile, logMsgSrcId);
+			return;
+		}
+
+		JSONObject structDefs = XmlIngester.getMddfResource("structure_mec", structVer);
+		if (structDefs == null) {
+			// LOG a FATAL problem.
+			String msg = "Unable to process; missing structure definitions for MEC v" + MDMEC_VER;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MEC, msg, curFile, logMsgSrcId);
+			return;
+		}
+
+		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
+		Iterator<String> keys = rqmtSet.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
+			// NOTE: This block of code requires a 'targetPath' be defined
+			if (rqmtSpec.has("targetPath")) {
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MEC, "Structure check; key= " + key, curFile,
+						logMsgSrcId);
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
+			}
+		}
+
+		return;
 	}
 
 }

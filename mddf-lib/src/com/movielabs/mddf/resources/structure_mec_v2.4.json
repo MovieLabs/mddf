@@ -1,0 +1,124 @@
+{
+	"COMMENT": "refer to Javadoc for com.movielabs.mddflib.util.xml.StructureValidation before editing",
+	"StrucRqmts": 
+	{
+		"default LocalizedInfo": 
+		{
+			"targetPath": ".//{mdmec}Basic",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}LocalizedInfo[@default='true']",
+					"msg": "Must have exactly 1 default LocalizedInfo matching the language of the original production"
+				}
+			]
+		},
+
+		"TitleDisplay60": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}TitleDisplay60",
+					"msg": "REQUIRED for MEC v2.4"
+				}
+			]
+		},
+
+		"Original Title": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}OriginalTitle",
+					"msg": "REQUIRED for MEC v2.4"
+				}
+			]
+		},
+
+		"ArtRef": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"severity": "Error",
+					"xpath": "./{md}ArtReference",
+					"msg": "REQUIRED for MEC v2.4"
+				}
+			]
+		},
+
+		"genre": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}Genre[@source='http://www.movielabs.com/md/mec/mec_primary_genre.html']",
+					"msg": "Must include a primary Genre (see http://www.movielabs.com/md/mec/mec_primary_genre.html)"
+				}
+			]
+		},
+
+		"CopyrightLine": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}CopyrightLine",
+					"msg": "REQUIRED for MEC v2.4"
+				}
+			]
+		},
+
+		"Release History": 
+		{
+			"targetPath": ".",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}ReleaseHistory/{md}ReleaseType[text()='original']",
+					"msg": "REQUIRED for MEC v2.4"
+				}
+			]
+		},
+
+		"SequenceInfo": 
+		{
+			"targetPath": "./{mdmec}Basic[./{md}WorkType[. = 'Season' or . = 'Episode' or . = 'Promotion' or . = 'Excerpt' or . = 'Supplemental']]",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}SequenceInfo/{md}Number",
+					"msg": "REQUIRED by MEC v2.4 for the specified WorkType"
+				}
+			]
+		}
+	}
+}
