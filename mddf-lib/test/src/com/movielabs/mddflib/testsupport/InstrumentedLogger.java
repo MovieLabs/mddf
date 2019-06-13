@@ -72,7 +72,7 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 		if (level < minLevel) {
 			return;
 		}
-		if (level == LogMgmt.LEV_ERR) {
+		if (level == LogMgmt.LEV_ERR || level == LogMgmt.LEV_FATAL) {
 			// good place for breakpoint when debugging
 			int foo = 0;
 		}
