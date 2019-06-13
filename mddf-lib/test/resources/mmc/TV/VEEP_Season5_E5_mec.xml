@@ -11,7 +11,7 @@
 			<md:Genre>Action</md:Genre>
 			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
 		</md:LocalizedInfo>
-		<md:LocalizedInfo language="en">
+		<md:LocalizedInfo default="true" language="en">
 			<md:TitleDisplayUnlimited>Thanksgiving</md:TitleDisplayUnlimited>
 			<md:TitleSort>Thanksgiving</md:TitleSort>
 			<md:ArtReference resolution="800x800">md:imageid:org:number.hbo.com:787232:season-photo.en</md:ArtReference>

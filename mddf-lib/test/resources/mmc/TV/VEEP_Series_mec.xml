@@ -16,7 +16,7 @@
 			<md:OriginalTitle>Veep</md:OriginalTitle>
 			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
 		</md:LocalizedInfo>
-		<md:LocalizedInfo language="en">
+		<md:LocalizedInfo default="true" language="en">
 			<md:TitleDisplayUnlimited>Veep</md:TitleDisplayUnlimited>
 			<md:TitleSort>Veep</md:TitleSort>
 			<md:ArtReference resolution="800x800">fmd:imageid:eidr-x:CF5A-AB7E-A4DB-35FA-BAC5-M:series-photo.en</md:ArtReference>

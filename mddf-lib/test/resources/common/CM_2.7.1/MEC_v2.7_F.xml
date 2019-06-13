@@ -11,7 +11,7 @@
 			<md:OriginalTitle>Cosmos: Season 1</md:OriginalTitle>
 			<md:CopyrightLine>2014 Cosmos Studios, Inc.  All rights reserved.</md:CopyrightLine>
 		</md:LocalizedInfo>
-		<md:LocalizedInfo language="en">
+		<md:LocalizedInfo default="true" language="en">
 			<md:TitleDisplayUnlimited>Cosmos: A Spacetime Odyssey: Season 1</md:TitleDisplayUnlimited>
 			<md:TitleSort/>
 			<md:ArtReference resolution="2000x2818">file://Cosmos_YNF000_2000x2818_ENG_SER_IMG.png</md:ArtReference>

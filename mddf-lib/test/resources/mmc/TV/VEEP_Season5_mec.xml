@@ -11,7 +11,7 @@
 			<md:OriginalTitle>Veep: Season 5</md:OriginalTitle>
 			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
 		</md:LocalizedInfo>
-		<md:LocalizedInfo language="en">
+		<md:LocalizedInfo default="true" language="en">
 			<md:TitleDisplayUnlimited>Veep: Season 5</md:TitleDisplayUnlimited>
 			<md:TitleSort/>
 			<md:ArtReference resolution="800x800">file://resources/VEEP__043_787232_858219_SeasonPhoto.jpg</md:ArtReference>
