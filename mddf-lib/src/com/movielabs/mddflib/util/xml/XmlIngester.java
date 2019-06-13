@@ -68,7 +68,7 @@ public abstract class XmlIngester implements IssueLogger {
 			MddfContext.NSPACE_CMD_PREFIX + CM_VER + MddfContext.NSPACE_CMD_SUFFIX);
 
 	public static Namespace mdmecNSpace = Namespace.getNamespace("mdmec",
-			MddfContext.NSPACE_MDMEC_PREFIX + MDMEC_VER + MddfContext.NSPACE_MDMEC_SUFFIX);
+			MddfContext.NSPACE_MDMEC_PREFIX + MDMEC_VER); 
 
 	public static Namespace manifestNSpace = Namespace.getNamespace("manifest",
 			MddfContext.NSPACE_MANIFEST_PREFIX + MAN_VER + MddfContext.NSPACE_MANIFEST_SUFFIX);
@@ -369,7 +369,7 @@ public abstract class XmlIngester implements IssueLogger {
 			/* Since Manifest isn't used for MEC, set to NULL */
 			MAN_VER = null;
 			mdmecNSpace = Namespace.getNamespace("mdmec",
-					"http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
+					"http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER);
 			mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
 			break;
 		}
