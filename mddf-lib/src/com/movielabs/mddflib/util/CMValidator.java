@@ -227,7 +227,7 @@ public abstract class CMValidator extends XmlIngester {
 		this.validateC = validateC;
 		logMsgSrcId = LOGMSG_ID;
 	}
-	
+
 	public abstract boolean process(MddfTarget target) throws IOException, JDOMException;
 
 	/**
@@ -241,6 +241,7 @@ public abstract class CMValidator extends XmlIngester {
 		validateLanguageCodes();
 		validateCurrencyCodes();
 		validateRatings();
+		validateDigitalAssets();
 	}
 
 	/**
@@ -252,14 +253,14 @@ public abstract class CMValidator extends XmlIngester {
 		 * handle any case of backwards (or forwards) compatibility between versions.
 		 */
 		String vocabVer = CM_VER;
-		switch (CM_VER) { 
+		switch (CM_VER) {
 		case "2.7.1":
 			vocabVer = "2.7";
-			break; 
+			break;
 		}
 		JSONObject cmVocab = (JSONObject) getVocabResource("cm", vocabVer);
-		if (cmVocab == null) { 
-			String msg = "Unable to validate controlled vocab: missing resource file vocab_cm_v"+vocabVer;
+		if (cmVocab == null) {
+			String msg = "Unable to validate controlled vocab: missing resource file vocab_cm_v" + vocabVer;
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 			curFileIsValid = false;
 			return;
@@ -885,12 +886,12 @@ public abstract class CMValidator extends XmlIngester {
 				curFileIsValid = false;
 				continue;
 			}
-			if(system.startsWith("Custom:")) {
-				String msg = "Ignoring custom Rating System '"+system+"'";
+			if (system.startsWith("Custom:")) {
+				String msg = "Ignoring custom Rating System '" + system + "'";
 				String explanation = null;
 				logIssue(LogMgmt.TAG_CR, LogMgmt.LEV_DEBUG, rSysEl, msg, explanation, null, logMsgSrcId);
 				continue;
-			}			
+			}
 			RatingSystem rSystem = RatingSystem.factory(system);
 			if (rSystem == null) {
 				String msg = "Unrecognized Rating System '" + system + "'";
@@ -1274,6 +1275,65 @@ public abstract class CMValidator extends XmlIngester {
 			}
 		}
 		return allOK;
+	}
+
+	protected void validateDigitalAssets() {
+		String structVer = null;
+		switch (CM_VER) {
+		case "2.7":
+		case "2.6":
+		case "2.5":
+		case "2.4":
+			structVer = CM_VER;
+			break;
+		default:
+			// Not supported for the version
+			return;
+		}
+		JSONObject structDefs = XmlIngester.getMddfResource("vocab_digAsset", structVer);
+		if (structDefs == null) {
+			// LOG a FATAL problem.
+			String msg = "Unable to process; missing structure definitions for vocab_digAsset v" + structVer;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MD, msg, curFile, logMsgSrcId);
+			return;
+		}
+		/*
+		 * Namespace of the asset element (e.g., 'manifest:Audio' vs 'md:Audio' depends
+		 * on the document type.
+		 */
+		String rootPrefix = curRootEl.getNamespacePrefix();
+		String pre;
+		switch (rootPrefix) {
+		case "avails":
+		case "mdmec":
+			pre = "md";
+			break;
+		case "manifest":
+			pre = "manifest";
+			break;
+		default:
+			// Not used in this type of MDDF file
+			loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD,
+					"Skipping DigitalAsset rqmt check; not used for this type of MDDF file", curFile, logMsgSrcId);
+			return;
+		}
+		JSONObject rqmtSet = structDefs.getJSONObject("Audio");
+		validateDigitalAsset(".//" + pre + ":Audio", curRootEl, rqmtSet);
+
+		rqmtSet = structDefs.getJSONObject("Video");
+		validateDigitalAsset(".//" + pre + ":Video", curRootEl, rqmtSet);
+
+		rqmtSet = structDefs.getJSONObject("Subtitle");
+		validateDigitalAsset(".//" + pre + ":Subtitle", curRootEl, rqmtSet);
+
+		rqmtSet = structDefs.getJSONObject("Image");
+		validateDigitalAsset(".//" + pre + ":Image", curRootEl, rqmtSet);
+
+		rqmtSet = structDefs.getJSONObject("Interactive");
+		validateDigitalAsset(".//" + pre + ":Interactive", curRootEl, rqmtSet);
+
+		rqmtSet = structDefs.getJSONObject("Ancillary");
+		validateDigitalAsset(".//" + pre + ":Ancillary", curRootEl, rqmtSet);
 	}
 
 	/**

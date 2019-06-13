@@ -179,8 +179,6 @@ public class ManifestValidator extends CMValidator {
 		validateMetadata();
 
 		validateUsage();
-
-		validateDigitalAssets();
 	}
 
 	/*
@@ -534,44 +532,6 @@ public class ManifestValidator extends CMValidator {
 		return;
 	}
 
-	protected void validateDigitalAssets() {
-		String structVer = null;
-		switch (CM_VER) {
-		case "2.7":
-		case "2.6":
-		case "2.5":
-			structVer = CM_VER;
-			break;
-		default:
-			// Not supported for the version
-			return;
-		}
-		JSONObject structDefs = XmlIngester.getMddfResource("vocab_digAsset", structVer);
-		if (structDefs == null) {
-			// LOG a FATAL problem.
-			String msg = "Unable to process; missing structure definitions for vocab_digAsset v" + structVer;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
-			return;
-		}
-		String pre = manifestNSpace.getPrefix();
-		JSONObject rqmtSet = structDefs.getJSONObject("Audio");
-		validateDigitalAsset(".//" + pre + ":Audio", curRootEl, rqmtSet);
-
-		rqmtSet = structDefs.getJSONObject("Video");
-		validateDigitalAsset(".//" + pre + ":Video", curRootEl, rqmtSet);
-
-		rqmtSet = structDefs.getJSONObject("Subtitle");
-		validateDigitalAsset(".//" + pre + ":Subtitle", curRootEl, rqmtSet);
-
-		rqmtSet = structDefs.getJSONObject("Image");
-		validateDigitalAsset(".//" + pre + ":Image", curRootEl, rqmtSet);
-
-		rqmtSet = structDefs.getJSONObject("Interactive");
-		validateDigitalAsset(".//" + pre + ":Interactive", curRootEl, rqmtSet);
-
-		rqmtSet = structDefs.getJSONObject("Ancillary");
-		validateDigitalAsset(".//" + pre + ":Ancillary", curRootEl, rqmtSet);
-	}
 
 	/**
 	 * Return all <tt>ContainerLocations</tt> found in the last MDDF file processed.
