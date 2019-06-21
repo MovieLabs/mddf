@@ -25,6 +25,7 @@ package com.movielabs.mddflib.util.xml;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -207,6 +208,40 @@ import net.sf.json.JSONObject;
 		}
  * </pre>
  * 
+ * <h3>Nested Requirements:</h3>
+ * <p>
+ * Requirements can be defined in a way that reflects the nested structure of
+ * the underlying XML. For example, assume the XSD specifies the following
+ * syntax:
+ * </p>
+ * <ul>
+ * <li>Foo:
+ * <ul>
+ * <li>Bar:
+ * <ul>
+ * <li>Flavor</li>
+ * <li>Weight</li>
+ * <li>Calories</li>
+ * </ul>
+ * </li>
+ * </ul>
+ * </li>
+ * </ul>
+ * We wish to specify that <i>if</i>Flavor is present then Calories must also be
+ * specified. There are two options:
+ * <ul>
+ * <li>use a <tt>targetPath</tt> pointing to <tt>Foo</tt> and constraints with
+ * <tt>xpath</tt> that will resolve when <tt>Foo</tt> is the root for xpath
+ * evaluation (e.g., "xpath": "./Foo/Calories")</li>
+ * <li>the <tt>targetPath</tt> points to <tt>Foo</tt>, followed by a
+ * <i>child</i> constraint with the <tt>targetPath</tt> pointing to <tt>Bar</tt>
+ * and an <tt>xpath</tt> that will resolve when <tt>Bar</tt> is the root (e.g.,
+ * "xpath": "./Calories")</li>
+ * </ul>
+ * <p>
+ * Either option will work but in some situations one or the other may be more
+ * efficient to evaluate or easier to write.
+ * </p>
  * <h3>Usage:</h3>
  * <p>
  * Validation modules should determine the appropriate JSON resource file based
@@ -230,12 +265,30 @@ public class StructureValidation {
 		String rootPath = rqmt.getString("targetPath");
 		XPathExpression<?> xpExp = resolveXPath(rootPath);
 		List<Element> targetElList = (List<Element>) xpExp.evaluate(rootEl);
-		JSONArray constraintSet = rqmt.getJSONArray("constraint");
 		boolean isOk = true;
-		for (Element nextTargetEl : targetElList) {
-			for (int i = 0; i < constraintSet.size(); i++) {
-				JSONObject constraint = constraintSet.getJSONObject(i);
-				isOk = evaluateConstraint(nextTargetEl, constraint) && isOk;
+		if (rqmt.containsKey("constraint")) {
+			JSONArray constraintSet = rqmt.getJSONArray("constraint");
+			for (Element nextTargetEl : targetElList) {
+				for (int i = 0; i < constraintSet.size(); i++) {
+					JSONObject constraint = constraintSet.getJSONObject(i);
+					isOk = evaluateConstraint(nextTargetEl, constraint) && isOk;
+				}
+			}
+		}
+		/* are there nested constraints?? */
+		if (rqmt.containsKey("children")) {
+			JSONObject embeddedReqmts = rqmt.getJSONObject("children");
+			for (Element nextTargetEl : targetElList) {
+				Iterator<String> embeddedKeys = embeddedReqmts.keys();
+				while (embeddedKeys.hasNext()) {
+					String key = embeddedKeys.next();
+					JSONObject childRqmtSpec = embeddedReqmts.getJSONObject(key);
+					// NOTE: This block of code requires a 'targetPath' be defined
+					if (childRqmtSpec.has("targetPath")) {
+						// Recursive descent...
+						isOk = validateDocStructure(nextTargetEl, childRqmtSpec) && isOk;
+					}
+				}
 			}
 		}
 		return isOk;
