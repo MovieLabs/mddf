@@ -42,7 +42,6 @@ public class MecValidator extends CMValidator {
 
 	public static final String LOGMSG_ID = "MecValidator";
 
-//	static final String DOC_VER = "2.4";
 
 	protected static HashMap<String, String> mec_id2typeMap;
 	static {
@@ -158,13 +157,11 @@ public class MecValidator extends CMValidator {
 		String structVer = null;
 		switch (MDMEC_VER) {
 		case "2.4":
-			structVer = "2.4";
-			break;
 		case "2.5": 
 		case "2.6": 
 		case "2.7":
 		case "2.7.1":
-//			structVer = "1.8";
+			structVer = "2.4";
 			break;
 		default:
 			// Not supported for the version
