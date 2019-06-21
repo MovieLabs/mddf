@@ -26,8 +26,7 @@
 					"min": "1",
 					"max": "1",
 					"severity": "Error",
-					"xpath": "./{md}TitleDisplay60",
-					"msg": "REQUIRED for MEC v2.4"
+					"xpath": "./{md}TitleDisplay60" 
 				}
 			]
 		},
@@ -41,8 +40,7 @@
 					"min": "1",
 					"max": "1",
 					"severity": "Error",
-					"xpath": "./{md}OriginalTitle",
-					"msg": "REQUIRED for MEC v2.4"
+					"xpath": "./{md}OriginalTitle"
 				}
 			]
 		},
@@ -55,8 +53,7 @@
 				{
 					"min": "1",
 					"severity": "Error",
-					"xpath": "./{md}ArtReference",
-					"msg": "REQUIRED for MEC v2.4"
+					"xpath": "./{md}ArtReference"
 				}
 			]
 		},
@@ -70,8 +67,14 @@
 					"min": "1",
 					"max": "1",
 					"severity": "Error",
-					"xpath": "./{md}Genre[@source='http://www.movielabs.com/md/mec/mec_primary_genre.html']",
-					"msg": "Must include a primary Genre (see http://www.movielabs.com/md/mec/mec_primary_genre.html)"
+					"xpath": "./{md}Genre[@level='0' and @source='http://www.movielabs.com/md/mec/mec_primary_genre.html']",
+					"msg": "Must specify a primary ('@level=0') Genre (see http://www.movielabs.com/md/mec/mec_primary_genre.html)"
+				},
+				{ 
+					"max": "0",
+					"severity": "Error",
+					"xpath": "./{md}Genre[@level='0' and @source !='http://www.movielabs.com/md/mec/mec_primary_genre.html']",
+					"msg": "Invalid PRIMARY Genre (see http://www.movielabs.com/md/mec/mec_primary_genre.html)"
 				}
 			]
 		},
@@ -85,8 +88,7 @@
 					"min": "1",
 					"max": "1",
 					"severity": "Error",
-					"xpath": "./{md}CopyrightLine",
-					"msg": "REQUIRED for MEC v2.4"
+					"xpath": "./{md}CopyrightLine" 
 				}
 			]
 		},
@@ -101,7 +103,7 @@
 					"max": "1",
 					"severity": "Error",
 					"xpath": ".//{md}ReleaseHistory/{md}ReleaseType[text()='original']",
-					"msg": "REQUIRED for MEC v2.4"
+					"msg": "Exactly 1 'orginal' ReleaseHistory must be specified"
 				}
 			]
 		},
@@ -116,7 +118,153 @@
 					"max": "1",
 					"severity": "Error",
 					"xpath": ".//{md}SequenceInfo/{md}Number",
-					"msg": "REQUIRED by MEC v2.4 for the specified WorkType"
+					"msg": "REQUIRED by MEC for the specified WorkType"
+				}
+			]
+		},
+
+		"DigitalAsset Audio": 
+		{
+			"targetPath": "./{mdmec}DigitalAsset/{md}Audio",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Type" 
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Channels" 
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Encoding" 
+				}
+			],
+
+			"children": 
+			{
+				"Encoding": 
+				{
+					"targetPath": "./{md}Encoding",
+					"constraint": 
+					[
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}BitrateMax" 
+						},
+
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}SampleRate" 
+						},
+
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}SampleBitDepth" 
+						}
+					]
+				}
+			}
+		},
+
+		"DigitalAsset Video": 
+		{
+			"targetPath": "./{mdmec}DigitalAsset/{md}Video",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Type"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}ColorType"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Encoding"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Picture"
+				}
+			],
+
+			"children": 
+			{
+				"Encoding": 
+				{
+					"targetPath": "./{md}Encoding",
+					"constraint": 
+					[
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}BitrateMax"
+						}
+					]
+				},
+
+				"Picture": 
+				{
+					"targetPath": "./{md}Picture",
+					"constraint": 
+					[
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}AspectRatio"
+						}
+					]
+				}
+			}
+		},
+
+		"DigitalAsset Subtitle": 
+		{
+			"targetPath": "./{mdmec}DigitalAsset/{md}Subtitle",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}Format"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}FormatType"
 				}
 			]
 		}
