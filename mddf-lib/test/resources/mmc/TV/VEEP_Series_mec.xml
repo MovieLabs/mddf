@@ -1,28 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mdmec:CoreMetadata 
-	xmlns="http://www.movielabs.com/schema/md/v2.4/md" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" 
-	xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
+<mdmec:CoreMetadata
+	xmlns="http://www.movielabs.com/schema/md/v2.4/md"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.7/md"
 	xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.xsd">
-	<mdmec:Basic ContentID="md:cid:eidr-s:CF5A-AB7E-A4DB-35FA-BAC5-M">
+	<mdmec:Basic
+		ContentID="md:cid:eidr-s:CF5A-AB7E-A4DB-35FA-BAC5-M">
 		<md:LocalizedInfo language="de">
+			<md:TitleDisplay60>Veep</md:TitleDisplay60>
 			<md:TitleDisplayUnlimited>Veep</md:TitleDisplayUnlimited>
 			<md:TitleSort>Veep</md:TitleSort>
-			<md:ArtReference resolution="800x800">md:imageid:eidr-x:CF5A-AB7E-A4DB-35FA-BAC5-M:series-photo.de</md:ArtReference>
-			<md:Summary190 cast="false">xxx NEED GERMAN TRANSLATION xxx</md:Summary190>
-			<md:Summary4000 cast="false">xxx NEED GERMAN TRANSLATION xxx</md:Summary4000>
-			<md:Genre>X-Comedy</md:Genre>
+			<md:ArtReference resolution="800x800">md:imageid:eidr-x:CF5A-AB7E-A4DB-35FA-BAC5-M:series-photo.de
+			</md:ArtReference>
+			<md:Summary190 cast="false">xxx NEED GERMAN TRANSLATION xxx
+			</md:Summary190>
+			<md:Summary4000 cast="false">xxx NEED GERMAN TRANSLATION xxx
+			</md:Summary4000>
+			<md:Genre
+				source="http://www.movielabs.com/md/mec/mec_primary_genre.html"
+				level="0" id="Comedy" />
 			<md:OriginalTitle>Veep</md:OriginalTitle>
 			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
 		</md:LocalizedInfo>
 		<md:LocalizedInfo default="true" language="en">
+			<md:TitleDisplay60>Veep</md:TitleDisplay60>
 			<md:TitleDisplayUnlimited>Veep</md:TitleDisplayUnlimited>
 			<md:TitleSort>Veep</md:TitleSort>
-			<md:ArtReference resolution="800x800">fmd:imageid:eidr-x:CF5A-AB7E-A4DB-35FA-BAC5-M:series-photo.en</md:ArtReference>
-			<md:Summary190 cast="false">Julia Louis-Dreyfus is the Vice President of the United States in this HBO comedy series that follows her whirlwind day-to-day existence as she puts out political fires, juggles public and private demands and defends the interests of the chief executive.</md:Summary190>
-			<md:Summary4000 cast="false">Senator Selina Meyer has just become the Vice President of the United States...and discovered that the job is nothing like she expected--but everything she was warned about. Julia Louis-Dreyfus stars in this HBO comedy series that follows the whirlwind day-to-day existence of Vice President Meyer as she puts out political fires, juggles public and private demands and defends the interests of the chief executive--with whom she shares a uniquely dysfunctional relationship. The ensemble cast includes Tony Hale as Selina's right-hand man; Anna Chlumsky as her chief of staff; Matt Walsh as her weathered spokesperson; Reid Scott as an ambitious political aide; Timothy C. Simons as a clueless White House liaison; and Sufe Bradshaw as Selina's seen-it-all assistant.</md:Summary4000>
-			<md:Genre>Comedy</md:Genre>
+			<md:ArtReference resolution="800x800">fmd:imageid:eidr-x:CF5A-AB7E-A4DB-35FA-BAC5-M:series-photo.en
+			</md:ArtReference>
+			<md:Summary190 cast="false">Julia Louis-Dreyfus is the Vice
+				President of the United States in this HBO comedy series that
+				follows her whirlwind day-to-day existence as she puts out political
+				fires, juggles public and private demands and defends the interests
+				of the chief executive.</md:Summary190>
+			<md:Summary4000 cast="false">Senator Selina Meyer has just
+				become the Vice President of the United States...and discovered that
+				the job is nothing like she expected--but everything she was warned
+				about. Julia Louis-Dreyfus stars in this HBO comedy series that
+				follows the whirlwind day-to-day existence of Vice President Meyer
+				as she puts out political fires, juggles public and private demands
+				and defends the interests of the chief executive--with whom she
+				shares a uniquely dysfunctional relationship. The ensemble cast
+				includes Tony Hale as Selina's right-hand man; Anna Chlumsky as her
+				chief of staff; Matt Walsh as her weathered spokesperson; Reid Scott
+				as an ambitious political aide; Timothy C. Simons as a clueless
+				White House liaison; and Sufe Bradshaw as Selina's seen-it-all
+				assistant.</md:Summary4000>
+			<md:Genre
+				source="http://www.movielabs.com/md/mec/mec_primary_genre.html"
+				level="0" id="Comedy" />
 			<md:OriginalTitle>Veep</md:OriginalTitle>
 			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
 		</md:LocalizedInfo>

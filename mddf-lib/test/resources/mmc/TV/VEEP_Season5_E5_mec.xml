@@ -1,24 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mdmec:CoreMetadata xmlns="http://www.movielabs.com/schema/md/v2.7/md" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.xsd">
+<mdmec:CoreMetadata
+	xmlns="http://www.movielabs.com/schema/md/v2.7/md"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.7/md"
+	xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.xsd">
 	<mdmec:Basic ContentID="md:cid:org:number.hbo.com:787232">
 		<md:LocalizedInfo language="de">
+			<md:TitleDisplay60>Thanksgiving</md:TitleDisplay60>
 			<md:TitleDisplayUnlimited>Thanksgiving</md:TitleDisplayUnlimited>
 			<md:TitleSort>Thanksgiving</md:TitleSort>
-			<md:ArtReference resolution="800x800">md:imageid:org:number.hbo.com:787232:season-photo.de</md:ArtReference>
-			<md:Summary190 cast="false">Selina feiert Thanksgiving auf eigene Weise. Zwischenzeitlich kümmern Ben und Kent sich um eine Thanksgiving-Day-Krise und bitten Tom James und VP Doyle, in Selinas Abwesenheit Erklärungen abzugeben. Ben beauftragt Dan damit, für Tom James zu arbeiten.</md:Summary190>
-			<md:Summary400 cast="false">Selina feiert Thanksgiving auf eigene Weise. Zwischenzeitlich kümmern Ben und Kent sich um eine Thanksgiving-Day-Krise und bitten Tom James und VP Doyle, in Selinas Abwesenheit Erklärungen abzugeben. Ben beauftragt Dan damit, für Tom James zu arbeiten.</md:Summary400>
-			<md:Summary4000 cast="false">Selina feiert Thanksgiving auf eigene Weise. Zwischenzeitlich kümmern Ben und Kent sich um eine Thanksgiving-Day-Krise und bitten Tom James und VP Doyle, in Selinas Abwesenheit Erklärungen abzugeben. Ben beauftragt Dan damit, für Tom James zu arbeiten.</md:Summary4000>
-			<md:Genre>Action</md:Genre>
+			<md:ArtReference resolution="800x800">md:imageid:org:number.hbo.com:787232:season-photo.de
+			</md:ArtReference>
+			<md:Summary190 cast="false">Selina feiert Thanksgiving auf
+				eigene Weise. Zwischenzeitlich kümmern Ben und Kent sich um eine
+				Thanksgiving-Day-Krise und bitten Tom James und VP Doyle, in Selinas
+				Abwesenheit Erklärungen abzugeben. Ben beauftragt Dan damit, für Tom
+				James zu arbeiten.</md:Summary190>
+			<md:Summary400 cast="false">Selina feiert Thanksgiving auf
+				eigene Weise. Zwischenzeitlich kümmern Ben und Kent sich um eine
+				Thanksgiving-Day-Krise und bitten Tom James und VP Doyle, in Selinas
+				Abwesenheit Erklärungen abzugeben. Ben beauftragt Dan damit, für Tom
+				James zu arbeiten.</md:Summary400>
+			<md:Summary4000 cast="false">Selina feiert Thanksgiving auf
+				eigene Weise. Zwischenzeitlich kümmern Ben und Kent sich um eine
+				Thanksgiving-Day-Krise und bitten Tom James und VP Doyle, in Selinas
+				Abwesenheit Erklärungen abzugeben. Ben beauftragt Dan damit, für Tom
+				James zu arbeiten.</md:Summary4000>
+			<md:Genre
+				source="http://www.movielabs.com/md/mec/mec_primary_genre.html"
+				level="0" id="Comedy" />
+			<md:OriginalTitle>Thanksgiving</md:OriginalTitle>
 			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
 		</md:LocalizedInfo>
 		<md:LocalizedInfo default="true" language="en">
+			<md:TitleDisplay60>Thanksgiving</md:TitleDisplay60>
 			<md:TitleDisplayUnlimited>Thanksgiving</md:TitleDisplayUnlimited>
 			<md:TitleSort>Thanksgiving</md:TitleSort>
-			<md:ArtReference resolution="800x800">md:imageid:org:number.hbo.com:787232:season-photo.en</md:ArtReference>
-			<md:Summary190 cast="false">Selina celebrates Thanksgiving in her own special way. Meanwhile, Ben and Kent manage a Thanksgiving Day crisis, deploying Tom James and VP Doyle to make statements in Selina's absence. Ben sends Dan to work for Tom James.</md:Summary190>
-			<md:Summary400 cast="false">Selina celebrates Thanksgiving in her own special way. Meanwhile, Ben and Kent manage a Thanksgiving Day crisis, deploying Tom James and VP Doyle to make statements in Selina's absence. Ben sends Dan to work for Tom James.</md:Summary400>
-			<md:Summary4000 cast="false">Selina celebrates Thanksgiving in her own special way. Meanwhile, Ben and Kent manage a Thanksgiving Day crisis, deploying Tom James and VP Doyle to make statements in Selina's absence. Ben sends Dan to work for Tom James.</md:Summary4000>
-			<md:Genre>Action</md:Genre>
+			<md:ArtReference resolution="800x800">md:imageid:org:number.hbo.com:787232:season-photo.en
+			</md:ArtReference>
+			<md:Summary190 cast="false">Selina celebrates Thanksgiving in
+				her own special way. Meanwhile, Ben and Kent manage a Thanksgiving
+				Day crisis, deploying Tom James and VP Doyle to make statements in
+				Selina's absence. Ben sends Dan to work for Tom James.
+			</md:Summary190>
+			<md:Summary400 cast="false">Selina celebrates Thanksgiving in
+				her own special way. Meanwhile, Ben and Kent manage a Thanksgiving
+				Day crisis, deploying Tom James and VP Doyle to make statements in
+				Selina's absence. Ben sends Dan to work for Tom James.
+			</md:Summary400>
+			<md:Summary4000 cast="false">Selina celebrates Thanksgiving in
+				her own special way. Meanwhile, Ben and Kent manage a Thanksgiving
+				Day crisis, deploying Tom James and VP Doyle to make statements in
+				Selina's absence. Ben sends Dan to work for Tom James.
+			</md:Summary4000>
+			<md:Genre
+				source="http://www.movielabs.com/md/mec/mec_primary_genre.html"
+				level="0" id="Comedy" />
+			<md:OriginalTitle>Thanksgiving</md:OriginalTitle>
 			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
 		</md:LocalizedInfo>
 		<md:ReleaseYear>2016</md:ReleaseYear>
@@ -33,7 +72,8 @@
 		<md:WorkType>Episode</md:WorkType>
 		<md:AltIdentifier>
 			<md:Namespace>MPM</md:Namespace>
-			<md:Identifier>md:cid:org:microsoft-x:787232_WW:VEEP_43_THANKSGIVING</md:Identifier>
+			<md:Identifier>md:cid:org:microsoft-x:787232_WW:VEEP_43_THANKSGIVING
+			</md:Identifier>
 		</md:AltIdentifier>
 		<md:RatingSet>
 			<md:Rating>
@@ -336,7 +376,8 @@
 			<md:HouseSequence>43</md:HouseSequence>
 		</md:SequenceInfo>
 		<md:Parent relationshipType="isepisodeof">
-			<md:ParentContentID>md:cid:eidr-s:2D99-3C1C-9F31-3E10-3411-1</md:ParentContentID>
+			<md:ParentContentID>md:cid:eidr-s:2D99-3C1C-9F31-3E10-3411-1
+			</md:ParentContentID>
 		</md:Parent>
 	</mdmec:Basic>
 </mdmec:CoreMetadata>

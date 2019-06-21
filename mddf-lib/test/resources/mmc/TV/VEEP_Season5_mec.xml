@@ -1,23 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mdmec:CoreMetadata xmlns="http://www.movielabs.com/schema/md/v2.7/md" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.xsd">
-	<mdmec:Basic ContentID="md:cid:eidr-s:2D99-3C1C-9F31-3E10-3411-1">
+<mdmec:CoreMetadata
+	xmlns="http://www.movielabs.com/schema/md/v2.7/md"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.7/md"
+	xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.xsd">
+	<mdmec:Basic
+		ContentID="md:cid:eidr-s:2D99-3C1C-9F31-3E10-3411-1">
 		<md:LocalizedInfo language="de">
-			<md:TitleDisplayUnlimited>Veep: Season 5</md:TitleDisplayUnlimited>
-			<md:TitleSort/>
-			<md:ArtReference resolution="800x800">file://resources/VEEP__043_787232_858219_SeasonPhoto.jpg</md:ArtReference>
-			<md:Summary190 cast="false">Präsidentin Selina Meyer (Julia Louis-Dreyfus) erkennt in Staffel 5 der mit mehreren Emmys(R) ausgezeichneten Comedy-Serie, dass ihre Zukunft als Präsidentin von ein paar Hundert Stimmen abhängt.</md:Summary190>
-			<md:Summary4000 cast="false">Präsidentin Selina Meyer (Julia Louis-Dreyfus) erkennt in Staffel 5 der mit mehreren Emmys(R) ausgezeichneten Comedy-Serie, dass ihre Zukunft als Präsidentin von ein paar Hundert Stimmen abhängt. Während Amy und Dan in Nevada an einer Neuzählung arbeiten, dreht Selina in Washington Däumchen. Ihr Team versucht weiterhin, sie wie eine Präsidentin aussehen zu lassen und gleichzeitig die Ambitionen des charismatischen Anwärters für die Position des Vizepräsidenten, Tom James (Hugh Laurie), abzuwehren - der aufgrund der obskuren Verflechtungen im Regierungsbildungssystem selbst Präsident werden könnte. Mit Tony Hale, Anna Chlumsky, Matt Walsh, Reid Scott, Timothy C. Simons, Sufe Bradshaw, Kevin Dunn, Gary Cole und Sam Richardson. Neben Hugh Laurie gehören außerdem John Slattery und Sarah Sutherland zu den Gast-Stars.</md:Summary4000>
-			<md:Genre>Comedy</md:Genre>
+			<md:TitleDisplay60>Veep: Staffel 5</md:TitleDisplay60>
+			<md:TitleDisplayUnlimited>Veep: Staffel 5</md:TitleDisplayUnlimited>
+			<md:TitleSort />
+			<md:ArtReference resolution="800x800">file://resources/VEEP__043_787232_858219_SeasonPhoto.jpg
+			</md:ArtReference>
+			<md:Summary190 cast="false">Präsidentin Selina Meyer (Julia
+				Louis-Dreyfus) erkennt in Staffel 5 der mit mehreren Emmys(R)
+				ausgezeichneten Comedy-Serie, dass ihre Zukunft als Präsidentin von
+				ein paar Hundert Stimmen abhängt.</md:Summary190>
+			<md:Summary4000 cast="false">Präsidentin Selina Meyer (Julia
+				Louis-Dreyfus) erkennt in Staffel 5 der mit mehreren Emmys(R)
+				ausgezeichneten Comedy-Serie, dass ihre Zukunft als Präsidentin von
+				ein paar Hundert Stimmen abhängt. Während Amy und Dan in Nevada an
+				einer Neuzählung arbeiten, dreht Selina in Washington Däumchen. Ihr
+				Team versucht weiterhin, sie wie eine Präsidentin aussehen zu lassen
+				und gleichzeitig die Ambitionen des charismatischen Anwärters für
+				die Position des Vizepräsidenten, Tom James (Hugh Laurie),
+				abzuwehren - der aufgrund der obskuren Verflechtungen im
+				Regierungsbildungssystem selbst Präsident werden könnte. Mit Tony
+				Hale, Anna Chlumsky, Matt Walsh, Reid Scott, Timothy C. Simons, Sufe
+				Bradshaw, Kevin Dunn, Gary Cole und Sam Richardson. Neben Hugh
+				Laurie gehören außerdem John Slattery und Sarah Sutherland zu den
+				Gast-Stars.</md:Summary4000>
+
+			<md:Genre
+				source="http://www.movielabs.com/md/mec/mec_primary_genre.html"
+				level="0" id="Comedy" />
 			<md:OriginalTitle>Veep: Season 5</md:OriginalTitle>
 			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
 		</md:LocalizedInfo>
 		<md:LocalizedInfo default="true" language="en">
+			<md:TitleDisplay60>Veep: Season 5</md:TitleDisplay60>
 			<md:TitleDisplayUnlimited>Veep: Season 5</md:TitleDisplayUnlimited>
-			<md:TitleSort/>
-			<md:ArtReference resolution="800x800">file://resources/VEEP__043_787232_858219_SeasonPhoto.jpg</md:ArtReference>
-			<md:Summary190 cast="false">President Selina Meyer (Julia Louis-Dreyfus) finds her future as President coming down to a few hundred votes in Season 5 of this Emmy(R)-winning comedy series.</md:Summary190>
-			<md:Summary4000 cast="false">President Selina Meyer (Julia Louis-Dreyfus) finds her future as President coming down to a few hundred votes as Season 5 of this Emmy(R)-winning comedy series begins. With Amy and Dan in Nevada working on a recount, Selina finds herself spinning her wheels in D.C., as her staff continues their mission to make her seem presidential while fending off the ambitions of her charismatic Vice Presidential running mate Tom James (Hugh Laurie)--who in a twist of obscure constitutional procedure could end up becoming President! Co-starring Tony Hale, Anna Chlumsky, Matt Walsh, Reid Scott, Timothy C. Simons, Sufe Bradshaw, Kevin Dunn, Gary Cole and Sam Richardson. In addition to Laurie, guests include John Slattery and Sarah Sutherland.</md:Summary4000>
-			<md:Genre>Comedy</md:Genre>
+			<md:TitleSort />
+			<md:ArtReference resolution="800x800">file://resources/VEEP__043_787232_858219_SeasonPhoto.jpg
+			</md:ArtReference>
+			<md:Summary190 cast="false">President Selina Meyer (Julia
+				Louis-Dreyfus) finds her future as President coming down to a few
+				hundred votes in Season 5 of this Emmy(R)-winning comedy series.
+			</md:Summary190>
+			<md:Summary4000 cast="false">President Selina Meyer (Julia
+				Louis-Dreyfus) finds her future as President coming down to a few
+				hundred votes as Season 5 of this Emmy(R)-winning comedy series
+				begins. With Amy and Dan in Nevada working on a recount, Selina
+				finds herself spinning her wheels in D.C., as her staff continues
+				their mission to make her seem presidential while fending off the
+				ambitions of her charismatic Vice Presidential running mate Tom
+				James (Hugh Laurie)--who in a twist of obscure constitutional
+				procedure could end up becoming President! Co-starring Tony Hale,
+				Anna Chlumsky, Matt Walsh, Reid Scott, Timothy C. Simons, Sufe
+				Bradshaw, Kevin Dunn, Gary Cole and Sam Richardson. In addition to
+				Laurie, guests include John Slattery and Sarah Sutherland.
+			</md:Summary4000>
+			<md:Genre
+				source="http://www.movielabs.com/md/mec/mec_primary_genre.html"
+				level="0" id="Comedy" />
 			<md:OriginalTitle>Veep: Season 5</md:OriginalTitle>
 			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
 		</md:LocalizedInfo>
@@ -58,10 +104,11 @@
 				<md:JobDisplay>Actor</md:JobDisplay>
 				<md:BillingBlockOrder>10</md:BillingBlockOrder>
 				<md:Character>Richard</md:Character>
-				</md:Job><md:Name>
-					<md:DisplayName>Sam Richardson</md:DisplayName>
-					<md:SortName>Richardson,Richardson</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Sam Richardson</md:DisplayName>
+				<md:SortName>Richardson,Richardson</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
@@ -69,11 +116,12 @@
 				<md:JobDisplay>Actor</md:JobDisplay>
 				<md:BillingBlockOrder>2</md:BillingBlockOrder>
 				<md:Character>Gary</md:Character>
-				</md:Job><md:Name>
-					<md:DisplayName>Tony Hale</md:DisplayName>
-					<md:SortName>Hale,Hale</md:SortName>
-				</md:Name>
-			
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Tony Hale</md:DisplayName>
+				<md:SortName>Hale,Hale</md:SortName>
+			</md:Name>
+
 		</md:People>
 		<md:People>
 			<md:Job>
@@ -81,11 +129,12 @@
 				<md:JobDisplay>Actor</md:JobDisplay>
 				<md:BillingBlockOrder>3</md:BillingBlockOrder>
 				<md:Character>Amy</md:Character>
-				</md:Job><md:Name>
-					<md:DisplayName>Anna Chlumsky</md:DisplayName>
-					<md:SortName>Chlumsky,Chlumsky</md:SortName>
-				</md:Name>
-			
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Anna Chlumsky</md:DisplayName>
+				<md:SortName>Chlumsky,Chlumsky</md:SortName>
+			</md:Name>
+
 		</md:People>
 		<md:People>
 			<md:Job>
@@ -93,10 +142,11 @@
 				<md:JobDisplay>Actor</md:JobDisplay>
 				<md:BillingBlockOrder>4</md:BillingBlockOrder>
 				<md:Character>Dan Egan</md:Character>
-				</md:Job><md:Name>
-					<md:DisplayName>Reid Scott</md:DisplayName>
-					<md:SortName>Scott,Scott</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Reid Scott</md:DisplayName>
+				<md:SortName>Scott,Scott</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
@@ -104,10 +154,11 @@
 				<md:JobDisplay>Actor</md:JobDisplay>
 				<md:BillingBlockOrder>5</md:BillingBlockOrder>
 				<md:Character>Mike McClintock</md:Character>
-				</md:Job><md:Name>
-					<md:DisplayName>Matt Walsh</md:DisplayName>
-					<md:SortName>Walsh,Walsh</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Matt Walsh</md:DisplayName>
+				<md:SortName>Walsh,Walsh</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
@@ -115,10 +166,11 @@
 				<md:JobDisplay>Actor</md:JobDisplay>
 				<md:BillingBlockOrder>6</md:BillingBlockOrder>
 				<md:Character>Jonah</md:Character>
-				</md:Job><md:Name>
-					<md:DisplayName>Timothy C. Simons</md:DisplayName>
-					<md:SortName>Simons,Simons</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Timothy C. Simons</md:DisplayName>
+				<md:SortName>Simons,Simons</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
@@ -126,10 +178,11 @@
 				<md:JobDisplay>Actor</md:JobDisplay>
 				<md:BillingBlockOrder>7</md:BillingBlockOrder>
 				<md:Character>Sue</md:Character>
-				</md:Job><md:Name>
-					<md:DisplayName>Sufe Bradshaw</md:DisplayName>
-					<md:SortName>Bradshaw,Bradshaw</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Sufe Bradshaw</md:DisplayName>
+				<md:SortName>Bradshaw,Bradshaw</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
@@ -137,10 +190,11 @@
 				<md:JobDisplay>Actor</md:JobDisplay>
 				<md:BillingBlockOrder>8</md:BillingBlockOrder>
 				<md:Character>Ben</md:Character>
-				</md:Job><md:Name>
-					<md:DisplayName>Kevin Dunn</md:DisplayName>
-					<md:SortName>Dunn,Dunn</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Kevin Dunn</md:DisplayName>
+				<md:SortName>Dunn,Dunn</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
@@ -148,156 +202,173 @@
 				<md:JobDisplay>Actor</md:JobDisplay>
 				<md:BillingBlockOrder>9</md:BillingBlockOrder>
 				<md:Character>Kent Davison</md:Character>
-				</md:Job><md:Name>
-					<md:DisplayName>Gary Cole</md:DisplayName>
-					<md:SortName>Cole,Cole</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Gary Cole</md:DisplayName>
+				<md:SortName>Cole,Cole</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Director</md:JobFunction>
 				<md:JobDisplay>Director</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Chris Addison</md:DisplayName>
-					<md:SortName>Addison,Addison</md:SortName>
-				</md:Name>
-			
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Chris Addison</md:DisplayName>
+				<md:SortName>Addison,Addison</md:SortName>
+			</md:Name>
+
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Producer</md:JobFunction>
 				<md:JobDisplay>Producer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Julia Louis-Dreyfus</md:DisplayName>
-					<md:SortName>Louis-Dreyfus,Louis-Dreyfus</md:SortName>
-				</md:Name>
-			
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Julia Louis-Dreyfus</md:DisplayName>
+				<md:SortName>Louis-Dreyfus,Louis-Dreyfus</md:SortName>
+			</md:Name>
+
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Producer</md:JobFunction>
 				<md:JobDisplay>Producer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Georgia Pritchett</md:DisplayName>
-					<md:SortName>Pritchett,Pritchett</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Georgia Pritchett</md:DisplayName>
+				<md:SortName>Pritchett,Pritchett</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Producer</md:JobFunction>
 				<md:JobDisplay>Producer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Morgan Sackett</md:DisplayName>
-					<md:SortName>Sackett,Sackett</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Morgan Sackett</md:DisplayName>
+				<md:SortName>Sackett,Sackett</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Producer</md:JobFunction>
 				<md:JobDisplay>Producer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Will Smith</md:DisplayName>
-					<md:SortName>Smith,Smith</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Will Smith</md:DisplayName>
+				<md:SortName>Smith,Smith</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Producer</md:JobFunction>
 				<md:JobDisplay>Producer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Christopher Godsick</md:DisplayName>
-					<md:SortName>Godsick,Godsick</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Christopher Godsick</md:DisplayName>
+				<md:SortName>Godsick,Godsick</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Producer</md:JobFunction>
 				<md:JobDisplay>Producer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Dave Mandel</md:DisplayName>
-					<md:SortName>Mandel,Mandel</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Dave Mandel</md:DisplayName>
+				<md:SortName>Mandel,Mandel</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Producer</md:JobFunction>
 				<md:JobDisplay>Producer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Lew Morton</md:DisplayName>
-					<md:SortName>Morton,Morton</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Lew Morton</md:DisplayName>
+				<md:SortName>Morton,Morton</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Producer</md:JobFunction>
 				<md:JobDisplay>Producer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Frank Rich</md:DisplayName>
-					<md:SortName>Rich,Rich</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Frank Rich</md:DisplayName>
+				<md:SortName>Rich,Rich</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Producer</md:JobFunction>
 				<md:JobDisplay>Producer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Peter Huyck</md:DisplayName>
-					<md:SortName>Huyck,Huyck</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Peter Huyck</md:DisplayName>
+				<md:SortName>Huyck,Huyck</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Producer</md:JobFunction>
 				<md:JobDisplay>Producer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Alex Gregory</md:DisplayName>
-					<md:SortName>Gregory,Gregory</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Alex Gregory</md:DisplayName>
+				<md:SortName>Gregory,Gregory</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Producer</md:JobFunction>
 				<md:JobDisplay>Producer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Sean Grey</md:DisplayName>
-					<md:SortName>Grey,Grey</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Sean Grey</md:DisplayName>
+				<md:SortName>Grey,Grey</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Producer</md:JobFunction>
 				<md:JobDisplay>Producer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Jim Margolis</md:DisplayName>
-					<md:SortName>Margolis,Margolis</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Jim Margolis</md:DisplayName>
+				<md:SortName>Margolis,Margolis</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Writer</md:JobFunction>
 				<md:JobDisplay>Writer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Sean Gray</md:DisplayName>
-					<md:SortName>Gray,Gray</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Sean Gray</md:DisplayName>
+				<md:SortName>Gray,Gray</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Writer</md:JobFunction>
 				<md:JobDisplay>Writer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Georgia Pritchett</md:DisplayName>
-					<md:SortName>Pritchett,Pritchett</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Georgia Pritchett</md:DisplayName>
+				<md:SortName>Pritchett,Pritchett</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:People>
 			<md:Job>
 				<md:JobFunction>Writer</md:JobFunction>
 				<md:JobDisplay>Writer</md:JobDisplay>
-				</md:Job><md:Name>
-					<md:DisplayName>Will Smith</md:DisplayName>
-					<md:SortName>Smith,Smith</md:SortName>
-				</md:Name>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Will Smith</md:DisplayName>
+				<md:SortName>Smith,Smith</md:SortName>
+			</md:Name>
 		</md:People>
 		<md:CountryOfOrigin>
 			<md:country>US</md:country>
@@ -311,7 +382,8 @@
 			<md:Number>5</md:Number>
 		</md:SequenceInfo>
 		<md:Parent relationshipType="isseasonof">
-			<md:ParentContentID>md:cid:eidr-s:CF5A-AB7E-A4DB-35FA-BAC5-M</md:ParentContentID>
+			<md:ParentContentID>md:cid:eidr-s:CF5A-AB7E-A4DB-35FA-BAC5-M
+			</md:ParentContentID>
 		</md:Parent>
 	</mdmec:Basic>
 </mdmec:CoreMetadata>

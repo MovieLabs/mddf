@@ -2,22 +2,28 @@
 <mdmec:CoreMetadata xmlns="http://www.movielabs.com/schema/md/v2.7/md" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.xsd">
 	<mdmec:Basic ContentID="md:cid:org:number.NationalGeographicChannel_Cosmos_YNF100:season">
 		<md:LocalizedInfo language="nl">
+			<md:TitleDisplay60>Cosmos: Season 1</md:TitleDisplay60>
 			<md:TitleDisplayUnlimited>Cosmos: Season 1</md:TitleDisplayUnlimited>
 			<md:TitleSort/>
 			<md:ArtReference resolution="2000x2818">file://Cosmos_YNF000_2000x2818_ENG_SER_IMG.png</md:ArtReference>
 			<md:Summary400 cast="false">De vooraanstaande astrofysicus dr. Neil deGrasse Tyson blaast nieuw leven in het legendarische programma uit de jaren tachtig, dat destijds werd gepresenteerd door Carl Sagan.</md:Summary400>
 			<md:Summary4000 cast="false">De vooraanstaande astrofysicus dr. Neil deGrasse Tyson blaast nieuw leven in het legendarische programma uit de jaren tachtig, dat destijds werd gepresenteerd door Carl Sagan. Het nieuwe ‘Cosmos’ vertelt het verhaal van de natuurwetten. In dertien afleveringen komt de zoektocht naar kennis tot leven, waarbij kijkers door het universum reizen om een volledig beeld te krijgen van de kosmos.</md:Summary4000>
-			<md:Genre>Comedy</md:Genre>
+			<md:Genre
+				source="http://www.movielabs.com/md/mec/mec_primary_genre.html"
+				level="0" id="Instructional" /> 
 			<md:OriginalTitle>Cosmos: Season 1</md:OriginalTitle>
 			<md:CopyrightLine>2014 Cosmos Studios, Inc.  All rights reserved.</md:CopyrightLine>
 		</md:LocalizedInfo>
 		<md:LocalizedInfo default="true" language="en">
+			<md:TitleDisplay60>Cosmos: Season 1</md:TitleDisplay60>
 			<md:TitleDisplayUnlimited>Cosmos: A Spacetime Odyssey: Season 1</md:TitleDisplayUnlimited>
 			<md:TitleSort/>
 			<md:ArtReference resolution="2000x2818">file://Cosmos_YNF000_2000x2818_ENG_SER_IMG.png</md:ArtReference>
 			<md:Summary400 cast="false">A 13-part adventure across the universe of space and time, COSMOS: A SPACETIME ODYSSEY airs Sundays at 9/8c on FOX and Mondays at 10/9c on the National Geographic Channel. </md:Summary400>
 			<md:Summary4000 cast="false">A 13-part adventure across the universe of space and time, hosted by renowned astrophysicist Neil deGrasse Tyson, exploring humanity’s heroic quest for knowledge and the laws of science. COSMOS: A SPACETIME ODYSSEY airs Sundays at 9/8c on FOX and Mondays at 10/9c on the National Geographic Channel.  </md:Summary4000>
-			<md:Genre>Comedy</md:Genre>
+			<md:Genre
+				source="http://www.movielabs.com/md/mec/mec_primary_genre.html"
+				level="0" id="Instructional" /> 
 			<md:OriginalTitle>Cosmos: A Spacetime Odyssey: Season 1</md:OriginalTitle>
 			<md:CopyrightLine>2014 Cosmos Studios, Inc.  All rights reserved.</md:CopyrightLine>
 		</md:LocalizedInfo>

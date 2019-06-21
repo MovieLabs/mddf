@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdmec:CoreMetadata xmlns:md="http://www.movielabs.com/schema/md/v2.4/md" 
+		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		    xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.4" 
+		    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <mdmec:Basic ContentID="md:cid:org:TEST:TEST1">
+        <md:LocalizedInfo default="true" language="en">
+	  <md:TitleDisplay60>Killer Rabbitts Redux</md:TitleDisplay60>
+	  <md:TitleSort>Killer Rabbitts Redux</md:TitleSort>
+            <md:ArtReference resolution="1000x1440">md:imageid:org:TEST:TEST:poster.en</md:ArtReference>
+	    <md:Summary190>test artifact</md:Summary190>
+	    <md:Genre source="http://www.movielabs.com/md/mec/mec_primary_genre.html" level="0" id="Science Fiction" /> 
+	    <md:OriginalTitle>Killer Rabbitts from Space: Part 2</md:OriginalTitle>
+            <md:CopyrightLine>Sofa Spud Films (c) 2019</md:CopyrightLine>
+        </md:LocalizedInfo>
+        <md:LocalizedInfo language="fi-FI">
+	  <md:TitleDisplay60>Paluu tappaja kanit</md:TitleDisplay60>
+	  <md:TitleSort>Paluu tappaja kanit</md:TitleSort>
+            <md:ArtReference resolution="1000x1440">md:imageid:org:TEST:TEST:poster.en</md:ArtReference>
+	    <md:Summary190>tiedot testausta varten</md:Summary190>
+	    <md:Genre source="http://www.movielabs.com/md/mec/mec_primary_genre.html" level="0" id="Science Fiction" /> 
+	    <md:OriginalTitle>Killer Rabbitts from Space: Part 2</md:OriginalTitle>
+            <md:CopyrightLine>Sofa Spud Films (c) 2019</md:CopyrightLine>
+        </md:LocalizedInfo>
+        <md:ReleaseYear>2016</md:ReleaseYear>
+        <md:ReleaseDate>2018-09-11</md:ReleaseDate>
+        <md:ReleaseHistory>
+            <md:ReleaseType>original</md:ReleaseType>
+            <md:DistrTerritory>
+                <md:country>US</md:country>
+            </md:DistrTerritory>
+            <md:Date>2018-09-11</md:Date>
+        </md:ReleaseHistory>
+        <md:WorkType>Movie</md:WorkType>
+        <md:AltIdentifier>
+            <md:Namespace>ORG</md:Namespace>
+            <md:Identifier>TEST</md:Identifier>
+        </md:AltIdentifier>
+        <md:RatingSet>
+            <md:Rating>
+                <md:Region>
+                    <md:country>US</md:country>
+                </md:Region>
+                <md:System>MPAA</md:System>
+                <md:Value>PG</md:Value>
+            </md:Rating>
+        </md:RatingSet>
+        <md:CountryOfOrigin>
+            <md:country>US</md:country>
+        </md:CountryOfOrigin>
+        <md:OriginalLanguage>en</md:OriginalLanguage>
+        <md:AssociatedOrg organizationID="TEST" role="licensor"/>
+    </mdmec:Basic>
+    <mdmec:DigitalAsset>
+      <md:Audio>
+	<md:Type>commentary</md:Type>
+	<md:Encoding>
+	  <md:Codec>DOLBY-TRUEHD</md:Codec>
+	  <md:BitrateMax>140000</md:BitrateMax>
+	  <md:VBR>2-pass VBR</md:VBR>
+	  <md:SampleRate>140000</md:SampleRate>
+	  <md:SampleBitDepth>64</md:SampleBitDepth>
+	  <md:ChannelMapping>Mono</md:ChannelMapping>
+	</md:Encoding>
+	<md:Language>en</md:Language>
+	<md:Channels>1</md:Channels>
+      </md:Audio>
+    </mdmec:DigitalAsset>
+    <mdmec:DigitalAsset>
+      <md:Video>
+	<md:Type>enhancement</md:Type>
+	<md:Encoding>
+	  <md:Codec>H.264</md:Codec>
+	  <md:MPEGProfile>Hi444P</md:MPEGProfile>
+	  <md:MPEGLevel>3.1</md:MPEGLevel>
+	  <md:BitrateMax>140000</md:BitrateMax>
+	</md:Encoding>
+	<md:Picture>
+	  <md:AspectRatio>10x9</md:AspectRatio>
+	</md:Picture>
+	<md:ColorType>color</md:ColorType>
+      </md:Video>
+    </mdmec:DigitalAsset>
+    <mdmec:DigitalAsset>
+      <md:Subtitle>
+	<md:Format>Text</md:Format>
+	<md:Type>normal</md:Type>
+	<md:FormatType>3GPP</md:FormatType>
+	<md:Language>es</md:Language>	
+      </md:Subtitle>
+    </mdmec:DigitalAsset>    
+    <mdmec:Source organizationID="TEST" idType="SofaSpud JUnit"/>
+    <mdmec:CompanyDisplayCredit>
+      <md:DisplayString>Stadium Media</md:DisplayString>
+    </mdmec:CompanyDisplayCredit>
+</mdmec:CoreMetadata>

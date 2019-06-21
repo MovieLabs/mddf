@@ -32,6 +32,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -74,12 +76,13 @@ public class MecValidatorTest extends MecValidator {
 		curRootEl = null;
 		rootNS = null;
 		iLog.clearLog();
+		iLog.setPrintToConsole(true);
 	}
 
-	@AfterEach
-	public void tearDown() {
-		iLog.printLog();
-	}
+//	@AfterEach
+//	public void tearDown() {
+//		iLog.printLog();
+//	}
 
 	/**
 	 * @param string
@@ -91,25 +94,45 @@ public class MecValidatorTest extends MecValidator {
 			MddfTarget target = new MddfTarget(srcFile, iLog);
 			return target;
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
+		} catch (Exception e) {
+			dumpLog();
+			throw e;
 		}
 
 	}
 
 	@Test
-	public void testFull1_v2_4() throws IOException, JDOMException {
-		MddfTarget target = initialize("mec/MEC_v1.6_noErr.xml");
-		execute(target, true);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		/*
-		 * WIP:
-		 */
+	public void test_v2_4() throws IOException, JDOMException {
+		MddfTarget target = initialize("mec/MEC_v2.4.xml");
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+
+	@Test
+	public void testFull_v2_5() throws IOException, JDOMException {
+		MddfTarget target = initialize("mec/MEC_v2.5_noErr.xml");
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			/*
+			 * WIP:
+			 */
 //		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		iLog.clearLog();
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	/**
@@ -120,12 +143,16 @@ public class MecValidatorTest extends MecValidator {
 	@Test
 	public void test_TV_Series() throws IOException, JDOMException {
 		MddfTarget target = initialize("mmc/TV/VEEP_Series_mec.xml");
-		execute(target, true);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		iLog.clearLog();
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	/**
@@ -136,13 +163,18 @@ public class MecValidatorTest extends MecValidator {
 	@Test
 	public void test_TV_Season() throws IOException, JDOMException {
 		MddfTarget target = initialize("mmc/TV/VEEP_Season5_mec.xml");
-		execute(target, true);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		iLog.clearLog();
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
+
 	/**
 	 * @throws JDOMException
 	 * @throws IOException
@@ -151,55 +183,34 @@ public class MecValidatorTest extends MecValidator {
 	@Test
 	public void test_TV_Episode() throws IOException, JDOMException {
 		MddfTarget target = initialize("mmc/TV/VEEP_Season5_E5_mec.xml");
-		execute(target, true);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		iLog.clearLog();
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
-	// ======================================================
-	/*
-	 * These tests are disabled. The logic for validation process to 'follow'
-	 * Container references to MEC files, currently resides in the
-	 * ValidationController rather than the ManifestValidator.
-	 */
-//	/**
-//	 * @throws JDOMException
-//	 * @throws IOException
-//	 * 
-//	 */
-//	@Test
-//	public void testMEC_noErr() throws IOException, JDOMException {
-//		MddfTarget target = initialize("containers/Manifest_w_good_MEC_v1.6.xml"); 
-//		super.process(target); 
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-//	}
-//
-//	/**
-//	 * @throws JDOMException
-//	 * @throws IOException
-//	 * 
-//	 */
-//	@Test
-//	public void testMEC_withErrors() throws IOException, JDOMException {
-//		MddfTarget target = initialize("containers/Manifest_w_bad_MEC_v1.6.xml");
-//		iLog.setPrintToConsole(true);
-//		super.process(target);
-//		iLog.setPrintToConsole(false);
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-//	}
 
-	protected void execute(MddfTarget target, boolean logToConsole) throws IOException, JDOMException {
-		iLog.setPrintToConsole(logToConsole);
+	protected void execute(MddfTarget target) throws IOException, JDOMException {
+		iLog.setMinLevel(LogMgmt.LEV_DEBUG);
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Testing with file " + target.getSrcFile().getCanonicalPath(), null,
 				"JUnit");
-		super.process(target);
+		try {
+			super.process(target);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AssertionFailedError();
+		}
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "===== Test completed =====", null, "JUnit");
-		iLog.setPrintToConsole(false);
+	}
+
+	private void dumpLog() {
+		System.out.println("\n === FAILED TEST... dumping log ===");
+		iLog.printLog();
+		System.out.println(" === End log dump for FAILED TEST ===");
 	}
 }
