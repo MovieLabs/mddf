@@ -352,7 +352,7 @@ public class StructureValidation {
 			String elName = target.getName();
 			String msg;
 			if (logMsg.isEmpty()) {
-				msg = "Invalid " + elName + " structure: missing elements";
+				msg = "Invalid " + elName + " structure: missing " + targetList + " elements";
 			} else {
 				msg = logMsg;
 			}
@@ -372,7 +372,7 @@ public class StructureValidation {
 			String elName = target.getName();
 			String msg;
 			if (logMsg.isEmpty()) {
-				msg = "Invalid " + elName + " structure: too many child elements";
+				msg = "Invalid " + elName + " structure: too many child " + targetList + "elements";
 			} else {
 				msg = logMsg;
 			}
