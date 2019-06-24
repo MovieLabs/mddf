@@ -44,11 +44,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 
 import com.movielabs.mddf.tools.ToolLauncher;
 import com.movielabs.mddf.tools.UpdateDialog;
 import com.movielabs.mddf.tools.ValidatorTool;
-
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.groovy.JsonSlurper;
@@ -59,7 +59,10 @@ import net.sf.json.groovy.JsonSlurper;
  * typically used on startup. A query is sent to the <tt>UPDATE_SERVER</tt>
  * which will respond with a message indicating if an update is available. If
  * one is, a pop-up notifying the user is displayed.
- * 
+ * <p>
+ * All communications with the server will take place on a background thread
+ * using a <tt>SwingWorker</tt>
+ * </p>
  * 
  * 
  * @author L. Levin, Critical Architectures LLC
@@ -67,9 +70,100 @@ import net.sf.json.groovy.JsonSlurper;
  */
 public class UpdateMgr {
 	public static final String UPDATE_SERVER = "https://mddf.movielabs.com/updateMgr";
-//	private static final String UPDATE_SERVER = "http://localhost:8080/mddf-svcs/updateMgr"; 
+//	private static final String UPDATE_SERVER = "http://localhost:8080/mddf-svcs/updateMgr";
 
 	public static final int maxDaysBtwnChecks = 7;
+	private static UpdateMgr singleton = new UpdateMgr();
+
+	public class UpdateWorker extends SwingWorker<Void, Void> {
+
+		private ToolLauncher framework;
+		private Component uiFrame;
+		private boolean forced;
+		private JSONObject statusCheck;
+		private String curVersion;
+
+		/**
+		 * @param framework
+		 * @param uiFrame
+		 * @param forced
+		 */
+		public UpdateWorker(ToolLauncher framework, Component uiFrame, boolean forced) {
+			super();
+			this.framework = framework;
+			this.uiFrame = uiFrame;
+			this.forced = forced;
+		}
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			Properties mddfToolProps = ValidatorTool.loadProperties("/com/movielabs/mddf/tools/build.properties");
+			if (!forced) {
+				// how long since last check??
+				String last = framework.getProperty("updateMgr.lastCheck");
+				if (last == null) {
+					// use the build time instead
+					last = mddfToolProps.getProperty("build.timestamp");
+				}
+				// just need yyyy-MMM-dd and can drop the hh:mm
+				String[] parts = last.split(" ");
+				SimpleDateFormat df = new SimpleDateFormat("yyyy-MMM-dd");
+				Date dateLastChecked = null;
+				try {
+					dateLastChecked = df.parse(parts[0]);
+				} catch (ParseException e) {
+					e.printStackTrace();
+					return null;
+				}
+				LocalDate then = Instant.ofEpochMilli(dateLastChecked.getTime()).atZone(ZoneId.of("UTC+0"))
+						.toLocalDate();
+
+				// compare with current date
+				LocalDate now = LocalDate.now();
+				long daysBetween = ChronoUnit.DAYS.between(then, now);
+				if (daysBetween <= maxDaysBtwnChecks) {
+					// no need to check
+					return null;
+				}
+			}
+			// check with server
+			curVersion = mddfToolProps.getProperty("mddf.tool.version");
+			statusCheck = getStatus(framework, curVersion);
+			return null;
+		}
+
+		@Override
+		protected void done() {
+			if (statusCheck == null) {
+				if (forced) {
+					JOptionPane.showMessageDialog(uiFrame,
+							"<html>Unable to connect with Update Server.<br/>Try latter</html>", "Server Unreachable",
+							JOptionPane.WARNING_MESSAGE);
+				}
+			} else {
+				System.out.println(statusCheck);
+				/* Server's response is in the form of a JSON structure */
+				String status = statusCheck.optString("status", "UPDATE");
+				if (status.equals("UPDATE")) {
+					/*
+					 * A detailed msg may *OPTIONALLY* be provided by the server. If absent, use a
+					 * simple default
+					 */
+					String defaultMsg = "A more recent version is available. See ChangeLog for details";
+					String msg2user = statusCheck.optString("userMsg", defaultMsg);
+					UpdateDialog dialog = new UpdateDialog(statusCheck, curVersion, uiFrame, msg2user);
+					dialog.setVisible(true);
+				} else {
+					if (forced) {
+						JOptionPane.showMessageDialog(uiFrame, "Software is up-to-date.");
+					}
+				}
+				LocalDate now = LocalDate.now();
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd");
+				framework.setProperty("updateMgr.lastCheck", now.format(formatter));
+			}
+		}
+	}
 
 	/**
 	 * Check with <tt>UPDATE_SERVER</tt> to see if an update is available. Check is
@@ -79,8 +173,8 @@ public class UpdateMgr {
 	 * @param framework ToolLauncher
 	 * @return
 	 */
-	public static boolean check(ToolLauncher framework) {
-		return check(framework, framework.getFrame(), false);
+	public static void check(ToolLauncher framework) {
+		check(framework, framework.getFrame(), false);
 	}
 
 	/**
@@ -92,68 +186,21 @@ public class UpdateMgr {
 	 *                  elapsed since previous check.
 	 * @return
 	 */
-	public static boolean check(ToolLauncher framework, Component uiFrame, boolean forced) {
-		Properties mddfToolProps = ValidatorTool.loadProperties("/com/movielabs/mddf/tools/build.properties");
-		if (!forced) {
-			// how long since last check??
-			String last = framework.getProperty("updateMgr.lastCheck");
-			if (last == null) {
-				// use the build time instead
-				last = mddfToolProps.getProperty("build.timestamp");
-			}
-			// just need yyyy-MMM-dd and can drop the hh:mm
-			String[] parts = last.split(" ");
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MMM-dd");
-			Date dateLastChecked = null;
-			try {
-				dateLastChecked = df.parse(parts[0]);
-			} catch (ParseException e) {
-				e.printStackTrace();
-				return true;
-			}
-			LocalDate then = Instant.ofEpochMilli(dateLastChecked.getTime()).atZone(ZoneId.of("UTC+0")).toLocalDate();
+	public static void check(ToolLauncher framework, Component uiFrame, boolean forced) {
+		singleton.launch(framework, uiFrame, forced);
+	}
 
-			// compare with current date
-			LocalDate now = LocalDate.now();
-			long daysBetween = ChronoUnit.DAYS.between(then, now);
+	private void launch(ToolLauncher framework, Component uiFrame, boolean forced) {
+		SwingWorker<Void, Void> worker = new UpdateMgr.UpdateWorker(framework, uiFrame, forced);
+		worker.execute();
 
-			if (daysBetween <= maxDaysBtwnChecks) {
-				// no need to check
-				return true;
-			}
-		}
-		// check with server
-		String curVersion = mddfToolProps.getProperty("mddf.tool.version");
-		JSONObject statusCheck = getStatus(framework, curVersion);
-		if (statusCheck == null) {
-			if (forced) {
-				JOptionPane.showMessageDialog(uiFrame,
-						"<html>Unable to connect with Update Server.<br/>Try latter</html>", "Server Unreachable",
-						JOptionPane.WARNING_MESSAGE);
-			}
-			return true;
-		}
-		String status = statusCheck.optString("status", "UPDATE");
-		if (status.equals("UPDATE")) {
-			// Notify user they need to update
-			UpdateDialog dialog = new UpdateDialog(statusCheck, curVersion, uiFrame);
-			dialog.setVisible(true);
-		} else {
-			if (forced) {
-				JOptionPane.showMessageDialog(uiFrame, "Software is up-to-date.");
-			}
-		}
-		LocalDate now = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd");
-		framework.setProperty("updateMgr.lastCheck", now.format(formatter));
-
-		return true;
 	}
 
 	private static JSONObject getStatus(ToolLauncher framework, String curVersion) {
 		securityKludge();
 		String uuid = framework.getUUID();
 		String fullUrl = UPDATE_SERVER + "?uuid=" + uuid + "&curVer=" + curVersion;
+		System.out.println(fullUrl);
 		try {
 			URL netUrl = new URL(fullUrl);
 			InputStream is = netUrl.openStream();
