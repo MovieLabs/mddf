@@ -1,6 +1,7 @@
 {
-  "build.timestamp": "2019-May-30 14:50:09 UTC",
-  "mddf.lib.version": "1.5.2",
+  "build.timestamp": "2019-Jun-24 21:05:16 UTC",
+  "mddf.lib.version": "1.5.3",
   "mddf.tool.build": "M",
-  "mddf.tool.version": "1.5.2"  
+  "mddf.tool.version": "1.5.3",
+  "userMsg": "Update strongly recommended due to bug fixes<br> in MEC Validation. See ChangeLog for full details."
 }

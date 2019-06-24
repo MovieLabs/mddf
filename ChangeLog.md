@@ -5,6 +5,16 @@
 
 ## Versioning
 
+### mddf-lib v1.5.3
+
+#### rc1
+* Bug Fix: MEC validation was incomplete due to multiple issue
+   * terminology checks for DigitalAssets was not invoked
+   * structural checks used incorrect namespace URI in XPaths
+* Bug Fix: CoreMetadata included in an Avails did not get validated
+* Enhancement: Improved UI for handling update notifications
+* Internal: validation of DigitalAssets handled by CMValidator instead of ManifestValidator
+
 ### mddf-lib v1.5.2
 
 #### rc2
