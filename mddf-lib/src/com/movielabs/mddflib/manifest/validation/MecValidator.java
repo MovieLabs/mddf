@@ -148,6 +148,9 @@ public class MecValidator extends CMValidator {
 	 * @see com.movielabs.mddflib.util.CMValidator#validateUsage()
 	 */
 	protected void validateUsage() {
+
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints of MEC v"+MDMEC_VER, curFile, LOGMSG_ID);
+		
 		super.validateUsage();
 		/*
 		 * Load JSON that defines various constraints on structure of the XML This is
@@ -178,6 +181,8 @@ public class MecValidator extends CMValidator {
 			return;
 		}
 
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints with MEC structure-defs_v"+structVer, curFile, LOGMSG_ID);
+		
 		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
 		Iterator<String> keys = rqmtSet.keys();
 		while (keys.hasNext()) {
