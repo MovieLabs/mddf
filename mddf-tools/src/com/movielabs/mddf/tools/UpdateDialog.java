@@ -46,7 +46,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * JDialog used to inform user that an update to the software is available.
+ * 
+ * @author L. Levin, Critical Architectures LLC
+ *
+ */
 public class UpdateDialog extends JDialog {
+
+	private static final String styleDiv = "<div style='text-align: center;'>";
 
 	/**
 	 * Launch the application. [for TESTING ONLY]
@@ -67,24 +75,37 @@ public class UpdateDialog extends JDialog {
 		String fakeStatus = "{\"latest\":{\"build.timestamp\":\"2019-Feb-27 19:16:36 UTC\",\"mddf.lib.version\":\"1.5.1.rc5-SNAPSHOT\",\"mddf.tool.build\":\"J\",\"mddf.tool.version\":\"1.5.1.rc4\"},\"jarUrl\":\"https://github.com/MovieLabs/mddf/raw/master/binaries/mddf-tools-1.5.1.rc4.jar\",\"status\":\"UPDATE\"}";
 		JsonSlurper slurper = new JsonSlurper();
 		JSONObject statusCheck = (JSONObject) slurper.parseText(fakeStatus);
-		initialize(statusCheck, "1.0.1", null);
+		initialize(statusCheck, "1.0.1", null, "Test message from server");
 	}
 
-	public UpdateDialog(JSONObject statusCheck, String curVersion, Component parent) {
-		initialize(statusCheck, curVersion, parent);
+	/**
+	 * Create a dialog to inform user of update status.
+	 * 
+	 * @param statusCheck response from server to update status check
+	 * @param curVersion  current version of the software
+	 * @param parent      UI component used for relative positioning
+	 * @param userMsg     explanatory message to user (may be HTML format)
+	 */
+	public UpdateDialog(JSONObject statusCheck, String curVersion, Component parent, String userMsg) {
+		initialize(statusCheck, curVersion, parent, userMsg);
 	}
 
-	private void initialize(JSONObject statusCheck, String curVersion, Component parent) {
+	private void initialize(JSONObject statusCheck, String curVersion, Component parent, String userMsg) {
 		setBounds(100, 100, 593, 300);
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(UpdateDialog.class.getResource("/com/movielabs/mddf/tools/images/icon_movielabs.jpg")));
 		setTitle("Update Available");
 		JSONObject latestReleaseDesc = statusCheck.getJSONObject("latest");
 		String jarUrl = statusCheck.getString("jarUrl");
-		String msg = "<html>A newer version of the MDDF Toolkit is available";
+		String msg = null;
+		if (userMsg == null) {
+			msg = "<html>" + "A newer version of the MDDF Toolkit is available";
+		} else {
+			msg = "<html>" + styleDiv + msg + "</div>";
+		}
 		msg = msg + "<ul><li>Current version: " + curVersion + "</li>";
 		msg = msg + "<li>Latest release: " + latestReleaseDesc.getString("mddf.tool.version") + "</li></ul>";
-		msg = msg + "<p>To download the latest release, copy this URL, then paste it into you browser:<br/><a href='"
+		msg = msg + "<p>To download the latest release, copy this<br>URL, then paste it into your browser:<br><a href='"
 				+ jarUrl + "'>" + jarUrl + "</a></p>";
 		msg = msg + "</html>";
 		JLabel lblAMoreRecent = new JLabel(msg);
@@ -119,9 +140,10 @@ public class UpdateDialog extends JDialog {
 		btnOk.setHorizontalAlignment(SwingConstants.RIGHT);
 
 		btnOk.setActionCommand("OK");
-		
+
 		JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setIcon(new ImageIcon(UpdateDialog.class.getResource("/com/movielabs/mddf/tools/images/attention-64.png")));
+		lblNewLabel.setIcon(
+				new ImageIcon(UpdateDialog.class.getResource("/com/movielabs/mddf/tools/images/attention-64.png")));
 		getContentPane().add(lblNewLabel, BorderLayout.NORTH);
 		btnOk.addActionListener(new ActionListener() {
 
