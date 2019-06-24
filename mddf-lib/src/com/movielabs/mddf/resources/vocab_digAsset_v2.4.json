@@ -1,0 +1,435 @@
+{
+	"COMMENT": "refer to Javadoc for com.movielabs.mddflib.util.CMValidator.validateDigitalAsset() before editing",
+	"Audio": 
+	{
+		"Type": 
+		{
+			"targetPath": "./md:Type",
+			"ref": "Sec. 5.2.2.1",
+			"values": 
+			[
+				"primary",
+				"narration",
+				"dialogcentric",
+				"commentary",
+				"other"
+			]
+		},
+
+		"Codec": 
+		{
+			"targetPath": "./md:Encoding/md:Codec",
+			"ref": "Sec. 5.2.3.1",
+			"values": 
+			[
+				"AAC",
+				"AAC-LC",
+				"AAC-LC+MPS",
+				"AAC-SLS",
+				"AC-3",
+				"AC-4",
+				"AIFF",
+				"ALAC",
+				"AMR",
+				"DOLBY-TRUEHD",
+				"DSD",
+				"DST",
+				"DTS",
+				"DTS-ES",
+				"DTS-EXPRESS",
+				"DTS-HRA",
+				"DTS-96/24",
+				"DTS-MA",
+				"DTS-X",
+				"E-AC-3",
+				"FLAC",
+				"HE-ACCV2",
+				"LPAC",
+				"LTAC",
+				"MP3",
+				"MPEG1",
+				"MPEG-4-ALS",
+				"MPEG-H",
+				"MLP",
+				"PCM",
+				"QCELP",
+				"RealAudio-Lossless",
+				"Vorbis",
+				"WAV",
+				"WMA",
+				"WM9-lossless"
+			]
+		},
+
+		"VBR": 
+		{
+			"targetPath": "./md:Encoding/md:VBR",
+			"ref": "Sec. 5.2.3.3",
+			"values": 
+			[
+				"VBR",
+				"Constrained VBR",
+				"2-pass VBR"
+			]
+		}
+	},
+
+	"Video": 
+	{ 
+		"Type": 
+		{
+			"targetPath": "./md:Type",
+			"ref": "Sec. 5.2.4.1",
+			"values": 
+			[
+				"primary",
+				"overlay",
+				"angle",
+				"enhancement",
+				"other"
+			]
+		},
+
+		"Encoding/Codec": 
+		{
+			"targetPath": "./md:Encoding/md:Codec",
+			"ref": "Sec. 5.2.5.1",
+			"values": 
+			[
+				"AVI Uncompressed",
+				"CineForm HD",
+				"DIVX",
+				"DV",
+				"H.264",
+				"H.264 DolbyVision",
+				"H.265",
+				"H.265 DolbyVision",
+				"JPEG2000",
+				"MOBICLIP",
+				"MPEG1",
+				"MPEG2",
+				"On2",
+				"PHOTOJPEG",
+				"PRORES",
+				"PRORESHQ",
+				"PRORES422",
+				"QT Uncompressed",
+				"REAL",
+				"Spark",
+				"SVQ",
+				"WMV",
+				"WMV7",
+				"WMV8",
+				"WMV9",
+				"VC1",
+				"VP6",
+				"VP7",
+				"VP8",
+				"VP9",
+				"XVID",
+				"OTHER"
+			]
+		},
+
+		"Picture": 
+		{
+			"targetPath": "./md:Picture",
+			"children": 
+			{
+				"PixelAspect": 
+				{
+					"targetPath": "./md:PixelAspect",
+					"ref": "Sec. 5.2.6",
+					"values": 
+					[
+						"square",
+						"NTSC",
+						"PAL",
+						"other"
+					]
+				},
+
+				"FrameRate@timecode": 
+				{
+					"targetPath": "./md:FrameRate/@timecode",
+					"ref": "Sec. 5.2.6.1",
+					"values": 
+					[
+						"Drop",
+						"EBU",
+						"Other"
+					]
+				},
+				
+				"Progressive@scanOrder": 
+				{
+					"targetPath": "./md:Progressive/@scanOrder",
+					"ref": "Sec. 5.2.6.2",
+					"values": 
+					[
+						"TFF",
+						"BFF",
+						"PPF"
+					]
+				},
+
+				"ColorSubsampling": 
+				{
+					"targetPath": "./md:ColorSubsampling",
+					"ref": "Sec. 5.2.6.3",
+					"values": 
+					[
+						"4:1:1",
+						"4:2:0",
+						"4:2:2",
+						"4:4:4"
+					]
+				},
+
+				"Colorimetry": 
+				{
+					"targetPath": "./md:Colorimetry",
+					"ref": "Sec. 5.2.6.4",
+					"values": 
+					[
+						"601",
+						"709",
+						"2020",
+						"P3"
+					]
+				},
+
+				"ColorEncoding": 
+				{
+					"targetPath": "./md:ColorEncoding",
+					"children": 
+					{
+						"Primaries": 
+						{
+							"targetPath": "./md:Primaries",
+							"ref": "Sec. 5.2.6.6.1",
+							"values": 
+							[
+								"BT601",
+								"BT709",
+								"BT2020",
+								"DCIP3",
+								"XYZ",
+								"ACES"
+							]
+						},
+
+						"TransferFunc": 
+						{
+							"targetPath": "./md:TransferFunc",
+							"ref": "Sec. 5.2.6.6.2",
+							"values": 
+							[
+								"BT1886",
+								"ST428-1",
+								"ST2084"
+							]
+						},
+
+						"ColorDiff": 
+						{
+							"targetPath": "./md:ColorDifferencing",
+							"ref": "Sec. 5.2.6.6.3",
+							"values": 
+							[
+								"BT601",
+								"BT709",
+								"BT2020",
+								"ST2085",
+								"none"
+							]
+						}
+					}
+				},
+
+				"CMax@interpretation": 
+				{
+					"targetPath": "./md:LightLevel/md:ContentMax/@interpretation",
+					"ref": "Sec. 5.2.6.8",
+					"values": 
+					[
+						"MaxFall",
+						"MaxCLL"
+					]
+				},
+
+				"SDRDownconversion": 
+				{
+					"targetPath": "./md:HDRPlaybackInfo/md:SDRDownconversion",
+					"ref": "Sec. 5.2.6.9",
+					"values": 
+					[
+						"Prohibited",
+						"ProhibitedAlways"
+					]
+				}
+			}
+		}
+	},
+
+	"Subtitle": 
+	{
+		"Type": 
+		{
+			"targetPath": "./md:Type",
+			"ref": "Sec. 5.2.7.1",
+			"values": 
+			[
+				"normal",
+				"SDH",
+				"large",
+				"forced", 
+				"commentary",
+				"easyreader",
+				"other"
+			]
+		},
+
+		"Format": 
+		{
+			"targetPath": "./md:Format",
+			"ref": "Sec. 5.2.7.2",
+			"values": 
+			[
+				"Text",
+				"Image",
+				"Combined"
+			]
+		},
+
+		"FormatType": 
+		{
+			"targetPath": "./md:FormatType",
+			"ref": "Sec. 5.2.7.3",
+			"values": 
+			[
+				"3GPP",
+				"Blu-Ray",
+				"DCI",
+				"DVB",
+				"DVD",
+				"ITT",
+				"SMPTE 2052-1 Timed Text",
+				"SCC",
+				"SRT",
+				"TTML",
+				"WebVTT"
+			]
+		}
+	},
+
+	"Image": 
+	{ 
+		"Picture": 
+		{
+			"targetPath": "./md:Picture",
+			"link": "Video>Picture"
+		}
+	},
+
+	"Interactive": 
+	{
+		"Type": 
+		{
+			"targetPath": "./md:Type",
+			"ref": "Sec. 5.2.9.1",
+			"values": 
+			[
+				"Menu",
+				"Standalone Game",
+				"Overlay Game",
+				"Skins",
+				"Interactivity",
+				"Image",
+				"Other"
+			]
+		},
+
+		"FormatType": 
+		{
+			"targetPath": "./md:FormatType",
+			"ref": "Sec. 5.2.9.2",
+			"values": 
+			[
+				"Text",
+				"Executable",
+				"Metadata"
+			]
+		},
+
+		"RuntimeEnvironment": 
+		{
+			"targetPath": "./md:RuntimeEnvironment",
+			"ref": "Sec. 5.2.9.3",
+			"values": 
+			[
+				"CMX",
+				"Flash",
+				"BD-J",
+				"MHEG",
+				"HTML5", 
+				"Default",
+				"Other"
+			]
+		}
+	},
+ 	"CardsetList": 
+	{
+		"Type": 
+		{
+			"targetPath": "./md:Type",
+			"ref": "Sec. 5.2.11.1",
+			"values": 
+			[
+				"Theatrical",
+				"Broadcast",
+				"Hospitality",
+				"Rental",
+				"EST"
+			]
+		},
+
+		"Cardset": 
+		{
+			"targetPath": "./md:Cardset",
+			"children": 
+			{
+				"Type": 
+				{
+					"targetPath": "./md:Type",
+					"ref": "Sec. 5.2.11.1",
+					"values": 
+					[
+						"AntiPiracy",
+						"DistributionLogo",
+						"Rating",
+						"DubbingCredit",
+						"Intermission",
+						"EditNotice",
+						"Other"
+					]
+				}
+			}
+		}
+	},
+	"Ancillary": 
+	{
+		"Type": 
+		{
+			"targetPath": "./md:Type",
+			"ref": "Sec. 5.2.12.2",
+			"values": 
+			[
+				"enhancement",
+				"metadata",
+				"variation",
+				"other"
+			]
+		}
+	}
+}
