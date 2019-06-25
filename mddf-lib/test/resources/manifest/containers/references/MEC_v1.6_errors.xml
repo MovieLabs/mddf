@@ -1,0 +1,109 @@
+<mdmec:CoreMetadata xmlns="http://www.movielabs.com/schema/md/v2.4/md" 
+		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		    xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.5" 
+		    xmlns:md="http://www.movielabs.com/schema/md/v2.5/md" 
+		    xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.5 mdmec-v2.5.xsd">
+  <mdmec:Basic  ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+				<md:LocalizedInfo language="en" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>A large but peaceful bunny is harassed by three
+						trouble-making rodents
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+				</md:LocalizedInfo>
+				<md:RunLength>PT10M00.0S</md:RunLength>
+				<md:ReleaseYear>2008</md:ReleaseYear>
+				<md:ReleaseHistory>
+					<md:ReleaseType>original</md:ReleaseType>
+					<md:DistrTerritory>
+						<md:country>DE</md:country>
+					</md:DistrTerritory>
+					<md:Date>2016-05-22</md:Date>
+				</md:ReleaseHistory>
+				<md:ReleaseHistory>
+					<md:ReleaseType>original</md:ReleaseType>
+					<md:DistrTerritory>
+						<!--  ERROR: invalid country code -->
+						<md:country>JJ</md:country>
+					</md:DistrTerritory>
+					<md:Date>2016-09-24</md:Date>
+				</md:ReleaseHistory>
+				<md:WorkType>Movie</md:WorkType>
+				<md:RatingSet>
+					<md:Rating>
+						<md:Region>
+							<md:country>DE</md:country>
+						</md:Region>
+						<md:System>FSK</md:System>
+						<md:Value>16</md:Value>
+					</md:Rating>
+					<md:Rating>
+						<md:Region>
+							<md:country>US</md:country>
+						</md:Region>
+						<md:System>MPAA</md:System>
+						<md:Value>G</md:Value>
+					</md:Rating>
+					<md:Rating>
+						<md:Region>
+							<md:country>DE</md:country>
+						</md:Region>
+						<md:System>FSK</md:System>
+						<md:Value>16</md:Value>
+					</md:Rating>
+					<md:Rating>
+						<md:Region>
+							<md:country>ZA</md:country>
+						</md:Region> 
+						<md:System>FPB</md:System>
+						<md:Value>16</md:Value>
+						<md:Reason>D</md:Reason>
+						<md:Reason>H</md:Reason>
+						<md:Reason>N</md:Reason>
+					</md:Rating> 
+				</md:RatingSet>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Director</md:JobFunction>
+						<md:JobDisplay>Director</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Job>
+						<md:JobFunction>Writer</md:JobFunction>
+						<md:JobDisplay>Writer</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Sacha Goedegebure</md:DisplayName>
+					</md:Name>
+				</md:People>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Producer</md:JobFunction>
+						<md:JobDisplay>Producer</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Ton Roosendaal</md:DisplayName>
+					</md:Name>
+				</md:People>
+				<md:PrimarySpokenLanguage>de-DE</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>en-DE</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>en</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>en-1694acad</md:PrimarySpokenLanguage>
+				<!--  ERROR:Invalid language code-->
+				<md:PrimarySpokenLanguage>HK</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>cmn-Hans-CN</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>sr-Latn-RS</md:PrimarySpokenLanguage>
+  </mdmec:Basic>
+</mdmec:CoreMetadata>

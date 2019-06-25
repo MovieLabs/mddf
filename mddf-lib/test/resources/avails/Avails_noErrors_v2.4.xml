@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <avails:AvailList 
   xmlns:avails="http://www.movielabs.com/schema/avails/v2.4/avails" 
-  xmlns:md="http://www.movielabs.com/schema/md/v2.7.1/md" 
-  xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7.1" 
+  xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <!-- AVAILS TEST Artifact: error-free test case for v2.4 complaint Avails. 
 		Contains wide range of Avail structures including Movies, TV Episodes/Seasons/Series, 
@@ -291,10 +290,10 @@
       <avails:BundledAsset sequence="2">
         <avails:BundledALID>33601_OV</avails:BundledALID>
       </avails:BundledAsset>
-      <avails:BundledAsset sequence="4">
+      <avails:BundledAsset sequence="3">
         <avails:BundledALID>33602_OV</avails:BundledALID>
       </avails:BundledAsset>
-      <avails:BundledAsset sequence="5">
+      <avails:BundledAsset sequence="4">
         <avails:BundledALID>33603_OV</avails:BundledALID>
       </avails:BundledAsset>
     </avails:Asset>

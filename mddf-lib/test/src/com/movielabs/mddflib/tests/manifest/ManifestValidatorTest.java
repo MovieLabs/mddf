@@ -36,6 +36,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -75,11 +77,12 @@ public class ManifestValidatorTest extends ManifestValidator {
 		curRootEl = null;
 		rootNS = null;
 		iLog.clearLog();
+		iLog.setPrintToConsole(true);
+		iLog.setMinLevel(iLog.LEV_DEBUG);
 	}
 
 	@AfterEach
-	public void tearDown() {
-		iLog.printLog(); 
+	public void tearDown() { 
 	}
 
 	/**
@@ -108,11 +111,15 @@ public class ManifestValidatorTest extends ManifestValidator {
 	public void testV16noErrors() throws IOException, JDOMException {
 		MddfTarget target = initialize("MMM_v1.6_base.xml");
 		execute(target);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		iLog.clearLog();
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	/**
@@ -124,11 +131,15 @@ public class ManifestValidatorTest extends ManifestValidator {
 	public void testV16withErrors() throws IOException, JDOMException {
 		MddfTarget target = initialize("MMM_v1.6_errors.xml");
 		execute(target);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(5, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		iLog.clearLog();
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(5, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	/**
@@ -140,11 +151,15 @@ public class ManifestValidatorTest extends ManifestValidator {
 	public void testV17noErrors() throws IOException, JDOMException {
 		MddfTarget target = initialize("MMM_v1.7_base.xml");
 		execute(target);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		iLog.clearLog();
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	/**
@@ -156,86 +171,110 @@ public class ManifestValidatorTest extends ManifestValidator {
 	public void testV17withErrors() throws IOException, JDOMException {
 		MddfTarget target = initialize("MMM_v1.7_errors.xml");
 		execute(target);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(9, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(7, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		iLog.clearLog();
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(9, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(7, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	@Test
 	public void testFull1_v1_6() throws IOException, JDOMException {
 		MddfTarget target = initialize("Manifest_v1.6_A.xml");
 		execute(target);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		/*
-		 * WIP:
-		 */
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			/*
+			 * WIP:
+			 */
 //		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		iLog.clearLog();
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	@Test
 	public void testFull1_v1_7() throws IOException, JDOMException {
 		MddfTarget target = initialize("Manifest_v1.7_A.xml");
 		execute(target);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		/*
-		 * WIP:
-		 */
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			/*
+			 * WIP:
+			 */
 //		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		iLog.clearLog();
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	@Test
 	public void testFull1_v1_8() throws IOException, JDOMException {
 		MddfTarget target = initialize("Manifest_v1.8_A.xml");
 		execute(target);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		/*
-		 * WIP:
-		 */
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			/*
+			 * WIP:
+			 */
 //		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		iLog.clearLog();
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	@Test
 	public void testFull1_v1_8_1() throws IOException, JDOMException {
 		MddfTarget target = initialize("Manifest_v1.8.1_A.xml");
 		execute(target);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		/*
-		 * WIP:
-		 */
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			/*
+			 * WIP:
+			 */
 //		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		iLog.clearLog();
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	@Test
 	public void testMEC_Usage() throws IOException, JDOMException {
 		MddfTarget target = initialize("Manifest_w_MEC_v1.6.xml");
 		execute(target);
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR)); 
-		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		Map<String, List<Element>> foo = getSupportingRsrcLocations();
-		Set<String> bar = foo.keySet();
-		int supportingXmlCnt =0;
-		for(String path : bar) {
-			if(path.endsWith("xml")) {
-				supportingXmlCnt++;
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			Map<String, List<Element>> foo = getSupportingRsrcLocations();
+			Set<String> bar = foo.keySet();
+			int supportingXmlCnt = 0;
+			for (String path : bar) {
+				if (path.endsWith("xml")) {
+					supportingXmlCnt++;
+				}
 			}
-		} 
-		assertEquals(1, supportingXmlCnt);
-		iLog.clearLog();
+			assertEquals(1, supportingXmlCnt);
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	protected void execute(MddfTarget target) throws IOException, JDOMException {
@@ -244,8 +283,13 @@ public class ManifestValidatorTest extends ManifestValidator {
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + target.getSrcFile().getCanonicalPath(), null,
 				"JUnit");
 		super.process(target);
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Test completed", null,
-				"JUnit");
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Test completed", null, "JUnit");
 		iLog.setPrintToConsole(false);
+	}
+
+	private void dumpLog() {
+		System.out.println("\n\n === FAILED TEST... dumping log ===");
+		iLog.printLog();
+		System.out.println(" === End log dump for FAILED TEST ===");
 	}
 }

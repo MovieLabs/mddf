@@ -415,12 +415,12 @@
 	<!-- ###############==============================################# -->
 	<manifest:PlayableSequences>
 		<manifest:PlayableSequence>
-			<manifest:Clip sequence="1">
+			<manifest:Clip sequence="0">
 				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 				</manifest:PresentationID>
 			</manifest:Clip>
 			<!-- for versions prior to v1.7 sequence must be continuous and sequential -->
-			<manifest:Clip sequence="2">
+			<manifest:Clip sequence="1">
 				<manifest:PresentationID>md:presentationid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
 				</manifest:PresentationID>
 				<manifest:EntryPointTimecode

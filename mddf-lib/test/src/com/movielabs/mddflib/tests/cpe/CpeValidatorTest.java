@@ -21,26 +21,27 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.movielabs.mddflib.tests.cpe;
- 
+
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.swing.tree.DefaultTreeModel;
 
 import org.jdom2.Document;
-import org.jdom2.Element; 
-
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.CpeValidator;
-import com.movielabs.mddflib.manifest.validation.ManifestValidator;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
@@ -75,6 +76,8 @@ public class CpeValidatorTest extends CpeValidator {
 		curRootEl = null;
 		rootNS = null;
 		iLog.clearLog();
+		iLog.setPrintToConsole(true);
+		iLog.setMinLevel(iLog.LEV_DEBUG);
 	}
 
 	/**
@@ -124,9 +127,14 @@ public class CpeValidatorTest extends CpeValidator {
 		 */
 		initialize("CPE_base_v1.0.xml");
 		super.validateMetadata();
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 
 		/*
 		 * Repeat with error-generating XML:
@@ -134,30 +142,66 @@ public class CpeValidatorTest extends CpeValidator {
 		iLog.clearLog();
 		initialize("CPE_errors_v1.0.xml");
 		super.validateMetadata();
-		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		try {
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	@Test
 	public void testAlidExtraction() {
 		initialize("CPE_base_v1.0.xml");
 		List<Element> primaryExpSet = extractAlidMap(curRootEl);
-		assertNotNull(primaryExpSet);
-		assertEquals(1, primaryExpSet.size());
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		try {
+			assertNotNull(primaryExpSet);
+			assertEquals(1, primaryExpSet.size());
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
 	@Test
 	public void testBuildInfoModel() {
 		initialize("CPE_base_v1.0.xml");
-		DefaultTreeModel infoModel = buildInfoModel();
-		assertNotNull(infoModel);
-		ExperienceNode root = (ExperienceNode) infoModel.getRoot();
-		assertNotNull(root);
-		assertEquals(5, root.getDescendents().size());
+		try {
+			DefaultTreeModel infoModel = buildInfoModel();
+			assertNotNull(infoModel);
+			ExperienceNode root = (ExperienceNode) infoModel.getRoot();
+			assertNotNull(root);
+			assertEquals(5, root.getDescendents().size());
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
 	}
 
+	protected void execute(MddfTarget target, String profileId) throws IOException, JDOMException {
+		iLog.setPrintToConsole(true);
+		iLog.setMinLevel(LogMgmt.LEV_DEBUG);
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + target.getSrcFile().getCanonicalPath(), null,
+				"JUnit");
+		List<String> useCases = null;
+		try {
+			super.process(target, profileId, useCases);
+		} catch (Exception e) {
+			throw new AssertionFailedError();
+		}
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Test completed", null, "JUnit");
+		iLog.setPrintToConsole(false);
+
+	}
+
+	private void dumpLog() {
+		System.out.println("\n\n === FAILED TEST... dumping log ===");
+		iLog.printLog();
+		System.out.println(" === End log dump for FAILED TEST ===");
+	}
 }

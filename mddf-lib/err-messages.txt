@@ -1,0 +1,57 @@
+
+Structural:
+  XML Only:
+    Invalid XML on or before line {nn}
+    Invalid element: {element} does not comply with schema
+    Invalid {element} structure
+	missing elements
+	too many child elements
+    {element} not specified. A value must be provided
+    Validation error -:: {ExceptionCause}
+
+  XLSX only:
+    Use of Excel Formulas not supported
+    Third row should not contain an Avail (reserved for header)
+
+Common Metadata:
+  Invalid value for indexing attribute (non-negative integer required)
+  Invalid value for indexing attribute (out of range)
+  Invalid value for indexing attribute (duplicate value)
+  Invalid indexing of {element} sequence: must be continuous
+  ID {idAttribute} is not unique
+  Invalid SSID syntax for {idScheme} scheme
+  Invalid cross-reference: the referenced {type} is not defined in this manifest
+  Invalid image resolution
+  Rating System not specified
+  Unrecognized Rating System
+  Invalid Rating for RatingSystem
+  Invalid Reason code
+  Invalid Country code (must conform to ISO 3166-1 Alpha-2)
+  Invalid Language code (must conform to RFC5646)
+  Unrecognized value
+
+MMC Validation:
+  Missing required attribute 'ManifestID'
+  Missing required element 'MediaManifest'
+  Incompatible profile
+  Missing TrackReference
+  Missing required attribute 'ExperienceID'
+  Missing 'ContentID'
+  Missing required element 'ALIDExperienceMaps'
+  Invalid ALIDExperienceMaps; only one Experience can be referenced
+  
+Manifest Validation:
+  When ExternalManifestID is present in a ExperienceChild, there may not be an Experience with that ID contained in the same file
+  Invalid syntax for local file location (must be specified as a relative path)
+  Metadata/Alias requires peer BasicMetadata
+  IncludedLanguage not supported by BasicMetadata/LocalizedInfo
+
+Avails Validation:
+  XLSX only:
+    Invalid use of 'Start/End' Lag; Missing 'Start/End' Condition
+    Invalid use of 'Start/End' Lag;  Base value must be conditional
+    Invalid PriceType for v1.7 Excel
+    Unrecognized PriceType
+    Inconsistent WorkType; value not compatable with 1st definition of referenced Avail
+    Inconsistent specification; value does not match 1st definition of referenced {entityName}
+    Required fulfillment language {reqLangCode} is not an AssetLanguage  

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<avails:AvailList xmlns:avails="http://www.movielabs.com/schema/avails/v2.3/avails" xmlns:md="http://www.movielabs.com/schema/md/v2.6/md" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <!-- AVAILS TEST Artifact: error-free test case for v2.2.2 complaint Avails. 
+<avails:AvailList 
+  xmlns:avails="http://www.movielabs.com/schema/avails/v2.3/avails" 
+  xmlns:md="http://www.movielabs.com/schema/md/v2.6/md" 
+  xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.6" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <!-- AVAILS TEST Artifact: error-free test case for v2.3 complaint Avails. 
 		Contains wide range of Avail structures including Movies, TV Episodes/Seasons/Series, 
 		and Collections. -->
   <avails:Avail>

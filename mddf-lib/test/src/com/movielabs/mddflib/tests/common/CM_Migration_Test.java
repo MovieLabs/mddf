@@ -292,7 +292,7 @@ public class CM_Migration_Test   {
 	}
 
 	private void dumpLog() {
-		System.out.println("\n === FAILED TEST... dumping log ===");
+		System.out.println("\n\n === FAILED TEST... dumping log ===");
 		iLog.printLog();
 		System.out.println(" === End log dump for FAILED TEST ===");
 	}

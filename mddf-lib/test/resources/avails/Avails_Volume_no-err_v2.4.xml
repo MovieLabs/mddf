@@ -267,6 +267,7 @@
         <avails:VolumeTitleInternalAlias>Killer Rabbits from Space: VS1_V2</avails:VolumeTitleInternalAlias>
         <avails:VolumeNumber>
           <md:Number>2</md:Number>
+          <md:DistributionNumber>KRFS:V02</md:DistributionNumber>
         </avails:VolumeNumber>
         <avails:ReleaseDate>2010</avails:ReleaseDate>
         <avails:VolumeFirstEpisodeNumber>5</avails:VolumeFirstEpisodeNumber>
@@ -396,6 +397,7 @@
         <avails:VolumeTitleInternalAlias>Killer Rabbits from Space: VS1_V1</avails:VolumeTitleInternalAlias>
         <avails:VolumeNumber>
           <md:Number>1</md:Number>
+          <md:DistributionNumber>KRFS:V01</md:DistributionNumber>
         </avails:VolumeNumber>
         <avails:ReleaseDate>2010</avails:ReleaseDate>
         <avails:VolumeFirstEpisodeNumber>1</avails:VolumeFirstEpisodeNumber>

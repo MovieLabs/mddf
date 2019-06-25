@@ -77,12 +77,12 @@ public class MecValidatorTest extends MecValidator {
 		rootNS = null;
 		iLog.clearLog();
 		iLog.setPrintToConsole(true);
+		iLog.setMinLevel(iLog.LEV_DEBUG);
 	}
 
-//	@AfterEach
-//	public void tearDown() {
-//		iLog.printLog();
-//	}
+	@AfterEach
+	public void tearDown() { 
+	}
 
 	/**
 	 * @param string
@@ -197,6 +197,7 @@ public class MecValidatorTest extends MecValidator {
 
 	protected void execute(MddfTarget target) throws IOException, JDOMException {
 		iLog.setMinLevel(LogMgmt.LEV_DEBUG);
+		iLog.setPrintToConsole(true);
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Testing with file " + target.getSrcFile().getCanonicalPath(), null,
 				"JUnit");
 		try {
@@ -206,10 +207,11 @@ public class MecValidatorTest extends MecValidator {
 			throw new AssertionFailedError();
 		}
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "===== Test completed =====", null, "JUnit");
+		iLog.setPrintToConsole(false);
 	}
 
 	private void dumpLog() {
-		System.out.println("\n === FAILED TEST... dumping log ===");
+		System.out.println("\n\n === FAILED TEST... dumping log ===");
 		iLog.printLog();
 		System.out.println(" === End log dump for FAILED TEST ===");
 	}

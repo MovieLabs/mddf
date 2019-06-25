@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <avails:AvailList xmlns:avails="http://www.movielabs.com/schema/avails/v2.4/avails" 
-		  xmlns:md="http://www.movielabs.com/schema/md/v2.7.1/md" 
-		  xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7.1" 
+		  xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
 		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <!-- ===== Translation History::
            from Avails v1.8 (xlsx) to Avails v2.4 (xml)
