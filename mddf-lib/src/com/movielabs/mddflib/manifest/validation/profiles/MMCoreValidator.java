@@ -202,12 +202,12 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 			 * have a hierarchical tree-like structure) we keep track of how many
 			 * ExperienceIDs are NOT referenced w/in an ExperienceChild.
 			 */
-			String expId = expEl.getAttributeValue("ExperienceID");
+			String expId = expEl.getAttributeValue("ExperienceID").trim(); 
 			String targetXPath = "./manifest:Experience/manifest:ExperienceChild/manifest:ExperienceID[.='" + expId
 					+ "']";
-			xpExpression = xpfac.compile(targetXPath, Filters.element(), null, manifestNSpace);
-			Element targetEl = xpExpression.evaluateFirst(expSetEl);
-			if (targetEl == null) {
+			XPathExpression<Element> xpExpression2 = xpfac.compile(targetXPath, Filters.element(), null, manifestNSpace);
+			List<Element> targetEl = xpExpression2.evaluate(expSetEl);
+			if (targetEl.isEmpty()) {
 				rootExpCount++;
 			}
  
