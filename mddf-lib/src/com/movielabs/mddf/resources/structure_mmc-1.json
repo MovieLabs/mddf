@@ -11,6 +11,14 @@
 					"min": "1",
 					"max": "1",
 					"severity": "Error",
+					"xpath": "./{manifest}Compatibility/{manifest}Profile[. = 'MMC-1']",
+					"msg": "Invalid Profile"
+				},
+				
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
 					"xpath": "./@ManifestID[normalize-space()]",
 					"msg": "Missing ManifestID"
 				},
@@ -66,8 +74,8 @@
 					"msg": "Missing ContentID"
 				}
 			]
-		}, 
-		
+		},
+
 		"PictureGroup": 
 		{
 			"targetPath": ".//{manifest}Experience[not(child::{manifest}PictureGroupID)]",
@@ -86,6 +94,6 @@
 					"details": "Required when referenced Metadata includes ArtReferences"
 				}
 			]
-		}
+		} 
 	}
 }
