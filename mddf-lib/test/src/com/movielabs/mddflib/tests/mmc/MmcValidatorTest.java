@@ -101,26 +101,7 @@ public class MmcValidatorTest extends MMCoreValidator {
 		}
 
 	}
-
-	/**
-	 * @throws JDOMException
-	 * @throws IOException
-	 * 
-	 */
-	@Test
-	public void testExample1() throws IOException, JDOMException {
-		MddfTarget target = initialize("ManifestCore_Example1_simple.xml");
-		execute(target, "MMC-1", true);
-		try {
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		} catch (AssertionFailedError e) {
-			dumpLog();
-			throw e;
-		}
-	}
+ 
 
 	/**
 	 * @throws JDOMException
@@ -136,6 +117,26 @@ public class MmcValidatorTest extends MMCoreValidator {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+
+	/**
+	 * @throws JDOMException
+	 * @throws IOException
+	 * 
+	 */
+	@Test
+	public void testV1_Errors() throws IOException, JDOMException {
+		MddfTarget target = initialize("MMCore_v1_ERRORS.xml");
+		execute(target, "MMC-1", true);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
 			throw e;
