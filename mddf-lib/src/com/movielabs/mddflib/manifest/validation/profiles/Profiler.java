@@ -38,7 +38,9 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
- * 
+ * EXPERIMENTAL CODE: The <tt>Profiler</tt> is used to try and identify the
+ * use-case an MMC file is supposed to address. It does NOT validate an MDDF
+ * file.
  * 
  * <pre>
  *  
@@ -85,11 +87,17 @@ public class Profiler {
 		super();
 		this.logger = logger;
 		this.logMsgSrcId = logMsgSrcId;
-		JSONObject ruleFile = XmlIngester.getMddfResource(PROFILE_DIR+profilingRules);
+		JSONObject ruleFile = XmlIngester.getMddfResource(PROFILE_DIR + profilingRules);
 		usecaseSet = ruleFile.getJSONObject("Profiles");
 		structHelper = new StructureValidation(logger, logMsgSrcId);
 	}
 
+	/**
+	 * Identify the <i>use cases</i> an Manifest seems to be addressing.
+	 * 
+	 * @param rootEl
+	 * @return
+	 */
 	public List<String> evaluate(Element rootEl) {
 		List<String> matches = new ArrayList<String>();
 		Iterator<String> keys = usecaseSet.keys();
@@ -152,14 +160,14 @@ public class Profiler {
 			// must be a GOTO
 			String nextTestId = result.split(":")[1];
 			test = testSet.getJSONObject(nextTestId);
-			testSeq = testSeq +"; "+nextTestId;
+			testSeq = testSeq + "; " + nextTestId;
 			/*
 			 * The decision tree defined for evaluation must be DAG. Terminate the
 			 * processing if the logic results in a loop back to a previously performed
 			 * test.
 			 */
-			if(loopDetector.contains(nextTestId)) {
-				throw new RuntimeException("Loop in test sequence: "+testSeq);
+			if (loopDetector.contains(nextTestId)) {
+				throw new RuntimeException("Loop in test sequence: " + testSeq);
 			}
 			loopDetector.add(nextTestId);
 		}
