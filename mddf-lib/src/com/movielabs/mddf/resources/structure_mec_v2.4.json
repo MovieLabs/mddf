@@ -93,21 +93,6 @@
 			]
 		},
 
-		"Release History": 
-		{
-			"targetPath": ".",
-			"constraint": 
-			[
-				{
-					"min": "1",
-					"max": "1",
-					"severity": "Error",
-					"xpath": ".//{md}ReleaseHistory/{md}ReleaseType[text()='original']",
-					"msg": "Exactly 1 'orginal' ReleaseHistory must be specified"
-				}
-			]
-		},
-
 		"SequenceInfo": 
 		{
 			"targetPath": "./{mdmec}Basic[./{md}WorkType[. = 'Season' or . = 'Episode' or . = 'Promotion' or . = 'Excerpt' or . = 'Supplemental']]",
