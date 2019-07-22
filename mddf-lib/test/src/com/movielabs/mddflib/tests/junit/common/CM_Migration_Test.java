@@ -20,7 +20,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.common;
+package com.movielabs.mddflib.tests.junit.common;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -75,7 +75,7 @@ public class CM_Migration_Test   {
 	@BeforeEach
 	public void setUp() throws Exception {
 		iLog.clearLog();
-		iLog.setPrintToConsole(true);
+		iLog.setPrintToConsole(false);
 		iLog.setMinLevel(iLog.LEV_DEBUG);
 	}
 
@@ -282,7 +282,7 @@ public class CM_Migration_Test   {
 	protected void execute(MddfTarget target, CMValidator validator) throws IOException, JDOMException {
 		Element rootEl = target.getXmlDoc().getRootElement();
 		List<Namespace> nsList = rootEl.getNamespacesInScope();
-		iLog.setPrintToConsole(true);
+		iLog.setPrintToConsole(false);
 		iLog.setMinLevel(iLog.LEV_DEBUG);
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + target.getSrcFile().getCanonicalPath(), null,
 				"JUnit");

@@ -20,16 +20,14 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.cpe;
+package com.movielabs.mddflib.tests.junit.avails;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
 
-import javax.swing.tree.DefaultTreeModel;
-
-import org.jdom2.Document;
-import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,23 +36,23 @@ import org.opentest4j.AssertionFailedError;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.movielabs.mddflib.avails.validation.AvailValidator;
+import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
-import com.movielabs.mddflib.manifest.validation.CpeValidator;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.xml.MddfTarget;
-import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class CpeValidatorTest extends CpeValidator {
+public class AvailsValidatorTest extends AvailValidator {
 
-	private static String rsrcPath = "./test/resources/cpe/";
+	private static String rsrcPath = "./test/resources/avails/";
 	private InstrumentedLogger iLog;
 
-	public CpeValidatorTest() {
-		super(new InstrumentedLogger());
+	public AvailsValidatorTest() {
+		super(true, new InstrumentedLogger());
 		iLog = (InstrumentedLogger) loggingMgr;
 	}
 
@@ -76,57 +74,36 @@ public class CpeValidatorTest extends CpeValidator {
 		curRootEl = null;
 		rootNS = null;
 		iLog.clearLog();
-		iLog.setPrintToConsole(true);
-		iLog.setMinLevel(iLog.LEV_DEBUG);
 	}
 
 	/**
 	 * @param string
 	 */
-	protected void initialize(String testFileName) {
-		try {
-			setUp();
-		} catch (Exception e) {
-			assertNotNull(curRootEl);
-			return;
-		}
-		Document xmlDoc = loadTestArtifact(testFileName);
-		if (xmlDoc == null) {
-			// forces a FAILED result
-			assertNotNull(curRootEl);
-			return;
-		}
-		curRootEl = xmlDoc.getRootElement();
-		String schemaVer = identifyXsdVersion(curRootEl);
-		setManifestVersion(schemaVer);
-		rootNS = manifestNSpace;
-	}
-
-	private Document loadTestArtifact(String fileName) {
-		String srcFilePath = rsrcPath + fileName;
+	protected MddfTarget initialize(String testFileName) {
+		String srcFilePath = rsrcPath + testFileName;
 		srcFile = new File(srcFilePath);
-		if (!srcFile.canRead()) {
-			return null;
-		}
-		Document xmlDoc;
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
+
 		try {
-			xmlDoc = XmlIngester.getAsXml(srcFile);
-		} catch (Exception e) {
-			return null;
+			MddfTarget target = new MddfTarget(srcFile, iLog);
+			return target;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
 		}
-		return xmlDoc;
+
 	}
 
 	/**
+	 * @throws JDOMException
+	 * @throws IOException
 	 * 
 	 */
 	@Test
-	public void testValidataMetadata() {
-		/*
-		 * First run with error-free XML
-		 */
-		initialize("CPE_base_v1.0.xml");
-		super.validateMetadata();
+	public void testNoErrors_2_2_2() throws IOException, JDOMException {
+		MddfTarget target = initialize("Avails_noErrors_v2.2.2.xml");
+		execute(target);
 		try {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
@@ -135,13 +112,55 @@ public class CpeValidatorTest extends CpeValidator {
 			dumpLog();
 			throw e;
 		}
+	}
 
-		/*
-		 * Repeat with error-generating XML:
-		 */
-		iLog.clearLog();
-		initialize("CPE_errors_v1.0.xml");
-		super.validateMetadata();
+	/**
+	 * @throws JDOMException
+	 * @throws IOException
+	 * 
+	 */
+	@Test
+	public void testNoErrors_2_3() throws IOException, JDOMException {
+		MddfTarget target = initialize("Avails_noErrors_v2.3.xml");
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(12, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+
+	/**
+	 * @throws JDOMException
+	 * @throws IOException
+	 * 
+	 */
+	@Test
+	public void testNoErrors_2_4() throws IOException, JDOMException {
+		MddfTarget target = initialize("Avails_noErrors_v2.4.xml");
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+
+	/**
+	 * @throws JDOMException
+	 * @throws IOException
+	 * 
+	 */
+	@Test
+	public void testVolumeErrors() throws IOException, JDOMException {
+		MddfTarget target = initialize("Avails_Volume_error_v2.4.xml");
+		execute(target);
 		try {
 			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
@@ -152,15 +171,18 @@ public class CpeValidatorTest extends CpeValidator {
 		}
 	}
 
+	/**
+	 * @throws JDOMException
+	 * @throws IOException
+	 * 
+	 */
 	@Test
-	public void testAlidExtraction() {
-		initialize("CPE_base_v1.0.xml");
-		List<Element> primaryExpSet = extractAlidMap(curRootEl);
+	public void testWithErrors() throws IOException, JDOMException {
+		MddfTarget target = initialize("Avails_withErrors.xml");
+		execute(target);
 		try {
-			assertNotNull(primaryExpSet);
-			assertEquals(1, primaryExpSet.size());
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
@@ -168,39 +190,21 @@ public class CpeValidatorTest extends CpeValidator {
 		}
 	}
 
-	@Test
-	public void testBuildInfoModel() {
-		initialize("CPE_base_v1.0.xml");
-		try {
-			DefaultTreeModel infoModel = buildInfoModel();
-			assertNotNull(infoModel);
-			ExperienceNode root = (ExperienceNode) infoModel.getRoot();
-			assertNotNull(root);
-			assertEquals(5, root.getDescendents().size());
-		} catch (AssertionFailedError e) {
-			dumpLog();
-			throw e;
-		}
-	}
-
-	protected void execute(MddfTarget target, String profileId) throws IOException, JDOMException {
-		iLog.setPrintToConsole(true);
+	protected void execute(MddfTarget target) throws IOException, JDOMException {
+		iLog.setPrintToConsole(false);
 		iLog.setMinLevel(LogMgmt.LEV_DEBUG);
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + target.getSrcFile().getCanonicalPath(), null,
 				"JUnit");
-		List<String> useCases = null;
+		Map<Object, Pedigree> pedigreeMap = null;
 		try {
-			super.process(target, profileId, useCases);
+			super.process(target, pedigreeMap);
 		} catch (Exception e) {
 			throw new AssertionFailedError();
 		}
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Test completed", null, "JUnit");
-		iLog.setPrintToConsole(false);
-
 	}
 
 	private void dumpLog() {
-		System.out.println("\n\n === FAILED TEST... dumping log ===");
+		System.out.println("\n === FAILED TEST... dumping log ===");
 		iLog.printLog();
 		System.out.println(" === End log dump for FAILED TEST ===");
 	}

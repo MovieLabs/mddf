@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018 MovieLabs
+ * Copyright (c) 2017 MovieLabs
 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -20,38 +20,32 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.common;
+package com.movielabs.mddflib.tests.junit.common;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
+ * JUnit test of the basic functionality of the <tt>CMValidator</tt> class. Test
+ * pass/fail criteria is the detection, and reporting, of the correct number,
+ * type, and location of errors.
+ * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class LanguageTest extends AbstractCmmTester {
+public class CountryTest extends AbstractCmmTester {
 
-	@Test
-	public void testAllLanguageUsage() {
-		initialize("common/CM_withErrors.xml");
-		validateLanguageCodes();
-		assertEquals(5, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+	public CountryTest() {
+		super();
 	}
 
 	@Test
-	public void testElementsWithErrors() {
+	public void testWithRegionErrors() {
 		initialize("common/CM_withErrors.xml");
-		validateLanguageElements();
-		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-	}
-
-	@Test
-	public void testAttributesWithErrors() {
-		initialize("common/CM_withErrors.xml");
-		validateLanguageAttributes();
+		boolean ok = validateCountries();
 		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 	}
 

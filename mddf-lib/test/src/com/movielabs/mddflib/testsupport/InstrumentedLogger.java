@@ -78,12 +78,9 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 		}
 		String key = line + ":" + tag + ":" + level;
 		msgMap.put(key, msg);
+		msgList.add("ILOG:  " + LogMgmt.logLevels[level].toUpperCase() + ":\t line " + line + ": " + msg);
 		if (printToConsole) {
-			msgList.add("ILOG:  " + LogMgmt.logLevels[level].toUpperCase() + ":\t line " + line + ": " + msg);
-//			System.out.println("ILOG:  " + LogMgmt.logLevels[level].toUpperCase() + ":\t line " + line + ": " + msg);
-			if (level == LogMgmt.LEV_FATAL) {
-				System.out.println("DEAD AGAIN");
-			}
+			System.out.println("ILOG:  " + LogMgmt.logLevels[level].toUpperCase() + ":\t line " + line + ": " + msg);
 		}
 	}
 
@@ -211,16 +208,6 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 		// Not used or required for JUnit tests
 
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddflib.logging.LogMgmt#setMinLevel(int)
-	 */
-//	@Override
-//	public void setMinLevel(int level) {
-//		// Not used or required for JUnit tests
-//	}
 
 	/*
 	 * (non-Javadoc)

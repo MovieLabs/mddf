@@ -20,7 +20,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.avails;
+package com.movielabs.mddflib.tests.junit.avails;
 
 import org.jdom2.Document;
 import org.junit.jupiter.api.BeforeAll;
@@ -76,7 +76,7 @@ public class XlsxExportTest {
 	@BeforeEach
 	public void setUp() throws Exception {
 		iLog.clearLog();
-		iLog.setPrintToConsole(true);
+		iLog.setPrintToConsole(false);
 	}
 
 	@Test

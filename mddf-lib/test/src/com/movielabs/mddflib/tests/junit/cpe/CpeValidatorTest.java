@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018 MovieLabs
+ * Copyright (c) 2017 MovieLabs
 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -20,15 +20,19 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.mmc;
+package com.movielabs.mddflib.tests.junit.cpe;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.MissingResourceException;
 
+import javax.swing.tree.DefaultTreeModel;
+
+import org.jdom2.Document;
+import org.jdom2.Element;
 import org.jdom2.JDOMException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,20 +41,21 @@ import org.opentest4j.AssertionFailedError;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.movielabs.mddflib.logging.LogMgmt;
-import com.movielabs.mddflib.manifest.validation.profiles.MMCoreValidator;
+import com.movielabs.mddflib.manifest.validation.CpeValidator;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.xml.MddfTarget;
+import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class MmcValidatorTest extends MMCoreValidator {
+public class CpeValidatorTest extends CpeValidator {
 
-	private static String rsrcPath = "./test/resources/mmc/";
+	private static String rsrcPath = "./test/resources/cpe/";
 	private InstrumentedLogger iLog;
 
-	public MmcValidatorTest() {
+	public CpeValidatorTest() {
 		super(new InstrumentedLogger());
 		iLog = (InstrumentedLogger) loggingMgr;
 	}
@@ -74,21 +79,50 @@ public class MmcValidatorTest extends MMCoreValidator {
 		rootNS = null;
 		iLog.clearLog();
 		iLog.setPrintToConsole(false);
-	}
-
-	@AfterEach
-	public void tearDown() {
+		iLog.setMinLevel(iLog.LEV_DEBUG);
 	}
 
 	/**
 	 * @param string
 	 */
-	protected MddfTarget initialize(String testFileName) {
-		iLog.setPrintToConsole(true);
-		iLog.setMinLevel(iLog.LEV_DEBUG);
-		iLog.setInfoIncluded(true);
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + testFileName, null, "JUnit");
+	protected void initialize(String testFileName) {
+		try {
+			setUp();
+		} catch (Exception e) {
+			assertNotNull(curRootEl);
+			return;
+		}
+		Document xmlDoc = loadTestArtifact(testFileName);
+		if (xmlDoc == null) {
+			// forces a FAILED result
+			assertNotNull(curRootEl);
+			return;
+		}
+		curRootEl = xmlDoc.getRootElement();
+		String schemaVer = identifyXsdVersion(curRootEl);
+		setManifestVersion(schemaVer);
+		rootNS = manifestNSpace;
+	}
 
+	private Document loadTestArtifact(String fileName) {
+		String srcFilePath = rsrcPath + fileName;
+		srcFile = new File(srcFilePath);
+		if (!srcFile.canRead()) {
+			return null;
+		}
+		Document xmlDoc;
+		try {
+			xmlDoc = XmlIngester.getAsXml(srcFile);
+		} catch (Exception e) {
+			return null;
+		}
+		return xmlDoc;
+	}
+
+	/**
+	 * @param string
+	 */
+	protected MddfTarget getTarget(String testFileName) {
 		String srcFilePath = rsrcPath + testFileName;
 		srcFile = new File(srcFilePath);
 		try {
@@ -101,41 +135,69 @@ public class MmcValidatorTest extends MMCoreValidator {
 		}
 
 	}
- 
 
 	/**
-	 * @throws JDOMException
-	 * @throws IOException
 	 * 
 	 */
-	@Test
-	public void testV1_noErrors() throws IOException, JDOMException {
-		MddfTarget target = initialize("MMCore_v1_noErr.xml");
-		execute(target, "MMC-1", true);
+	//@Test
+	public void testNoErrors() throws Exception  {
+		/*
+		 * First run with error-free XML
+		 */
+		MddfTarget target = getTarget("CPE_base_v1.0.xml"); 
 		try {
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			execute(target, "IP-0");
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
 			throw e;
 		}
 	}
+	
+	
 
-	/**
-	 * @throws JDOMException
-	 * @throws IOException
-	 * 
-	 */
-	@Test
-	public void testV1_Errors() throws IOException, JDOMException {
-		MddfTarget target = initialize("MMCore_v1_ERRORS.xml");
-		execute(target, "MMC-1", true);
+
+	//@Test
+	public void testForErrors() throws Exception {
+		MddfTarget target = getTarget("CPE_errors_v1.0.xml");
 		try {
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-			assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			execute(target, "IP-0");
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+
+	}
+
+	@Test
+	public void testRefactoring() throws Exception {
+		MddfTarget target = getTarget("CPE_error_test_2_v1.0.xml");
+		try {
+			execute(target, "IP-0");
+			assertEquals(13, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+
+	}
+
+	@Test
+	public void testAlidExtraction() {
+		initialize("CPE_base_v1.0.xml");
+		List<Element> primaryExpSet = extractAlidMap(curRootEl);
+		try {
+			assertNotNull(primaryExpSet);
+			assertEquals(1, primaryExpSet.size());
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
@@ -143,79 +205,38 @@ public class MmcValidatorTest extends MMCoreValidator {
 		}
 	}
 
-	/**
-	 * @throws JDOMException
-	 * @throws IOException
-	 * 
-	 */
 	@Test
-	public void test_TV_Series() throws IOException, JDOMException {
-		MddfTarget target = initialize("TV/VEEP_Series_manifest.xml");
-		execute(target, "MMC-1", true);
+	public void testBuildInfoModel() {
+		initialize("CPE_base_v1.0.xml");
 		try {
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+			DefaultTreeModel infoModel = buildInfoModel();
+			assertNotNull(infoModel);
+			ExperienceNode root = (ExperienceNode) infoModel.getRoot();
+			assertNotNull(root);
+			assertEquals(5, root.getDescendents().size());
 		} catch (AssertionFailedError e) {
 			dumpLog();
 			throw e;
 		}
 	}
 
-	/**
-	 * @throws JDOMException
-	 * @throws IOException
-	 * 
-	 */
-	@Test
-	public void test_TV_Season() throws IOException, JDOMException {
-		MddfTarget target = initialize("TV/VEEP_Season5_manifest.xml");
-		execute(target, "MMC-1", true);
-		try {
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
-		} catch (AssertionFailedError e) {
-			dumpLog();
-			throw e;
-		}
-	}
-
-	/**
-	 * @throws JDOMException
-	 * @throws IOException
-	 * 
-	 */
-	@Test
-	public void test_TV_Episode() throws IOException, JDOMException {
-		MddfTarget target = initialize("TV/VEEP_Season5_E5_manifest.xml");
-		execute(target, "MMC-1", true);
-		try {
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE)); 
-		} catch (AssertionFailedError e) {
-			dumpLog();
-			throw e;
-		}
-	}
-
-	protected void execute(MddfTarget target, String profile, boolean logToConsole) throws IOException, JDOMException {
-		iLog.setPrintToConsole(logToConsole);
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Testing with file " + target.getSrcFile().getCanonicalPath(), null,
+	protected void execute(MddfTarget target, String profileId) throws IOException, JDOMException {
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + target.getSrcFile().getCanonicalPath(), null,
 				"JUnit");
-		super.process(target, profile, null);
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "===== Test completed =====", null, "JUnit");
+		try {
+			super.process(target, profileId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AssertionFailedError();
+		}
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Test completed", null, "JUnit");
 		iLog.setPrintToConsole(false);
+
 	}
 
 	private void dumpLog() {
 		System.out.println("\n\n === FAILED TEST... dumping log ===");
 		iLog.printLog();
 		System.out.println(" === End log dump for FAILED TEST ===");
-
 	}
 }

@@ -20,7 +20,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.manifest;
+package com.movielabs.mddflib.tests.junit.manifest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -77,7 +77,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 		curRootEl = null;
 		rootNS = null;
 		iLog.clearLog();
-		iLog.setPrintToConsole(true);
+		iLog.setPrintToConsole(false);
 		iLog.setMinLevel(iLog.LEV_DEBUG);
 	}
 
@@ -278,7 +278,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 	}
 
 	protected void execute(MddfTarget target) throws IOException, JDOMException {
-		iLog.setPrintToConsole(true);
+		iLog.setPrintToConsole(false);
 		iLog.setMinLevel(iLog.LEV_DEBUG);
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + target.getSrcFile().getCanonicalPath(), null,
 				"JUnit");

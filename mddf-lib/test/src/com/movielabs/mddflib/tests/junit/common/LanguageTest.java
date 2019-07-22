@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 MovieLabs
+ * Copyright (c) 2018 MovieLabs
 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -20,35 +20,39 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.common;
+package com.movielabs.mddflib.tests.junit.common;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
- * JUnit test of the basic functionality of the <tt>CMValidator</tt> class. Test
- * pass/fail criteria is the detection, and reporting, of the correct number,
- * type, and location of errors.
- * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class CurrencyTest extends AbstractCmmTester {
+public class LanguageTest extends AbstractCmmTester {
 
-	public CurrencyTest() {
-		super();
+	@Test
+	public void testAllLanguageUsage() {
+		initialize("common/CM_withErrors.xml");
+		validateLanguageCodes();
+		assertEquals(5, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 	}
 
 	@Test
-	public void testWithRegionErrors() {
-		initialize("common/CM_Currency-errors.xml");
-		iLog.setPrintToConsole(true);
-		validateCurrencyCodes();
-		iLog.setPrintToConsole(false);
-		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+	public void testElementsWithErrors() {
+		initialize("common/CM_withErrors.xml");
+		validateLanguageElements();
+		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+	}
+
+	@Test
+	public void testAttributesWithErrors() {
+		initialize("common/CM_withErrors.xml");
+		validateLanguageAttributes();
+		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 	}
 
 }

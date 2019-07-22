@@ -20,7 +20,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.common;
+package com.movielabs.mddflib.tests.junit.common;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,17 +36,19 @@ import com.movielabs.mddflib.logging.LogMgmt;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class CountryTest extends AbstractCmmTester {
+public class CurrencyTest extends AbstractCmmTester {
 
-	public CountryTest() {
+	public CurrencyTest() {
 		super();
 	}
 
 	@Test
 	public void testWithRegionErrors() {
-		initialize("common/CM_withErrors.xml");
-		boolean ok = validateCountries();
-		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		initialize("common/CM_Currency-errors.xml");
+		iLog.setPrintToConsole(false);
+		validateCurrencyCodes();
+		iLog.setPrintToConsole(false);
+		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 	}
 
 }

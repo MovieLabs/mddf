@@ -20,7 +20,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.common;
+package com.movielabs.mddflib.tests.junit.common;
 
 import java.io.File;
 import java.io.IOException;
@@ -131,7 +131,7 @@ public abstract class AbstractCmmTester extends CMValidator {
 		if (jsonFile != null) {
 			jsonDefs = loadJSON(jsonFile);
 		}
-		iLog.setPrintToConsole(true);
+		iLog.setPrintToConsole(false);
 		iLog.setMinLevel(iLog.LEV_DEBUG);
 		iLog.setInfoIncluded(true);
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + mddfFile, null, "JUnit");

@@ -20,7 +20,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.util.xml;
+package com.movielabs.mddflib.tests.junit.util.xml;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -260,7 +260,7 @@ public class StructureValidationTest extends StructureValidation {
 		if (jsonFile != null) {
 			structDefs = loadJSON(jsonFile);
 		}
-		iLog.setPrintToConsole(true);
+		iLog.setPrintToConsole(false);
 		iLog.setMinLevel(iLog.LEV_DEBUG);
 		iLog.setInfoIncluded(true);
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + testFile, null, "JUnit");

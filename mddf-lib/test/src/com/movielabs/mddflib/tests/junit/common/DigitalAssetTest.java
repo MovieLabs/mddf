@@ -20,59 +20,47 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.tests.common;
+package com.movielabs.mddflib.tests.junit.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.XmlIngester;
+
+import net.sf.json.JSONObject;
 
 /**
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class RatingsTest extends AbstractCmmTester {
-	@Test
-	public void testWithErrors() {
-		initialize("common/CM_withErrors.xml");
-		validateRatings();
-		assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-	}
+public class DigitalAssetTest extends AbstractCmmTester {
 
 	@Test
-	public void availsNoErrors() {
-		initialize("avails/Avails_noErrors_v2.2.2.xml"); 
-		validateRatings();
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-	}
-
-	@Test
-	public void availsWithErrors() {
-		initialize("avails/Avails_withErrors.xml");
-		validateRatings();
-		assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-	}
-
-	@Test
-	public void manifestNoErrors() {
-		initialize("manifest/MMM_v1.7_base.xml");
-		validateRatings();
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-	}
-
-	@Test
-	public void manifestWithErrors() {
-		initialize("manifest/MMM_v1.7_errors.xml");
-//		iLog.setPrintToConsole(true);
-		validateRatings();
-//		iLog.setPrintToConsole(false);
-		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-		assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+	public void testWithNoErrors() {
+		initialize("manifest/Manifest_v1.8_A.xml");
+		JSONObject structDefs = XmlIngester.getMddfResource("vocab_digAsset", "2.7");
+		String pre = manifestNSpace.getPrefix();
+		JSONObject rqmtSet = structDefs.getJSONObject("Audio");
+		validateDigitalAsset(".//" + pre + ":Audio", curRootEl, rqmtSet);
+		rqmtSet = structDefs.getJSONObject("Video");
+		validateDigitalAsset(".//" + pre + ":Video", curRootEl, rqmtSet);
+		rqmtSet = structDefs.getJSONObject("Subtitle");
+		validateDigitalAsset(".//" + pre + ":Subtitle", curRootEl, rqmtSet);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+		} catch (AssertionFailedError e) {
+			System.out.println("\n === FAILED TEST... dumping log ===");
+			iLog.printLog();
+			System.out.println(" === End log dump for FAILED TEST ===");
+			throw e;
+		}
+//		System.out.println("\n === DEBUGGING ... dumping log ===");
+//		iLog.printLog();
+//		System.out.println(" === End log dump ===");
+	
 	}
 
 }
