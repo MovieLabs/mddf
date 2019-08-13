@@ -204,13 +204,13 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		tableView.clearLog();
 		this.invalidate();
 		this.repaint();
+		System.gc();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event
+	 * @see javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event
 	 * .TreeSelectionEvent)
 	 */
 	@Override
@@ -311,7 +311,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		}
 
 		private void doPop(MouseEvent e) {
-			LogEntryNode logEntry = tableView.getLogEntryAt(e); 
+			LogEntryNode logEntry = tableView.getLogEntryAt(e);
 			MsgLogPopup menu = new MsgLogPopup(logPanel, logEntry);
 			menu.show(e.getComponent(), e.getX(), e.getY());
 		}
@@ -353,8 +353,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.movielabs.mddf.util.UiLogger#saveAs(java.io.File,
-	 * java.lang.String)
+	 * @see com.movielabs.mddf.util.UiLogger#saveAs(java.io.File, java.lang.String)
 	 */
 	@Override
 	public void saveAs(File outFile, String format) throws IOException {
@@ -379,8 +378,8 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 				lineNum = ((Located) target).getLine();
 			} else if (target instanceof Cell) {
 				/*
-				 * Add 1 to line number for display purposes. Code is zero-based
-				 * index but Excel spreadsheet displays using 1 as the 1st row.
+				 * Add 1 to line number for display purposes. Code is zero-based index but Excel
+				 * spreadsheet displays using 1 as the 1st row.
 				 */
 				lineNum = ((Cell) target).getRowIndex() + 1;
 				/* Prefix an 'explanation' with column ID (e.g., 'X', 'AA') */
@@ -391,6 +390,8 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 				} else {
 					explanation = prefix + ": " + explanation;
 				}
+			} else if (target instanceof Integer) {
+				lineNum = ((Integer) target).intValue();
 			}
 		}
 		log(level, tag, msg, curInputFile, lineNum, moduleId, explanation, srcRef);
@@ -412,8 +413,8 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.movielabs.mddflib.logging.LogMgmt#log(int, int,
-	 * java.lang.String, java.io.File, java.lang.String)
+	 * @see com.movielabs.mddflib.logging.LogMgmt#log(int, int, java.lang.String,
+	 * java.io.File, java.lang.String)
 	 */
 	@Override
 	public void log(int level, int tag, String msg, File file, String moduleId) {
@@ -423,8 +424,8 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.movielabs.mddflib.logging.LogMgmt#log(int, int,
-	 * java.lang.String, java.io.File, int, java.lang.String, java.lang.String,
+	 * @see com.movielabs.mddflib.logging.LogMgmt#log(int, int, java.lang.String,
+	 * java.io.File, int, java.lang.String, java.lang.String,
 	 * com.movielabs.mddflib.logging.LogReference)
 	 */
 	@Override
@@ -437,7 +438,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 			LogReference srcRef) {
 
 		if (level == LogMgmt.LEV_FATAL) {
-			String consoleMsg = "================\nFATAL Error:\n"+msg+"\n"+tooltip+"\n"+"================";
+			String consoleMsg = "================\nFATAL Error:\n" + msg + "\n" + tooltip + "\n" + "================";
 			System.out.println(consoleMsg);
 		}
 		if (level < minLevel) {
@@ -487,8 +488,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	}
 
 	/**
-	 * @param infoIncluded
-	 *            the infoIncluded to set
+	 * @param infoIncluded the infoIncluded to set
 	 */
 	public void setInfoIncluded(boolean infoIncluded) {
 		this.infoIncluded = infoIncluded;
