@@ -140,7 +140,7 @@ public class RowToXmlHelperV1_7_3 extends RowToXmlHelperV1_7_2 {
 			for (String reqLangCode : reqLanguages) {
 				String errMsg = "Required fulfillment language '" + reqLangCode + "' is not an AssetLanguage";
 				logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null,
-						XmlBuilder.moduleId);
+						DefaultXmlBuilder.moduleId);
 			}
 		}
 	}
@@ -221,7 +221,7 @@ public class RowToXmlHelperV1_7_3 extends RowToXmlHelperV1_7_2 {
 			String errMsg = "Invalid use of '" + lagKey + "'; Missing " + anchorKey;
 			String details = lagKey + " is an offest from a " + anchorKey + ". The " + anchorKey
 					+ " value, however, was not specified";
-			logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null, XmlBuilder.moduleId);
+			logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null, DefaultXmlBuilder.moduleId);
 			return condEl;
 		}
 		// Have a base value but is it the right type?
@@ -230,7 +230,7 @@ public class RowToXmlHelperV1_7_3 extends RowToXmlHelperV1_7_2 {
 			String errMsg = "Invalid use of '" + lagKey + "'; Base value must be conditional ";
 			String details = lagKey + " is an offest from a " + anchorKey + ". The " + childName
 					+ " value, however, was specified as an absolute date/time";
-			logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null, XmlBuilder.moduleId);
+			logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null, DefaultXmlBuilder.moduleId);
 			return condEl;
 		}
 		// All checks passed so we can add the attribute

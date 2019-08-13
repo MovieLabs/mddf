@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 MovieLabs
+ * Copyright (c) 2019 MovieLabs
 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -20,158 +20,169 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.movielabs.mddflib.avails.xml;
+package com.movielabs.mddflib.avails.xml.streaming;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 
+import com.movielabs.mddflib.avails.xml.Pedigree;
+import com.movielabs.mddflib.avails.xml.RowDataSrc;
+import com.movielabs.mddflib.avails.xml.DefaultXmlBuilder;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
- * Create XML document from a v1.7 or v1.7.2 Excel spreadsheet. The XML
- * generated will be based on v2.2 of the Avails XSD and reflects a "best
- * effort" in that there is no guarantee that it is valid.
- * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class RowToXmlHelperV1_7 extends AbstractRowHelper {
+public abstract class StreamingRowIngester implements RowDataSrc {
 
-	static final String MISSING = "--FUBAR (missing)";
+	protected LogMgmt logger;
+	protected StreamingXmlBuilder builder;
+	protected Pedigree workTypePedigree;
+	protected String workType;
+	protected String[] row;
+	protected Integer rowNum;
 
-	/**
-	 * @param logger
-	 * @param fields
-	 */
-	RowToXmlHelperV1_7(AvailsSheet sheet, Row row, LogMgmt logger) {
-		super(sheet, row, logger);
+	StreamingRowIngester(String[] row, int rowNum, StreamingXmlBuilder builder, LogMgmt logger) {
+		super();
+		this.row = row;
+		this.rowNum = rowNum;
+		this.logger = logger;
+		this.builder = builder;
+		makeAvail();
 	}
 
-	protected void makeAvail(DefaultXmlBuilder xb) {
-		this.xb = xb;
-		Element avail = xb.getAvailElement(this);
+	private void makeAvail() {
+		/*
+		 * Need to save the current workType for use in Transaction/Terms
+		 */
+		workTypePedigree = getPedigreedData("AvailAsset/WorkType");
+		this.workType = workTypePedigree.getRawValue();
+
+		Element avail = builder.getAvailElement(this);
 
 		/*
 		 * Assets can be defined redundantly on multiple lines so the XmlBuilder is used
 		 * to coordinate and filter out duplicates.
 		 */
-		xb.createAsset(this);
+		builder.createAsset(this);
 
 		Element e = createTransaction();
 		// Transaction
 		if (e != null) {
-			xb.addTransaction(avail, e);
+			builder.addTransaction(avail, e);
 		}
 
 		createSharedEntitlements();
 	}
 
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddflib.avails.xml.AbstractRowHelper#mDisposition()
-	 */
-	protected Element mDisposition() {
-		Element disp = new Element("Disposition", xb.getAvailsNSpace());
-		process(disp, "EntryType", xb.getAvailsNSpace(), "Disposition/EntryType");
-		return disp;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddflib.avails.xml.AbstractRowHelper#mPublisher(java.lang.
-	 * String, java.lang.String)
-	 */
-	protected Element mPublisher(String elName, String colKey) {
-		Element pubEl = new Element(elName, xb.getAvailsNSpace());
-
-		process(pubEl, "DisplayName", xb.getMdNSpace(), colKey);
-
-		/*
-		 * if ContactInfo is mandatory we can't get this info from the spreadsheet
-		 */
-		if (xb.isRequired("ContactInfo", "mdmec")) {
-			Element e = new Element("ContactInfo", xb.getMdMecNSpace());
-			Element e2 = new Element("Name", xb.getMdNSpace());
-			e.addContent(e2);
-			e2 = new Element("PrimaryEmail", xb.getMdNSpace());
-			e.addContent(e2);
-			pubEl.addContent(e);
-		}
-		return pubEl;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddflib.avails.xml.AbstractRowHelper#buildAsset()
-	 */
-	protected Element buildAsset() {
-		Namespace availNS = xb.getAvailsNSpace();
-		Element assetEl = new Element("Asset", availNS);
-		Element wtEl = new Element("WorkType", availNS);
-		wtEl.setText(workType);
-		xb.addToPedigree(wtEl, workTypePedigree);
-		assetEl.addContent(wtEl);
-		/*
-		 * Source key for 'contentID' depends (unfortunately) on the WorkType of the
-		 * Asset.
-		 */
-		String colKey = locateContentID(workType);
-		Pedigree pg = getPedigreedData(colKey);
-		if (isSpecified(pg)) {
-			String contentID = pg.getRawValue();
-			Attribute attEl = new Attribute("contentID", contentID);
-			assetEl.setAttribute(attEl);
-			xb.addToPedigree(attEl, pg);
-			xb.addToPedigree(assetEl, pg);
-		}
-		xb.createAssetMetadata(assetEl, workType, this);
-
-		pg = getPedigreedData("Avail/BundledALIDs");
-		if (isSpecified(pg)) {
-			String[] alidList = pg.getRawValue().split(";");
-			for (int i = 0; i < alidList.length; i++) {
-				Element bAssetEl = new Element("BundledAsset", availNS);
-				xb.addToPedigree(bAssetEl, pg);
-				Element bAlidEl = new Element("BundledALID", availNS);
-				bAlidEl.setText(alidList[i]);
-				xb.addToPedigree(bAlidEl, pg);
-				bAssetEl.addContent(bAlidEl);
-				assetEl.addContent(bAssetEl);
-			}
-		}
-		return assetEl;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.movielabs.mddflib.avails.xml.AbstractRowHelper#locateContentID(java.lang.
-	 * String)
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#getPedigreedData(java.lang.String)
 	 */
 	@Override
-	protected String locateContentID(String workType) {
-		String cidPrefix = "";
-		switch (workType) {
-		case "Series":
-		case "Season":
-		case "Episode":
-			cidPrefix = workType;
-			break;
-		default:
+	public Pedigree getPedigreedData(String colKey) {
+		int cellIdx = builder.getColumnIdx(colKey);
+		if (cellIdx < 0) {
+			return null;
 		}
-		String colKey = "AvailAsset/" + cidPrefix + "ContentID";
-		return colKey;
+		String value = row[cellIdx];
+		if (value == null) {
+			value = "";
+		}
+		// TODO: trap use of formulas???
+		Pedigree ped = new Pedigree(rowNum, value);
+
+		return ped;
 	}
+
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#getData(java.lang.String)
+	 */
+	@Override
+	public String getData(String colKey) {
+		int cellIdx = builder.getColumnIdx(colKey);
+		if (cellIdx < 0) {
+			return null;
+		} else {
+			String value = row[cellIdx];
+			if (value == null) {
+				value = "";
+			}
+			return value;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#process(org.jdom2.Element, java.lang.String, org.jdom2.Namespace, java.lang.String)
+	 */
+	@Override
+	public Element process(Element parentEl, String childName, Namespace ns, String cellKey) {
+		Element[] elementList = process(parentEl, childName, ns, cellKey, null);
+		if (elementList != null) {
+			return elementList[0];
+		} else {
+			return null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#process(org.jdom2.Element, java.lang.String, org.jdom2.Namespace, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Element[] process(Element parentEl, String childName, Namespace ns, String cellKey, String separator) {
+		Pedigree pg = getPedigreedData(cellKey);
+		if (pg == null) {
+			return null;
+		}
+		String value = pg.getRawValue();
+		if (Pedigree.isSpecified(value) || builder.isRequired(childName, ns.getPrefix())) {
+			String[] valueSet;
+			if (separator == null) {
+				valueSet = new String[1];
+				valueSet[0] = value;
+			} else {
+				valueSet = value.split(separator);
+			}
+			Element[] elementList = new Element[valueSet.length];
+			for (int i = 0; i < valueSet.length; i++) {
+				Element childEl = builder.mGenericElement(childName, valueSet[i], ns);
+				parentEl.addContent(childEl);
+				builder.addToPedigree(childEl, pg);
+				elementList[i] = childEl;
+			}
+			return elementList;
+		} else {
+			return null;
+		}
+	}
+
+	abstract protected Element mDisposition();
+
+	/**
+	 * Create an <tt>mdmec:Publisher-type</tt> XML element with a md:DisplayName
+	 * element child, and populate the latter with the DisplayName
+	 * 
+	 * @param elName the parent element to be created (i.e., Licensor or
+	 *               ServiceProvider)
+	 * @param colKey the name to be held in the DisplayName child node
+	 * @return the created element
+	 */
+	abstract protected Element mPublisher(String elName, String colKey);
+
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#getRowNumber()
+	 */
+	@Override
+	public int getRowNumber() {
+		return rowNum.intValue();
+	}
+
+	/**
+	 * @return
+	 */
+	abstract protected Element buildAsset();
 
 	/**
 	 * Create a Transaction Element. While the Avail XSD allows multiple
@@ -181,13 +192,13 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 	 * @return
 	 */
 	protected Element createTransaction() {
-		Element transactionEl = new Element("Transaction", xb.getAvailsNSpace());
+		Element transactionEl = new Element("Transaction", builder.getAvailsNSpace());
 		/*
 		 * TransactionID is OPTIONAL. For mystical reasons lost in the mists of time, it
 		 * come from the 'AvailID' column.
 		 */
 		Pedigree pg = getPedigreedData("Avail/AvailID");
-		if (this.isSpecified(pg)) {
+		if (Pedigree.isSpecified(pg)) {
 			transactionEl.setAttribute("TransactionID", pg.getRawValue());
 		}
 		processTransactionBody(transactionEl);
@@ -201,26 +212,27 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 	 */
 	protected void processTransactionBody(Element transactionEl) {
 		String prefix = "AvailTrans/";
-		process(transactionEl, "LicenseType", xb.getAvailsNSpace(), prefix + "LicenseType");
-		process(transactionEl, "Description", xb.getAvailsNSpace(), prefix + "Description");
-		addRegion(transactionEl, "Territory", xb.getAvailsNSpace(), prefix + "Territory");
+		process(transactionEl, "LicenseType", builder.getAvailsNSpace(), prefix + "LicenseType");
+		process(transactionEl, "Description", builder.getAvailsNSpace(), prefix + "Description");
+		addRegion(transactionEl, "Territory", builder.getAvailsNSpace(), prefix + "Territory");
 
 		// Start or StartCondition
-		processCondition(transactionEl, "Start", xb.getAvailsNSpace(), prefix + "Start");
+		processCondition(transactionEl, "Start", builder.getAvailsNSpace(), prefix + "Start");
 		// End or EndCondition
-		processCondition(transactionEl, "End", xb.getAvailsNSpace(), prefix + "End");
+		processCondition(transactionEl, "End", builder.getAvailsNSpace(), prefix + "End");
 
-		process(transactionEl, "AllowedLanguage", xb.getAvailsNSpace(), prefix + "AllowedLanguages", ",");
-		process(transactionEl, "AssetLanguage", xb.getAvailsNSpace(), prefix + "AssetLanguage");
-		process(transactionEl, "HoldbackLanguage", xb.getAvailsNSpace(), prefix + "HoldbackLanguage", ",");
-		process(transactionEl, "LicenseRightsDescription", xb.getAvailsNSpace(), prefix + "LicenseRightsDescription");
-		process(transactionEl, "FormatProfile", xb.getAvailsNSpace(), prefix + "FormatProfile");
-		process(transactionEl, "ContractID", xb.getAvailsNSpace(), prefix + "ContractID");
-		process(transactionEl, "ReportingID", xb.getAvailsNSpace(), prefix + "ReportingID");
+		process(transactionEl, "AllowedLanguage", builder.getAvailsNSpace(), prefix + "AllowedLanguages", ",");
+		process(transactionEl, "AssetLanguage", builder.getAvailsNSpace(), prefix + "AssetLanguage");
+		process(transactionEl, "HoldbackLanguage", builder.getAvailsNSpace(), prefix + "HoldbackLanguage", ",");
+		process(transactionEl, "LicenseRightsDescription", builder.getAvailsNSpace(),
+				prefix + "LicenseRightsDescription");
+		process(transactionEl, "FormatProfile", builder.getAvailsNSpace(), prefix + "FormatProfile");
+		process(transactionEl, "ContractID", builder.getAvailsNSpace(), prefix + "ContractID");
+		process(transactionEl, "ReportingID", builder.getAvailsNSpace(), prefix + "ReportingID");
 
 		addAllTerms(transactionEl);
 
-		process(transactionEl, "OtherInstructions", xb.getAvailsNSpace(), prefix + "OtherInstructions");
+		process(transactionEl, "OtherInstructions", builder.getAvailsNSpace(), prefix + "OtherInstructions");
 
 	}
 
@@ -249,9 +261,9 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		Pedigree pg = getPedigreedData(prefix + "PriceType");
 
 		pg = filterDeprecated(pg);
-		if (isSpecified(pg)) {
+		if (Pedigree.isSpecified(pg)) {
 			String tName = pg.getRawValue();
-			Element termEl = new Element("Term", xb.getAvailsNSpace());
+			Element termEl = new Element("Term", builder.getAvailsNSpace());
 			/*
 			 * Any term may be prefixed with 'TPR-' to indicate temp price reduction
 			 */
@@ -261,7 +273,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 			case "Category":
 			case "LicenseFee":
 			case "NA":
-				process(termEl, "Text", xb.getAvailsNSpace(), prefix + "PriceValue");
+				process(termEl, "Text", builder.getAvailsNSpace(), prefix + "PriceValue");
 				break;
 			case "WSP":
 				if (workType.equals("Episode")) {
@@ -274,12 +286,12 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 			case "SRP":
 			case "DMRP":
 			case "SMRP":
-				Element moneyEl = process(termEl, "Money", xb.getAvailsNSpace(), prefix + "PriceValue");
+				Element moneyEl = process(termEl, "Money", builder.getAvailsNSpace(), prefix + "PriceValue");
 				Pedigree curPGee = getPedigreedData(prefix + "PriceCurrency");
-				if (moneyEl != null && isSpecified(curPGee)) {
+				if (moneyEl != null && Pedigree.isSpecified(curPGee)) {
 					Attribute curAt = new Attribute("currency", curPGee.getRawValue());
 					moneyEl.setAttribute(curAt);
-					xb.addToPedigree(curAt, curPGee);
+					builder.addToPedigree(curAt, curPGee);
 				}
 				break;
 			case "Season Only":
@@ -292,7 +304,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 
 			}
 			termEl.setAttribute("termName", tName);
-			xb.addToPedigree(termEl, pg);
+			builder.addToPedigree(termEl, pg);
 			transactionEl.addContent(termEl);
 		}
 
@@ -329,13 +341,13 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 
 	protected Element addTerm(Element parent, String src, String termName, String subElName) {
 		Pedigree pg = getPedigreedData(src);
-		if ((pg != null) && (isSpecified(pg.getRawValue()))) {
-			Element termEl = new Element("Term", xb.getAvailsNSpace());
+		if ((pg != null) && (Pedigree.isSpecified(pg.getRawValue()))) {
+			Element termEl = new Element("Term", builder.getAvailsNSpace());
 			termEl.setAttribute("termName", termName);
-			Element childEl = xb.mGenericElement(subElName, pg.getRawValue(), xb.getAvailsNSpace());
+			Element childEl = builder.mGenericElement(subElName, pg.getRawValue(), builder.getAvailsNSpace());
 			termEl.addContent(childEl);
-			xb.addToPedigree(childEl, pg);
-			xb.addToPedigree(termEl, pg);
+			builder.addToPedigree(childEl, pg);
+			builder.addToPedigree(termEl, pg);
 			parent.addContent(termEl);
 			return termEl;
 		} else {
@@ -357,11 +369,11 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 
 	protected void addEcosystem(String ecosysId, String colKey) {
 		Pedigree pg = getPedigreedData(colKey);
-		if (this.isSpecified(pg)) {
-			Element eidEl = new Element("EcosystemID", xb.getAvailsNSpace());
+		if (Pedigree.isSpecified(pg)) {
+			Element eidEl = new Element("EcosystemID", builder.getAvailsNSpace());
 			eidEl.setText(pg.getRawValue());
-			Element avail = xb.getAvailElement(this);
-			xb.addEntitlement(avail, ecosysId, eidEl);
+			Element avail = builder.getAvailElement(this);
+			builder.addEntitlement(avail, ecosysId, eidEl);
 		}
 	}
 
@@ -373,7 +385,7 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 		Pedigree pg = getPedigreedData(cellKey);
 		String rawValue = pg.getRawValue();
 		Element countryEl = null;
-		if (isSpecified(rawValue)) {
+		if (Pedigree.isSpecified(rawValue)) {
 			String[] valueSet;
 			if (separator == null) {
 				valueSet = new String[1];
@@ -385,22 +397,24 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 				Element regionEl = new Element(regionType, ns);
 				String code = valueSet[i].trim();
 				if (code.length() > 2) {
-					countryEl = xb.mGenericElement("countryRegion", code, xb.getMdNSpace());
+					countryEl = builder.mGenericElement("countryRegion", code, builder.getMdNSpace());
 					// process(regionEl, "countryRegion", xb.getMdNSpace(),
 					// cellKey);
 				} else {
-					countryEl = xb.mGenericElement("country", code, xb.getMdNSpace());
+					countryEl = builder.mGenericElement("country", code, builder.getMdNSpace());
 					// countryEl = process(regionEl, "country",
 					// xb.getMdNSpace(), cellKey);
 				}
 				if (countryEl != null) {
 					regionEl.addContent(countryEl);
 					parentEl.addContent(regionEl);
-					xb.addToPedigree(countryEl, pg);
+					builder.addToPedigree(countryEl, pg);
 				}
 			}
 		}
 	}
+	
+
 
 	/**
 	 * Process start or end conditions for a Transaction. The <tt>cellKey</tt> is
@@ -426,38 +440,19 @@ public class RowToXmlHelperV1_7 extends AbstractRowHelper {
 	protected Element processCondition(Element parentEl, String childName, Namespace ns, String cellKey) {
 		Pedigree pg = getPedigreedData(cellKey);
 		String value = pg.getRawValue();
-		if (isSpecified(value)) {
+		if (Pedigree.isSpecified(value)) {
 			Element condEl = null;
 			// does it start with 'yyyy' ?
 			if (value.matches("^[\\d]{4}-.*")) {
-				condEl = xb.mGenericElement(childName, value, ns);
+				condEl = builder.mGenericElement(childName, value, ns);
 			} else {
-				condEl = xb.mGenericElement(childName + "Condition", value, ns);
+				condEl = builder.mGenericElement(childName + "Condition", value, ns);
 			}
 			parentEl.addContent(condEl);
-			xb.addToPedigree(condEl, pg);
+			builder.addToPedigree(condEl, pg);
 			return condEl;
 		} else {
 			return null;
-		}
-	}
-
-	/**
-	 * @param colKey
-	 * @return
-	 */
-	public String getData(String colKey) {
-		int cellIdx = sheet.getColumnIdx(colKey);
-		if (cellIdx < 0) {
-			return null;
-		} else {
-			Cell cell = row.getCell(cellIdx);
-			usesFormula(cell);
-			String value = dataF.formatCellValue(cell);
-			if (value == null) {
-				value = "";
-			}
-			return value;
 		}
 	}
 

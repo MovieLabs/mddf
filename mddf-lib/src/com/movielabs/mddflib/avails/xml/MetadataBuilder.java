@@ -179,8 +179,8 @@ public class MetadataBuilder {
 	protected String logMsgSrcId = "MetadataBuilder";
 	protected XPathFactory xpfac = XPathFactory.instance();
 
-	private XmlBuilder xmlBldr;
-	private AbstractRowHelper row;
+	private AbstractXmlBuilder xmlBldr;
+	private RowDataSrc row;
 	private JSONObject mapping4Version;
 	private JSONObject mapping4type;
 
@@ -212,7 +212,7 @@ public class MetadataBuilder {
 	 * @param logger
 	 * @param xmlBldr
 	 */
-	public MetadataBuilder(LogMgmt logger, XmlBuilder xmlBldr) {
+	public MetadataBuilder(LogMgmt logger, AbstractXmlBuilder xmlBldr) {
 		this.logger = logger;
 		this.xmlBldr = xmlBldr;
 		String schemaVer = "V" + xmlBldr.getVersion();
@@ -236,7 +236,7 @@ public class MetadataBuilder {
 	 * @param assetWorkType
 	 * @return a metadata <tt>Element</tt>
 	 */
-	public Element appendMData(AbstractRowHelper row, String assetWorkType) {
+	public Element appendMData(RowDataSrc row, String assetWorkType) {
 		this.row = row;
 		/*
 		 * Need to determine what metadata structure to use based on the
@@ -498,10 +498,10 @@ public class MetadataBuilder {
 		idValue = srcId[srcId.length - 1] + ":" + idValue;
 		xmlBldr.addToPedigree(altIdEl, pg);
 
-		Element nsEl = row.mGenericElement("Namespace", namespace, xmlBldr.getMdNSpace());
+		Element nsEl = xmlBldr.mGenericElement("Namespace", namespace, xmlBldr.getMdNSpace());
 		altIdEl.addContent(nsEl);
 		xmlBldr.addToPedigree(nsEl, pg);
-		Element idEl = row.mGenericElement("Identifier", idValue, xmlBldr.getMdNSpace());
+		Element idEl = xmlBldr.mGenericElement("Identifier", idValue, xmlBldr.getMdNSpace());
 		altIdEl.addContent(idEl);
 		xmlBldr.addToPedigree(idEl, pg);
 	}
@@ -569,7 +569,7 @@ public class MetadataBuilder {
 		 * any has been specified than we add the Rating element and let XML
 		 * validation worry about completeness,
 		 */
-		boolean add = row.isSpecified(ratingSystem) || row.isSpecified(ratingValue);
+		boolean add = Pedigree.isSpecified(ratingSystem) || Pedigree.isSpecified(ratingValue);
 		if (!add) {
 			return;
 		}

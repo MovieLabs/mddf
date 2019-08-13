@@ -47,7 +47,7 @@ public class RowToXmlHelperV1_7_2 extends RowToXmlHelperV1_7 {
 		super(sheet, row, logger);
 	}
 
-	protected Element[] process(Element parentEl, String childName, Namespace ns, String cellKey, String separator) {
+	public Element[] process(Element parentEl, String childName, Namespace ns, String cellKey, String separator) {
 		switch (cellKey) {
 		case "AvailTrans/FormatProfile":
 			return processFmtProfile(parentEl, childName, ns, cellKey, separator);

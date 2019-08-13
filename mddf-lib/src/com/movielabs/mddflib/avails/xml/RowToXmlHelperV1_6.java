@@ -47,7 +47,7 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelperV1_7 {
 		// TODO Auto-generated constructor stub
 	}
 
-	protected String getData(String colKey) {
+	public String getData(String colKey) {
 		String mappedKey = mapKey(colKey);
 		if (mappedKey != null) {
 			return super.getData(mappedKey);
@@ -75,7 +75,7 @@ public class RowToXmlHelperV1_6 extends RowToXmlHelperV1_7 {
 		if (value.isEmpty()) {
 			value = "not provided";
 		}
-		Element childEl = mGenericElement("Description", value, xb.getAvailsNSpace());
+		Element childEl = xb.mGenericElement("Description", value, xb.getAvailsNSpace());
 		transactionEl.addContent(childEl);
 		xb.addToPedigree(childEl, pg);
 

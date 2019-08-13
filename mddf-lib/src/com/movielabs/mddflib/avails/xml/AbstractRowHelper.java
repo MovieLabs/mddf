@@ -39,11 +39,11 @@ import com.movielabs.mddflib.logging.LogMgmt;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public abstract class AbstractRowHelper {
+public abstract class AbstractRowHelper  implements RowDataSrc{
 
 	static final String MISSING = "--FUBAR (missing)";
 	protected Row row;
-	protected XmlBuilder xb;
+	protected DefaultXmlBuilder xb;
 	protected AvailsSheet sheet;
 	protected String workType = "";
 	protected DataFormatter dataF = new DataFormatter();
@@ -111,19 +111,6 @@ public abstract class AbstractRowHelper {
 	 */
 	abstract protected String locateContentID(String workType);
 
-	/**
-	 * Create an XML element
-	 * 
-	 * @param name the name of the element
-	 * @param val  the value of the element
-	 * @return the created element, or null
-	 */
-	Element mGenericElement(String name, String val, Namespace ns) {
-		Element el = new Element(name, ns);
-		String formatted = xb.formatForType(name, ns, val);
-		el.setText(formatted);
-		return el;
-	}
 
 	/**
 	 * Same as invoking
@@ -137,7 +124,7 @@ public abstract class AbstractRowHelper {
 	 * @param cellKey
 	 * @return
 	 */
-	protected Element process(Element parentEl, String childName, Namespace ns, String cellKey) {
+	public Element process(Element parentEl, String childName, Namespace ns, String cellKey) {
 		Element[] elementList = process(parentEl, childName, ns, cellKey, null);
 		if (elementList != null) {
 			return elementList[0];
@@ -160,7 +147,7 @@ public abstract class AbstractRowHelper {
 	 * @param separator
 	 * @return an array of child <tt>Element</tt> instances
 	 */
-	protected Element[] process(Element parentEl, String childName, Namespace ns, String cellKey, String separator) {
+	public Element[] process(Element parentEl, String childName, Namespace ns, String cellKey, String separator) {
 		Pedigree pg = getPedigreedData(cellKey);
 		if (pg == null) {
 			return null;
@@ -176,7 +163,7 @@ public abstract class AbstractRowHelper {
 			}
 			Element[] elementList = new Element[valueSet.length];
 			for (int i = 0; i < valueSet.length; i++) {
-				Element childEl = mGenericElement(childName, valueSet[i], ns);
+				Element childEl = xb.mGenericElement(childName, valueSet[i], ns);
 				parentEl.addContent(childEl);
 				xb.addToPedigree(childEl, pg);
 				elementList[i] = childEl;
@@ -187,9 +174,9 @@ public abstract class AbstractRowHelper {
 		}
 	}
 
-	abstract protected void addRegion(Element parentEl, String regionType, Namespace ns, String cellKey);
+	public abstract void addRegion(Element parentEl, String regionType, Namespace ns, String cellKey);
 
-	abstract protected String getData(String colKey);
+	public abstract String getData(String colKey);
 
 	/**
 	 * 
@@ -227,7 +214,7 @@ public abstract class AbstractRowHelper {
 			String addr = sourceCell.getAddress().formatAsString();
 			String errMsg = "Cell " + addr + "- Excel Formulas not supported";
 			String details = "Use of formulas may prevent the use of automated workflows for ingesting and processing the Avails.";
-			logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null, XmlBuilder.moduleId);
+			logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, sourceCell, errMsg, details, null, DefaultXmlBuilder.moduleId);
 			return true;
 		} else {
 			return false;
@@ -257,13 +244,13 @@ public abstract class AbstractRowHelper {
 		throw new IllegalArgumentException(msg);
 	}
 
-	int getRowNumber() {
+	public int getRowNumber() {
 		return row.getRowNum();
 	}
 
 	/**
 	 * @param xmlBuilder
 	 */
-	abstract protected void makeAvail(XmlBuilder xmlBuilder);
+	abstract protected void makeAvail(DefaultXmlBuilder xmlBuilder);
 
 }

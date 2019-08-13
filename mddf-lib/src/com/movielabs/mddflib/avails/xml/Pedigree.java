@@ -60,5 +60,26 @@ public class Pedigree {
 	public boolean isEmpty() {
 		return rawValue.isEmpty();
 	}
+	/**
+	 * Returns <tt>true</tt> if the valueSrc is both non-null and not empty. The
+	 * value source must be an instance of either the <tt>String</tt> or
+	 * <tt>Pedigree</tt> class or an <tt>IllegalArgumentException</tt> is thrown.
+	 * 
+	 * @param valueSrc
+	 * @throws IllegalArgumentException
+	 */
+	public static boolean isSpecified(Object valueSrc) throws IllegalArgumentException {
+		if (valueSrc == null) {
+			return false;
+		}
+		if (valueSrc instanceof String) {
+			return (!((String) valueSrc).isEmpty());
+		}
 
+		if (valueSrc instanceof Pedigree) {
+			return (!((Pedigree) valueSrc).isEmpty());
+		}
+		String msg = valueSrc.getClass().getCanonicalName() + " is not supported value source";
+		throw new IllegalArgumentException(msg);
+	}
 }

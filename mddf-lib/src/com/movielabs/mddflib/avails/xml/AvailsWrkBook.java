@@ -96,40 +96,22 @@ public class AvailsWrkBook {
 	 */
 	public static Map<String, Object> convertSpreadsheet(File xslxFile, Version xlsxVersion, InputStream inStream,
 			LogMgmt logMgr) {
-		boolean autoCorrect = false;
-		boolean exitOnError = false;
-		AvailsWrkBook ss;
-		try {
-			if (inStream == null) {
-				inStream = new FileInputStream(xslxFile);
-			}
-			ss = new AvailsWrkBook(inStream, xslxFile, logMgr, exitOnError, autoCorrect);
-		} catch (FileNotFoundException e1) {
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found", xslxFile, logMsgSrcId);
-			return null;
-		} catch (POIXMLException e1) {
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
-					"Unable to parse XLSX. Check for comments or embedded objects.", xslxFile, logMsgSrcId);
-			return null;
-		} catch (IOException e1) {
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", xslxFile, logMsgSrcId);
-			return null;
-		}
 		int sheetNum = 0; // KLUDGE for now
-		AvailsSheet as;
-		try {
-			as = ss.ingestSheet(sheetNum);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
+		AvailsSheet sheet = loadWorkBook(xslxFile, logMgr, inStream, sheetNum);
+		String inFileName = xslxFile.getName();
+		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
+		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp);
+		return mapToXml(sheet, xslxFile, xlsxVersion, shortDesc, logMgr);
+	}
+
+	public static Map<String, Object> mapToXml(AvailsSheet sheet, File xslxFile, Version xlsxVersion,
+			String description, LogMgmt logMgr) {
 		Version unknown = AvailsSheet.Version.valueOf("UNK");
 		if (xlsxVersion == null) {
 			xlsxVersion = unknown;
 		}
 		// does 'targetVersion' match the inferred version?
-		Version inferredVer = as.getVersion();
+		Version inferredVer = sheet.getVersion();
 		if (!inferredVer.equals(unknown)) {
 			if (xlsxVersion.equals(unknown)) {
 				// use inferred
@@ -148,11 +130,11 @@ public class AvailsWrkBook {
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, xslxFile, logMsgSrcId);
 			return null;
 		}
-		as.setVersion(xlsxVersion);
+		sheet.setVersion(xlsxVersion);
 
 		FILE_FMT srcMddfFmt = null;
 		FILE_FMT targetMddfFmt = null;
-		XmlBuilder xBuilder = new XmlBuilder(logMgr, xlsxVersion);
+		DefaultXmlBuilder xBuilder = new DefaultXmlBuilder(logMgr, xlsxVersion);
 		switch (xlsxVersion) {
 		case V1_8:
 			srcMddfFmt = FILE_FMT.AVAILS_1_8;
@@ -189,11 +171,8 @@ public class AvailsWrkBook {
 		}
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + xlsxVersion + " format", xslxFile,
 				logMsgSrcId);
-		String inFileName = xslxFile.getName();
-		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
-		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp);
 		try {
-			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(as, shortDesc, xslxFile);
+			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(sheet, description, xslxFile);
 			if (xmlJDomDoc == null) {
 				// Ingest failed
 				return null;
@@ -213,6 +192,42 @@ public class AvailsWrkBook {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static AvailsSheet loadWorkBook(File xslxFile, LogMgmt logMgr, InputStream inStream, int sheetNum) {
+		boolean autoCorrect = false;
+		boolean exitOnError = false;
+		AvailsWrkBook wrkBook;
+		try {
+			if (inStream == null) {
+				inStream = new FileInputStream(xslxFile);
+			}
+			wrkBook = new AvailsWrkBook(inStream, xslxFile, logMgr, exitOnError, autoCorrect);
+		} catch (FileNotFoundException e1) {
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found: "+xslxFile.getAbsolutePath(), xslxFile, logMsgSrcId);
+			return null;
+		} catch (POIXMLException e1) {
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
+					"Unable to parse XLSX. Check for comments or embedded objects.", xslxFile, logMsgSrcId);
+			return null;
+		} catch (IOException e1) {
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", xslxFile, logMsgSrcId);
+			return null;
+		}
+		AvailsSheet sheet;
+		try {
+			sheet = wrkBook.ingestSheet(sheetNum);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		try {
+			inStream.close();
+		} catch (IOException e) { 
+			e.printStackTrace();
+		}
+		return sheet;
 	}
 
 	/**
@@ -379,45 +394,5 @@ public class AvailsWrkBook {
 		return cleanupData;
 	}
 
-	/**
-	 * Dump raw contents of specified sheet
-	 * 
-	 * @param sheetName name of the sheet to dump
-	 * @throws Exception if any error is encountered (e.g. non-existant or corrupt
-	 *                   file)
-	 */
-	public void dumpSheet(String sheetName) throws Exception {
-		boolean foundSheet = false;
-		for (AvailsSheet s : sheets) {
-			if (s.getName().equals(sheetName)) {
-				int i = 0;
-				foundSheet = true;
-				s.dump();
-			}
-		}
-		if (!foundSheet)
-			throw new IllegalArgumentException(file + ":" + sheetName + " not found");
-	}
 
-	/**
-	 * Dump the contents (sheet-by-sheet) of an Excel spreadsheet
-	 * 
-	 * @param file name of the Excel .xlsx spreadsheet
-	 * @throws Exception if any error is encountered (e.g. non-existant or corrupt
-	 *                   file)
-	 */
-	public static void dumpFile(String file) throws Exception {
-		Workbook wb = new XSSFWorkbook(new FileInputStream(file));
-		for (int i = 0; i < wb.getNumberOfSheets(); i++) {
-			Sheet sheet = wb.getSheetAt(i);
-			System.out.println("Sheet <" + wb.getSheetName(i) + ">");
-			for (Row row : sheet) {
-				System.out.println("rownum: " + row.getRowNum());
-				for (Cell cell : row) {
-					System.out.println("   | " + cell.toString());
-				}
-			}
-		}
-		wb.close();
-	}
 }

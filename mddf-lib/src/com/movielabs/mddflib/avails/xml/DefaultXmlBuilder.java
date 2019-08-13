@@ -56,7 +56,7 @@ import com.movielabs.mddflib.util.xml.SchemaWrapper;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class XmlBuilder {
+public class DefaultXmlBuilder  extends AbstractXmlBuilder{
 
 	public static final String moduleId = "XmlBuilder";
 	private String xsdVersion;
@@ -91,7 +91,7 @@ public class XmlBuilder {
 	 * @param logger
 	 * @param sstVersion the template version used by the spreadsheet
 	 */
-	public XmlBuilder(LogMgmt logger, Version sstVersion) {
+	public DefaultXmlBuilder(LogMgmt logger, Version sstVersion) {
 		this.logger = logger;
 		this.templateVersion = sstVersion;
 	}
@@ -277,7 +277,7 @@ public class XmlBuilder {
 			 */
 			element2SrcRowMap.put(availEL, curRow);
 
-			Element alidEl = curRow.mGenericElement("ALID", alid, getAvailsNSpace());
+			Element alidEl = mGenericElement("ALID", alid, getAvailsNSpace());
 			availEL.addContent(alidEl);
 			addToPedigree(alidEl, alidPedigree);
 
@@ -286,11 +286,11 @@ public class XmlBuilder {
 			availEL.addContent(curRow.mPublisher("ServiceProvider", "Avail/ServiceProvider"));
 
 			String availType = mapWorkType(curRow);
-			Element atEl = curRow.mGenericElement("AvailType", availType, getAvailsNSpace());
+			Element atEl = mGenericElement("AvailType", availType, getAvailsNSpace());
 			availEL.addContent(atEl);
 			addToPedigree(atEl, curRow.getPedigreedData("AvailAsset/WorkType"));
 
-			Element sdEl = curRow.mGenericElement("ShortDescription", shortDesc, getAvailsNSpace());
+			Element sdEl = mGenericElement("ShortDescription", shortDesc, getAvailsNSpace());
 			availEL.addContent(sdEl);
 
 			// Exception Flag
@@ -385,35 +385,29 @@ public class XmlBuilder {
 	/**
 	 * @return the availsNSpace
 	 */
-	Namespace getAvailsNSpace() {
+	public Namespace getAvailsNSpace() {
 		return availsNSpace;
 	}
 
 	/**
 	 * @return the mdNSpace
 	 */
-	Namespace getMdNSpace() {
+	public Namespace getMdNSpace() {
 		return mdNSpace;
 	}
 
 	/**
 	 * @return the mdMecNSpace
 	 */
-	Namespace getMdMecNSpace() {
+	public Namespace getMdMecNSpace() {
 		return mdMecNSpace;
 	}
 
-	/**
-	 * @param elementName
-	 * @param schema
-	 * @return
-	 * @throws IllegalStateException    if supported schema version was not
-	 *                                  previously set
-	 * @throws IllegalArgumentException if <tt>schema</tt> is unrecognized or
-	 *                                  <tt>elementName</tt> is not defined by the
-	 *                                  <tt>schema</tt>
+
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.avails.xml.AbstractXmlBuilder#isRequired(java.lang.String, java.lang.String)
 	 */
-	boolean isRequired(String elementName, String schema) throws IllegalStateException, IllegalArgumentException {
+	public boolean isRequired(String elementName, String schema) throws IllegalStateException, IllegalArgumentException {
 		if (xsdVersion == null) {
 			throw new IllegalStateException("The XSD version was not set or is unsupported.");
 		}
@@ -488,7 +482,7 @@ public class XmlBuilder {
 		return pedigreeMap;
 	}
 
-	void addToPedigree(Object content, Pedigree source) {
+	public void addToPedigree(Object content, Pedigree source) {
 		pedigreeMap.put(content, source);
 	}
 
@@ -525,6 +519,20 @@ public class XmlBuilder {
 		}
 	}
 
+
+	/**
+	 * Create an XML element
+	 * 
+	 * @param name the name of the element
+	 * @param val  the value of the element
+	 * @return the created element, or null
+	 */
+	public Element mGenericElement(String name, String val, Namespace ns) {
+		Element el = new Element(name, ns);
+		String formatted = formatForType(name, ns, val);
+		el.setText(formatted);
+		return el;
+	}
 	/**
 	 * @param row
 	 */
