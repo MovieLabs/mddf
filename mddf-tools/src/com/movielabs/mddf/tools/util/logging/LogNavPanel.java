@@ -83,8 +83,8 @@ import com.movielabs.mddflib.util.xml.MddfTarget;
 public class LogNavPanel extends JPanel {
 
 	/**
-	 * Implements context-sensitive pop-up menu displayed when user right-clicks
-	 * on a tree node.
+	 * Implements context-sensitive pop-up menu displayed when user right-clicks on
+	 * a tree node.
 	 * 
 	 * @author L. Levin, Critical Architectures LLC
 	 *
@@ -97,9 +97,8 @@ public class LogNavPanel extends JPanel {
 
 		public TreePopupMenu(TreePath selPath) {
 			/*
-			 * Step 1: get the context (i.e., what was selected and what is is
-			 * the state & status of whatever is associated with the selected
-			 * node).
+			 * Step 1: get the context (i.e., what was selected and what is is the state &
+			 * status of whatever is associated with the selected node).
 			 */
 			int depth = selPath.getPathCount();
 			node = (LogEntryFolder) selPath.getLastPathComponent();
@@ -113,8 +112,8 @@ public class LogNavPanel extends JPanel {
 			boolean fileSelected = (node == fileFolder);
 			MDDF_TYPE mddfType = fileFolder.getMddfType();
 			/*
-			 * Step 2: Now we can construct the pop-up and enable/disable
-			 * specific menu items based on the context.
+			 * Step 2: Now we can construct the pop-up and enable/disable specific menu
+			 * items based on the context.
 			 * 
 			 */
 			JMenuItem runMItem = new JMenuItem("Re-Validate");
@@ -128,8 +127,8 @@ public class LogNavPanel extends JPanel {
 					ValidatorTool.getTool().runTool();
 					if (isXml) {
 						/*
-						 * Is there an XmlEditor for the file? If so, make sure
-						 * editor is up to-date with latest log entries
+						 * Is there an XmlEditor for the file? If so, make sure editor is up to-date
+						 * with latest log entries
 						 */
 						EditorMgr edMgr = EditorMgr.getSingleton();
 						SimpleXmlEditor editor = edMgr.getEditorFor(target.getAbsolutePath());
@@ -294,8 +293,8 @@ public class LogNavPanel extends JPanel {
 	}
 
 	/**
-	 * Customized <tt>TreeCellRenderer</tt> that sets the icon based on the
-	 * highest level of severity for all messages found in any sub-folder.
+	 * Customized <tt>TreeCellRenderer</tt> that sets the icon based on the highest
+	 * level of severity for all messages found in any sub-folder.
 	 * 
 	 * @author L. Levin, Critical Architectures LLC
 	 *
@@ -349,8 +348,8 @@ public class LogNavPanel extends JPanel {
 
 	static {
 		/*
-		 * Note that for now the same icon is used for both OPEN and CLOSED
-		 * states but that isn't required.
+		 * Note that for now the same icon is used for both OPEN and CLOSED states but
+		 * that isn't required.
 		 */
 		String[] levels = LogMgmt.logLevels;
 		for (int i = 0; i < levels.length; i++) {
@@ -424,8 +423,8 @@ public class LogNavPanel extends JPanel {
 		LogEntryFolder fileFolder = fileFolderMap.get(targetFile);
 		if (fileFolder == null) {
 			/*
-			 * Deal with possibility of multiple files with the same name being
-			 * processed (i.e. /foo/myFile.xml vs /bar/myFile.xml).
+			 * Deal with possibility of multiple files with the same name being processed
+			 * (i.e. /foo/myFile.xml vs /bar/myFile.xml).
 			 */
 			int suffix = 1;
 			String label = "";
@@ -484,10 +483,10 @@ public class LogNavPanel extends JPanel {
 	}
 
 	/**
-	 * Set the file ID to associate with any new log entries. This results in
-	 * all new entries being added to the folder with that identifier. If the
-	 * <tt>clear</tt> flag is <tt>true</tt> the current contents of the folder
-	 * will be deleted.
+	 * Set the file ID to associate with any new log entries. This results in all
+	 * new entries being added to the folder with that identifier. If the
+	 * <tt>clear</tt> flag is <tt>true</tt> the current contents of the folder will
+	 * be deleted.
 	 * 
 	 * @param id
 	 */
@@ -535,6 +534,9 @@ public class LogNavPanel extends JPanel {
 	public void clearLog() {
 		rootLogNode.deleteMsgs();
 		rootLogNode.removeAllChildren();
+		for (LogEntryFolder next : fileFolderMap.values()) {
+			next.setXml(null);
+		}
 		fileFolderMap = new HashMap<File, LogEntryFolder>();
 		masterSeqNum = 0;
 		treeModel.reload();
@@ -567,9 +569,8 @@ public class LogNavPanel extends JPanel {
 			 */
 			tagNode = new LogEntryFolder(tagAsText, level);
 			/*
-			 * need to keep order consistent so figure where to insert. Allow
-			 * for situation where it is the first node or the child set is
-			 * empty
+			 * need to keep order consistent so figure where to insert. Allow for situation
+			 * where it is the first node or the child set is empty
 			 */
 			if (tag == 0) {
 				treeModel.insertNodeInto(tagNode, byLevel, 0);
