@@ -47,6 +47,7 @@ import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook.RESULT_STATUS;
+import com.movielabs.mddflib.avails.xml.streaming.StreamingXmlBuilder;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.CpeValidator;
@@ -278,11 +279,10 @@ public class ValidationController {
 	 * @param srcPath   location of a file or a directory containing CMM and/or
 	 *                  Avails files.
 	 * @param uxProfile the name of a valid profile or <tt>none</tt>
-	 * @param useCases
 	 * @throws IOException
 	 * @throws JDOMException
 	 */
-	public void validate(String srcPath, String uxProfile, List<String> useCases) throws IOException {
+	public void validate(String srcPath, String uxProfile) throws IOException {
 		File srcFile = new File(srcPath);
 		if (srcFile.isDirectory()) {
 			File[] inputFiles = srcFile.listFiles(new MddfFileFilter());
@@ -292,7 +292,7 @@ public class ValidationController {
 				String message = aFile.getName();
 				if (aFile.isFile()) {
 					try {
-						validateFile(aFile, uxProfile, useCases);
+						validateFile(aFile, uxProfile);
 					} catch (Exception e) {
 						String msg = e.getMessage();
 						if (msg == null) {
@@ -301,19 +301,22 @@ public class ValidationController {
 						}
 						String details = "Exception while validating; file processing terminated.";
 						logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_MANIFEST, msg, aFile, -1, MODULE_ID, details, null);
+					} finally {
+						/* Some memory mgmt??? */
+						System.gc();
 					}
 				} else {
 					boolean isDir = aFile.isDirectory();
 					if (isDir && isRecursive) {
 						// recursively descend directory tree...
-						validate(aFile.getCanonicalPath(), uxProfile, useCases);
+						validate(aFile.getCanonicalPath(), uxProfile);
 					}
 				}
 			}
 		} else {
 			// Process a single file
 			try {
-				validateFile(srcFile, uxProfile, useCases);
+				validateFile(srcFile, uxProfile);
 			} catch (Exception e) {
 				e.printStackTrace();
 				String msg = e.getLocalizedMessage();
@@ -323,12 +326,14 @@ public class ValidationController {
 				String loc = e.getStackTrace()[0].toString();
 				String details = "Exception while validating; " + loc;
 				logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, details, null);
+			} finally {
+				/* Some memory mgmt??? */
+				System.gc();
 			}
 		}
 	}
 
-	protected void validateFile(File srcFile, String uxProfile, List<String> useCases)
-			throws IOException, JDOMException {
+	protected void validateFile(File srcFile, String uxProfile) throws IOException, JDOMException {
 		String fileType = StringUtils.extractFileType(srcFile.getAbsolutePath());
 		fileType = fileType.toLowerCase();
 		if (!(fileType.equals("xml") || fileType.equals("xlsx"))) {
@@ -354,17 +359,27 @@ public class ValidationController {
 			return;
 		}
 		logMgr.setCurrentFile(srcFile);
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "Validating " + srcFile.getPath(), srcFile, MODULE_ID);
-
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "Validating " + srcFile.getPath(), srcFile, MODULE_ID); 
 		Map<Object, Pedigree> pedigreeMap = null;
 		FILE_FMT srcMddfFmt = null;
 		Document xmlDoc = null;
 		MddfTarget target = null;
 		if (fileType.equals("xlsx")) {
 			/* The XLSX format is only supported with AVAILS files */
-			Map<String, Object> results = convertSpreadsheet(srcFile);
+			Map<String, Object> results = convertSpreadsheet_v2(srcFile);
 			if (results == null) {
-				String msg = "Unable to convert Excel to XML";
+				String msg = "Unable to conve\n" + 
+						"	private void pauseForInput(String msg) {\n" + 
+						"		System.out.println(msg);\n" + 
+						"//		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));\n" + 
+						"//		// Reading data using readLine\n" + 
+						"//		try {\n" + 
+						"//			String name = reader.readLine();\n" + 
+						"//		} catch (IOException e) {\n" + 
+						"//			e.printStackTrace();\n" + 
+						"//		}\n" + 
+						"	}\n" + 
+						"rt Excel to XML";
 				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, srcFile, -1, MODULE_ID, null, null);
 				return;
 			} else {
@@ -377,6 +392,9 @@ public class ValidationController {
 				xmlDoc = (Document) results.get("xml");
 				srcMddfFmt = (FILE_FMT) results.get("srcFmt");
 				target = new MddfTarget(srcFile, xmlDoc, logMgr);
+				/* Some memory mgmt??? */
+				results = null;
+				System.gc();
 			}
 		} else if (fileType.equals("xml")) {
 			target = new MddfTarget(srcFile, logMgr);
@@ -398,7 +416,8 @@ public class ValidationController {
 			String supplemental = null;
 			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, errMsg, srcFile, -1, MODULE_ID, supplemental, null);
 			return;
-		}
+		} 
+
 		XmlIngester.setSourceDirPath(srcFile.getAbsolutePath());
 		MDDF_TYPE mddfType = target.getMddfType();
 		int logTag = target.getLogTag();
@@ -415,7 +434,7 @@ public class ValidationController {
 		boolean isValid;
 		switch (mddfType) {
 		case MANIFEST:
-			isValid = validateManifest(target, uxProfile, useCases);
+			isValid = validateManifest(target);
 			break;
 		case AVAILS:
 			isValid = validateAvail(target, pedigreeMap);
@@ -454,6 +473,45 @@ public class ValidationController {
 	}
 
 	/**
+	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file. If
+	 * <tt>inStream</tt> is <tt>null</tt> the <tt>xlsxFile</tt> parameter is used to
+	 * read a file accessible via the local system. Otherwise the contents of the
+	 * <tt>inStream</tt> is used.
+	 * <p>
+	 * The result <tt>Map</tt> that is returned will contain:
+	 * </p>
+	 * <ul>
+	 * <li><tt>xlsx</tt>: the xlsx File that was passed as the input argument</li>
+	 * <li><tt>xml</tt>: the JDOM2 Document that was created from the xlsx</li>
+	 * <li><tt>pedigree</tt>: the <tt>Pedigree</tt> map that was created by the
+	 * <tt>XmlBuilder</tt> during the conversion process.</li>
+	 * <li><tt>srcFmt</tt>: the <tt>MddfContect.FILE_FMT</tt> of the ingested file.
+	 * </ul>
+	 * 
+	 * @param xslxFile
+	 * @param xlsxVersion xlsx template version
+	 * @param inStream
+	 * @param logMgr
+	 * @return a Map&lt;String, Object&gt;
+	 */
+	private Map<String, Object> convertSpreadsheet_v2(File xslxFile) {
+		VersionChooserDialog vcd = new VersionChooserDialog();
+		vcd.setLocationRelativeTo(logNav);
+		vcd.setVisible(true);
+		if (vcd.isCancelled()) {
+			Map<String, Object> results = new HashMap<String, Object>();
+			results.put("status", RESULT_STATUS.CANCELLED);
+			return results;
+		}
+		Version xlsxVersion = vcd.getSelected();
+
+		StreamingXmlBuilder bldr = new StreamingXmlBuilder(logMgr, xlsxVersion);
+		String shortDesc = "Converted using STREAMING XML builder";
+		Map<String, Object> results = bldr.convert(xslxFile, null, 0, shortDesc);
+		return results;
+	}
+
+	/**
 	 * Convert an AVAIL file in spreadsheet (i.e., xlsx) format to an XML file. The
 	 * result <tt>Map</tt> that is returned will contain:
 	 * <ul>
@@ -466,7 +524,8 @@ public class ValidationController {
 	 * @param xslxFile
 	 * @return
 	 */
-	private Map<String, Object> convertSpreadsheet(File xslxFile) {
+	private Map<String, Object> convertSpreadsheet_v1(File xslxFile) {
+
 		VersionChooserDialog vcd = new VersionChooserDialog();
 		vcd.setLocationRelativeTo(logNav);
 		vcd.setVisible(true);
@@ -502,9 +561,10 @@ public class ValidationController {
 	 */
 	protected boolean validateAvail(MddfTarget target, Map<Object, Pedigree> pedigreeMap)
 			throws IOException, JDOMException {
-		boolean isValid = true;
+		boolean isValid = true; 
+
 		AvailValidator tool1 = new AvailValidator(validateC, logMgr);
-		isValid = tool1.process(target, pedigreeMap);
+		isValid = tool1.process(target, pedigreeMap); 
 		if (!isValid) {
 			String msg = "Validation FAILED; Terminating processing of file";
 			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, target.getSrcFile(), -1, MODULE_ID, null, null);
@@ -523,7 +583,7 @@ public class ValidationController {
 		Document xmlDoc;
 		String fileType = StringUtils.extractFileType(inFile.getAbsolutePath());
 		if (fileType.equals("xlsx")) {
-			Map<String, Object> results = convertSpreadsheet(inFile);
+			Map<String, Object> results = convertSpreadsheet_v2(inFile);
 			if (results == null) {
 				String msg = "Obfuscation failed: Unable to convert Excel to XML";
 				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, inFile, -1, MODULE_ID, null, null);
@@ -576,23 +636,21 @@ public class ValidationController {
 
 	/**
 	 * Perform requested pre-processing on a single Manifest file. The extent of the
-	 * pre-processing will depend on the arguments passed when invoking this method
-	 * as well as any a-priori set-up and configuration (e.g., use of the
-	 * <tt>setValidation()</tt> function).
+	 * pre-processing will depend on any a-priori set-up and configuration (e.g.,
+	 * use of the <tt>setValidation()</tt> function).
 	 * 
-	 * @param srcFile
-	 * @param uxProfile
+	 * @param target
+	 * @return
 	 * @throws IOException
 	 * @throws JDOMException
 	 */
-	protected boolean validateManifest(MddfTarget target, String uxProfile, List<String> useCases)
-			throws IOException, JDOMException {
+	protected boolean validateManifest(MddfTarget target) throws IOException, JDOMException {
 		boolean isValid = true;
 
 		String schemaVer = ManifestValidator.identifyXsdVersion(target);
 		ManifestValidator.setManifestVersion(schemaVer);
 
-		List<String> profileNameList = identifyProfiles(target, uxProfile);
+		List<String> profileNameList = identifyProfiles(target);
 		if (profileNameList.isEmpty() || profileNameList.contains("none")) {
 			ManifestValidator tool1 = new ManifestValidator(validateC, logMgr);
 			isValid = tool1.process(target);
@@ -624,11 +682,11 @@ public class ValidationController {
 					case "IP-01":
 					case "IP-1":
 						pValidator = new CpeValidator(logMgr);
-						isValid = pValidator.process(target, profile, useCases) && isValid;
+						isValid = pValidator.process(target, profile) && isValid;
 						break;
 					case "MMC-1":
 						pValidator = new MMCoreValidator(logMgr);
-						isValid = pValidator.process(target, profile, useCases) && isValid;
+						isValid = pValidator.process(target, profile) && isValid;
 						Map<String, List<Element>> supportingFiles = ((ManifestValidator) pValidator)
 								.getSupportingRsrcLocations();
 						Set<String> foobar = supportingFiles.keySet();
@@ -706,15 +764,9 @@ public class ValidationController {
 	 * @param uxProfile
 	 * @return
 	 */
-	private List<String> identifyProfiles(MddfTarget target, String uxProfile) {
+	private List<String> identifyProfiles(MddfTarget target) {
 		// make sure data structures got initialized..
 		List<String> profileNameList = new ArrayList<String>();
-		if (XmlIngester.MAN_VER.endsWith("1.4")) {
-			if (!uxProfile.equals("none")) {
-				profileNameList.add(uxProfile);
-			}
-			return profileNameList;
-		}
 		Element docRootEl = target.getXmlDoc().getRootElement();
 		Element compEl = docRootEl.getChild("Compatibility", XmlIngester.manifestNSpace);
 		List<Element> profileElList = compEl.getChildren("Profile", XmlIngester.manifestNSpace);
@@ -731,6 +783,8 @@ public class ValidationController {
 				}
 			}
 		}
+		String msg = "Applicable profiles: " + profileNameList.toString();
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_PROFILE, msg, target.getSrcFile(), -1, MODULE_ID, null, null);
 		return profileNameList;
 	}
 
@@ -749,4 +803,5 @@ public class ValidationController {
 	public void setRecursive(boolean isRecursive) {
 		this.isRecursive = isRecursive;
 	}
+ 
 }
