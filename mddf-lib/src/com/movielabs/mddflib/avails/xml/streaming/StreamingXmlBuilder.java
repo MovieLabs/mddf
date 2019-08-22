@@ -122,10 +122,11 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 	}
 
 	/**
-	 * Uses the XSSF Event SAX helpers to do most of the work of parsing the Sheet
-	 * XML. Data values are accumulated on a row-by-row basis. When the end of a row
-	 * is signaled by the invoking of <tt>endRow()</tt>, the accumulated data is
-	 * passed to <tt>StreamingXmlBuilder.processRow()</tt>.
+	 * A <tt>SheetContentsHandler</tt> that uses the XSSF Event SAX helpers to do
+	 * most of the work of parsing the Sheet XML. Data values are accumulated on a
+	 * row-by-row basis. When the end of a row is signaled by the invoking of
+	 * <tt>endRow()</tt>, the accumulated data is passed to
+	 * <tt>StreamingXmlBuilder.processRow()</tt>.
 	 */
 	private class ParseByRow implements SheetContentsHandler {
 		private boolean haveFirstRow = false;
@@ -167,9 +168,7 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 			try {
 				processRow(rowContentsAsArray, rowNum, rowHasData);
 			} catch (XlsxDataTermination e) {
-				// TODO Auto-generated catch block
-//				e.printStackTrace();
-				System.out.println("Empty rows; ronNum=" + rowNum);
+//				System.out.println("Empty rows; ronNum=" + rowNum);
 			}
 		}
 
@@ -336,13 +335,41 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 	}
 
 	/**
+	 * Return the XML mddf version used when generating XML from the XLSX.
+	 * 
 	 * @return the xsdVersion
 	 */
 	public String getVersion() {
 		return xsdVersion;
 	}
 
-	public Map<String, Object> convert(File srcXslxFile, int sheetNum, String shortDesc) throws IllegalStateException {
+	/**
+	 * Convert one sheet within the Workbook to an XML representation. The results
+	 * are returned in the form of a <tt>Map</tt> with the following content:
+	 * <ul>
+	 * <li><tt>results.get("xlsx")</tt>: the <tt>File</tt> srcXslxFile that was
+	 * passed as input argument</li>
+	 * <li><tt>results.get("xml")</tt>: the JDom2 <tt>Document</tt> that was created
+	 * </li>
+	 * <li><tt>results.get("pedigree"</tt>: a
+	 * <tt>Map<Object, Pedigree> pedigreeMap</tt> instance linking XML elements to
+	 * the Avail cell from which they were derived.</li>
+	 * <li><tt>results.get("srcFmt")</tt>: <tt>FILE_FMT</tt> of the ingested
+	 * XLSX</li>
+	 * <li><tt>results.get("status")</tt>: <tt>RESULT_STATUS.COMPLETED</tt></li>
+	 * </ul>
+	 * The <tt>results</tt> returned will be <tt>null</tt> if XLSX has a FILE_FMT
+	 * that is invalid or that can not be processed by the code as currently
+	 * implemented.
+	 * 
+	 * @param srcXslxFile
+	 * @param sheetNum
+	 * @param shortDesc
+	 * @return results
+	 * @throws IllegalStateException
+	 */
+	public Map<String, Object> convert(File srcXslxFile, InputStream inStream, int sheetNum, String shortDesc)
+			throws IllegalStateException {
 		Map<String, Object> results = new HashMap<String, Object>();
 		FILE_FMT srcMddfFmt = null;
 		switch (templateVersion) {
@@ -371,7 +398,7 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 					srcXslxFile, moduleId);
 			return null;
 		}
-		Document xmlDoc = makeXmlAsJDom(srcXslxFile, 0, shortDesc);
+		Document xmlDoc = makeXmlAsJDom(srcXslxFile, inStream, 0, shortDesc);
 		results.put("xlsx", srcXslxFile);
 		results.put("xml", xmlDoc);
 		results.put("pedigree", pedigreeMap);
@@ -380,7 +407,15 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		return results;
 	}
 
-	public Document makeXmlAsJDom(File srcXslxFile, int sheetNum, String shortDesc) throws IllegalStateException {
+	/**
+	 * @param srcXslxFile
+	 * @param sheetNum
+	 * @param shortDesc
+	 * @return
+	 * @throws IllegalStateException
+	 */
+	private Document makeXmlAsJDom(File srcXslxFile, InputStream inStream, int sheetNum, String shortDesc)
+			throws IllegalStateException {
 		this.shortDesc = shortDesc;
 		this.curSrcXslxFile = srcXslxFile;
 		if (xsdVersion == null) {
@@ -400,7 +435,12 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		 * ingested an entire row,.
 		 */
 		try {
-			OPCPackage xlsxPackage = OPCPackage.open(srcXslxFile.getPath(), PackageAccess.READ);
+			OPCPackage xlsxPackage = null;
+			if (inStream == null) {
+				xlsxPackage = OPCPackage.open(srcXslxFile.getPath(), PackageAccess.READ);
+			} else {
+				xlsxPackage = OPCPackage.open(inStream);
+			}
 			XSSFReader xssfReader = new XSSFReader(xlsxPackage);
 			StylesTable styles = xssfReader.getStylesTable();
 			ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(xlsxPackage);
@@ -917,15 +957,8 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		}
 	}
 
-	/**
-	 * @param elementName
-	 * @param schema
-	 * @return
-	 * @throws IllegalStateException    if supported schema version was not
-	 *                                  previously set
-	 * @throws IllegalArgumentException if <tt>schema</tt> is unrecognized or
-	 *                                  <tt>elementName</tt> is not defined by the
-	 *                                  <tt>schema</tt>
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.avails.xml.AbstractXmlBuilder#isRequired(java.lang.String, java.lang.String)
 	 */
 	public boolean isRequired(String elementName, String schema)
 			throws IllegalStateException, IllegalArgumentException {
@@ -943,16 +976,15 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		return pedigreeMap;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.avails.xml.AbstractXmlBuilder#addToPedigree(java.lang.Object, com.movielabs.mddflib.avails.xml.Pedigree)
+	 */
 	public void addToPedigree(Object content, Pedigree source) {
 		pedigreeMap.put(content, source);
 	}
 
-	/**
-	 * Create an XML element
-	 * 
-	 * @param name the name of the element
-	 * @param val  the value of the element
-	 * @return the created element, or null
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.avails.xml.AbstractXmlBuilder#mGenericElement(java.lang.String, java.lang.String, org.jdom2.Namespace)
 	 */
 	public Element mGenericElement(String name, String val, Namespace ns) {
 		Element el = new Element(name, ns);
@@ -1007,9 +1039,9 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		}
 		return formattedValue;
 	}
-
+ 
 	/**
-	 * @param streamingRowIngester
+	 * @param curRow
 	 */
 	public void createAsset(StreamingRowIngester curRow) {
 		/*
@@ -1072,11 +1104,12 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		List<Element> assetList = avail2AssetMap.get(avail);
 		assetList.add(assetEl);
 	}
-
+ 
 	/**
-	 * @param assetEl
-	 * @param workType
-	 * @param ingesterV1_7
+	 * Metadata is created and added as content to the <tt>Asset</tt> element 
+	 * @param assetEl - <tt>Asset</tt> element the metadata is appended to.
+	 * @param workType -  determinines structure of the metadata being added.
+	 * @param row - a <tt>RowDataSrc</tt>
 	 */
 	public void createAssetMetadata(Element assetEl, String workType, RowDataSrc row) {
 		Element metadataEl = mdBuilder.appendMData(row, workType);
