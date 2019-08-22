@@ -31,6 +31,14 @@ import org.jdom2.Namespace;
  */
 public abstract class AbstractXmlBuilder {
 
+
+	/**
+	 * Create an XML element
+	 * 
+	 * @param name the name of the element
+	 * @param val  the value of the element
+	 * @return the created element, or null
+	 */
 	public abstract Element mGenericElement(String name, String val, Namespace ns);
 
 	/**
@@ -47,6 +55,9 @@ public abstract class AbstractXmlBuilder {
 	public abstract Namespace getMdNSpace();
 
 	/**
+	 * Return <tt>true</tt> if the indicated schema requires the element (i.e.,
+	 * minimum cardinality is <tt>1</tt>).
+	 * 
 	 * @param elementName
 	 * @param schema
 	 * @return
