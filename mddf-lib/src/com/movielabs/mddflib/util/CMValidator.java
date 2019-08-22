@@ -30,6 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -753,22 +755,45 @@ public abstract class CMValidator extends XmlIngester {
 	}
 
 	/**
+	 * Check that the value returned by an <tt>XPath</tt> specifies an ID associated
+	 * with an <tt>Element</tt> of the specified type. This logs any missing xref at
+	 * the default level of <tt>ERROR</tt>.
+	 * 
 	 * @param xpath
 	 * @param targetElType
 	 */
+
 	protected void validateXRef(String xpath, String targetElType) {
+		String logMsg = "Invalid cross-reference: the referenced " + targetElType + " is not defined in this manifest";
+		int logLevel = LogMgmt.LEV_ERR;
+		validateXRef(xpath, targetElType, logLevel, logMsg);
+	}
+
+	/**
+	 * Check that the value returned by an <tt>XPath</tt> specifies an ID associated
+	 * with an <tt>Element</tt> of the specified type. Missing xrefs result in a log
+	 * entry with the specified severity level.
+	 * 
+	 * @param xpath
+	 * @param targetElType
+	 * @param logLevel
+	 * @param logMsg
+	 */
+	protected void validateXRef(String xpath, String targetElType, int logLevel, String logMsg) {
+		Set<Namespace> nspaceSet = new HashSet<Namespace>();
+		nspaceSet.add(XmlIngester.mdNSpace);
+		nspaceSet.add(XmlIngester.manifestNSpace);
+
 		HashSet<String> idSet = idSets.get(targetElType);
 		Map<String, XrefCounter> idXRefCounter = idXRefCounts.get(targetElType);
 		if (xpath.contains("@")) {
-			XPathExpression<Attribute> xpExpression = xpfac.compile(xpath, Filters.attribute(), null, manifestNSpace);
+			XPathExpression<Attribute> xpExpression = xpfac.compile(xpath, Filters.attribute(), null, nspaceSet);
 			List<Attribute> attributeList = xpExpression.evaluate(curRootEl);
 			for (int i = 0; i < attributeList.size(); i++) {
 				Attribute refAtt = (Attribute) attributeList.get(i);
 				String targetId = refAtt.getValue();
 				if (!idSet.contains(targetId)) {
-					String msg = "Invalid cross-reference: the referenced " + targetElType
-							+ " is not defined in this manifest";
-					logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, refAtt.getParent(), msg, null, null, logMsgSrcId);
+					logIssue(LogMgmt.TAG_MD, logLevel, refAtt.getParent(), logMsg, null, null, logMsgSrcId);
 					curFileIsValid = false;
 				} else {
 					XrefCounter count = idXRefCounter.get(targetId);
@@ -781,20 +806,17 @@ public abstract class CMValidator extends XmlIngester {
 				}
 			}
 		} else {
-			XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, manifestNSpace);
+			XPathExpression<Element> xpExpression = xpfac.compile(xpath, Filters.element(), null, nspaceSet);
 			List<Element> elementList = xpExpression.evaluate(curRootEl);
 			for (int i = 0; i < elementList.size(); i++) {
 				Element refEl = (Element) elementList.get(i);
 				String targetId = refEl.getTextNormalize();
 				if (!idSet.contains(targetId)) {
-					String msg = "Invalid cross-reference: the referenced " + targetElType
-							+ " is not defined in this manifest";
-					logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_ERR, refEl, msg, null, null, logMsgSrcId);
+					logIssue(LogMgmt.TAG_MD, logLevel, refEl, logMsg, null, null, logMsgSrcId);
 					curFileIsValid = false;
 				} else {
 					XrefCounter count = idXRefCounter.get(targetId);
 					if (count == null) {
-						System.out.println("TRAPPED :" + targetId);
 						count = new XrefCounter(targetElType, targetId);
 						idXRefCounter.put(targetId, count);
 					}
