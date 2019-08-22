@@ -74,7 +74,7 @@ public class AvailsTool extends ValidatorTool {
 		inputSrcTFieldLocked = true;
 		consoleLogger.collapse(); 
 		// ....................................................
-		runInBackground(srcPath, null, null);
+		runInBackground(srcPath, null);
 		// .................................................
 		frame.setCursor(null); // turn off the wait cursor
 		consoleLogger.expand();

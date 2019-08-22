@@ -127,14 +127,11 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		private ValidationController controller;
 		private String srcPath;
 		private String uxProfile;
-		private List<String> useCases;
 
-		public ValidationWorker(ValidationController controller, String srcPath, String uxProfile,
-				List<String> useCases) {
+		public ValidationWorker(ValidationController controller, String srcPath, String uxProfile) {
 			this.controller = controller;
 			this.srcPath = srcPath;
 			this.uxProfile = uxProfile;
-			this.useCases = useCases;
 		}
 
 		@Override
@@ -144,7 +141,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			getTxtStatus().setText("Starting validation.....");
 			consoleLogger.collapse();
 			try {
-				controller.validate(srcPath, uxProfile, useCases);
+				controller.validate(srcPath, uxProfile);
 				refreshEditor(srcPath);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -332,10 +329,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected JCheckBoxMenuItem validateBestPracCBox;
 	protected JCheckBoxMenuItem compressCBoxMenuItem;
 	protected JPanel mainPanel;
-	protected JButton runValidatorBtn;
-	protected JLabel useCaseLabel;
-	protected UseCaseDialog useCaseDialog;
-	protected List<String> useCases = new ArrayList<String>();
+	protected JButton runValidatorBtn; 
 	protected JToolBar validatorToolBar;
 	protected JButton editFileBtn;
 	protected Map<String, File> selectedFiles = new HashMap<String, File>();
@@ -991,7 +985,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 				public void itemStateChanged(ItemEvent event) {
 					if (event.getStateChange() == ItemEvent.SELECTED) {
 						String selectedProfile = (String) event.getItem();
-						setAvailableUseCase(selectedProfile);
+//						setAvailableUseCase(selectedProfile);
 					}
 				}
 			});
@@ -1002,78 +996,78 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	/**
 	 * @param selectedProfile
 	 */
-	protected void setAvailableUseCase(String selectedProfile) {
-		getUseCaseDialog();
-		controller = getController();
-		String[] useCases = controller.getSupportedUseCases(selectedProfile);
-		useCaseDialog.setAvailableUseCases(useCases);
-	}
+//	protected void setAvailableUseCase(String selectedProfile) {
+//		getUseCaseDialog();
+//		controller = getController();
+//		String[] useCases = controller.getSupportedUseCases(selectedProfile);
+//		useCaseDialog.setAvailableUseCases(useCases);
+//	}
 
-	protected UseCaseDialog getUseCaseDialog() {
-		if (useCaseDialog == null) {
-			useCaseDialog = new UseCaseDialog();
-			useCaseDialog.addComponentListener(new ComponentAdapter() {
-				public void componentShown(ComponentEvent e) {
-					// Not really interested in this
-				}
-
-				public void componentHidden(ComponentEvent e) {
-					// need to get current selections
-					useCases = useCaseDialog.getSelectedUseCases();
-				}
-			});
-		}
-		return useCaseDialog;
-	}
+//	protected UseCaseDialog getUseCaseDialog() {
+//		if (useCaseDialog == null) {
+//			useCaseDialog = new UseCaseDialog();
+//			useCaseDialog.addComponentListener(new ComponentAdapter() {
+//				public void componentShown(ComponentEvent e) {
+//					// Not really interested in this
+//				}
+//
+//				public void componentHidden(ComponentEvent e) {
+//					// need to get current selections
+//					useCases = useCaseDialog.getSelectedUseCases();
+//				}
+//			});
+//		}
+//		return useCaseDialog;
+//	}
 
 	/**
 	 * @return
 	 */
-	protected Component getUseCasePanel() {
-		if (useCaseLabel == null) {
-			useCaseLabel = new JLabel("--------");
-			useCaseLabel.setPreferredSize(new Dimension(150, 35));
-			useCaseLabel.setBorder(
-					new TitledBorder(null, "Use Cases", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLUE));
-			useCaseLabel.setToolTipText("Click here to set or view Use-Cases for the selected Profile");
-			useCaseLabel.addMouseListener(new MouseListener() {
-
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					getUseCaseDialog();
-					useCaseDialog.setVisible(true);
-					useCaseDialog.setLocationRelativeTo(useCaseLabel);
-
-				}
-
-				@Override
-				public void mousePressed(MouseEvent e) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void mouseReleased(MouseEvent e) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void mouseEntered(MouseEvent e) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void mouseExited(MouseEvent e) {
-					// TODO Auto-generated method stub
-
-				}
-
-			});
-		}
-		return useCaseLabel;
-	}
+//	protected Component getUseCasePanel_XX() {
+//		if (useCaseLabel == null) {
+//			useCaseLabel = new JLabel("--------");
+//			useCaseLabel.setPreferredSize(new Dimension(150, 35));
+//			useCaseLabel.setBorder(
+//					new TitledBorder(null, "Use Cases", TitledBorder.LEADING, TitledBorder.TOP, null, Color.BLUE));
+//			useCaseLabel.setToolTipText("Click here to set or view Use-Cases for the selected Profile");
+//			useCaseLabel.addMouseListener(new MouseListener() {
+//
+//				@Override
+//				public void mouseClicked(MouseEvent e) {
+//					getUseCaseDialog();
+//					useCaseDialog.setVisible(true);
+//					useCaseDialog.setLocationRelativeTo(useCaseLabel);
+//
+//				}
+//
+//				@Override
+//				public void mousePressed(MouseEvent e) {
+//					// TODO Auto-generated method stub
+//
+//				}
+//
+//				@Override
+//				public void mouseReleased(MouseEvent e) {
+//					// TODO Auto-generated method stub
+//
+//				}
+//
+//				@Override
+//				public void mouseEntered(MouseEvent e) {
+//					// TODO Auto-generated method stub
+//
+//				}
+//
+//				@Override
+//				public void mouseExited(MouseEvent e) {
+//					// TODO Auto-generated method stub
+//
+//				}
+//
+//			});
+//		}
+//		return useCaseLabel;
+//	}
 
 	protected void runScript() {
 		// trigger the FileChooser dialog
@@ -1112,15 +1106,15 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		controller = getController();
 		controller.setValidation(true, validateConstraintsCBox.isSelected(), validateBestPracCBox.isSelected());
 		// ....................................................
-		runInBackground(srcPath, uxProfile, useCases);
+		runInBackground(srcPath, uxProfile);
 		// .................................................
 		frame.setCursor(null); // turn off the wait cursor
 		consoleLogger.expand();
 		inputSrcTFieldLocked = false;
 	}
 
-	protected void runInBackground(String srcPath, String uxProfile, List<String> useCases) {
-		SwingWorker<Void, StatusMsg> worker = new ValidationWorker(controller, srcPath, uxProfile, useCases);
+	protected void runInBackground(String srcPath, String uxProfile) {
+		SwingWorker<Void, StatusMsg> worker = new ValidationWorker(controller, srcPath, uxProfile);
 		worker.execute();
 	}
 

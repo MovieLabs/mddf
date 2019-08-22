@@ -209,7 +209,7 @@ public class ToolLauncher {
 					if (recursive.equalsIgnoreCase("F")) {
 						vCtrl.setRecursive(false);
 					}
-					vCtrl.validate(dir, null, null);
+					vCtrl.validate(dir, null);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -223,7 +223,7 @@ public class ToolLauncher {
 					System.exit(0);
 				}
 				try {
-					vCtrl.validate(filePath, null, null);
+					vCtrl.validate(filePath, null);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

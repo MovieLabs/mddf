@@ -53,20 +53,12 @@ public class ManifestTool extends ValidatorTool {
 	 * Manifest processing.
 	 * 
 	 * @see com.movielabs.mddf.preProcess.ValidatorTool#getValidationTools()
+	 * @wbp.parser.entryPoint
 	 */
 	protected JToolBar getValidationTools() {
 		if (validatorToolBar == null) {
 			super.getValidationTools();
-
-			JLabel profileLabel = new JLabel("Profile:");
-			profileLabel.setMaximumSize(new Dimension(71, 15));
-			profileLabel.setPreferredSize(new Dimension(71, 15));
-			profileLabel.setMinimumSize(new Dimension(71, 15));
-			profileLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-			profileLabel.setForeground(Color.BLUE);
-			validatorToolBar.add(profileLabel);
-
-			validatorToolBar.add(getProfileComboBox());
+			// nothing to add
 		}
 		return validatorToolBar;
 	}
