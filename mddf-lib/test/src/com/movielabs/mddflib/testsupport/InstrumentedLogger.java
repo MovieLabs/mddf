@@ -23,7 +23,9 @@
 package com.movielabs.mddflib.testsupport;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,8 +52,20 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	private int[] countByTag;
 	private Map<String, String> msgMap;
 	private List<String> msgList;
+	private PrintWriter logWriter;
 
 	public InstrumentedLogger() {
+		clearLog();
+		minLevel = LogMgmt.LEV_NOTICE; // default
+	}
+
+	public InstrumentedLogger(File saveFile) {
+		try {
+			logWriter = new PrintWriter(saveFile);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
 		clearLog();
 		minLevel = LogMgmt.LEV_NOTICE; // default
 	}
@@ -81,6 +95,11 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 		msgList.add("ILOG:  " + LogMgmt.logLevels[level].toUpperCase() + ":\t line " + line + ": " + msg);
 		if (printToConsole) {
 			System.out.println("ILOG:  " + LogMgmt.logLevels[level].toUpperCase() + ":\t line " + line + ": " + msg);
+		}
+		if (logWriter != null) {
+			logWriter
+					.write("ILOG:  " + LogMgmt.logLevels[level].toUpperCase() + ":\t line " + line + ": " + msg + "\n");
+			logWriter.flush();
 		}
 	}
 
@@ -170,10 +189,38 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 		msgList = new ArrayList<String>();
 	}
 
+	public void closeLog() {
+		if (logWriter != null) {
+			logWriter.flush();
+			logWriter.close();
+		}
+	}
+
+	/**
+	 * Print log to console
+	 */
 	public void printLog() {
 		for (int i = 0; i < msgList.size(); i++) {
 			System.out.println(msgList.get(i));
 		}
+	}
+
+	/**
+	 * @param logFile
+	 */
+	public void saveLog(File logFile) {
+		PrintWriter po;
+		try {
+			po = new PrintWriter(logFile);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+		for (int i = 0; i < msgList.size(); i++) {
+			po.println(msgList.get(i));
+		}
+		po.flush();
+		po.close();
 	}
 
 	/*
