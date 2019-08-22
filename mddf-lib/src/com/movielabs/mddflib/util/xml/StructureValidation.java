@@ -68,14 +68,21 @@ import net.sf.json.JSONObject;
  * 			"constraint" :
  * 			[
  * 				{
-				  "min": <i>INTEGER</i>,
-				  "max": <i>INTEGER</i>,
+ 				  "<i>VARIABLE ID</i>": <i>XPATH</i>, (optional)
+				  "min": <i>INTEGER</i>, (optional)
+				  "max": <i>INTEGER</i>, (optional)
 				  "xpath": <i>(XPATH | ARRAY[XPATH])</i>,
+				  "filter" : (optional)
+				  	{
+				  		 "values":  ARRAY[ <i>STRING</i>],
+				  		 "negated" : <i>("true" | "false")</i> (optional)
+				  	}
 				  "severity": <i>("Fatal" | "Error" | "Warning" | "Notice")</i>,
 				  "msg" : <i>STRING</i>,  (optional)
 				  "docRef": <i>STRING</i> (optional)
  * 				}
  * 			]
+ * 			"children": {.... } (optional)
  * 		 }
  * }
  * </pre>
@@ -92,11 +99,15 @@ import net.sf.json.JSONObject;
  * <li><tt>constraint</tt>: one or more structural requirements associated with
  * the targeted element.
  * <ul>
+ * <li><tt><i>VARIABLE-ID</i></tt>: Variables are denoted by a "$" followed by
+ * an ID (e.g., $FOO) and are assigned a value via a XPath.</li>
  * <li><tt>xpath</tt>: defines one or more xpaths relative to the target element
  * that, when evaluated, the number of matching elements satisfy the min/max
  * cardinality constraints. If multiple xpaths are listed, the total number of
  * elements (or attributes) returned when each is separately evaluated must
  * satisfy the constraint.</li>
+ * <li><tt>filter</tt>: supplemental condition applied to results returned when
+ * XPath is evaluated.</li>
  * <li><tt>min</tt>: minimum number of matching objects that should be found
  * when evaluating the xpath(s). [OPTIONAL, default is 0]</li>
  * <li><tt>max</tt>: maximum number of matching objects that should be found
@@ -207,6 +218,25 @@ import net.sf.json.JSONObject;
 			]
 		}
  * </pre>
+ * 
+ * <h3>Variables:</h3>
+ * 
+ * Variables are denoted by a "$" followed by an ID (e.g., <tt>$FOO</tt>) and
+ * are assigned a value via a XPath. For example: <tt><pre>
+ *   "$CID": "./@ContentID"
+ * </pre></tt> They may be included in the constraint's XPath by using enclosing
+ * the variable name in curly brackets. For example: <tt><pre>
+ *   "xpath": 
+ *      [
+ *         "../..//{manifest}Experience[@ExperienceID={$CID}]/{manifest}PictureGroupID"
+ *      ],
+ * </pre></tt>
+ * <p>
+ * It is possible that the XPath used to determine a variable's value will
+ * evaluate to a <tt>null</tt>. Any constraint XPath that references a null
+ * variable will be skipped when evaluating the constraint criteria.
+ * </p>
+ * 
  * 
  * <h3>Nested Requirements:</h3>
  * <p>
