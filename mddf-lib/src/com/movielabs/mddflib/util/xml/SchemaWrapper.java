@@ -93,9 +93,10 @@ public class SchemaWrapper {
 					cache.put(xsdRsrc, target);
 				} catch (Exception e) {
 					/*
-					 * This happens if request is for a schema we don't provide XSD for
+					 * This happens if request is for a schema we don't provide XSD for.
+					 * Exception for 'ds-vhttp://www.w3.org/2000/09/xmldsig#' seems to be normal
 					 */
-					System.out.println("SchemaWrapper.factory(): Exception for " + xsdRsrc);
+					//System.out.println("SchemaWrapper.factory(): Exception for " + xsdRsrc);
 				}
 			}
 			return target;
