@@ -93,6 +93,8 @@ public class AvailsWrkBook {
 	 * @param inStream
 	 * @param logMgr
 	 * @return a Map&lt;String, Object&gt;
+	 * @deprecated StreamingXmlBuilder provides better memory utilization and
+	 *             support for large Avails
 	 */
 	public static Map<String, Object> convertSpreadsheet(File xslxFile, Version xlsxVersion, InputStream inStream,
 			LogMgmt logMgr) {
@@ -204,7 +206,8 @@ public class AvailsWrkBook {
 			}
 			wrkBook = new AvailsWrkBook(inStream, xslxFile, logMgr, exitOnError, autoCorrect);
 		} catch (FileNotFoundException e1) {
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found: "+xslxFile.getAbsolutePath(), xslxFile, logMsgSrcId);
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found: " + xslxFile.getAbsolutePath(), xslxFile,
+					logMsgSrcId);
 			return null;
 		} catch (POIXMLException e1) {
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
@@ -224,7 +227,7 @@ public class AvailsWrkBook {
 		}
 		try {
 			inStream.close();
-		} catch (IOException e) { 
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return sheet;
@@ -393,6 +396,5 @@ public class AvailsWrkBook {
 	public boolean getCleanupData() {
 		return cleanupData;
 	}
-
 
 }
