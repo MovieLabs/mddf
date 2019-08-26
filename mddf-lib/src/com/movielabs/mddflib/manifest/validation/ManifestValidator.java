@@ -236,12 +236,13 @@ public class ManifestValidator extends CMValidator {
 		validateXRef(".//manifest:Audiovisual/manifest:PlayableSequenceID", "PlayableSequence");
 
 		validateXRef(".//manifest:Clip/manifest:PresentationID", "Presentation");
+		
 		validateXRef(".//manifest:ImageClip/manifest:ImageID", "Image");
-
 		validateXRef(".//manifest:Chapter/manifest:ImageID", "Image");
-
 		validateXRef(".//manifest:Picture/manifest:ImageID", "Image");
 		validateXRef(".//manifest:Picture/manifest:ThumbnailImageID", "Image");
+		String msgAR1 = "Identification of ArtReference by means other that ImageID should only be done under bi-lateral agreement";
+		validateXRef(".//md:LocalizedInfo/md:ArtReference", "Image", LogMgmt.LEV_NOTICE, msgAR1);
 
 		validateXRef(".//manifest:VideoTrackReference/manifest:VideoTrackID", "Video");
 		validateXRef(".//manifest:AudioTrackReference/manifest:AudioTrackID", "Audio");
