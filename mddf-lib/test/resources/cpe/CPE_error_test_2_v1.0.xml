@@ -1,38 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TEST ARTIFACT: This file includes errors that can be used to perform 
+<!-- TEST ARTIFACT: This file includes 13 errors that can be used to perform 
 	specific JUnit tests relating to the CPE Manifest specification. -->
 <manifest:MediaManifest
 	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.6/manifest"
-	xmlns:md="http://www.movielabs.com/schema/md/v2.5/md" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.5/md"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.6/manifest manifest-v1.6.xsd"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 	<manifest:Compatibility>
 		<manifest:SpecVersion>1.6</manifest:SpecVersion>
 		<manifest:System>HTML5</manifest:System>
 		<manifest:System>Roku</manifest:System>
-		<manifest:Profile>IP-0</manifest:Profile>
+		<manifest:Profile>none</manifest:Profile>
 	</manifest:Compatibility>
 	<manifest:Inventory>
-		<manifest:Audio AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		<manifest:Audio
+			AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		  <!--  3 ERRORS: Inventory tracks should include Digital Asset Metadata -->
 			<md:Language>en</md:Language>
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Audio>
-		<manifest:Video VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		<manifest:Video
+			VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		  <!--  4 ERRORS: Inventory tracks should include Digital Asset Metadata -->
 			<md:Picture />
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Video>
-		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
-			<manifest:BasicMetadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+		<manifest:Image
+			ImageID="md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:main.poster.big1">
+			<md:Width>1500</md:Width>
+			<md:Height>2122</md:Height>
+			<md:Encoding>image/jpeg</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>https://upload.wikimedia.org/wikipedia/commons/c/c5/Big_buck_bunny_poster_big.jpg
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<manifest:Metadata
+			ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+			<manifest:BasicMetadata
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<md:LocalizedInfo language="en" default="true">
 					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
 					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
 					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:ArtReference>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:main.poster.big1
+					</md:ArtReference>
+					<!-- NOTICE: Identification of ArtRef by means other that ImageID should 
+						only be done under bi-lateral agreement -->
+					<md:ArtReference>https://fanart.tv/fanart/movies/10378/hdmovieclearart/big-buck-bunny-5133bf8939efc.png
+					</md:ArtReference>
 					<md:Summary190>A large but peaceful bunny is harassed by three
 						trouble-making rodents
 					</md:Summary190>
@@ -42,11 +66,16 @@
 						kills a butterfly, Buck decides it's payback time and unleashes
 						his inner warrior.
 					</md:Summary400>
+					<!-- ERROR: Must specify a primary ('@level=0') Genre   -->
 					<md:Genre>Animation</md:Genre>
 					<md:Genre>Short</md:Genre>
 					<md:Genre>Comedy</md:Genre>
+					<!-- ERROR: missing ./OriginalTitle -->
+					<!-- ERROR: missing ./CopyrightLine -->
 				</md:LocalizedInfo>
+				<!-- ERROR: RunLength is required
 				<md:RunLength>PT10M00.0S</md:RunLength>
+				-->
 				<md:ReleaseYear>2008</md:ReleaseYear>
 				<md:ReleaseHistory>
 					<md:ReleaseType>original</md:ReleaseType>
@@ -129,7 +158,8 @@
 				<md:PrimarySpokenLanguage>cmn-Hans-CN</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>sr-Latn-RS</md:PrimarySpokenLanguage>
 			</manifest:BasicMetadata>
-			<manifest:Alias ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+			<manifest:Alias
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<manifest:LocalizedPair>
 					<manifest:LanguageIncluded>en</manifest:LanguageIncluded>
 				</manifest:LocalizedPair>
@@ -142,7 +172,7 @@
 			PresentationID="md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<manifest:TrackMetadata>
 				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
-				<manifest:VideoTrackReference> 
+				<manifest:VideoTrackReference>
 					<manifest:VideoTrackID>md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 					</manifest:VideoTrackID>
 				</manifest:VideoTrackReference>
@@ -153,101 +183,131 @@
 			</manifest:TrackMetadata>
 		</manifest:Presentation>
 	</manifest:Presentations>
+	<manifest:PictureGroups>
+		<manifest:PictureGroup
+			PictureGroupID="md:picturegroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:PG1">
+			<manifest:Picture>
+				<manifest:PictureID>
+					md:picturegroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:PG1_1
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:main.poster.big1
+				</manifest:ImageID> 
+			</manifest:Picture>
+			<manifest:Type>Retail</manifest:Type>
+		</manifest:PictureGroup>
+	</manifest:PictureGroups>
 	<manifest:Experiences>
 		<manifest:Experience version="0.1"
-			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha"> 
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha">
 			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
 			</manifest:ContentID>
-			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A"> 
+			<manifest:Audiovisual
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<manifest:Type>Main</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>
 				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 				</manifest:PresentationID>
 			</manifest:Audiovisual>
-            <manifest:ExperienceChild>
-                <manifest:Relationship>ispartof</manifest:Relationship>
-                <manifest:SequenceInfo>
-                    <md:Number>1</md:Number>
-                </manifest:SequenceInfo>
-                <manifest:ExperienceID>md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha1</manifest:ExperienceID>
-            </manifest:ExperienceChild>
-            <manifest:ExperienceChild>
-                <manifest:Relationship>ispartof</manifest:Relationship>
-                <manifest:SequenceInfo>
-                    <md:Number>2</md:Number>
-                </manifest:SequenceInfo>
-                <manifest:ExperienceID>md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha2</manifest:ExperienceID>
-            </manifest:ExperienceChild>
-		</manifest:Experience> 
+			<manifest:PictureGroupID>md:picturegroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:PG1</manifest:PictureGroupID>
+			<manifest:ExperienceChild>
+				<manifest:Relationship>ispartof</manifest:Relationship>
+				<manifest:SequenceInfo>
+					<md:Number>1</md:Number>
+				</manifest:SequenceInfo>
+				<manifest:ExperienceID>md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha1
+				</manifest:ExperienceID>
+			</manifest:ExperienceChild>
+			<manifest:ExperienceChild>
+				<manifest:Relationship>ispartof</manifest:Relationship>
+				<manifest:SequenceInfo>
+					<md:Number>2</md:Number>
+				</manifest:SequenceInfo>
+				<manifest:ExperienceID>md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha2
+				</manifest:ExperienceID>
+			</manifest:ExperienceChild>
+		</manifest:Experience>
+		<!-- WARNING: Experience is never referenced by it's ID -->
 		<manifest:Experience version="0.1"
-			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:beta"> 
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:beta">
 			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
 			</manifest:ContentID>
-			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A"> 
+			<manifest:Audiovisual
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<manifest:Type>Main</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>
 				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 				</manifest:PresentationID>
 			</manifest:Audiovisual>
-		</manifest:Experience> 
+			<manifest:PictureGroupID>md:picturegroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:PG1</manifest:PictureGroupID>
+		</manifest:Experience>
+		<!-- ERROR Missing PictureGroupID; Required when referenced Metadata includes ArtReferences -->
 		<manifest:Experience version="0.1"
-			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha1"> 
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha1">
 			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
 			</manifest:ContentID>
-			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A"> 
+			<manifest:Audiovisual
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<manifest:Type>Main</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>
 				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 				</manifest:PresentationID>
 			</manifest:Audiovisual>
-		</manifest:Experience> 
+		</manifest:Experience>
 		<manifest:Experience version="0.1"
-			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha2"> 
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha2">
 			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
 			</manifest:ContentID>
-			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A"> 
+			<manifest:Audiovisual
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<manifest:Type>Main</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>
 				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 				</manifest:PresentationID>
 			</manifest:Audiovisual>
-            <manifest:ExperienceChild>
-                <manifest:Relationship>ispartof</manifest:Relationship>
-                <manifest:SequenceInfo>
-                    <md:Number>1</md:Number>
-                </manifest:SequenceInfo>
-                <manifest:ExperienceID>md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha2a</manifest:ExperienceID>
-            </manifest:ExperienceChild>
-            <manifest:ExperienceChild>
-                <manifest:Relationship>ispartof</manifest:Relationship>
-                <manifest:SequenceInfo>
-                    <md:Number>2</md:Number>
-                </manifest:SequenceInfo>
-                <manifest:ExperienceID>md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha2b</manifest:ExperienceID>
-            </manifest:ExperienceChild>
-		</manifest:Experience> 
+			<manifest:PictureGroupID>md:picturegroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:PG1</manifest:PictureGroupID>
+			<manifest:ExperienceChild>
+				<manifest:Relationship>ispartof</manifest:Relationship>
+				<manifest:SequenceInfo>
+					<md:Number>1</md:Number>
+				</manifest:SequenceInfo>
+				<manifest:ExperienceID>md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha2a
+				</manifest:ExperienceID>
+			</manifest:ExperienceChild>
+			<manifest:ExperienceChild>
+				<manifest:Relationship>ispartof</manifest:Relationship>
+				<manifest:SequenceInfo>
+					<md:Number>2</md:Number>
+				</manifest:SequenceInfo>
+				<manifest:ExperienceID>md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha2b
+				</manifest:ExperienceID>
+			</manifest:ExperienceChild>
+		</manifest:Experience>
 		<manifest:Experience version="0.1"
-			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha2a"> 
-			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
-			</manifest:ContentID>
-			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A"> 
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha2a">
+			<!-- ERROR: Experience MUST include a ContentID (Sec 5.1.1) -->
+			<!-- <manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A</manifest:ContentID> -->
+			<manifest:Audiovisual
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<manifest:Type>Main</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>
 				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 				</manifest:PresentationID>
 			</manifest:Audiovisual>
-		</manifest:Experience> 
+			<manifest:PictureGroupID>md:picturegroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:PG1</manifest:PictureGroupID>
+		</manifest:Experience>
 		<manifest:Experience version="0.1"
-			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha2b"> 
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha2b">
 			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
 			</manifest:ContentID>
-			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A"> 
+			<manifest:Audiovisual
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<manifest:Type>Main</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>
 				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 				</manifest:PresentationID>
 			</manifest:Audiovisual>
-		</manifest:Experience> 
+			<manifest:PictureGroupID>md:picturegroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:PG1</manifest:PictureGroupID>
+		</manifest:Experience>
 	</manifest:Experiences>
 	<manifest:ALIDExperienceMaps>
 		<manifest:ALIDExperienceMap>
