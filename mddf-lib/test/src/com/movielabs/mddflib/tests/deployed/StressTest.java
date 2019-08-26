@@ -25,12 +25,12 @@ package com.movielabs.mddflib.tests.deployed;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.TimeZone;
@@ -44,20 +44,18 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.jdom2.Document;
 
-import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.avails.xml.AvailsSheet;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
-import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
- * Run diagnostic stress tests
+ * Run diagnostic stress tests. Statistics on execution time and heap usage are collected.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -115,25 +113,28 @@ public class StressTest {
 	private InstrumentedLogger iLog;
 	private Options options;
 
-	private static final String DEFAULT_DIR = ".";  
-	public static final String STAT_COL_NAMES[] = { "mode", "context", "Run", "Heap", "Time", "size", "forced GC" };
+	private static final String DEFAULT_DIR = ".";
+	public static final String STAT_COL_NAMES[] = { "mode", "context", "Run", "Heap (MB)", "Used Mem (MB)", "Time",
+			"size", "forced GC" };
 	private static final String stats_colSep = ",";
 
 	private static String MODULE_ID = "Tester";
 	private static File tempDir;
 	private static final int DEFAULT_CNT = 5;
 	private static String filePrefix = "TestCase_";
-	
+
 	private String testMode;
-	private  String rsrcPath = DEFAULT_DIR;
+	private String rsrcPath = DEFAULT_DIR;
 	private File logDir;
 	private boolean interactive;
 	private StopWatch timer = new StopWatch();
 	private PrintWriter statsWriter;
 	private boolean gcOn;
 	private String fileSize;
+	private String fileFmt = "xlsx"; // default value
 	private int count;
-	private File workDir; 
+	private File workDir;
+	private String startTime;
 
 	/**
 	 * @param args
@@ -159,16 +160,27 @@ public class StressTest {
 		float maxGB = maxMem / (1024 * 1014 * 1024);
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Max Memory = " + maxGB + "GBytes", null, "JUnit");
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Mode=" + testMode, null, "JUnit");
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Format=" + fileFmt, null, "JUnit");
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Force GC=" + gcOn, null, "JUnit");
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Interactive=" + interactive, null, "JUnit");
 		try {
 			runTest(version, count);
 		} catch (Exception e) {
 			e.printStackTrace();
+			iLog.log(iLog.LEV_FATAL, iLog.TAG_N_A, e.getMessage(), null, "JUnit");
 		}
-		if (interactive) {
-			System.out.println("Hit <Enter> to exit");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		pauseForInput("Hit <Enter> to exit");
+		statsWriter.flush();
+		statsWriter.close();
+		iLog.closeLog();
+		System.out.println("Good-bye");
 
+	}
+
+	private void pauseForInput(String msg) {
+		if (interactive) {
+			System.out.println(msg);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 			// Reading data using readLine
 			try {
 				String name = reader.readLine();
@@ -176,10 +188,111 @@ public class StressTest {
 				e.printStackTrace();
 			}
 		}
-		statsWriter.flush();
-		statsWriter.close();
-		System.out.println("Good-bye");
+	}
 
+	/**
+	 * @param testFile
+	 * @param version
+	 * @param count
+	 * @param force    if <tt>true</tt> request garbage collection between major
+	 *                 stages
+	 */
+	private void runTest(Version version, int count) {
+		String testFileName = filePrefix + fileSize + "." + fileFmt;
+		String srcFilePath = rsrcPath + testFileName;
+		File srcFile = new File(srcFilePath);
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with rsrc file " + srcFile.getAbsolutePath(), null, "JUnit");
+
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Repeat count=" + count, null, "JUnit");
+		for (int i = 1; i < (count + 1); i++) {
+			if (gcOn) {
+				/* do garbage collection btwn runs */
+				System.gc();
+				// sleep for 2 seconds before next attempt (allows GC (I hope))
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					// e.printStackTrace();
+				}
+			}
+			pauseForInput("Hit <Enter> to continue");
+			String msg = "\nRun " + i + " of " + count;
+			System.out.println(msg);
+			iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Run " + i + " of " + count + ":: " + tStamp() + " start time", null,
+					"JUnit");
+			// reset the stopwatch
+			timer.reset();
+			reportStats(" initial", i);
+			switch (fileFmt) {
+			case "xlsx":
+				runXlsxTest(srcFile, version, i);
+				break;
+			case "xml":
+				runXmlTest(srcFile, version, i);
+				break;
+			}
+			reportStats("Processing completed", i);
+			iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Run " + i + " of " + count + ":: " + tStamp() + " end time", null,
+					"JUnit");
+		}
+	}
+
+	/**
+	 * @param srcFile
+	 * @param version
+	 * @param i
+	 */
+	private void runXmlTest(File srcFile, Version version, int i) {
+		MddfTarget target;
+		try {
+			target = new MddfTarget(srcFile, iLog);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+		Document xmlDoc = target.getXmlDoc();
+		if (testMode.equals("load")) {
+			return;
+		}
+		boolean isValid = true;
+		if (testMode.equals("cvrt")) {
+			iLog.log(LogMgmt.LEV_INFO, iLog.TAG_N_A, "Conversion of XML is a NO-OP.", srcFile, MODULE_ID);
+			return;
+		}
+		AvailValidator tool1 = new AvailValidator(true, iLog);
+		isValid = tool1.process(target, null);
+		if (testMode.equals("val")) {
+			return;
+		}
+	}
+
+	private void runXlsxTest(File srcFile, Version version, int runNum) {
+
+		AvailsSheet sheet = AvailsWrkBook.loadWorkBook(srcFile, iLog, null, 0);
+		reportStats("LOAD completed", runNum);
+		if (testMode.equals("load")) {
+			return;
+		}
+
+		Map<String, Object> results = AvailsWrkBook.mapToXml(sheet, srcFile, version, null, iLog);
+		reportStats("XLSX CONVERSION completed", runNum);
+		Document xmlDoc = (Document) results.get("xml");
+		File outputLoc = new File(tempDir, "TRACE_" + srcFile.getName().replace("xlsx", "xml"));
+		XmlIngester.writeXml(outputLoc, xmlDoc);
+		if (testMode.equals("cvrt")) {
+			return;
+		}
+
+		pauseForInput("Ready to validate. Hit <Enter> when ready to continue");
+		Map<Object, Pedigree> pedigreeMap = (Map<Object, Pedigree>) results.get("pedigree");
+		MddfTarget target = new MddfTarget(srcFile, xmlDoc, iLog);
+		iLog.log(LogMgmt.LEV_INFO, iLog.TAG_N_A, "Validating file as a " + target.getMddfType().toString(), srcFile,
+				MODULE_ID);
+		boolean isValid = true;
+		AvailValidator tool1 = new AvailValidator(true, iLog);
+		isValid = tool1.process(target, pedigreeMap);
+		reportStats("XLSX VALIDATION completed", runNum);
 	}
 
 	/**
@@ -187,9 +300,7 @@ public class StressTest {
 	 * 
 	 */
 	private void initialize(String[] args) throws IOException {
-		iLog = new InstrumentedLogger();
-		iLog.setPrintToConsole(true);
-		iLog.setMinLevel(iLog.LEV_WARN);
+		startTime = tStamp();
 		loadOptions();
 		CommandLine cmdLine = null;
 		if (args.length == 0) {
@@ -219,28 +330,29 @@ public class StressTest {
 			}
 		}
 
-		// intitialize alll directory paths....
+		// intitialize all directory paths....
 		String wrkDirPath;
 		if ((cmdLine.hasOption("d"))) {
 			wrkDirPath = cmdLine.getOptionValue("d");
-		}else {
+		} else {
 			wrkDirPath = DEFAULT_DIR;
 		}
 		workDir = new File(wrkDirPath);
-		tempDir = new File(workDir, "./tmp"); 
+		tempDir = new File(workDir, "./tmp");
 		if (!tempDir.exists()) {
 			tempDir.mkdirs();
 		}
-		logDir = new File(workDir, "./logs"); 
+		logDir = new File(workDir, "./logs");
 		if (!logDir.exists()) {
 			logDir.mkdirs();
 		}
-		rsrcPath = wrkDirPath +"/resources/stressTests/";
+		rsrcPath = wrkDirPath + "/resources/stressTests/";
 
 		if ((cmdLine.hasOption("m"))) {
 			testMode = cmdLine.getOptionValue("m");
 			switch (testMode) {
 			case "load":
+			case "cvrt":
 			case "val":
 			case "xlate":
 				break;
@@ -252,6 +364,17 @@ public class StressTest {
 			testMode = "load";
 		}
 
+		if ((cmdLine.hasOption("f"))) {
+			fileFmt = cmdLine.getOptionValue("f");
+			switch (fileFmt) {
+			case "xlsx":
+			case "xml":
+				break;
+			default:
+				printUsage("Invalid Argument: 'format'");
+				System.exit(0);
+			}
+		}
 		gcOn = (cmdLine.hasOption("g"));
 		interactive = (cmdLine.hasOption("i"));
 
@@ -261,8 +384,15 @@ public class StressTest {
 		}
 		fileSize = cmdLine.getOptionValue("s");
 
+		String logFileName = "/" + testMode + "_" + fileFmt + "_" + fileSize + "_" + startTime + ".log";
+		File logFile = new File(logDir, logFileName);
+		iLog = new InstrumentedLogger(logFile);
+		iLog.setPrintToConsole(true);
+		iLog.setMinLevel(iLog.LEV_WARN);
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Start time = " + startTime, null, "JUnit");
 
-		String statsOutFile = logDir.getPath() + "/StressTest_" + testMode + "_" + fileSize + "_" + tStamp() + ".csv";
+		String statsOutFile = logDir.getPath() + "/" + testMode + "_" + fileFmt + "_" + fileSize + "_" + startTime
+				+ ".csv";
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Stats file=" + statsOutFile, null, "JUnit");
 		statsWriter = new PrintWriter(new BufferedWriter(new FileWriter(statsOutFile)));
 		/* first row has column names */
@@ -286,6 +416,7 @@ public class StressTest {
 		options.addOption("d", "dir", true, "working directory. \n [OPTIONAL: default=" + DEFAULT_DIR + "]");
 		options.addOption("c", "cnt", true,
 				"how many times test is repeated \n[OPTIONAL: default=" + DEFAULT_CNT + "]");
+		options.addOption("f", "format", true, "input file format ( xlsx | xml)\n[OPTIONAL: default='xlsx']");
 		options.addOption("m", "mode", true, "test mode (load | cvrt | val | xlate) \n[OPTIONAL: defualt=load'");
 		options.addOption("g", "garbage", false, "Request garbage collection between major stages");
 		options.addOption("i", "interactive", false, "Run in interactive mode");
@@ -314,91 +445,23 @@ public class StressTest {
 	}
 
 	/**
-	 * @param testFile
-	 * @param version
-	 * @param count
-	 * @param force    if <tt>true</tt> request garbage collection between major
-	 *                 stages
-	 */
-	private void runTest(Version version, int count) {
-		String testFileName = filePrefix + fileSize + ".xlsx"; 
-		String srcFilePath = rsrcPath + testFileName;
-		File srcFile = new File(srcFilePath);
-			iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with rsrc file " + srcFile.getAbsolutePath(), null, "JUnit");
-
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Repeat count=" + count, null, "JUnit");
-		for (int i = 1; i < (count + 1); i++) {
-			if (gcOn) {
-				/* do garbage collection btwn runs */
-				System.gc();
-				// sleep for 2 seconds before next attempt (allows GC (I hope))
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					// e.printStackTrace();
-				}
-			}
-			String msg = "\nRun " + i + " of " + count;
-			System.out.println(msg);
-			iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Run " + i + " of " + count + ":: " + tStamp() + " start time", null,
-					"JUnit");
-			// reset the stopwatch
-			timer.reset();
-			reportStats(" initial", i);
-			AvailsSheet sheet = AvailsWrkBook.loadWorkBook(srcFile, iLog, null, 0);
-			if (testMode.equals("load")) {
-				reportStats("LOAD completed", i);
-				continue;
-			}
-			reportStats("LOAD completed", i);
-			Map<String, Object> results = AvailsWrkBook.mapToXml(sheet, srcFile, version, null, iLog);
-			if (testMode.equals("cvrt")) {
-				reportStats("XML CONVERSION completed", i);
-				continue;
-			}
-			reportStats("XML CONVERSION completed", i);
-
-			Document xmlDoc = (Document) results.get("xml");
-			File outputLoc = new File(tempDir, "TRACE_" + srcFile.getName().replace("xlsx", "xml"));
-			XmlIngester.writeXml(outputLoc, xmlDoc);
-
-			results = AvailsWrkBook.convertSpreadsheet(srcFile, version, null, iLog);
-			xmlDoc = (Document) results.get("xml");
-			outputLoc = new File(tempDir, "TRACE_" + srcFile.getName().replace("xlsx", "xml"));
-			XmlIngester.writeXml(outputLoc, xmlDoc);
-
-			File xlsxFile = (File) results.get("xlsx");
-			Map<Object, Pedigree> pedigreeMap = (Map<Object, Pedigree>) results.get("pedigree");
-			FILE_FMT srcMddfFmt = (FILE_FMT) results.get("srcFmt");
-			MddfTarget target = new MddfTarget(srcFile, xmlDoc, iLog);
-			iLog.log(LogMgmt.LEV_INFO, iLog.TAG_N_A, "Validating file as a " + target.getMddfType().toString(), srcFile,
-					MODULE_ID);
-			boolean isValid = true;
-			AvailValidator tool1 = new AvailValidator(true, iLog);
-			isValid = tool1.process(target, pedigreeMap);
-			reportStats("VALIDATION completed", i);
-
-			iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Run " + i + " of " + count + ":: " + tStamp() + " end time", null,
-					"JUnit");
-			//
-		}
-	}
-
-	/**
 	 * 
 	 */
 	private void reportStats(String contextMsg, int runNum) {
 		// Get current size of heap in bytes, then convert to GB
 		long heapSize = Runtime.getRuntime().totalMemory();
 		float heapGB = heapSize / (1024 * 1014);// * 1024);
+		long freeMem = Runtime.getRuntime().freeMemory();
+		float freeMB = freeMem / (1024 * 1014);// * 1024);
+		float usedMB = (heapSize - freeMem) / (1024 * 1014);
 		String time = timer.elapsedTime();
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A,
-				contextMsg + ": elapsed time = " + time + ", Memory usage = " + heapGB + "MBytes", null, "JUnit");
+				contextMsg + ": elapsed time = " + time + ", Memory used = " + usedMB + "MBytes", null, "JUnit");
 		if (statsWriter != null) {
-			// { "mode", "context", "heap", "time", "size", "forced GC" };
+			// { "mode", "context", "heap", "usedMB, "time", "size", "forced GC" };
 			String stats = testMode + stats_colSep + contextMsg + stats_colSep + runNum + stats_colSep + heapGB
-					+ stats_colSep + time + stats_colSep + fileSize + stats_colSep + gcOn + "\n";
+					+ stats_colSep + usedMB + stats_colSep + time + stats_colSep + fileSize + stats_colSep + gcOn
+					+ "\n";
 			statsWriter.write(stats);
 			statsWriter.flush();
 		}
@@ -419,9 +482,10 @@ public class StressTest {
 	}
 
 	private void dumpLog() {
-		System.out.println("\n ===   dumping log ===");
-		iLog.printLog();
-		System.out.println(" === End log dump  ====");
+		String logFileName = "/" + testMode + "_" + fileSize + "_" + startTime + ".log";
+		File logFile = new File(logDir, logFileName);
+		System.out.println("\n ===   dumping log ===> " + logFile.getAbsolutePath());
+		iLog.saveLog(logFile);
 
 	}
 }
