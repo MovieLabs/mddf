@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -44,6 +45,9 @@ import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.manifest.validation.profiles.CpeIP1Validator;
 import com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator;
 import com.movielabs.mddflib.util.xml.MddfTarget;
+import com.movielabs.mddflib.util.xml.XmlIngester;
+
+import net.sf.json.JSONObject;
 
 /**
  * Handles validation of a CPE-Manifest as specified in TR-CPE-M1. As a
@@ -120,7 +124,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 	protected HashMap<String, Element> cid2MDataMap;
 	private CpeIP1Validator profileIP1Val;
 
-	/** 
+	/**
 	 * @param loggingMgr
 	 */
 	public CpeValidator(LogMgmt loggingMgr) {
@@ -134,21 +138,19 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		profileIP1Val = new CpeIP1Validator(this, loggingMgr);
 	}
 
-	public boolean process(MddfTarget target,  String profileId, List<String> useCases)
-			throws JDOMException, IOException {
-		super.process( target );
+	public boolean process(MddfTarget target, String profileId) throws JDOMException, IOException {
+		super.process(target);
 		if (!curFileIsValid) {
 			String msg = "CPE validation terminated.. file is not a valid Media Manifest";
 			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curFile, logMsgSrcId);
 			return curFileIsValid;
 		}
 		/*
-		 * Continue with additional checks for compliance with CPE-Manifest
-		 * spec.
+		 * Continue with additional checks for compliance with CPE-Manifest spec.
 		 */
 		/*
-		 * Note that validateConstraints() will invoke validateMetadata() which
-		 * will in turn initialize the 'cid2MDataMap'.
+		 * Note that validateConstraints() will invoke validateMetadata() which will in
+		 * turn initialize the 'cid2MDataMap'.
 		 */
 		validateConstraints();
 		DefaultTreeModel infoModel = buildInfoModel();
@@ -164,11 +166,10 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		switch (profileId) {
 		case "IP-0":
 			/*
-			 * Profile IP-0 assumes no specific interactivity guidance within
-			 * the Manifest and supports any content structure. This is used
-			 * when the Retailer determines where and how bonus material is
-			 * displayed. Validation is, therefore, not required (i.e., it is
-			 * equivalent to profile='none'.
+			 * Profile IP-0 assumes no specific interactivity guidance within the Manifest
+			 * and supports any content structure. This is used when the Retailer determines
+			 * where and how bonus material is displayed. Validation is, therefore, not
+			 * required (i.e., it is equivalent to profile='none'.
 			 */
 			break;
 		case "IP-01":
@@ -196,98 +197,133 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		super.validateConstraints();
 	}
 
-	/**
-	 * Check for conformance with Sec 5.1 of CPE-Manifest (TR-CPE-M1)
-	 * Specification.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.util.CMValidator#validateUsage()
 	 */
-	protected void validateMetadata() {
-		super.validateMetadata();
-		cid2MDataMap = new HashMap<String, Element>();
+	protected void validateUsage() { 
+		super.validateUsage();
+
 		/*
-		 * Each Experience instance must include a ContentID element referencing
-		 * metadata (i.e., ContentID is mandatory). The referenced metadata must
-		 * be in the Inventory (i.e., Inventory/Metadata). The Metadata/Alias
-		 * mechanism may be used.
+		 * Load JSON that defines the BASIC (i.e., generic) CPE constraints. These are
+		 * independent of which CPE Profile is specified.
 		 */
-		XPathExpression<Element> xpe1 = xpfac.compile(".//" + manifestNSpace.getPrefix() + ":Experience",
-				Filters.element(), null, manifestNSpace);
-		List<Element> elementList = xpe1.evaluate(curRootEl);
-		for (Element expEl : elementList) {
-			String cid = expEl.getChildTextNormalize("ContentID", manifestNSpace);
-			// ContentID is mandatory for CPE
-			if (cid == null || cid.isEmpty()) {
-				String msg = "Missing required ContentID";
-				LogReference srcRef = LogReference.getRef(LOGREFDOC, "MData01");
-				loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, expEl, msg, null, srcRef, logMsgSrcId);
-				curFileIsValid = false;
-				continue;
-			}
-			/*
-			 * The referenced metadata must be in the Inventory (i.e.,
-			 * Inventory/Metadata).
-			 */
-			XPathExpression<Element> xpe2 = xpfac.compile(
-					".//" + manifestNSpace.getPrefix() + ":Metadata[@ContentID='" + cid + "']", Filters.element(), null,
-					manifestNSpace);
-			Element metaDataEl = xpe2.evaluateFirst(curRootEl);
-			if (metaDataEl == null) {
-				String msg = "Missing required Metadata";
-				String details = "Experience CID must reference metadata in Inventory";
-				LogReference srcRef = LogReference.getRef(LOGREFDOC, "MData01");
-				loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, expEl, msg, details, srcRef, logMsgSrcId);
-				curFileIsValid = false;
-				continue;
-			} else {
-				/*
-				 * Find the BasicMetadata and save in HashMap to facilitate
-				 * later processing. The Metadata/Alias mechanism may be used.
-				 */
-				Element basicMDEl = metaDataEl.getChild("BasicMetadata", manifestNSpace);
-				if (basicMDEl == null) {
-					// must be using indirect Alias mechanism.
-					Element aliasMDEl = metaDataEl.getChild("Alias", manifestNSpace);
-					if (aliasMDEl == null) {
-						/*
-						 * Only way to pass XSD checks and reach this point is
-						 * if they used a ContainerReference.
-						 */
-						String msg = "Missing required Metadata/BasicMetadata or Metadata/Alias";
-						String details = "Experience CID must reference metadata in Inventory";
-						LogReference srcRef = LogReference.getRef(LOGREFDOC, "MData01");
-						loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, expEl, msg, details, srcRef,
-								logMsgSrcId);
-						curFileIsValid = false;
-					} else {
-						// make sure Alias points to BasicMetadata in Inventory
-						String aliasedCid = aliasMDEl.getAttributeValue("ContentID", "not specified");
-						XPathExpression<Element> xpe3 = xpfac.compile(
-								".//" + manifestNSpace.getPrefix() + ":BasicMetadata[@ContentID='" + aliasedCid + "']",
-								Filters.element(), null, manifestNSpace);
-						basicMDEl = xpe3.evaluateFirst(curRootEl);
-						if (basicMDEl == null) {
-							String msg = "Metadata/Alias does not reference BasicMetadata in Inventory";
-							String details = "Experience CID must reference metadata in Inventory";
-							LogReference srcRef = LogReference.getRef(LOGREFDOC, "MData01");
-							loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, aliasMDEl, msg, details, srcRef,
-									logMsgSrcId);
-							curFileIsValid = false;
-						}
-					}
-				}
-				cid2MDataMap.put(cid, basicMDEl);
-				/*
-				 * Any additional checking of the actual content of the metadata
-				 * must wait until the Info Model has been built.
-				 */
+		String cur_cpe_struc_defs = "structure_cpe_v1.0";
+		JSONObject structDefs = XmlIngester.getMddfResource(cur_cpe_struc_defs);
+		if (structDefs == null) {
+			// LOG a FATAL problem.
+			String msg = "Unable to process; missing CPE structure definitions " + cur_cpe_struc_defs;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MODEL, msg, curFile, logMsgSrcId);
+			return;
+		}
+
+		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
+		Iterator<String> keys = rqmtSet.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
+			// NOTE: This block of code requires a 'targetPath' be defined
+			if (rqmtSpec.has("targetPath")) {
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MODEL, "Structure check; key= " + key, curFile,
+						logMsgSrcId);
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
 			}
 		}
+
+		return;
 	}
 
 	/**
-	 * Validates general model requirements (i.e., not specific to a given
-	 * Profile). This includes checking an Experience's metadata entry for
-	 * compliance with the Experience's position and context within the
-	 * Information Model. See Section 5.1.2.3 of [TR-CPE-M1]
+	 * Check for conformance with Sec 5.1 of CPE-Manifest (TR-CPE-M1) Specification.
+	 */
+//	protected void validateMetadata() {
+//		super.validateMetadata();
+//		cid2MDataMap = new HashMap<String, Element>();
+//		/*
+//		 * Each Experience instance must include a ContentID element referencing
+//		 * metadata (i.e., ContentID is mandatory). The referenced metadata must be in
+//		 * the Inventory (i.e., Inventory/Metadata). The Metadata/Alias mechanism may be
+//		 * used.
+//		 */
+//		XPathExpression<Element> xpe1 = xpfac.compile(".//" + manifestNSpace.getPrefix() + ":Experience",
+//				Filters.element(), null, manifestNSpace);
+//		List<Element> elementList = xpe1.evaluate(curRootEl);
+//		for (Element expEl : elementList) {
+//			String cid = expEl.getChildTextNormalize("ContentID", manifestNSpace);
+//			// ContentID is mandatory for CPE
+//			if (cid == null || cid.isEmpty()) {
+//				String msg = "Missing required ContentID";
+//				LogReference srcRef = LogReference.getRef(LOGREFDOC, "MData01");
+//				loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, expEl, msg, null, srcRef, logMsgSrcId);
+//				curFileIsValid = false;
+//				continue;
+//			}
+//			/*
+//			 * The referenced metadata must be in the Inventory (i.e., Inventory/Metadata).
+//			 */
+//			XPathExpression<Element> xpe2 = xpfac.compile(
+//					".//" + manifestNSpace.getPrefix() + ":Metadata[@ContentID='" + cid + "']", Filters.element(), null,
+//					manifestNSpace);
+//			Element metaDataEl = xpe2.evaluateFirst(curRootEl);
+//			if (metaDataEl == null) {
+//				String msg = "Missing required Metadata";
+//				String details = "Experience CID must reference metadata in Inventory";
+//				LogReference srcRef = LogReference.getRef(LOGREFDOC, "MData01");
+//				loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, expEl, msg, details, srcRef, logMsgSrcId);
+//				curFileIsValid = false;
+//				continue;
+//			} else {
+//				/*
+//				 * Find the BasicMetadata and save in HashMap to facilitate later processing.
+//				 * The Metadata/Alias mechanism may be used.
+//				 */
+//				Element basicMDEl = metaDataEl.getChild("BasicMetadata", manifestNSpace);
+//				if (basicMDEl == null) {
+//					// must be using indirect Alias mechanism.
+//					Element aliasMDEl = metaDataEl.getChild("Alias", manifestNSpace);
+//					if (aliasMDEl == null) {
+//						/*
+//						 * Only way to pass XSD checks and reach this point is if they used a
+//						 * ContainerReference.
+//						 */
+//						String msg = "Missing required Metadata/BasicMetadata or Metadata/Alias";
+//						String details = "Experience CID must reference metadata in Inventory";
+//						LogReference srcRef = LogReference.getRef(LOGREFDOC, "MData01");
+//						loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, expEl, msg, details, srcRef,
+//								logMsgSrcId);
+//						curFileIsValid = false;
+//					} else {
+//						// make sure Alias points to BasicMetadata in Inventory
+//						String aliasedCid = aliasMDEl.getAttributeValue("ContentID", "not specified");
+//						XPathExpression<Element> xpe3 = xpfac.compile(
+//								".//" + manifestNSpace.getPrefix() + ":BasicMetadata[@ContentID='" + aliasedCid + "']",
+//								Filters.element(), null, manifestNSpace);
+//						basicMDEl = xpe3.evaluateFirst(curRootEl);
+//						if (basicMDEl == null) {
+//							String msg = "Metadata/Alias does not reference BasicMetadata in Inventory";
+//							String details = "Experience CID must reference metadata in Inventory";
+//							LogReference srcRef = LogReference.getRef(LOGREFDOC, "MData01");
+//							loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, aliasMDEl, msg, details, srcRef,
+//									logMsgSrcId);
+//							curFileIsValid = false;
+//						}
+//					}
+//				}
+//				cid2MDataMap.put(cid, basicMDEl);
+//				/*
+//				 * Any additional checking of the actual content of the metadata must wait until
+//				 * the Info Model has been built.
+//				 */
+//			}
+//		}
+//	}
+
+	/**
+	 * Validates general model requirements (i.e., not specific to a given Profile).
+	 * This includes checking an Experience's metadata entry for compliance with the
+	 * Experience's position and context within the Information Model. See Section
+	 * 5.1.2.3 of [TR-CPE-M1]
 	 * 
 	 * @param infoModel
 	 */
@@ -304,17 +340,17 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 	}
 
 	/**
-	 * The following rules apply to top-level grouping nodes (i.e., those that
-	 * are not presented to the user), such as “in-movie” and “out-of-movie” in
-	 * the examples above:
+	 * The following rules apply to top-level grouping nodes (i.e., those that are
+	 * not presented to the user), such as “in-movie” and “out-of-movie” in the
+	 * examples above:
 	 * <ul>
 	 * <li>There is only one instance of LocalizedInfo</li>
 	 * <li>That instance has TitleSort set to the name of the grouping category
 	 * (e.g., “in-movie” or “out-of-movie”).</li>
 	 * <li>LocalizedInfo@language may contain any language code, and it is
 	 * ignored.</li>
-	 * <li>No other metadata is present unless it is a required element or
-	 * attribute in the schema.</li>
+	 * <li>No other metadata is present unless it is a required element or attribute
+	 * in the schema.</li>
 	 * </ul>
 	 * 
 	 * @param topNode
@@ -334,9 +370,9 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 	 * <li>An instance of LocalizedInfo should be included for each language
 	 * supported for the title.</li>
 	 * <li>LocalizedInfo/TitleDisplayUnlimited and TitleSort contains the
-	 * user-visible name for that node. Note that even when an image is the
-	 * intended UI element, text should still be provided for accessibility
-	 * (text to speech).</li>
+	 * user-visible name for that node. Note that even when an image is the intended
+	 * UI element, text should still be provided for accessibility (text to
+	 * speech).</li>
 	 * <li>LocalizedInfo/ArtReference includes images associated with the node.
 	 * Implementers note: Implementations should accept ImageID, PictureID,
 	 * PictureGroupID and URL.</li>
@@ -411,8 +447,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		ExperienceNode rootNode = new ExperienceNode(curRootEl);
 		DefaultTreeModel infoModel = new DefaultTreeModel(rootNode);
 		/*
-		 * Get all ALID and identify for each the 'root' (i.e., main) Experience
-		 * element
+		 * Get all ALID and identify for each the 'root' (i.e., main) Experience element
 		 */
 		List<Element> primaryExpSet = extractAlidMap(curRootEl);
 		if (primaryExpSet == null || (primaryExpSet.isEmpty())) {
@@ -463,25 +498,24 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 	}
 
 	/**
-	 * Return an ordered list of child Elements that have the specified
-	 * relationship with the parent or null if unable to sort the children. A
-	 * return value of <tt>null</tt> is, therefore, not the same as returning an
-	 * empty List as the later indicates no matching child Elements were found
-	 * rather than a problem while sorting.
+	 * Return an ordered list of child Elements that have the specified relationship
+	 * with the parent or null if unable to sort the children. A return value of
+	 * <tt>null</tt> is, therefore, not the same as returning an empty List as the
+	 * later indicates no matching child Elements were found rather than a problem
+	 * while sorting.
 	 * <p>
-	 * Ordering is determined in one of two ways. If
-	 * <tt>&lt;SequenceInfo&gt;</tt> elements are present they will be used to
-	 * determine the order of the list entries returned. Otherwise ordering is
-	 * indeterminate.
+	 * Ordering is determined in one of two ways. If <tt>&lt;SequenceInfo&gt;</tt>
+	 * elements are present they will be used to determine the order of the list
+	 * entries returned. Otherwise ordering is indeterminate.
 	 * </p>
 	 * <p>
 	 * Additional restrictions on the use of <tt>&lt;SequenceInfo&gt;</tt>:
 	 * </p>
 	 * <ul>
-	 * <li><tt>&lt;SequenceInfo&gt;</tt> elements shall be used for either all
-	 * of the children or none of the children. Mixed usage is not allowed.
-	 * <li>SequenceInfo/Number starts with one and increases monotonically for
-	 * each child</li>
+	 * <li><tt>&lt;SequenceInfo&gt;</tt> elements shall be used for either all of
+	 * the children or none of the children. Mixed usage is not allowed.
+	 * <li>SequenceInfo/Number starts with one and increases monotonically for each
+	 * child</li>
 	 * </ul>
 	 * 
 	 * @param parentEl
@@ -549,8 +583,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 					}
 				} else {
 					/*
-					 * Explicit SeqInfo is neither provided nor required so use
-					 * as-is order
+					 * Explicit SeqInfo is neither provided nor required so use as-is order
 					 */
 					firstPass[i] = nextEl;
 					lastIndex = i;
@@ -564,8 +597,8 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		List<Element> childElList = new ArrayList<Element>();
 		/*
 		 * Transfer the Elements from the 'firstPass' array to the List. While
-		 * transferring, check to make sure the SequenceInfo/Number starts with
-		 * one and increases monotonically for each child.
+		 * transferring, check to make sure the SequenceInfo/Number starts with one and
+		 * increases monotonically for each child.
 		 * 
 		 */
 		for (int i = 0; i <= lastIndex; i++)

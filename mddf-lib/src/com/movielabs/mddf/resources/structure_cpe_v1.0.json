@@ -1,0 +1,272 @@
+{
+	"COMMENT": "refer to Javadoc for com.movielabs.mddflib.util.xml.StructureValidation before editing",
+	"StrucRqmts": 
+	{
+		"Experience": 
+		{
+			"targetPath": "./{manifest}Experiences/{manifest}Experience",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{manifest}ContentID",
+					"msg": "Missing Experience/ContentID",
+					"details": "Each Experience instance must include a ContentID element"
+				}
+			]
+		},
+
+		"PictureGroup": 
+		{
+			"targetPath": ".//{manifest}Experience[not(child::{manifest}PictureGroupID)]",
+			"constraint": 
+			[
+				{
+					"$CID": "./{manifest}ContentID",
+					"max": "0",
+					"severity": "Error",
+					"xpath": 
+					[
+						"//{manifest}BasicMetadata[(descendant::{md}ArtReference) and (@ContentID = {$CID}) ]"
+					],
+
+					"msg": "Missing PictureGroupID",
+					"details": "Required when referenced Metadata includes ArtReferences (See Sec 5.1.1 of CPE-Manifest)"
+				}
+			]
+		},
+
+		"BasicMetadata": 
+		{
+			"targetPath": ".//{manifest}BasicMetadata",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"severity": "Error",
+					"xpath": "./{md}RunLength",
+					"msg": "Missing RunLength (may be '0' if not otherwise applicable) "
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}LocalizedInfo[@default='true']",
+					"msg": "Must have exactly 1 default LocalizedInfo matching the language of the original production",
+					"details": "Basic Metadata should include the subset defined in MEC Section 2.2.1"
+				}
+			],
+
+			"children": 
+			{
+				"LocalizedInfo": 
+				{
+					"targetPath": ".//{md}LocalizedInfo",
+					"constraint": 
+					[
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": "./{md}TitleDisplay60",
+							"details": "Basic Metadata should include the subset defined in MEC Section 2.2.1"
+						},
+
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": "./{md}OriginalTitle",
+							"details": "Basic Metadata should include the subset defined in MEC Section 2.2.1"
+						},
+
+						{
+							"min": "1",
+							"severity": "Error",
+							"xpath": "./{md}ArtReference",
+							"details": "Basic Metadata should include the subset defined in MEC Section 2.2.1"
+						},
+
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": "./{md}Genre[@level='0' and @source='http://www.movielabs.com/md/mec/mec_primary_genre.html']",
+							"msg": "Must specify a primary ('@level=0') Genre (see http://www.movielabs.com/md/mec/mec_primary_genre.html)",
+							"details": "Basic Metadata should include the subset defined in MEC Section 2.2.1"
+						},
+
+						{
+							"max": "0",
+							"severity": "Error",
+							"xpath": "./{md}Genre[@level='0' and @source !='http://www.movielabs.com/md/mec/mec_primary_genre.html']",
+							"msg": "Invalid PRIMARY Genre (see http://www.movielabs.com/md/mec/mec_primary_genre.html)",
+							"details": "Basic Metadata should include the subset defined in MEC Section 2.2.1"
+						},
+
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": "./{md}CopyrightLine",
+							"details": "Basic Metadata should include the subset defined in MEC Section 2.2.1"
+						}
+					]
+				}
+			}
+		},
+
+		"DigitalAsset Audio": 
+		{
+			"COMMENT": "Sec 5.1.2.2 states Inventory tracks should include Digital Asset Metadata",
+			"targetPath": "./{manifest}Inventory/{manifest}Audio",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Type",
+					"details": "Should include data defined in MEC Section 2.2.2 for Digital Assets"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Channels"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Encoding"
+				}
+			],
+
+			"children": 
+			{
+				"Encoding": 
+				{
+					"targetPath": "./{md}Encoding",
+					"constraint": 
+					[
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}BitrateMax"
+						},
+
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}SampleRate"
+						},
+
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}SampleBitDepth"
+						}
+					]
+				}
+			}
+		},
+
+		"DigitalAsset Video": 
+		{
+			"COMMENT": "Sec 5.1.2.2 states Inventory tracks should include Digital Asset Metadata",
+			"targetPath": "./{manifest}Inventory/{manifest}Video",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Type"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}ColorType"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Encoding"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Picture"
+				}
+			],
+
+			"children": 
+			{
+				"Encoding": 
+				{
+					"targetPath": "./{md}Encoding",
+					"constraint": 
+					[
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}BitrateMax"
+						}
+					]
+				},
+
+				"Picture": 
+				{
+					"targetPath": "./{md}Picture",
+					"constraint": 
+					[
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}AspectRatio"
+						}
+					]
+				}
+			}
+		},
+
+		"DigitalAsset Subtitle": 
+		{
+			"COMMENT": "Sec 5.1.2.2 states Inventory tracks should include Digital Asset Metadata",
+			"targetPath": "./{manifest}Inventory/{manifest}Subtitle",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}Format"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}FormatType"
+				}
+			]
+		}
+	}
+}
