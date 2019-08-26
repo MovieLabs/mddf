@@ -37,7 +37,7 @@ import com.movielabs.mddflib.util.xml.MddfTarget;
  */
 public interface ProfileValidator {
 
-	boolean process(MddfTarget target, String profileId, List<String> useCases)
+	boolean process(MddfTarget target, String profileId)
 			throws JDOMException, IOException;
 
 	/**

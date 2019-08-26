@@ -117,7 +117,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		return pucList;
 	}
 
-	public boolean process(MddfTarget target, String profileId, List<String> useCases)
+	public boolean process(MddfTarget target, String profileId )
 			throws JDOMException, IOException {
 		super.process(target);
 		if (curFileIsValid) {
