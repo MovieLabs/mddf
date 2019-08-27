@@ -5,6 +5,17 @@
 
 ## Versioning
 
+### mddf-lib v1.6 
+
+* ENHANCEMENT: Memory usage when ingesting large XLSX-formated Avails has been significantly reduced.
+* Enhancement: Identification of ArtReference by means other that ImageID generates Best Practice notice
+* User Interface: Manifest Profiles are no longer enterable via UI. Feature removed due to schema enhancements,
+* Bug Fix: MMC detection of extra 'root' Experiences.
+* Bug Fix: Eliminated memory leak when clearing log.
+* Internal: CPE Validation now uses JSON-based structure checks
+* Internal: re-organization of unit test classes
+* Internal: `AvailsWrkBook.convertSpreadsheet()` has been deprecated in favor of using the `StreamingXmlBuilder`
+
 ### mddf-lib v1.5.3
 
 #### rc1

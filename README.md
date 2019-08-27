@@ -27,12 +27,13 @@
 
 ---
 ## <a name="h_News">1) What's New</a>
+* 2019-Aug-27: v1.6 released
 * 2019-June-24: v1.5.3 released
 * 2019-May-24: v1.5.2 released
 * 2019-May-09: v1.5.2_rc1 released for testing and evaluation.
 * 2019-Mar-15: v1.5.1 released
 
-__NOTE:__ Starting with v1.5.1, releases of mddf-lib are available via the Maven Central Repository. Refer to
+__NOTE:__ Starting with v1.6, releases of mddf-lib are available via the Maven Central Repository. Refer to
 the [mddf-lib README](./mddf-lib/README.md) for information on adding dependancy information to pom files.
 
 __NOTE:__ Beginning with Release 1.5, pre-built executables for Windows, OS-X, and Linux will no longer
@@ -188,6 +189,8 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">7) Release History:</a>
+* **2019-AUg-27**: mddf-tool v1.6 released.
+
 * **2019-June-24**: mddf-tool v1.5.3 released.
 
 * **2019-May-24**: mddf-tool v1.5.2 released.
