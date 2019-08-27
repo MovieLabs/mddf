@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.movielabs</groupId>
 	<artifactId>mddf-lib</artifactId>
-	<version>1.5.3</version>
+	<version>1.6.0</version>
 	<name>mddf library</name>
 	<description>implements all core (i.e., non-UI) functionality that can be used to generate, validate, or transform MovieLabs Digital Distribution Framework (MDDF) files.</description>
 	<url>https://github.com/MovieLabs/mddf</url>
@@ -20,6 +20,12 @@
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.9.2</version>
+		</dependency>
+		<!-- used in deployment tests... -->
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>1.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -217,6 +223,73 @@
 				</plugins>
 			</build>
 		</profile>
+
+		<!-- =========================================== -->
+		<!-- Creates a stand-alone executable Jar for running performance and stress 
+			tests. This can be used in a specific run-time environment to evaluate 
+			and tune configuration parameters (e.g., max Heap). -->
+		<profile>
+			<id>stress-tester</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<finalName>Stress-Tester</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.9.1</version>
+						<executions>
+							<execution>
+								<id>add-source</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>add-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>${project.basedir}/test/src/</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.3</version>
+						<configuration>
+							<source>1.8</source>
+							<target>1.8</target>
+							<excludes>
+								<exclude>**/junit/**/*.*</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-shade-plugin</artifactId>
+						<version>3.2.1</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>shade</goal>
+								</goals>
+								<configuration>
+									<transformers>
+										<transformer
+											implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+											<mainClass>com.movielabs.mddflib.tests.deployed.StressTest</mainClass>
+										</transformer>
+									</transformers>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -264,6 +337,20 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+			<!--  +++++++++++++++++++++++++++++++ -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- +++++++++++++++++++++++++++ -->
 		</plugins>
 	</build>
 
