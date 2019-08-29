@@ -744,15 +744,14 @@ public class ValidationController {
 	}
 
 	/**
-	 * Validate compatibility with any identified profiles. Compatibility/Profile
-	 * was added in v1.5. Prior to that Profile can only be identified to Validator
-	 * via external input (e.g., GUI or script). This code will allow the use of
-	 * either or both modes. It also anticipates future changes to the schema to
-	 * allow a single Manifest to be compatible with multiple Profiles.
+	 * Identify profiles the target Manifest is intended to be compatible with.
+	 * Compatibility/Profile was added in v1.5. Prior to that Profile can only be
+	 * identified to Validator via external input (e.g., GUI or script). This code
+	 * will allow the use of either or both modes. It also anticipates future
+	 * changes to the schema to allow a single Manifest to be compatible with
+	 * multiple Profiles.
 	 * 
-	 * @param docRootEl
-	 * @param srcFile
-	 * @param uxProfile
+	 * @param target
 	 * @return
 	 */
 	private List<String> identifyProfiles(MddfTarget target) {
