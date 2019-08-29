@@ -359,7 +359,7 @@ public class ValidationController {
 			return;
 		}
 		logMgr.setCurrentFile(srcFile);
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "Validating " + srcFile.getPath(), srcFile, MODULE_ID); 
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "Validating " + srcFile.getPath(), srcFile, MODULE_ID);
 		Map<Object, Pedigree> pedigreeMap = null;
 		FILE_FMT srcMddfFmt = null;
 		Document xmlDoc = null;
@@ -368,18 +368,12 @@ public class ValidationController {
 			/* The XLSX format is only supported with AVAILS files */
 			Map<String, Object> results = convertSpreadsheet_v2(srcFile);
 			if (results == null) {
-				String msg = "Unable to conve\n" + 
-						"	private void pauseForInput(String msg) {\n" + 
-						"		System.out.println(msg);\n" + 
-						"//		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));\n" + 
-						"//		// Reading data using readLine\n" + 
-						"//		try {\n" + 
-						"//			String name = reader.readLine();\n" + 
-						"//		} catch (IOException e) {\n" + 
-						"//			e.printStackTrace();\n" + 
-						"//		}\n" + 
-						"	}\n" + 
-						"rt Excel to XML";
+				String msg = "Unable to conve\n" + "	private void pauseForInput(String msg) {\n"
+						+ "		System.out.println(msg);\n"
+						+ "//		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));\n"
+						+ "//		// Reading data using readLine\n" + "//		try {\n"
+						+ "//			String name = reader.readLine();\n" + "//		} catch (IOException e) {\n"
+						+ "//			e.printStackTrace();\n" + "//		}\n" + "	}\n" + "rt Excel to XML";
 				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, srcFile, -1, MODULE_ID, null, null);
 				return;
 			} else {
@@ -416,7 +410,7 @@ public class ValidationController {
 			String supplemental = null;
 			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, errMsg, srcFile, -1, MODULE_ID, supplemental, null);
 			return;
-		} 
+		}
 
 		XmlIngester.setSourceDirPath(srcFile.getAbsolutePath());
 		MDDF_TYPE mddfType = target.getMddfType();
@@ -546,25 +540,22 @@ public class ValidationController {
 	}
 
 	/**
-	 * Perform requested pre-processing on a single Avail file. The extent of the
-	 * pre-processing may depend on the arguments passed when invoking this method
-	 * as well as any a-priori set-up and configuration (e.g., use of the
-	 * <tt>setValidation()</tt> function).
+	 * Validate a single Avail file. The extent of the pre-processing may depend on
+	 * a-priori set-up and configuration (e.g., use of the <tt>setValidation()</tt>
+	 * function).
 	 * 
-	 * @param docRootEl   root of the Avail
-	 * @param pedigreeMap links XML Elements to their original source (used for
-	 *                    logging only)
-	 * @param srcFile     is source from which XML was obtained (used for logging
-	 *                    only)
+	 * @param target
+	 * @param pedigreeMap
+	 * @return
 	 * @throws IOException
 	 * @throws JDOMException
 	 */
 	protected boolean validateAvail(MddfTarget target, Map<Object, Pedigree> pedigreeMap)
 			throws IOException, JDOMException {
-		boolean isValid = true; 
+		boolean isValid = true;
 
 		AvailValidator tool1 = new AvailValidator(validateC, logMgr);
-		isValid = tool1.process(target, pedigreeMap); 
+		isValid = tool1.process(target, pedigreeMap);
 		if (!isValid) {
 			String msg = "Validation FAILED; Terminating processing of file";
 			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, target.getSrcFile(), -1, MODULE_ID, null, null);
@@ -803,5 +794,5 @@ public class ValidationController {
 	public void setRecursive(boolean isRecursive) {
 		this.isRecursive = isRecursive;
 	}
- 
+
 }
