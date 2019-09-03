@@ -33,6 +33,7 @@ import java.util.Set;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
 import org.xml.sax.SAXParseException;
 
 import com.movielabs.mddf.MddfContext;
@@ -358,7 +359,7 @@ public class ValidationController {
 			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, errMsg, srcFile, -1, MODULE_ID, supplemental, null);
 			return;
 		}
-		logMgr.setCurrentFile(srcFile);
+		logMgr.setCurrentFile(srcFile, true);
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "Validating " + srcFile.getPath(), srcFile, MODULE_ID);
 		Map<Object, Pedigree> pedigreeMap = null;
 		FILE_FMT srcMddfFmt = null;
@@ -368,12 +369,7 @@ public class ValidationController {
 			/* The XLSX format is only supported with AVAILS files */
 			Map<String, Object> results = convertSpreadsheet_v2(srcFile);
 			if (results == null) {
-				String msg = "Unable to conve\n" + "	private void pauseForInput(String msg) {\n"
-						+ "		System.out.println(msg);\n"
-						+ "//		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));\n"
-						+ "//		// Reading data using readLine\n" + "//		try {\n"
-						+ "//			String name = reader.readLine();\n" + "//		} catch (IOException e) {\n"
-						+ "//			e.printStackTrace();\n" + "//		}\n" + "	}\n" + "rt Excel to XML";
+				String msg = "Unable to convert Excel to XML";
 				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, srcFile, -1, MODULE_ID, null, null);
 				return;
 			} else {
@@ -412,7 +408,7 @@ public class ValidationController {
 			return;
 		}
 
-		XmlIngester.setSourceDirPath(srcFile.getAbsolutePath());
+//		XmlIngester.setSourceDirPath(srcFile.getAbsolutePath());
 		MDDF_TYPE mddfType = target.getMddfType();
 		int logTag = target.getLogTag();
 		if (mddfType == null) {
@@ -638,8 +634,8 @@ public class ValidationController {
 	protected boolean validateManifest(MddfTarget target) throws IOException, JDOMException {
 		boolean isValid = true;
 
-		String schemaVer = ManifestValidator.identifyXsdVersion(target);
-		ManifestValidator.setManifestVersion(schemaVer);
+//		String schemaVer = ManifestValidator.identifyXsdVersion(target);
+//		ManifestValidator.setManifestVersion(schemaVer);
 
 		List<String> profileNameList = identifyProfiles(target);
 		if (profileNameList.isEmpty() || profileNameList.contains("none")) {
@@ -755,11 +751,15 @@ public class ValidationController {
 	 * @return
 	 */
 	private List<String> identifyProfiles(MddfTarget target) {
+
+		String schemaVer = ManifestValidator.identifyXsdVersion(target); 
+		Namespace manifestNSpace = Namespace.getNamespace("manifest",
+				MddfContext.NSPACE_MANIFEST_PREFIX + schemaVer + MddfContext.NSPACE_MANIFEST_SUFFIX);
 		// make sure data structures got initialized..
 		List<String> profileNameList = new ArrayList<String>();
 		Element docRootEl = target.getXmlDoc().getRootElement();
-		Element compEl = docRootEl.getChild("Compatibility", XmlIngester.manifestNSpace);
-		List<Element> profileElList = compEl.getChildren("Profile", XmlIngester.manifestNSpace);
+		Element compEl = docRootEl.getChild("Compatibility", manifestNSpace);
+		List<Element> profileElList = compEl.getChildren("Profile", manifestNSpace);
 		if (!profileElList.isEmpty()) {
 			for (int i = 0; i < profileElList.size(); i++) {
 				Element nextProfile = profileElList.get(i);

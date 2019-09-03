@@ -127,7 +127,7 @@ public interface LogMgmt extends IssueLogger {
 	 * 
 	 * @param srcfile
 	 */
-	public void setCurrentFile(File srcfile);
+	public void setCurrentFile(File srcfile, boolean clear);
 
 	/**
 	 * @param level

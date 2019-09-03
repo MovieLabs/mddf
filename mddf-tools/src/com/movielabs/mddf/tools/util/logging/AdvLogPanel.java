@@ -328,25 +328,21 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+
+	/* (non-Javadoc)
 	 * @see com.movielabs.mddflib.logging.LogMgmt#getFileFolder(java.io.File)
 	 */
-	@Override
 	public LogEntryFolder getFileFolder(File targetFile) {
 		return treeView.getFileFolder(targetFile);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddf.util.UiLogger#setCurrentFile(java.lang.String)
+
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.logging.LogMgmt#setCurrentFile(java.io.File)
 	 */
-	@Override
-	public void setCurrentFile(File targetFile) {
+	public void setCurrentFile(File targetFile, boolean clear) {
 		this.curInputFile = targetFile;
-		treeView.setCurrentFileId(targetFile, true);
+		treeView.setCurrentFileId(targetFile, clear);
 		valueChanged(null);
 	}
 
@@ -437,6 +433,10 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	protected void append(int level, int tag, String msg, File xmlFile, int line, String moduleID, String tooltip,
 			LogReference srcRef) {
 
+		if (level == LogMgmt.LEV_ERR) {
+			String consoleMsg = "================ TRAP Error:\n" + msg + "\n" + tooltip + "\n" + "================";
+			System.out.println(consoleMsg);
+		}
 		if (level == LogMgmt.LEV_FATAL) {
 			String consoleMsg = "================\nFATAL Error:\n" + msg + "\n" + tooltip + "\n" + "================";
 			System.out.println(consoleMsg);

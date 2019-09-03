@@ -275,13 +275,11 @@ public class DefaultLogging implements LogMgmt {
 		this.printToConsole = printToConsole;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddf.util.Logger#setCurrentFile(java.lang.String)
+
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.logging.LogMgmt#setCurrentFile(java.io.File, boolean)
 	 */
-	@Override
-	public void setCurrentFile(File targetFile) {
+	public void setCurrentFile(File targetFile, boolean clear) {
 		this.curInputFile = targetFile;
 	}
 
