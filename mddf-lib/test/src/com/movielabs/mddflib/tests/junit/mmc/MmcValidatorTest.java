@@ -90,7 +90,7 @@ public class MmcValidatorTest extends MMCoreValidator {
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + testFileName, null, "JUnit");
 
 		String srcFilePath = rsrcPath + testFileName;
-		srcFile = new File(srcFilePath);
+		File srcFile = new File(srcFilePath);
 		try {
 			MddfTarget target = new MddfTarget(srcFile, iLog);
 			return target;
@@ -114,7 +114,8 @@ public class MmcValidatorTest extends MMCoreValidator {
 		execute(target, "MMC-1");
 		try {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			// 1 error due to missing MEC file
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {

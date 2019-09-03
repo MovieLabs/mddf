@@ -90,7 +90,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 	 */
 	protected MddfTarget initialize(String testFileName) {
 		String srcFilePath = rsrcPath + testFileName;
-		srcFile = new File(srcFilePath);
+		File srcFile = new File(srcFilePath);
 		try {
 			MddfTarget target = new MddfTarget(srcFile, iLog);
 			return target;
@@ -254,7 +254,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testMEC_Usage() throws IOException, JDOMException {
 		MddfTarget target = initialize("Manifest_w_MEC_v1.6.xml");
 		execute(target);

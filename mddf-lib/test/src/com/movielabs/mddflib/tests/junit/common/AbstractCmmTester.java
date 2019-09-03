@@ -140,7 +140,7 @@ public abstract class AbstractCmmTester extends CMValidator {
 
 	private Document loadTestArtifact(String fileName) {
 		String srcFilePath = rsrcPath + fileName;
-		srcFile = new File(srcFilePath);
+		File srcFile = new File(srcFilePath);
 		if (!srcFile.canRead()) {
 			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
 

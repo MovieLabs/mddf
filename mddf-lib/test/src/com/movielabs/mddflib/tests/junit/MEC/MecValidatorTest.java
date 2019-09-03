@@ -89,7 +89,7 @@ public class MecValidatorTest extends MecValidator {
 	 */
 	protected MddfTarget initialize(String testFileName) {
 		String srcFilePath = rsrcPath + testFileName;
-		srcFile = new File(srcFilePath);
+		File srcFile = new File(srcFilePath);
 		try {
 			MddfTarget target = new MddfTarget(srcFile, iLog);
 			return target;

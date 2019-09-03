@@ -59,7 +59,7 @@ public class CMValidatorTest extends AbstractCmmTester {
 	@Test
 	public void testValidateNotEmpty() {
 		initialize("common/CM_withErrors.xml");
-		SchemaWrapper targetSchema = SchemaWrapper.factory("md-v" + XmlIngester.CM_VER);
+		SchemaWrapper targetSchema = SchemaWrapper.factory("md-v" + CM_VER);
 		validateNotEmpty(targetSchema);
 		try {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));

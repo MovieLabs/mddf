@@ -106,7 +106,7 @@ public class CpeValidatorTest extends CpeValidator {
 
 	private Document loadTestArtifact(String fileName) {
 		String srcFilePath = rsrcPath + fileName;
-		srcFile = new File(srcFilePath);
+		File srcFile = new File(srcFilePath);
 		if (!srcFile.canRead()) {
 			return null;
 		}
@@ -124,7 +124,7 @@ public class CpeValidatorTest extends CpeValidator {
 	 */
 	protected MddfTarget getTarget(String testFileName) {
 		String srcFilePath = rsrcPath + testFileName;
-		srcFile = new File(srcFilePath);
+		File srcFile = new File(srcFilePath);
 		try {
 			MddfTarget target = new MddfTarget(srcFile, iLog);
 			return target;

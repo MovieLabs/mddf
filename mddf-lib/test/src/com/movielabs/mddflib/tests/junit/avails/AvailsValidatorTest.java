@@ -81,7 +81,7 @@ public class AvailsValidatorTest extends AvailValidator {
 	 */
 	protected MddfTarget initialize(String testFileName) {
 		String srcFilePath = rsrcPath + testFileName;
-		srcFile = new File(srcFilePath);
+		File srcFile = new File(srcFilePath);
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
 
 		try {

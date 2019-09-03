@@ -44,8 +44,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
+import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.manifest.validation.ManifestValidator;
+import com.movielabs.mddflib.manifest.validation.MecValidator;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
+import com.movielabs.mddflib.util.CMValidator;
 import com.movielabs.mddflib.util.xml.StructureValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -61,16 +65,15 @@ import net.sf.json.JSONObject;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class StructureValidationTest extends StructureValidation {
+public class StructureValidationTest extends StructureValidation{
 
-	private static InstrumentedLogger iLog;
+	private static InstrumentedLogger iLog = new InstrumentedLogger();
 	private static String rsrcPath = "./test/resources/";
 	private JSONObject structDefs;
-	private Element rootEl;
-
+	private Element rootEl; 
+	
 	public StructureValidationTest() {
-		super(new InstrumentedLogger(), "JUnit");
-		iLog = (InstrumentedLogger) this.logger;
+		super(null, iLog, "JUnit"); 
 	}
 
 	/**
@@ -111,7 +114,7 @@ public class StructureValidationTest extends StructureValidation {
 	@Test
 	public void testBasicFunctions() {
 		initialize("mec/mec1.xml", "structure.json");
-		List<Element> basicElList = rootEl.getChildren("Basic", XmlIngester.mdmecNSpace);
+		List<Element> basicElList = rootEl.getChildren("Basic", validator.mdmecNSpace);
 		JSONObject basicMD = structDefs.getJSONObject("BasicMetadata");
 		JSONArray rqmtSet = basicMD.getJSONArray("requirement");
 		for (int j = 0; j < basicElList.size(); j++) {
@@ -197,7 +200,7 @@ public class StructureValidationTest extends StructureValidation {
 	@Test
 	public void testDigitalAsset_no_Errors() {
 		String targetFile = "common/CM_base.xml";
-		FILE_FMT srcMddfFmt =initialize(targetFile, null);
+		FILE_FMT srcMddfFmt = initialize(targetFile, null);
 		Map<String, String> verMap = MddfContext.getReferencedXsdVersions(srcMddfFmt);
 		JSONObject structDefs = XmlIngester.getMddfResource("structure_cm", verMap.get("MD"));
 		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
@@ -225,7 +228,7 @@ public class StructureValidationTest extends StructureValidation {
 	@Test
 	public void testDigitalAsset_Errors() {
 		String targetFile = "common/CM_withErrors.xml";
-		FILE_FMT srcMddfFmt =initialize(targetFile, null);
+		FILE_FMT srcMddfFmt = initialize(targetFile, null);
 		Map<String, String> verMap = MddfContext.getReferencedXsdVersions(srcMddfFmt);
 		JSONObject structDefs = XmlIngester.getMddfResource("structure_cm", verMap.get("MD"));
 		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
@@ -249,6 +252,7 @@ public class StructureValidationTest extends StructureValidation {
 			throw e;
 		}
 	}
+
 	/**
 	 * 
 	 */
@@ -256,7 +260,19 @@ public class StructureValidationTest extends StructureValidation {
 		Document xmlDoc = loadTestArtifact(testFile);
 		rootEl = xmlDoc.getRootElement();
 		FILE_FMT srcMddfFmt = MddfContext.identifyMddfFormat(rootEl);
-		XmlIngester.setMddfVersions(srcMddfFmt);
+		switch (srcMddfFmt.getStandard()) {
+		case "Avails":
+			validator = new AvailValidator(true, iLog);
+			break;
+		case "MEC":
+			validator = new MecValidator(true, iLog);
+			break;
+		case "Manifest":
+			validator = new ManifestValidator(true, iLog);
+			break;
+		}
+		validator.setMddfVersions(srcMddfFmt);
+		
 		if (jsonFile != null) {
 			structDefs = loadJSON(jsonFile);
 		}
