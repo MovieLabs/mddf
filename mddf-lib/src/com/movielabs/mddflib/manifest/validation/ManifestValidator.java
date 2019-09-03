@@ -21,6 +21,7 @@
  */
 package com.movielabs.mddflib.manifest.validation;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,27 +98,28 @@ public class ManifestValidator extends CMValidator {
 	 */
 	public boolean process(MddfTarget target) throws IOException, JDOMException {
 		String schemaVer = identifyXsdVersion(target);
-		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Schema Version " + schemaVer, curFile,
-				logMsgSrcId);
 		setManifestVersion(schemaVer);
 		rootNS = manifestNSpace;
-
 		curTarget = target;
 		curFile = target.getSrcFile();
 		curFileName = curFile.getName();
 		curFileIsValid = true;
 		curRootEl = null;
-		supportingRsrcLocations = new HashMap<String, List<Element>>();
-
+		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Schema Version " + schemaVer, curFile,
+				logMsgSrcId);
+		
 		validateXml(target);
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 			return false;
 		}
+
 		curRootEl = target.getXmlDoc().getRootElement();
 		String msg = "Schema validation check PASSED";
 		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
+
+		validateLocations();
 		if (validateC) {
 			validateConstraints();
 		}
@@ -130,9 +132,95 @@ public class ManifestValidator extends CMValidator {
 	 * @param target
 	 */
 	protected boolean validateXml(MddfTarget target) {
-		String manifestXsdFile = XsdValidation.defaultRsrcLoc + "manifest-v" + XmlIngester.MAN_VER + ".xsd";
+		String manifestXsdFile = XsdValidation.defaultRsrcLoc + "manifest-v" + MAN_VER + ".xsd";
 		curFileIsValid = xsdHelper.validateXml(target, manifestXsdFile, logMsgSrcId);
 		return curFileIsValid;
+	}
+
+	// ########################################################################
+
+	/**
+	 * Validate a local <tt>ContainerLocation</tt>. These should be a
+	 * <i>relative</i> path where the base location is that of the XML file being
+	 * processed. Note that network locations (i.e., URLs) are <b>not</b> verified.
+	 * Neither is there any requirement that the URL schema is HTTP as proprietary
+	 * schemes are allowed (e.g., <tt>flixster://foobar/BigBuckBunny.mp4</tt>)
+	 */
+	protected void validateLocations() {
+		supportingRsrcLocations = new HashMap<String, List<Element>>();
+
+		String pre = manifestNSpace.getPrefix();
+		String baseLoc = curFile.getAbsolutePath();
+		LogReference srcRef = LogReference.getRef("MMM", "mmm_locType");
+		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + pre + ":ContainerLocation", Filters.element(), null,
+				manifestNSpace);
+		MecValidator mecTool = new MecValidator(validateC, loggingMgr);
+		List<Element> cLocElList = xpExp01.evaluate(curRootEl);
+		outterLoop: for (int i = 0; i < cLocElList.size(); i++) {
+			Element clocEl = cLocElList.get(i);
+			String containerPath = clocEl.getTextNormalize();
+			if (containerPath.startsWith("file:")) {
+				String errMsg = "Invalid syntax for local file location";
+				String details = "Location of a local file must be specified as a relative path";
+				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId);
+				curFileIsValid = false;
+				continue outterLoop;
+			}
+			/*
+			 * at this point we have either (1) a relative path to a local file OR (2) a
+			 * full URL. No further validation takes place but we save the location in case
+			 * the Validation Controller being used wants to perform additional checks.
+			 */
+			try {
+				String targetLoc = PathUtilities.convertToAbsolute(baseLoc, containerPath);
+				String dbgMsg = "Possible MDDF file to validate at ContainerLocation " + targetLoc;
+				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_DEBUG, clocEl, dbgMsg, null, null, logMsgSrcId);
+				/* is this being used to provide Metadata via a MEC file? */
+				Element grandParentEl = (Element) clocEl.getParent().getParent();
+				if (grandParentEl.getName().equals("Metadata")) {
+					File mecFile = new File(targetLoc);
+					System.out.println("Possible MEC ref: " + targetLoc);
+					String infoMsg = "Validation of referenced MEC file required: " + mecFile.getName();
+					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_INFO, clocEl, infoMsg, null, null, logMsgSrcId);
+					if (!(mecFile.canRead())) {
+						String errMsg = "Unable to validate referenced MEC file " + mecFile.getName();
+						String details = "File may be missing or unreadable";
+						logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId);
+						curFileIsValid = false;
+						continue outterLoop;
+
+					}
+					try {
+						loggingMgr.setCurrentFile(mecFile, true);
+						MddfTarget mecTarget = new MddfTarget(mecFile, loggingMgr);
+						boolean validMec = mecTool.process(mecTarget);
+					} catch (Exception e) { 
+						e.printStackTrace();
+						String errMsg = "Exception processing referenced MEC XML";
+						String details = "Attempt to validate referenced MEC file failed while parsing XML"
+								+ e.getLocalizedMessage();
+						logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId);
+					} finally {
+						loggingMgr.setCurrentFile(curFile, false);
+					}
+				} else {
+					/*
+					 * For non-Metadata ContainerLocs, record the usage. Latter on it will get
+					 * checked.
+					 */
+					List<Element> usage = supportingRsrcLocations.get(targetLoc);
+					if (usage == null) {
+						usage = new ArrayList<Element>();
+					}
+					usage.add(clocEl);
+					supportingRsrcLocations.put(targetLoc, usage);
+				}
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -142,7 +230,7 @@ public class ManifestValidator extends CMValidator {
 		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, "Validating constraints", curFile, LOGMSG_ID);
 		super.validateConstraints();
 
-		SchemaWrapper targetSchema = SchemaWrapper.factory("manifest-v" + XmlIngester.MAN_VER);
+		SchemaWrapper targetSchema = SchemaWrapper.factory("manifest-v" + MAN_VER);
 		validateNotEmpty(targetSchema);
 
 		/* Validate indexed sequences that must be monotonically increasing */
@@ -152,7 +240,8 @@ public class ManifestValidator extends CMValidator {
 		validateIndexing("ImageClip", manifestNSpace, "sequence", "PlayableSequence", manifestNSpace, false, true,
 				false, true);
 		// ?? PictureGroup/Picture/Sequence
-		validateIndexing("TextString", manifestNSpace, "index", "TextObject", manifestNSpace, false, true, false, false);
+		validateIndexing("TextString", manifestNSpace, "index", "TextObject", manifestNSpace, false, true, false,
+				false);
 		// ?? ExperienceChild/SequenceInfo/{md}Number ??? Note other 3 domain-specific
 		// numbers
 		validateIndexing("TextGroupID", manifestNSpace, "index", "TimedEvent", manifestNSpace, false, true, false,
@@ -174,7 +263,7 @@ public class ManifestValidator extends CMValidator {
 		// Now do any defined in Manifest spec..
 		validateManifestVocab();
 
-		validateLocations();
+//		validateLocations();
 
 		validateMetadata();
 
@@ -236,7 +325,7 @@ public class ManifestValidator extends CMValidator {
 		validateXRef(".//manifest:Audiovisual/manifest:PlayableSequenceID", "PlayableSequence");
 
 		validateXRef(".//manifest:Clip/manifest:PresentationID", "Presentation");
-		
+
 		validateXRef(".//manifest:ImageClip/manifest:ImageID", "Image");
 		validateXRef(".//manifest:Chapter/manifest:ImageID", "Image");
 		validateXRef(".//manifest:Picture/manifest:ImageID", "Image");
@@ -309,15 +398,15 @@ public class ManifestValidator extends CMValidator {
 		 * handle any case of backwards (or forwards) compatibility between versions.
 		 */
 		String vocabVer = MAN_VER;
-		switch (MAN_VER) { 
+		switch (MAN_VER) {
 		case "1.8.1":
 			vocabVer = "1.8";
-			break; 
+			break;
 		}
 
 		JSONObject manifestVocab = (JSONObject) getVocabResource("manifest", vocabVer);
 		if (manifestVocab == null) {
-			String msg = "Unable to validate controlled vocab: missing resource file vocab_manifest_v"+vocabVer;
+			String msg = "Unable to validate controlled vocab: missing resource file vocab_manifest_v" + vocabVer;
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 			curFileIsValid = false;
 			return;
@@ -372,55 +461,6 @@ public class ManifestValidator extends CMValidator {
 			docRef = LogReference.getRef("CM", CM_VER, "cm002");
 			validateVocab(manifestNSpace, "Purpose", manifestNSpace, "WorkType", expectedValues, docRef, true, true);
 			break;
-		}
-	}
-
-	// ########################################################################
-
-	/**
-	 * Validate a local <tt>ContainerLocation</tt>. These should be a
-	 * <i>relative</i> path where the base location is that of the XML file being
-	 * processed. Note that network locations (i.e., URLs) are <b>not</b> verified.
-	 * Neither is there any requirement that the URL schema is HTTP as proprietary
-	 * schemes are allowed (e.g., <tt>flixster://foobar/BigBuckBunny.mp4</tt>)
-	 */
-	protected void validateLocations() {
-		String pre = manifestNSpace.getPrefix();
-		String baseLoc = curFile.getAbsolutePath();
-		LogReference srcRef = LogReference.getRef("MMM", "mmm_locType");
-		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + pre + ":ContainerLocation", Filters.element(), null,
-				manifestNSpace);
-		List<Element> cLocElList = xpExp01.evaluate(curRootEl);
-		outterLoop: for (int i = 0; i < cLocElList.size(); i++) {
-			Element clocEl = cLocElList.get(i);
-			String containerPath = clocEl.getTextNormalize();
-			if (containerPath.startsWith("file:")) {
-				String errMsg = "Invalid syntax for local file location";
-				String details = "Location of a local file must be specified as a relative path";
-				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId);
-				curFileIsValid = false;
-				continue outterLoop;
-			}
-			/*
-			 * at this point we have either (1) a relative path to a local file OR (2) a
-			 * full URL. No further validation takes place but we save the location in case
-			 * the Validation Controller being used wants to perform additional checks.
-			 */
-			try {
-				String targetLoc = PathUtilities.convertToAbsolute(baseLoc, containerPath);
-				String dbgMsg = "Possible MDDF file to validate at ContainerLocation " + targetLoc;
-				logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_DEBUG, clocEl, dbgMsg, null, null, logMsgSrcId);
-				List<Element> usage = supportingRsrcLocations.get(targetLoc);
-				if (usage == null) {
-					usage = new ArrayList<Element>();
-				}
-				usage.add(clocEl);
-				supportingRsrcLocations.put(targetLoc, usage);
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -532,7 +572,6 @@ public class ManifestValidator extends CMValidator {
 
 		return;
 	}
-
 
 	/**
 	 * Return all <tt>ContainerLocations</tt> found in the last MDDF file processed.
