@@ -251,7 +251,7 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	 * @see com.movielabs.mddflib.logging.LogMgmt#setCurrentFile(java.io.File)
 	 */
 	@Override
-	public void setCurrentFile(File srcfile) {
+	public void setCurrentFile(File srcfile, boolean clear) {
 		// Not used or required for JUnit tests
 
 	}
