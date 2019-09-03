@@ -31,6 +31,7 @@ import java.util.Set;
 import org.jdom2.Element;
 
 import com.movielabs.mddflib.logging.IssueLogger;
+import com.movielabs.mddflib.util.CMValidator;
 import com.movielabs.mddflib.util.xml.StructureValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -83,13 +84,13 @@ public class Profiler {
 	 * @param logMsgSrcId
 	 * @param profilingRules
 	 */
-	public Profiler(IssueLogger logger, String logMsgSrcId, String profilingRules) {
+	public Profiler(CMValidator validator, IssueLogger logger, String logMsgSrcId, String profilingRules) {
 		super();
 		this.logger = logger;
 		this.logMsgSrcId = logMsgSrcId;
 		JSONObject ruleFile = XmlIngester.getMddfResource(PROFILE_DIR + profilingRules);
 		usecaseSet = ruleFile.getJSONObject("Profiles");
-		structHelper = new StructureValidation(logger, logMsgSrcId);
+		structHelper = new StructureValidation(validator, logger, logMsgSrcId);
 	}
 
 	/**

@@ -128,8 +128,8 @@ public class CpeIP1Validator {
 		 * against the CPE Info Model rqmnts.
 		 */
 		Element basicMDEl = mainGroupNode.getMetadata();
-		Element locMDEl = basicMDEl.getChild("LocalizedInfo", XmlIngester.mdNSpace);
-		String curBranch = locMDEl.getChildTextNormalize("TitleSort", XmlIngester.mdNSpace);
+		Element locMDEl = basicMDEl.getChild("LocalizedInfo", cpeValidator.mdNSpace);
+		String curBranch = locMDEl.getChildTextNormalize("TitleSort", cpeValidator.mdNSpace);
 		switch (curBranch) {
 		case "in-movie":
 			curBranch = "in-movie";
@@ -159,13 +159,13 @@ public class CpeIP1Validator {
 		 * Type=‘Main’
 		 */
 		Element expEl = mainExpNode.getExpEl();
-		Element avEl = expEl.getChild("Audiovisual", XmlIngester.manifestNSpace);
+		Element avEl = expEl.getChild("Audiovisual", cpeValidator.manifestNSpace);
 		if (avEl == null) {
 			isValid = false;
 			String errMsg = "An Audiovisual referencing the main title must be included.";
 			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, expEl, errMsg, null, null, logMsgSrcId);
 		} else {
-			String avType = avEl.getChildTextNormalize("Type", XmlIngester.manifestNSpace);
+			String avType = avEl.getChildTextNormalize("Type", cpeValidator.manifestNSpace);
 			if (!avType.equals("Main")) {
 				isValid = false;
 				String errMsg = "Root Audiovisual instance must reference the main title";
@@ -206,15 +206,15 @@ public class CpeIP1Validator {
 		for (int i = 0; i < groupElList.size(); i++) {
 			if (!found) {
 				Element nextChildEl = groupElList.get(i);
-				String expXRef = nextChildEl.getChildTextNormalize("ExperienceID", XmlIngester.manifestNSpace);
+				String expXRef = nextChildEl.getChildTextNormalize("ExperienceID", cpeValidator.manifestNSpace);
 				XPathExpression<Element> xpExpression = xpfac.compile(
 						".//manifest:Experience[@ExperienceID='" + expXRef + "']", Filters.element(), null,
-						XmlIngester.manifestNSpace);
+						cpeValidator.manifestNSpace);
 				List<Element> elementList = xpExpression.evaluate(curRootEl);
 				Element childExpEl = elementList.get(0);
 				Element basicMDEl = cpeValidator.getMetadataEl(childExpEl);
-				Element locMDEl = basicMDEl.getChild("LocalizedInfo", XmlIngester.mdNSpace);
-				String title1 = locMDEl.getChildTextNormalize("TitleSort", XmlIngester.mdNSpace);
+				Element locMDEl = basicMDEl.getChild("LocalizedInfo", cpeValidator.mdNSpace);
+				String title1 = locMDEl.getChildTextNormalize("TitleSort", cpeValidator.mdNSpace);
 				found = title1.equals("Featured");
 			}
 		}
@@ -302,7 +302,7 @@ public class CpeIP1Validator {
 		Element expEl = tabGroupNode.getExpEl();
 		String msg = "Validating Tab Group " + tabGroupNode.getCid();
 		loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_DEBUG, expEl, msg, null, null, logMsgSrcId);
-		List<Element> tSeqList = expEl.getChildren("TimedSequenceID", XmlIngester.manifestNSpace);
+		List<Element> tSeqList = expEl.getChildren("TimedSequenceID", cpeValidator.manifestNSpace);
 		if (tSeqList.size() < 1) {
 			String errMsg = "No TimedSequenceID found for Tab Experience";
 			loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, expEl, errMsg, null, null, logMsgSrcId);
@@ -323,7 +323,7 @@ public class CpeIP1Validator {
 		String tSeqId = tSeqList.get(0).getTextNormalize();
 		XPathExpression<Element> xpExpression = xpfac.compile(
 				".//manifest:TimedEventSequence[@TimedSequenceID='" + tSeqId + "']", Filters.element(), null,
-				XmlIngester.manifestNSpace);
+				cpeValidator.manifestNSpace);
 		Element curRootEl = expEl.getDocument().getRootElement();
 		List<Element> tsList = xpExpression.evaluate(curRootEl);
 		if (tsList.size() < 1) {
@@ -340,21 +340,21 @@ public class CpeIP1Validator {
 		 * Presentation elements that are the child of a TimedEvent.
 		 */
 		XPathExpression<Element> xpEx1 = xpfac.compile(".//manifest:PresentationID", Filters.element(), null,
-				XmlIngester.manifestNSpace);
+				cpeValidator.manifestNSpace);
 		List<Element> expList = collectTabContent(tabGroupNode, xpEx1);
 		XPathExpression<Element> xpEx2 = xpfac.compile(".//manifest:TimedEvent/manifest:PresentationID",
-				Filters.element(), null, XmlIngester.manifestNSpace);
+				Filters.element(), null, cpeValidator.manifestNSpace);
 		List<Element> tesList = xpEx2.evaluate(tSeqEl);
 		boolean matches = compareIdSets(expList, tesList);
 
 		// AppGroup...
-		xpExpression = xpfac.compile(".//manifest:AppGroupID", Filters.element(), null, XmlIngester.manifestNSpace);
+		xpExpression = xpfac.compile(".//manifest:AppGroupID", Filters.element(), null, cpeValidator.manifestNSpace);
 		expList = collectTabContent(tabGroupNode, xpExpression);
 		tesList = xpExpression.evaluate(tSeqEl);
 		matches = (compareIdSets(expList, tesList) && matches);
 
 		// TextGroup...
-		xpExpression = xpfac.compile(".//manifest:TextGroupID", Filters.element(), null, XmlIngester.manifestNSpace);
+		xpExpression = xpfac.compile(".//manifest:TextGroupID", Filters.element(), null, cpeValidator.manifestNSpace);
 		expList = collectTabContent(tabGroupNode, xpExpression);
 		tesList = xpExpression.evaluate(tSeqEl);
 		matches = (compareIdSets(expList, tesList) && matches);
@@ -439,11 +439,11 @@ public class CpeIP1Validator {
 		Element curRootEl = manifestRoot.getExpEl().getDocument().getRootElement();
 		boolean isValid = true;
 		XPathExpression<Element> xpExpression = xpfac.compile(".//manifest:Inventory/manifest:Video/manifest:Encoding",
-				Filters.element(), null, XmlIngester.manifestNSpace);
+				Filters.element(), null, cpeValidator.manifestNSpace);
 		List<Element> elList = xpExpression.evaluate(curRootEl);
 		for (int i = 0; i < elList.size(); i++) {
 			Element nextEl = elList.get(i);
-			Element alEl = nextEl.getChild("ActualLength", XmlIngester.mdNSpace);
+			Element alEl = nextEl.getChild("ActualLength", cpeValidator.mdNSpace);
 			if ((alEl == null) || (alEl.getTextNormalize().isEmpty())) {
 				String errMsg = "ActualLength of Video/Encoding is not specified";
 				loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, nextEl, errMsg, null, null, logMsgSrcId);
@@ -472,11 +472,11 @@ public class CpeIP1Validator {
 		boolean isValid = true;
 		XPathExpression<Element> xpExpression = xpfac.compile(
 				".//manifest:Presentation/manifest:Chapters/manifest:Chapter", Filters.element(), null,
-				XmlIngester.manifestNSpace);
+				cpeValidator.manifestNSpace);
 		List<Element> elList = xpExpression.evaluate(curRootEl);
 		for (int i = 0; i < elList.size(); i++) {
 			Element nextEl = elList.get(i);
-			Element dlEl = nextEl.getChild("DisplayLabel", XmlIngester.manifestNSpace);
+			Element dlEl = nextEl.getChild("DisplayLabel", cpeValidator.manifestNSpace);
 			if ((dlEl == null) || (dlEl.getTextNormalize().isEmpty())) {
 				String errMsg = "Chapter DisplayLabel is not specified";
 				loggingMgr.logIssue(LogMgmt.TAG_PROFILE, LogMgmt.LEV_ERR, nextEl, errMsg, null, null, logMsgSrcId);

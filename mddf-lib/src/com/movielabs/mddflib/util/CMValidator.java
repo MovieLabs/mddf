@@ -218,7 +218,7 @@ public abstract class CMValidator extends XmlIngester {
 	public CMValidator(LogMgmt loggingMgr) {
 		super(loggingMgr);
 		xsdHelper = new XsdValidation(loggingMgr);
-		structHelper = new StructureValidation(this, logMsgSrcId);
+		structHelper = new StructureValidation(this, this, logMsgSrcId);
 	}
 
 	/**
@@ -781,8 +781,8 @@ public abstract class CMValidator extends XmlIngester {
 	 */
 	protected void validateXRef(String xpath, String targetElType, int logLevel, String logMsg) {
 		Set<Namespace> nspaceSet = new HashSet<Namespace>();
-		nspaceSet.add(XmlIngester.mdNSpace);
-		nspaceSet.add(XmlIngester.manifestNSpace);
+		nspaceSet.add(mdNSpace);
+		nspaceSet.add(manifestNSpace);
 
 		HashSet<String> idSet = idSets.get(targetElType);
 		Map<String, XrefCounter> idXRefCounter = idXRefCounts.get(targetElType);
@@ -861,7 +861,7 @@ public abstract class CMValidator extends XmlIngester {
 		String msg = "Invalid image resolution";
 		String details = "resolution must be in the form colxrow (e.g. 800x600)";
 		String pattern = "\\d+x\\d+";
-		XPathExpression<?> xpExpression = StructureValidation.resolveXPath(xpath);
+		XPathExpression<?> xpExpression = structHelper.resolveXPath(xpath);
 		List<?> targetList = xpExpression.evaluate(curRootEl);
 		for (Object target : targetList) {
 			String text = null;
@@ -1405,10 +1405,10 @@ public abstract class CMValidator extends XmlIngester {
 				XPathExpression xpExp;
 				if (xPath.contains("@")) {
 					isAttribute = true;
-					xpExp = xpfac.compile(xPath, Filters.attribute(), null, XmlIngester.mdNSpace);
+					xpExp = xpfac.compile(xPath, Filters.attribute(), null, mdNSpace);
 				} else {
 					isAttribute = false;
-					xpExp = xpfac.compile(xPath, Filters.element(), null, XmlIngester.mdNSpace);
+					xpExp = xpfac.compile(xPath, Filters.element(), null, mdNSpace);
 				}
 
 				String logLabel = targetSelectionPath + "/" + key;
@@ -1610,7 +1610,7 @@ public abstract class CMValidator extends XmlIngester {
 	 * @param childNS
 	 * @return
 	 */
-	public static int getLogTag(Namespace primaryNS, Namespace childNS) {
+	public int getLogTag(Namespace primaryNS, Namespace childNS) {
 		int tag4log = LogMgmt.TAG_N_A;
 		Namespace tagNS;
 		if (childNS != null) {

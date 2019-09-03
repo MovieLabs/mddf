@@ -58,28 +58,27 @@ import net.sf.json.JSONSerializer;
  *
  */
 public abstract class XmlIngester implements IssueLogger {
-	public static String CM_VER = "2.3";
-	public static String MDMEC_VER = "2.4";
-	public static String MAN_VER = "1.5";
-	public static String AVAIL_VER = "2.1";
-	public static Namespace xsiNSpace = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+	public String CM_VER = "2.3";
+	public String MDMEC_VER = "2.4";
+	public String MAN_VER = "1.5";
+	public String AVAIL_VER = "2.1";
+	public Namespace xsiNSpace = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 
-	public static Namespace mdNSpace = Namespace.getNamespace("md",
+	public Namespace mdNSpace = Namespace.getNamespace("md",
 			MddfContext.NSPACE_CMD_PREFIX + CM_VER + MddfContext.NSPACE_CMD_SUFFIX);
 
-	public static Namespace mdmecNSpace = Namespace.getNamespace("mdmec",
-			MddfContext.NSPACE_MDMEC_PREFIX + MDMEC_VER); 
+	public Namespace mdmecNSpace = Namespace.getNamespace("mdmec", MddfContext.NSPACE_MDMEC_PREFIX + MDMEC_VER);
 
-	public static Namespace manifestNSpace = Namespace.getNamespace("manifest",
+	public Namespace manifestNSpace = Namespace.getNamespace("manifest",
 			MddfContext.NSPACE_MANIFEST_PREFIX + MAN_VER + MddfContext.NSPACE_MANIFEST_SUFFIX);
-	public static Namespace availsNSpace = Namespace.getNamespace("avails",
+	public Namespace availsNSpace = Namespace.getNamespace("avails",
 			MddfContext.NSPACE_AVAILS_PREFIX + AVAIL_VER + MddfContext.NSPACE_AVAILS_SUFFIX);
 
 	protected static XPathFactory xpfac = XPathFactory.instance();
 
 	private static Map<String, JSONObject> rsrcCache = new HashMap<String, JSONObject>();
 
-	protected static File srcFile;
+//	protected File srcFile;
 	// protected static File sourceFolder;
 
 	protected MddfTarget curTarget;
@@ -124,8 +123,8 @@ public abstract class XmlIngester implements IssueLogger {
 	 * 
 	 * @param rsrcId
 	 * @param rsrcVersion
-	 * @return a JSONObject or <tt>null</tt>. if the resource is not accessible or is
-	 *         not valid JSON
+	 * @return a JSONObject or <tt>null</tt>. if the resource is not accessible or
+	 *         is not valid JSON
 	 */
 	protected static Object getVocabResource(String rsrcId, String rsrcVersion) {
 		String key = rsrcId + "_v" + rsrcVersion;
@@ -141,7 +140,7 @@ public abstract class XmlIngester implements IssueLogger {
 			break;
 		case "cm_v2.7.1":
 			key = "cm_v2.7";
-			break; 
+			break;
 		case "cm_v2.6":
 			key = "cm_v2.5";
 			break;
@@ -279,14 +278,14 @@ public abstract class XmlIngester implements IssueLogger {
 	/**
 	 * @param srcPath the srcPath to set
 	 */
-	public static void setSourceDirPath(String srcPath) {
-		if (srcPath != null) {
-			srcFile = new File(srcPath);
-		} else {
-			srcFile = null;
-		}
-
-	}
+//	public void setSourceDirPath(String srcPath) {
+//		if (srcPath != null) {
+//			srcFile = new File(srcPath);
+//		} else {
+//			srcFile = null;
+//		}
+//
+//	}
 
 	/**
 	 * Identify the XSD version for the document's <i>primary</i> MDDF namespace
@@ -339,7 +338,7 @@ public abstract class XmlIngester implements IssueLogger {
 	 * 
 	 * @param mddfFmt
 	 */
-	public static void setMddfVersions(FILE_FMT mddfFmt) {
+	public  void setMddfVersions(FILE_FMT mddfFmt) {
 		Map<String, String> uses = MddfContext.getReferencedXsdVersions(mddfFmt);
 		switch (mddfFmt.getStandard()) {
 		case "Avails":
@@ -368,8 +367,7 @@ public abstract class XmlIngester implements IssueLogger {
 			CM_VER = uses.get("MD");
 			/* Since Manifest isn't used for MEC, set to NULL */
 			MAN_VER = null;
-			mdmecNSpace = Namespace.getNamespace("mdmec",
-					"http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER);
+			mdmecNSpace = Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER);
 			mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
 			break;
 		}
@@ -389,7 +387,7 @@ public abstract class XmlIngester implements IssueLogger {
 	 * @param manifestSchemaVer
 	 * @throws IllegalArgumentException
 	 */
-	public static void setManifestVersion(String manifestSchemaVer) throws IllegalArgumentException {
+	public  void setManifestVersion(String manifestSchemaVer) throws IllegalArgumentException {
 		FILE_FMT manifestFmt = MddfContext.identifyMddfFormat("manifest", manifestSchemaVer);
 		if (manifestFmt == null) {
 			throw new IllegalArgumentException("Unsupported Manifest Schema version " + manifestSchemaVer);
@@ -401,7 +399,7 @@ public abstract class XmlIngester implements IssueLogger {
 	 * @param mecSchemaVer
 	 * @throws IllegalArgumentException
 	 */
-	public static void setMdMecVersion(String mecSchemaVer) throws IllegalArgumentException {
+	public  void setMdMecVersion(String mecSchemaVer) throws IllegalArgumentException {
 		FILE_FMT mecFmt = MddfContext.identifyMddfFormat("mdmec", mecSchemaVer);
 		if (mecFmt == null) {
 			throw new IllegalArgumentException("Unsupported MEC Schema version " + mecSchemaVer);
@@ -423,7 +421,7 @@ public abstract class XmlIngester implements IssueLogger {
 	 * @param availSchemaVer
 	 * @throws IllegalArgumentException
 	 */
-	public static void setAvailVersion(String availSchemaVer) throws IllegalArgumentException {
+	public  void setAvailVersion(String availSchemaVer) throws IllegalArgumentException {
 		FILE_FMT availsFmt = MddfContext.identifyMddfFormat("avails", availSchemaVer);
 		if (availsFmt == null) {
 			throw new IllegalArgumentException("Unsupported Avails Schema version " + availSchemaVer);

@@ -74,7 +74,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		this.validateC = true;
 		logMsgSrcId = LOGMSG_ID;
 		logMsgDefaultTag = LogMgmt.TAG_PROFILE; // or LogMgmt.TAG_MMC ???
-		profiler = new Profiler(loggingMgr, logMsgSrcId, "profiles_mmc_v2.0");
+		profiler = new Profiler(this, loggingMgr, logMsgSrcId, "profiles_mmc_v2.0");
 	}
 
 	/**

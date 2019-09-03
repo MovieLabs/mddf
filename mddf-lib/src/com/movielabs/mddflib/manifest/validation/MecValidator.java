@@ -64,14 +64,14 @@ public class MecValidator extends CMValidator {
 	}
 
 	public boolean process(MddfTarget target) throws IOException, JDOMException {
+		curFile = target.getSrcFile();
 		String schemaVer = identifyXsdVersion(target);
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, srcFile, logMsgSrcId);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, curFile, logMsgSrcId);
 		setMdMecVersion(schemaVer);
 		rootNS = mdmecNSpace;
 
 		curTarget = target;
 		curRootEl = null;
-		curFile = target.getSrcFile();
 		curFileName = curFile.getName();
 		curFileIsValid = true;
 
@@ -99,7 +99,7 @@ public class MecValidator extends CMValidator {
 	 * @param target
 	 */
 	protected boolean validateXml(MddfTarget target) {
-		String xsdFile = XsdValidation.defaultRsrcLoc + "mdmec-v" + XmlIngester.MDMEC_VER + ".xsd";
+		String xsdFile = XsdValidation.defaultRsrcLoc + "mdmec-v" + MDMEC_VER + ".xsd";
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		curFileIsValid = xsdHelper.validateXml(target, xsdFile, logMsgSrcId);
 		return curFileIsValid;
@@ -112,7 +112,7 @@ public class MecValidator extends CMValidator {
 		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints", curFile, LOGMSG_ID);
 		super.validateConstraints();
 
-		SchemaWrapper mecSchema = SchemaWrapper.factory("mdmec-v" + XmlIngester.MDMEC_VER);
+		SchemaWrapper mecSchema = SchemaWrapper.factory("mdmec-v" + MDMEC_VER);
 		validateNotEmpty(mecSchema);
 
 		/*

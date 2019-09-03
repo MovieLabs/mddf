@@ -40,6 +40,7 @@ import org.jdom2.xpath.XPathFactory;
 import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
+import com.movielabs.mddflib.util.CMValidator;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -286,8 +287,10 @@ public class StructureValidation {
 
 	protected IssueLogger logger;
 	protected String logMsgSrcId;
+	protected CMValidator validator;
 
-	public StructureValidation(IssueLogger logger, String logMsgSrcId) {
+	public StructureValidation(CMValidator validator, IssueLogger logger,  String logMsgSrcId) {
+		this.validator =  validator;
 		this.logger = logger;
 	}
 
@@ -504,7 +507,7 @@ public class StructureValidation {
 		return outList;
 	}
 
-	public static XPathExpression<?> resolveXPath(String xpathDef) {
+	public  XPathExpression<?> resolveXPath(String xpathDef) {
 		return resolveXPath(xpathDef, null);
 	}
 
@@ -525,30 +528,30 @@ public class StructureValidation {
 	 * @param varMap   (optional)
 	 * @return
 	 */
-	public static XPathExpression<?> resolveXPath(String xpathDef, Map<String, String> varMap) {
+	private  XPathExpression<?> resolveXPath(String xpathDef, Map<String, String> varMap) {
 		Set<Namespace> nspaceSet = new HashSet<Namespace>();
 
 		/*
 		 * replace namespace placeholders with actual prefix being used
 		 */
 		if (xpathDef.contains("{md}")) {
-			xpathDef = xpathDef.replaceAll("\\{md\\}", XmlIngester.mdNSpace.getPrefix() + ":");
-			nspaceSet.add(XmlIngester.mdNSpace);
+			xpathDef = xpathDef.replaceAll("\\{md\\}", validator.mdNSpace.getPrefix() + ":");
+			nspaceSet.add(validator.mdNSpace);
 		}
 
 		if (xpathDef.contains("{avail}")) {
-			xpathDef = xpathDef.replaceAll("\\{avail\\}", XmlIngester.availsNSpace.getPrefix() + ":");
-			nspaceSet.add(XmlIngester.availsNSpace);
+			xpathDef = xpathDef.replaceAll("\\{avail\\}", validator.availsNSpace.getPrefix() + ":");
+			nspaceSet.add(validator.availsNSpace);
 		}
 
 		if (xpathDef.contains("{manifest}")) {
-			xpathDef = xpathDef.replaceAll("\\{manifest\\}", XmlIngester.manifestNSpace.getPrefix() + ":");
-			nspaceSet.add(XmlIngester.manifestNSpace);
+			xpathDef = xpathDef.replaceAll("\\{manifest\\}", validator.manifestNSpace.getPrefix() + ":");
+			nspaceSet.add(validator.manifestNSpace);
 		}
 
 		if (xpathDef.contains("{mdmec}")) {
-			xpathDef = xpathDef.replaceAll("\\{mdmec\\}", XmlIngester.mdmecNSpace.getPrefix() + ":");
-			nspaceSet.add(XmlIngester.mdmecNSpace);
+			xpathDef = xpathDef.replaceAll("\\{mdmec\\}", validator.mdmecNSpace.getPrefix() + ":");
+			nspaceSet.add(validator.mdmecNSpace);
 		}
 		if (varMap != null) {
 			Set<String> keySet = varMap.keySet();
