@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -346,6 +347,126 @@ public class MddfContext {
 			break;
 		}
 		uses.put(standard.standard.toUpperCase(), standard.ver);
+		return uses;
+	}
+
+	/**
+	 * Return all <tt>Namespaces</tt> required to process an XML Document based on
+	 * the specified MDDF <tt>FILE_FMT</tt>. The returned <tt>Map</tt> uses the
+	 * following <i>keys</i>:
+	 * <ul>
+	 * <li>AVAILS</li>
+	 * <li>MANIFEST</li>
+	 * <li>MDMEC</li>
+	 * <li>MD</li>
+	 * </ul>
+	 * <p>
+	 * If the specified <tt>FILE_FMT</tt> identifies an XLSX representation for an
+	 * Avails (e.g., <tt>AVAILS_1_8</tt>), the returned <tt>Namespaces</tt> will be
+	 * those used for the corresponding XML representation (e.g.,
+	 * <tt>AVAILS_1_8</tt> is converted to a <tt>AVAILS_1_8</tt> representation).
+	 * </p>
+	 * 
+	 * @param standard
+	 * @return <tt>Map&lt;String, Namespace&gt;</tt> or <tt>null</tt> if the
+	 *         <tt>FILE_FMT</tt> is not supported.
+	 */
+	public static Map<String, Namespace> getRequiredNamespaces(FILE_FMT standard) {
+		Map<String, Namespace> uses = new HashMap<String, Namespace>();
+		switch (standard) {
+		case AVAILS_1_8:
+		case AVAILS_2_4:
+			uses.put("AVAILS", Namespace.getNamespace("avails", "http://www.movielabs.com/schema/avails/v2.4/avails"));
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.7"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.7/md"));
+			break;
+		case AVAILS_1_7_3:
+		case AVAILS_2_3:
+			uses.put("AVAILS", Namespace.getNamespace("avails", "http://www.movielabs.com/schema/avails/v2.3/avails"));
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.6"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.6/md"));
+			break;
+		case AVAILS_1_7_2:
+		case AVAILS_2_2_2:
+			uses.put("AVAILS",
+					Namespace.getNamespace("avails", "http://www.movielabs.com/schema/avails/v2.2.2/avails"));
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.5"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.5/md"));
+		case AVAILS_2_2_1:
+			uses.put("AVAILS", Namespace.getNamespace("avails", "http://www.movielabs.com/schema/avails/v2.2/avails"));
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.5"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.5/md"));
+			break;
+		case AVAILS_1_7:
+		case AVAILS_2_2:
+			uses.put("AVAILS", Namespace.getNamespace("avails", "http://www.movielabs.com/schema/avails/v2.2/avails"));
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.4"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.4/md"));
+			break;
+		case AVAILS_2_1:
+			uses.put("AVAILS", Namespace.getNamespace("avails", "http://www.movielabs.com/schema/avails/v2.1/avails"));
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.4"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.4/md"));
+			break;
+		// .......................
+		case MANIFEST_1_4:
+			uses.put("MANIFEST", Namespace.getNamespace("manifest",
+					MddfContext.NSPACE_MANIFEST_PREFIX + "1.4" + MddfContext.NSPACE_MANIFEST_SUFFIX));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.3/md"));
+			break;
+		case MANIFEST_1_5:
+			uses.put("MANIFEST", Namespace.getNamespace("manifest",
+					MddfContext.NSPACE_MANIFEST_PREFIX + "1.5" + MddfContext.NSPACE_MANIFEST_SUFFIX));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.4/md"));
+			break;
+		case MANIFEST_1_6:
+			uses.put("MANIFEST", Namespace.getNamespace("manifest",
+					MddfContext.NSPACE_MANIFEST_PREFIX + "1.6" + MddfContext.NSPACE_MANIFEST_SUFFIX));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.5/md"));
+			break;
+		case MANIFEST_1_6_1:
+			uses.put("MANIFEST", Namespace.getNamespace("manifest",
+					MddfContext.NSPACE_MANIFEST_PREFIX + "1.6.1" + MddfContext.NSPACE_MANIFEST_SUFFIX));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.6/md"));
+			break;
+		case MANIFEST_1_7:
+			uses.put("MANIFEST", Namespace.getNamespace("manifest",
+					MddfContext.NSPACE_MANIFEST_PREFIX + "1.7" + MddfContext.NSPACE_MANIFEST_SUFFIX));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.6/md"));
+			break;
+		case MANIFEST_1_8:
+			uses.put("MANIFEST", Namespace.getNamespace("manifest",
+					MddfContext.NSPACE_MANIFEST_PREFIX + "1.8" + MddfContext.NSPACE_MANIFEST_SUFFIX));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.7/md"));
+			break;
+		case MANIFEST_1_8_1:
+			uses.put("MANIFEST", Namespace.getNamespace("manifest",
+					MddfContext.NSPACE_MANIFEST_PREFIX + "1.8.1" + MddfContext.NSPACE_MANIFEST_SUFFIX));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.7.1/md"));
+			break;
+		case MDMEC_2_7_1:
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.7.1"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.7.1/md"));
+			break;
+		case MDMEC_2_7:
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.7"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.7/md"));
+			break;
+		case MDMEC_2_6:
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.6"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.6/md"));
+			break;
+		case MDMEC_2_5:
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.5"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.5/md"));
+			break;
+		case MDMEC_2_4:
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.4"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.4/md"));
+			break;
+		default:
+			return null;
+		}
 		return uses;
 	}
 
