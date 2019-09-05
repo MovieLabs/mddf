@@ -347,7 +347,7 @@
 
 		"SubType_commentary": 
 		{
-			"targetPath": ".//{manifest}Audio/{md}SubType[. = 'Director' or . = 'Actor' or . = 'ActorDirector']",
+			"targetPath": ".//{md}Audio/{md}SubType[. = 'Director' or . = 'Actor' or . = 'ActorDirector']",
 			"constraint": 
 			[
 				{					

@@ -49,6 +49,20 @@
 					]
 				}
 			]
+		},
+		
+		"SubType_commentary": 
+		{
+			"targetPath": ".//{manifest}Audio/{md}SubType[. = 'Director' or . = 'Actor' or . = 'ActorDirector']",
+			"constraint": 
+			[
+				{					
+					"min": "1",
+					"severity": "Error",
+					"xpath": "../{md}Type[. = 'commentary']",
+					"msg": "Specified SubType is only valid when Type is 'commentary'"
+				}
+			]
 		}
 	}
 }
