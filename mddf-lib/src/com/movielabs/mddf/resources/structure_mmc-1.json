@@ -87,7 +87,8 @@
 					"severity": "Error",
 					"xpath": 
 					[
-						"//{manifest}BasicMetadata[(descendant::{md}ArtReference) and (@ContentID = {$CID}) ]"
+						"//{manifest}BasicMetadata[(descendant::{md}ArtReference) and (@ContentID = {$CID}) ]",						
+						"{$$MEC}//{mdmec}Basic[(descendant::{md}ArtReference) and (@ContentID = {$CID}) ]"
 					],
 
 					"msg": "Missing PictureGroupID",
