@@ -176,7 +176,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 			if (rqmtSpec.has("targetPath")) {
 				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_PROFILE, "Structure check; key= " + key, curFile,
 						logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, getSupportingMECs()) && curFileIsValid;
 			}
 		}
 		// --------------------------------------------------------------------------

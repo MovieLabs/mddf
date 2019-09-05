@@ -90,7 +90,7 @@ public class Profiler {
 		this.logMsgSrcId = logMsgSrcId;
 		JSONObject ruleFile = XmlIngester.getMddfResource(PROFILE_DIR + profilingRules);
 		usecaseSet = ruleFile.getJSONObject("Profiles");
-		structHelper = new StructureValidation(validator, logger, logMsgSrcId);
+		structHelper = new StructureValidation( logger, logMsgSrcId);
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class Profiler {
 			JSONArray constraintSet = test.getJSONArray("constraint");
 			evalBlock: for (int i = 0; i < constraintSet.size(); i++) {
 				JSONObject constraint = constraintSet.getJSONObject(i);
-				boolean passes = structHelper.evaluateConstraint(targetEl, constraint);
+				boolean passes = structHelper.evaluateConstraint(targetEl, constraint, null);
 				if (mergeAnd) {
 					passesAll = passesAll && passes;
 					if (!passesAll) {

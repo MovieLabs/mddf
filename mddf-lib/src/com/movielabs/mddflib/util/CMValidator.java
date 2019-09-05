@@ -218,7 +218,7 @@ public abstract class CMValidator extends XmlIngester {
 	public CMValidator(LogMgmt loggingMgr) {
 		super(loggingMgr);
 		xsdHelper = new XsdValidation(loggingMgr);
-		structHelper = new StructureValidation(this, this, logMsgSrcId);
+		structHelper = new StructureValidation( this, logMsgSrcId);
 	}
 
 	/**
@@ -861,7 +861,7 @@ public abstract class CMValidator extends XmlIngester {
 		String msg = "Invalid image resolution";
 		String details = "resolution must be in the form colxrow (e.g. 800x600)";
 		String pattern = "\\d+x\\d+";
-		XPathExpression<?> xpExpression = structHelper.resolveXPath(xpath);
+		XPathExpression<?> xpExpression = structHelper.resolveXPath(xpath, null, curRootEl);
 		List<?> targetList = xpExpression.evaluate(curRootEl);
 		for (Object target : targetList) {
 			String text = null;
