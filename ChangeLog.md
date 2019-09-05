@@ -5,6 +5,17 @@
 
 ## Versioning
 
+### mddf-lib 1.6.1
+
+#### rc1
+* Bug Fix: MMC structure validation was incomplete when MEC file used to provide metadata.
+* Bug Fix: Correct use of Audio/SubType not verified when pressent in a MEC file.
+* Enhancement: structure check may specify a XPath constraint to be applied to a supporting MEC file.
+      Change made in support of BUG FIX re use of MEC files w/in a Manifest.
+* Internal: use of static methods and fields in Validator classes reduced to allow simultaneous instantiation
+       of multiple Validators. Change made in support of BUG FIX re use of MEC files w/in a Manifest.
+* Internal: change to LogMgmt API allows simultaneous instantiation of multiple Validators targeting different files
+
 ### mddf-lib v1.6 
 
 * ENHANCEMENT: Memory usage when ingesting large XLSX-formated Avails has been significantly reduced.
