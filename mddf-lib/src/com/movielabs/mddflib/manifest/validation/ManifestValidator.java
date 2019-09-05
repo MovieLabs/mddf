@@ -74,6 +74,7 @@ public class ManifestValidator extends CMValidator {
 	}
 
 	private Map<String, List<Element>> supportingRsrcLocations;
+	private List<MddfTarget> supportingMECs;
 
 	/**
 	 * @param validateC
@@ -107,7 +108,7 @@ public class ManifestValidator extends CMValidator {
 		curRootEl = null;
 		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Schema Version " + schemaVer, curFile,
 				logMsgSrcId);
-		
+
 		validateXml(target);
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
@@ -148,7 +149,7 @@ public class ManifestValidator extends CMValidator {
 	 */
 	protected void validateLocations() {
 		supportingRsrcLocations = new HashMap<String, List<Element>>();
-
+		supportingMECs = new ArrayList<MddfTarget>();
 		String pre = manifestNSpace.getPrefix();
 		String baseLoc = curFile.getAbsolutePath();
 		LogReference srcRef = LogReference.getRef("MMM", "mmm_locType");
@@ -194,7 +195,10 @@ public class ManifestValidator extends CMValidator {
 						loggingMgr.setCurrentFile(mecFile, true);
 						MddfTarget mecTarget = new MddfTarget(mecFile, loggingMgr);
 						boolean validMec = mecTool.process(mecTarget);
-					} catch (Exception e) { 
+						if(validMec) {
+							supportingMECs.add(mecTarget);
+						}
+					} catch (Exception e) {
 						e.printStackTrace();
 						String errMsg = "Exception processing referenced MEC XML";
 						String details = "Attempt to validate referenced MEC file failed while parsing XML"
@@ -566,7 +570,7 @@ public class ManifestValidator extends CMValidator {
 			if (rqmtSpec.has("targetPath")) {
 				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, "Structure check; key= " + key, curFile,
 						logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, getSupportingMECs()) && curFileIsValid;
 			}
 		}
 
@@ -586,4 +590,15 @@ public class ManifestValidator extends CMValidator {
 		return supportingRsrcLocations;
 	}
 
+	/**
+	 * Return a list identifying all MEC files referenced by the last MDDF file
+	 * processed. These will have been identified via
+	 * <tt>&lt;manifest:Metadata&gt;/&lt;manifest:ContainerReference&gt;</tt>
+	 * elements. Only  <b>valid</b> MEC files are included in the returned list.
+	 * 
+	 * @return
+	 */
+	protected List<MddfTarget> getSupportingMECs() {
+		return supportingMECs;
+	}
 }

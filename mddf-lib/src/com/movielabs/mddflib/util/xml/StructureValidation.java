@@ -37,6 +37,8 @@ import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
+import com.movielabs.mddf.MddfContext;
+import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
@@ -57,7 +59,7 @@ import net.sf.json.JSONObject;
  * <tt>StructureValidation</tt> class provides the functions that can interpret
  * the requirements and test an XML file for compliance.
  * </p>
- * <h3>Semantics and Syntax:</h3>
+ * <h3><u>Semantics and Syntax:</u></h3>
  * <p>
  * The semantics of JSON a structure definition is as follows:
  * 
@@ -124,11 +126,16 @@ import net.sf.json.JSONObject;
  * </ul>
  * </p>
  * 
+ * <h3><u>XPaths:</u></h3>
  * <p>
- * An <tt>XPATH</tt> is defined using the standard XPath syntax with one
- * modification. Namespaces are indicated using a variable indicating the name
- * of an MDDF schema. The appropriate namespace prefixes will be inserted by the
- * software. Supported namespaces are:
+ * An <tt>XPATH</tt> is defined using the standard XPath syntax with two
+ * modifications.
+ * </p>
+ * <h4>Indicating Namespaces:</h4>
+ * <p>
+ * Namespaces are indicated using a variable with the name of an MDDF schema.
+ * The appropriate namespace prefixes will be inserted by the software.
+ * Supported namespaces are:
  * </p>
  * <ul>
  * <li>{avail}</li>
@@ -174,7 +181,34 @@ import net.sf.json.JSONObject;
  *</tt>
  * </pre>
  * 
- * <h3>Filters:</h3>
+ * <h4>Support for MEC File Usage:</h4>
+ * <p>
+ * A Manifest file may provide metadata in one of two ways: either
+ * <i>internally</i> via a <tt>&lt;BasicMetadata&gt;</tt> element or
+ * <i>externally</i> via a <tt>&lt;ContainerReference&gt;</tt> pointing to a MEC
+ * file. Validating a constraint on Metadata may, therefore, require specifying
+ * two different XPaths to cover both possible situations.
+ * </p>
+ * <p>
+ * To handle this type of situation, a JSONArray with both paths is used. The
+ * xpath that is to be applied when a MEC file is used will be prefixed with the
+ * keyword <tt>{$$MEC}</tt>. For example:
+ * 
+ * <pre>
+ * <tt> 
+"$CID": "./{manifest}ContentID",
+"max": "0",
+"severity": "Error",
+"xpath": 
+[
+		"//{manifest}BasicMetadata[(descendant::{md}ArtReference) and (@ContentID = {$CID}) ]",						
+		"{$$MEC}//{mdmec}Basic[(descendant::{md}ArtReference) and (@ContentID = {$CID}) ]"
+],
+ * </tt>
+ * </pre>
+ * </p>
+ * 
+ * <h3><u>Filters:</u></h3>
  * <p>
  * A 'Filter' may be used to supplement the matching criteria specified by the
  * XPaths. This is used when XPath criteria are insufficient, or too unwieldy,
@@ -220,7 +254,7 @@ import net.sf.json.JSONObject;
 		}
  * </pre>
  * 
- * <h3>Variables:</h3>
+ * <h3><u>Variables:</u></h3>
  * 
  * Variables are denoted by a "$" followed by an ID (e.g., <tt>$FOO</tt>) and
  * are assigned a value via a XPath. For example: <tt><pre>
@@ -239,7 +273,7 @@ import net.sf.json.JSONObject;
  * </p>
  * 
  * 
- * <h3>Nested Requirements:</h3>
+ * <h3><u>Nested Requirements:</u></h3>
  * <p>
  * Requirements can be defined in a way that reflects the nested structure of
  * the underlying XML. For example, assume the XSD specifies the following
@@ -258,8 +292,8 @@ import net.sf.json.JSONObject;
  * </ul>
  * </li>
  * </ul>
- * We wish to specify that <i>if</i>Flavor is present then Calories must also be
- * specified. There are two options:
+ * We wish to specify that <i>if</i> Flavor is present then Calories must also
+ * be specified. There are two options:
  * <ul>
  * <li>use a <tt>targetPath</tt> pointing to <tt>Foo</tt> and constraints with
  * <tt>xpath</tt> that will resolve when <tt>Foo</tt> is the root for xpath
@@ -273,7 +307,7 @@ import net.sf.json.JSONObject;
  * Either option will work but in some situations one or the other may be more
  * efficient to evaluate or easier to write.
  * </p>
- * <h3>Usage:</h3>
+ * <h3><u>Usage</u></h3>
  * <p>
  * Validation modules should determine the appropriate JSON resource file based
  * on the type and version of the MDDF file. Requirements may then be retrieved
@@ -285,18 +319,55 @@ import net.sf.json.JSONObject;
  */
 public class StructureValidation {
 
+	private static final String KEY_MEC_REF = "{$$MEC}";
 	protected IssueLogger logger;
 	protected String logMsgSrcId;
-	protected CMValidator validator;
 
-	public StructureValidation(CMValidator validator, IssueLogger logger,  String logMsgSrcId) {
-		this.validator =  validator;
+	/**
+	 * @param logger
+	 * @param logMsgSrcId
+	 */
+	public StructureValidation(IssueLogger logger, String logMsgSrcId) {
 		this.logger = logger;
 	}
 
+	/**
+	 * Check to see if the XML satisfies the specified requirement. The
+	 * <tt>rootEL</tt> may either be the root of an entire document or the root of a
+	 * DOM tree forming a sub-tree within the overall document.
+	 * <p>
+	 * Any errors or warnings detected will be reported via the logger. The return
+	 * status will indicate to caller if an error was detected.
+	 * </p>
+	 * 
+	 * @param rootEl
+	 * @param rqmt
+	 * @return
+	 */
 	public boolean validateDocStructure(Element rootEl, JSONObject rqmt) {
+		return validateDocStructure(rootEl, rqmt, null);
+	}
+
+	/**
+	 * Check to see if the XML satisfies the specified requirement. The
+	 * <tt>rootEL</tt> may either be the root of an entire document or the root of a
+	 * DOM tree forming a sub-tree within the overall document. A requirement's
+	 * <tt>constraint</tt> may include an <tt>XPath</tt> that is to be applied to
+	 * the supporting MEC files.
+	 * <p>
+	 * Any errors or warnings detected will be reported via the logger. The return
+	 * status will indicate to caller if an error was detected.
+	 * </p>
+	 * 
+	 * @param rootEl
+	 * @param rqmt
+	 * @param supportingMECs
+	 * @return
+	 */
+	public boolean validateDocStructure(Element rootEl, JSONObject rqmt, List<MddfTarget> supportingMECs) {
 		String rootPath = rqmt.getString("targetPath");
-		XPathExpression<?> xpExp = resolveXPath(rootPath);
+		FILE_FMT mddfFmt = MddfContext.identifyMddfFormat(rootEl);
+		XPathExpression<?> xpExp = resolveXPath(rootPath, null, mddfFmt);
 		List<Element> targetElList = (List<Element>) xpExp.evaluate(rootEl);
 		boolean isOk = true;
 		if (rqmt.containsKey("constraint")) {
@@ -304,7 +375,7 @@ public class StructureValidation {
 			for (Element nextTargetEl : targetElList) {
 				for (int i = 0; i < constraintSet.size(); i++) {
 					JSONObject constraint = constraintSet.getJSONObject(i);
-					isOk = evaluateConstraint(nextTargetEl, constraint) && isOk;
+					isOk = evaluateConstraint(nextTargetEl, constraint, supportingMECs) && isOk;
 				}
 			}
 		}
@@ -327,7 +398,19 @@ public class StructureValidation {
 		return isOk;
 	}
 
-	public boolean evaluateConstraint(Element target, JSONObject constraint) {
+	/**
+	 * Evaluate a constraint in the context of a specific Element. This means
+	 * descendant Elements are not considered.
+	 * <p>
+	 * <b>Note:</b> This method is exposed as <tt>public</tt> to support unit
+	 * testing. Use of <tt>validateDocStructure()</tt> is prefered.
+	 * 
+	 * @param target
+	 * @param constraint
+	 * @param supportingMECs
+	 * @return
+	 */
+	public boolean evaluateConstraint(Element target, JSONObject constraint, List<MddfTarget> supportingMECs) {
 		boolean passes = true;
 		Map<String, String> varMap = resolveVariables(target, constraint);
 		int min = constraint.optInt("min", 0);
@@ -339,18 +422,29 @@ public class StructureValidation {
 
 		Object xpaths = constraint.opt("xpath");
 		List<XPathExpression<?>> xpeList = new ArrayList<XPathExpression<?>>();
+		List<String> externalPathList = new ArrayList<String>();
 		String targetList = ""; // for use if error msg is required
 		String[] xpParts = null;
 		if (xpaths instanceof String) {
 			String xpathDef = (String) xpaths;
-			xpeList.add(resolveXPath(xpathDef, varMap));
+			if (xpathDef.startsWith(KEY_MEC_REF)) {
+				xpathDef = xpathDef.replace(KEY_MEC_REF, "");
+				externalPathList.add(xpathDef);
+			} else {
+				xpeList.add(resolveXPath(xpathDef, varMap, target));
+			}
 			xpParts = xpathDef.split("\\[");
 			targetList = xpParts[0];
 		} else if (xpaths instanceof JSONArray) {
 			JSONArray xpArray = (JSONArray) xpaths;
 			for (int i = 0; i < xpArray.size(); i++) {
 				String xpathDef = xpArray.getString(i);
-				xpeList.add(resolveXPath(xpathDef, varMap));
+				if (xpathDef.startsWith(KEY_MEC_REF)) {
+					xpathDef = xpathDef.replace(KEY_MEC_REF, "");
+					externalPathList.add(xpathDef);
+				} else {
+					xpeList.add(resolveXPath(xpathDef, varMap, target));
+				}
 				xpParts = xpathDef.split("\\[");
 				if (i < 1) {
 					targetList = xpParts[0];
@@ -367,15 +461,43 @@ public class StructureValidation {
 		/* Has an OPTIONAL filter been included with the constraint? */
 		JSONObject filterDef = constraint.optJSONObject("filter");
 
-		List<Element> matchedElList = new ArrayList<Element>();
+		List<Object> matchedElList = new ArrayList<Object>();
+		/*
+		 * The xpeLlist contains constraints that are based on an XPath that should be
+		 * applied to the SAME file that contains the 'target' element (i.e., the
+		 * primary MDDF file being evaluated).
+		 */
 		for (int i = 0; i < xpeList.size(); i++) {
 			XPathExpression<Element> xpExp = (XPathExpression<Element>) xpeList.get(i);
-			List<Element> nextElList = xpExp.evaluate(target);
+			List<?> nextElList = xpExp.evaluate(target);
 			if (filterDef != null) {
 				nextElList = applyFilter(nextElList, filterDef);
 			}
 			matchedElList.addAll(nextElList);
 		}
+		/*
+		 * The externalPathList contains constraints that are based on an XPath that
+		 * should be applied to a MEC file providing Metadata in support of the primary
+		 * MDDF file being evaluated). This list contains Strings rather than resolved
+		 * xpath expressions (a.k.a 'xpe'). The reason for this is that the xpath can
+		 * not be resolved to an xpe without knowing the namespaces used by the MEC file
+		 * it is being applied to.
+		 */
+		if ((supportingMECs != null) && (!supportingMECs.isEmpty())) {
+			for (int i = 0; i < externalPathList.size(); i++) {
+				String xpath = externalPathList.get(i);
+				for (MddfTarget targetSrc : supportingMECs) {
+					Element rootEl = targetSrc.getXmlDoc().getRootElement();
+					XPathExpression<?> xpExp = resolveXPath(xpath, varMap, rootEl);
+					List<?> nextElList = xpExp.evaluate(rootEl);
+					if (filterDef != null) {
+						nextElList = applyFilter(nextElList, filterDef);
+					}
+					matchedElList.addAll(nextElList);
+				}
+			}
+		}
+
 		String logMsg = constraint.optString("msg", "");
 		String details = constraint.optString("details", "");
 
@@ -451,7 +573,7 @@ public class StructureValidation {
 		for (String key : keySet) {
 			if (key.startsWith("$")) {
 				String xpath = constraint.getString(key);
-				XPathExpression<?> xpe = resolveXPath(xpath);
+				XPathExpression<?> xpe = resolveXPath(xpath, null, target);
 				String value = null;
 				if (resolvesToAttribute(xpath)) {
 					Attribute varSrc = (Attribute) xpe.evaluateFirst(target);
@@ -474,8 +596,9 @@ public class StructureValidation {
 	}
 
 	/**
-	 * Apply a filter to a list of Elements. This is used when XPath criteria are
-	 * insufficient, or too unwieldy, to fully implement a constraint.
+	 * Apply a filter to a list of Elements and/ro Attributes. This is used when
+	 * XPath criteria are insufficient, or too unwieldy, to fully implement a
+	 * constraint.
 	 * <p>
 	 * Filters are (for now) defined as a set of values and an optional 'negated'
 	 * flag set to <tt>true</tt> or <tt>false</tt>
@@ -483,17 +606,23 @@ public class StructureValidation {
 	 * <b>NOTE:</b> future implementations may include support for REGEX pattern
 	 * matching.
 	 * 
-	 * @param elList
+	 * @param elList    of <tt>Elements</tt> and/or <tt>Attributes</tt>
 	 * @param filterDef
 	 * @return
 	 */
-	private List<Element> applyFilter(List<Element> inList, JSONObject filterDef) {
-		List<Element> outList = new ArrayList();
+	private List<Object> applyFilter(List<?> inList, JSONObject filterDef) {
+		List<Object> outList = new ArrayList();
 		JSONArray valueSet = filterDef.optJSONArray("values");
 		String negated = filterDef.optString("negated", "false");
 		boolean isNegated = negated.equals("true");
-		for (Element nextEl : inList) {
-			String value = nextEl.getValue();
+		for (Object nextEl : inList) {
+			String value;
+			if (nextEl instanceof Element) {
+				value = ((Attribute) nextEl).getValue();
+			} else {
+				Attribute nextAt = (Attribute) nextEl;
+				value = nextAt.getValue();
+			}
 			if (valueSet.contains(value)) {
 				if (!isNegated) {
 					outList.add(nextEl);
@@ -505,10 +634,6 @@ public class StructureValidation {
 			}
 		}
 		return outList;
-	}
-
-	public  XPathExpression<?> resolveXPath(String xpathDef) {
-		return resolveXPath(xpathDef, null);
 	}
 
 	/**
@@ -523,36 +648,51 @@ public class StructureValidation {
 	 * <li>{manifest}</li>
 	 * <li>{md}</li>
 	 * </ul>
+	 * <p>
+	 * The specific version-dependent <tt>Namespace</tt> instances used when
+	 * compiling the <tt>XPathExpression</tt> will be determined based on the
+	 * <tt>Namespaces</tt> used by the <tt>Document</tt> containing the
+	 * <tt>target</tt> Element argument. The returned XPathExpression may not,
+	 * therefore, evaluate properly when applied to a different Document.
+	 * </p>
 	 * 
-	 * @param xpathDef
-	 * @param varMap   (optional)
+	 * @param xpath
+	 * @param varMap
+	 * @param target
 	 * @return
 	 */
-	private  XPathExpression<?> resolveXPath(String xpathDef, Map<String, String> varMap) {
-		Set<Namespace> nspaceSet = new HashSet<Namespace>();
+	public XPathExpression<?> resolveXPath(String xpath, Map<String, String> varMap, Element target) {
+		Element rootEl = target.getDocument().getRootElement();
+		FILE_FMT mddfFmt = MddfContext.identifyMddfFormat(rootEl);
+		return resolveXPath(xpath, varMap, mddfFmt);
+	}
 
-		/*
-		 * replace namespace placeholders with actual prefix being used
-		 */
-		if (xpathDef.contains("{md}")) {
-			xpathDef = xpathDef.replaceAll("\\{md\\}", validator.mdNSpace.getPrefix() + ":");
-			nspaceSet.add(validator.mdNSpace);
-		}
-
-		if (xpathDef.contains("{avail}")) {
-			xpathDef = xpathDef.replaceAll("\\{avail\\}", validator.availsNSpace.getPrefix() + ":");
-			nspaceSet.add(validator.availsNSpace);
-		}
-
-		if (xpathDef.contains("{manifest}")) {
-			xpathDef = xpathDef.replaceAll("\\{manifest\\}", validator.manifestNSpace.getPrefix() + ":");
-			nspaceSet.add(validator.manifestNSpace);
-		}
-
-		if (xpathDef.contains("{mdmec}")) {
-			xpathDef = xpathDef.replaceAll("\\{mdmec\\}", validator.mdmecNSpace.getPrefix() + ":");
-			nspaceSet.add(validator.mdmecNSpace);
-		}
+	/**
+	 * Create a <tt>XPathExpression</tt> from a string representation. An
+	 * <tt>xpathDef</tt> is defined using the standard XPath syntax with one
+	 * modification. Namespaces are indicated using a variable indicating the name
+	 * of an MDDF schema. The appropriate namespace prefixes will be inserted by the
+	 * software. Supported namespaces are:
+	 * <ul>
+	 * <li>{avail}</li>
+	 * <li>{mdmec}</li>
+	 * <li>{manifest}</li>
+	 * <li>{md}</li>
+	 * </ul>
+	 * <p>
+	 * The specific version-dependent <tt>Namespace</tt> instances used when
+	 * compiling the <tt>XPathExpression</tt> will be determined based on the value
+	 * of the <tt>targetMddfFmt</tt> argument. The returned XPathExpression may not,
+	 * therefore, evaluate properly when applied to a different Document with a
+	 * <tt>FILE_FMT</tt>
+	 * </p>
+	 * 
+	 * @param xpathDef
+	 * @param varMap
+	 * @param targetMddfFmt
+	 * @return
+	 */
+	private XPathExpression<?> resolveXPath(String xpathDef, Map<String, String> varMap, FILE_FMT targetMddfFmt) {
 		if (varMap != null) {
 			Set<String> keySet = varMap.keySet();
 			for (String varID : keySet) {
@@ -561,7 +701,20 @@ public class StructureValidation {
 				xpathDef = xpathDef.replaceAll(regExp, "'" + varValue + "'");
 			}
 		}
+		Map<String, Namespace> uses = MddfContext.getRequiredNamespaces(targetMddfFmt);
 
+		if (xpathDef.contains("{md}")) {
+			xpathDef = xpathDef.replaceAll("\\{md\\}", uses.get("MD").getPrefix() + ":");
+		}
+		if (xpathDef.contains("{avail}")) {
+			xpathDef = xpathDef.replaceAll("\\{avail\\}", uses.get("AVAILS").getPrefix() + ":");
+		}
+		if (xpathDef.contains("{manifest}")) {
+			xpathDef = xpathDef.replaceAll("\\{manifest\\}", uses.get("MANIFEST").getPrefix() + ":");
+		}
+		if (xpathDef.contains("{mdmec}")) {
+			xpathDef = xpathDef.replaceAll("\\{mdmec\\}", uses.get("MDMEC").getPrefix() + ":");
+		}
 		// Now compile the XPath
 		XPathExpression<?> xpExpression;
 		/**
@@ -578,6 +731,8 @@ public class StructureValidation {
 		 * </ul>
 		 */
 		XPathFactory xpfac = XPathFactory.instance();
+		Set<Namespace> nspaceSet = new HashSet<Namespace>();
+		nspaceSet.addAll(uses.values());
 		if (resolvesToAttribute(xpathDef)) {
 			// must be an attribute value we're after..
 			xpExpression = xpfac.compile(xpathDef, Filters.attribute(), null, nspaceSet);
