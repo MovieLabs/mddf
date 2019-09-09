@@ -403,7 +403,7 @@ public class StructureValidation {
 	 * descendant Elements are not considered.
 	 * <p>
 	 * <b>Note:</b> This method is exposed as <tt>public</tt> to support unit
-	 * testing. Use of <tt>validateDocStructure()</tt> is prefered.
+	 * testing. Use of <tt>validateDocStructure()</tt> is preferred.
 	 * 
 	 * @param target
 	 * @param constraint
@@ -618,7 +618,7 @@ public class StructureValidation {
 		for (Object nextEl : inList) {
 			String value;
 			if (nextEl instanceof Element) {
-				value = ((Attribute) nextEl).getValue();
+				value = ((Element) nextEl).getValue();
 			} else {
 				Attribute nextAt = (Attribute) nextEl;
 				value = nextAt.getValue();
