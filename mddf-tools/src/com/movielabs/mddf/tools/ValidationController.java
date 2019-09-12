@@ -642,10 +642,12 @@ public class ValidationController {
 			ManifestValidator tool1 = new ManifestValidator(validateC, logMgr);
 			isValid = tool1.process(target);
 			Map<String, List<Element>> supportingFiles = ((ManifestValidator) tool1).getSupportingRsrcLocations();
-			Set<String> foobar = supportingFiles.keySet();
-			for (String path : foobar) {
-				if (path.endsWith("xml") && !path.contains(":")) {
-					validateReferencedMddf(path, supportingFiles.get(path));
+			if (supportingFiles != null) {
+				Set<String> foobar = supportingFiles.keySet();
+				for (String path : foobar) {
+					if (path.endsWith("xml") && !path.contains(":")) {
+						validateReferencedMddf(path, supportingFiles.get(path));
+					}
 				}
 			}
 
@@ -752,7 +754,7 @@ public class ValidationController {
 	 */
 	private List<String> identifyProfiles(MddfTarget target) {
 
-		String schemaVer = ManifestValidator.identifyXsdVersion(target); 
+		String schemaVer = ManifestValidator.identifyXsdVersion(target);
 		Namespace manifestNSpace = Namespace.getNamespace("manifest",
 				MddfContext.NSPACE_MANIFEST_PREFIX + schemaVer + MddfContext.NSPACE_MANIFEST_SUFFIX);
 		// make sure data structures got initialized..
