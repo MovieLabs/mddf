@@ -211,6 +211,7 @@ public abstract class CMValidator extends XmlIngester {
 	protected XsdValidation xsdHelper;
 
 	protected StructureValidation structHelper;
+	protected CMValidator parent = null;
 
 	/**
 	 * @param loggingMgr
@@ -218,7 +219,7 @@ public abstract class CMValidator extends XmlIngester {
 	public CMValidator(LogMgmt loggingMgr) {
 		super(loggingMgr);
 		xsdHelper = new XsdValidation(loggingMgr);
-		structHelper = new StructureValidation( this, logMsgSrcId);
+		structHelper = new StructureValidation(this, logMsgSrcId);
 	}
 
 	/**
@@ -238,7 +239,7 @@ public abstract class CMValidator extends XmlIngester {
 	 * unique Metadata schema and therefore does not need to invoke this method.
 	 */
 	protected void validateConstraints() {
-		validateIdSet();
+		validateIdSet(); 
 		validateCountries();
 		validateLanguageCodes();
 		validateCurrencyCodes();
@@ -324,12 +325,22 @@ public abstract class CMValidator extends XmlIngester {
 	/**
 	 * 
 	 */
-	protected void validateIdSet() {
-		idSets = new HashMap<String, HashSet<String>>();
-		idXRefCounts = new HashMap<String, Map<String, XrefCounter>>();
-		id2XmlMappings = new HashMap<String, Map<String, Element>>();
+	protected void initializeIdChecks() {
+		if (parent == null) {
+			idSets = new HashMap<String, HashSet<String>>();
+			idXRefCounts = new HashMap<String, Map<String, XrefCounter>>();
+			id2XmlMappings = new HashMap<String, Map<String, Element>>();
+		} else {
+			idSets = parent.idSets;
+			idXRefCounts = parent.idXRefCounts;
+			id2XmlMappings = parent.id2XmlMappings;
+		}
 	}
 
+	protected void validateIdSet() {
+	
+	}
+	
 	/**
 	 * Check for consistent usage. This typically means that an OPTIONAL element
 	 * will be either REQUIRED or INVALID for certain use-cases (e.g. BundledAsset
@@ -1627,4 +1638,14 @@ public abstract class CMValidator extends XmlIngester {
 		}
 		return tag4log;
 	}
+
+	protected CMValidator getParent() {
+		return parent;
+	}
+
+	protected abstract void setParent(CMValidator parent);
+
+//	void setParent(CMValidator parent) {
+//		this.parent = parent;
+//	}
 }

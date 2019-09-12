@@ -137,7 +137,7 @@ public class Profiler {
 			JSONArray constraintSet = test.getJSONArray("constraint");
 			evalBlock: for (int i = 0; i < constraintSet.size(); i++) {
 				JSONObject constraint = constraintSet.getJSONObject(i);
-				boolean passes = structHelper.evaluateConstraint(targetEl, constraint, null);
+				boolean passes = structHelper.evaluateConstraint(targetEl, constraint, targetEl, null, null);
 				if (mergeAnd) {
 					passesAll = passesAll && passes;
 					if (!passesAll) {

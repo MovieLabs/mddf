@@ -22,6 +22,8 @@
  */
 package com.movielabs.mddflib.logging;
 
+import java.io.File;
+
 /**
  * @author L. Levin, Critical Architectures LLC
  *
@@ -45,5 +47,9 @@ public interface IssueLogger {
 	 * @param moduleId
 	 */
 	public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
+			String moduleId);
+	
+
+	public void logIssue(int tag, int level, Object target, File srcFile,  String msg, String explanation, LogReference srcRef,
 			String moduleId);
 }

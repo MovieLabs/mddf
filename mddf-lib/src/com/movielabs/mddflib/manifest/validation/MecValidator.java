@@ -86,6 +86,7 @@ public class MecValidator extends CMValidator {
 			String msg = "Schema validation check PASSED";
 			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curFile, logMsgSrcId);
 			if (validateC) {
+				initializeIdChecks();
 				validateConstraints();
 			}
 		}
@@ -197,6 +198,14 @@ public class MecValidator extends CMValidator {
 		}
 
 		return;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.util.CMValidator#setParent(com.movielabs.mddflib.util.CMValidator)
+	 */
+	@Override
+	protected void setParent(CMValidator parent) {
+		this.parent = parent;		
 	}
 
 }

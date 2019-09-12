@@ -120,9 +120,11 @@ public class ManifestValidator extends CMValidator {
 		String msg = "Schema validation check PASSED";
 		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
 
+		initializeIdChecks();
 		validateLocations();
 		if (validateC) {
 			validateConstraints();
+			validateXrefs();
 		}
 		return curFileIsValid;
 	}
@@ -156,6 +158,13 @@ public class ManifestValidator extends CMValidator {
 		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + pre + ":ContainerLocation", Filters.element(), null,
 				manifestNSpace);
 		MecValidator mecTool = new MecValidator(validateC, loggingMgr);
+		/*
+		 * setting the parent ManifestValidator in a separate method rather than via a
+		 * constructor, allows validation of a stand-alone MEC (i.e., independent of a
+		 * specific usage by a Manifest). HOWEVER, that means we MUST set the parent
+		 * prior to invoking the Validator's process() method.
+		 */
+		mecTool.setParent(this);
 		List<Element> cLocElList = xpExp01.evaluate(curRootEl);
 		outterLoop: for (int i = 0; i < cLocElList.size(); i++) {
 			Element clocEl = cLocElList.get(i);
@@ -180,7 +189,7 @@ public class ManifestValidator extends CMValidator {
 				Element grandParentEl = (Element) clocEl.getParent().getParent();
 				if (grandParentEl.getName().equals("Metadata")) {
 					File mecFile = new File(targetLoc);
-					System.out.println("Possible MEC ref: " + targetLoc);
+//					System.out.println("Possible MEC ref: " + targetLoc);
 					String infoMsg = "Validation of referenced MEC file required: " + mecFile.getName();
 					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_INFO, clocEl, infoMsg, null, null, logMsgSrcId);
 					if (!(mecFile.canRead())) {
@@ -195,7 +204,7 @@ public class ManifestValidator extends CMValidator {
 						loggingMgr.setCurrentFile(mecFile, true);
 						MddfTarget mecTarget = new MddfTarget(mecFile, loggingMgr);
 						boolean validMec = mecTool.process(mecTarget);
-						if(validMec) {
+						if (validMec) {
 							supportingMECs.add(mecTarget);
 						}
 					} catch (Exception e) {
@@ -267,8 +276,6 @@ public class ManifestValidator extends CMValidator {
 		// Now do any defined in Manifest spec..
 		validateManifestVocab();
 
-//		validateLocations();
-
 		validateMetadata();
 
 		validateUsage();
@@ -280,7 +287,6 @@ public class ManifestValidator extends CMValidator {
 	 * @see com.movielabs.mddflib.util.CMValidator#validateIdSet()
 	 */
 	protected void validateIdSet() {
-		// do set-up and init....
 		super.validateIdSet();
 
 		// TODO: Load from JSON file....
@@ -312,6 +318,9 @@ public class ManifestValidator extends CMValidator {
 		validateId("TimedEventSequence", "TimedSequenceID", true, true);
 		validateId("Experience", "ExperienceID", true, true);
 		validateId("Gallery", "GalleryID", false, true);
+	}
+
+	protected void validateXrefs() {
 
 		/* Now validate cross-references */
 		validateXRef(".//manifest:Experience/manifest:ContentID", "Metadata");
@@ -570,7 +579,8 @@ public class ManifestValidator extends CMValidator {
 			if (rqmtSpec.has("targetPath")) {
 				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, "Structure check; key= " + key, curFile,
 						logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, getSupportingMECs()) && curFileIsValid;
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, getSupportingMECs())
+						&& curFileIsValid;
 			}
 		}
 
@@ -594,11 +604,23 @@ public class ManifestValidator extends CMValidator {
 	 * Return a list identifying all MEC files referenced by the last MDDF file
 	 * processed. These will have been identified via
 	 * <tt>&lt;manifest:Metadata&gt;/&lt;manifest:ContainerReference&gt;</tt>
-	 * elements. Only  <b>valid</b> MEC files are included in the returned list.
+	 * elements. Only <b>valid</b> MEC files are included in the returned list.
 	 * 
 	 * @return
 	 */
 	protected List<MddfTarget> getSupportingMECs() {
 		return supportingMECs;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.util.CMValidator#setParent(com.movielabs.mddflib.util.
+	 * CMValidator)
+	 */
+	@Override
+	protected void setParent(CMValidator parent) {
+		this.parent = parent;
 	}
 }

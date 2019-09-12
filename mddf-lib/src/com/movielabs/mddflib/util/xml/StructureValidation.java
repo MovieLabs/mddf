@@ -42,8 +42,6 @@ import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
-import com.movielabs.mddflib.util.CMValidator;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -359,43 +357,80 @@ public class StructureValidation {
 	 * status will indicate to caller if an error was detected.
 	 * </p>
 	 * 
-	 * @param rootEl
+	 * @param rootEl         for the MMC file
 	 * @param rqmt
-	 * @param supportingMECs
+	 * @param supportingMECs (may be empty)
 	 * @return
 	 */
 	public boolean validateDocStructure(Element rootEl, JSONObject rqmt, List<MddfTarget> supportingMECs) {
-		String rootPath = rqmt.getString("targetPath");
-		FILE_FMT mddfFmt = MddfContext.identifyMddfFormat(rootEl);
-		XPathExpression<?> xpExp = resolveXPath(rootPath, null, mddfFmt);
-		List<Element> targetElList = (List<Element>) xpExp.evaluate(rootEl);
-		boolean isOk = true;
-		if (rqmt.containsKey("constraint")) {
-			JSONArray constraintSet = rqmt.getJSONArray("constraint");
-			for (Element nextTargetEl : targetElList) {
-				for (int i = 0; i < constraintSet.size(); i++) {
-					JSONObject constraint = constraintSet.getJSONObject(i);
-					isOk = evaluateConstraint(nextTargetEl, constraint, supportingMECs) && isOk;
+		String targetPath = rqmt.getString("targetPath");
+		ArrayList<Element> rootElList = new ArrayList<Element>();
+		boolean MEC_Target = false;
+		if (targetPath.startsWith(KEY_MEC_REF)) {
+			MEC_Target = true;
+			targetPath = targetPath.replace(KEY_MEC_REF, "");
+			if ((supportingMECs != null) && (!supportingMECs.isEmpty())) {
+				for (MddfTarget targetSrc : supportingMECs) {
+					Element mecRootEl = targetSrc.getXmlDoc().getRootElement();
+					rootElList.add(mecRootEl);
 				}
 			}
+		} else {
+			// no need to mod the targetPath.
+			rootElList.add(rootEl);
 		}
-		/* are there nested constraints?? */
-		if (rqmt.containsKey("children")) {
-			JSONObject embeddedReqmts = rqmt.getJSONObject("children");
-			for (Element nextTargetEl : targetElList) {
-				Iterator<String> embeddedKeys = embeddedReqmts.keys();
-				while (embeddedKeys.hasNext()) {
-					String key = embeddedKeys.next();
-					JSONObject childRqmtSpec = embeddedReqmts.getJSONObject(key);
-					// NOTE: This block of code requires a 'targetPath' be defined
-					if (childRqmtSpec.has("targetPath")) {
-						// Recursive descent...
-						isOk = validateDocStructure(nextTargetEl, childRqmtSpec) && isOk;
+		boolean allOk = true;
+		for (Element nextDocRoot : rootElList) {
+			FILE_FMT mddfFmt = MddfContext.identifyMddfFormat(nextDocRoot);
+			XPathExpression<?> xpExp = resolveXPath(targetPath, null, mddfFmt);
+			List<Element> targetElList = (List<Element>) xpExp.evaluate(nextDocRoot);
+
+			boolean isOk = true;
+			if (rqmt.containsKey("constraint")) {
+				JSONArray constraintSet = rqmt.getJSONArray("constraint");
+				for (Element nextTargetEl : targetElList) {
+					for (int i = 0; i < constraintSet.size(); i++) {
+						JSONObject constraint = constraintSet.getJSONObject(i);
+						/*
+						 * variables are always resolved using the 'nextTargetEl'.
+						 */
+						Map<String, String> varMap = resolveVariables(nextTargetEl, constraint);
+						/*
+						 * the 'baseEl' will be used as the starting point when evaluating the
+						 * constraint's xPath(s). If the 'nextTargetEl' is in the main doc (i.e,
+						 * MEC_Target == false) then baseEl = nextTargetEl. Otherwise the baseEl should
+						 * be set to the 'rootEl' passed as a calling argument to this method.
+						 */
+						Element baseEl;
+						if (MEC_Target) {
+							baseEl = rootEl;
+						} else {
+							baseEl = nextTargetEl;
+						}
+						isOk = evaluateConstraint(baseEl, constraint, nextTargetEl, varMap, supportingMECs) && isOk;
 					}
 				}
 			}
+
+			/* are there nested constraints?? */
+			if (rqmt.containsKey("children")) {
+				JSONObject embeddedReqmts = rqmt.getJSONObject("children");
+				for (Element nextTargetEl : targetElList) {
+					Iterator<String> embeddedKeys = embeddedReqmts.keys();
+					while (embeddedKeys.hasNext()) {
+						String key = embeddedKeys.next();
+						JSONObject childRqmtSpec = embeddedReqmts.getJSONObject(key);
+						// NOTE: This block of code requires a 'targetPath' be defined
+						if (childRqmtSpec.has("targetPath")) {
+							// Recursive descent...
+							isOk = validateDocStructure(nextTargetEl, childRqmtSpec, supportingMECs) && isOk;
+						}
+					}
+				}
+			}
+			allOk = allOk && isOk;
 		}
-		return isOk;
+		return allOk;
 	}
 
 	/**
@@ -407,12 +442,17 @@ public class StructureValidation {
 	 * 
 	 * @param target
 	 * @param constraint
-	 * @param supportingMECs
+	 * @param contextEl
+	 * @param varMap         [OPTIONAL]
+	 * @param supportingMECs [OPTIONAL]
 	 * @return
 	 */
-	public boolean evaluateConstraint(Element target, JSONObject constraint, List<MddfTarget> supportingMECs) {
+	public boolean evaluateConstraint(Element target, JSONObject constraint, Element contextEl,
+			Map<String, String> varMap, List<MddfTarget> supportingMECs) {
 		boolean passes = true;
-		Map<String, String> varMap = resolveVariables(target, constraint);
+		if (varMap == null) {
+			varMap = resolveVariables(target, constraint);
+		}
 		int min = constraint.optInt("min", 0);
 		int max = constraint.optInt("max", -1);
 		String severity = constraint.optString("severity", "Error");
@@ -518,7 +558,7 @@ public class StructureValidation {
 				}
 			}
 			LogReference srcRef = resolveDocRef(docRef);
-			logger.logIssue(LogMgmt.TAG_MD, logLevel, target, msg, details, srcRef, logMsgSrcId);
+			logger.logIssue(LogMgmt.TAG_MD, logLevel, contextEl, msg, details, srcRef, logMsgSrcId);
 			if (logLevel > LogMgmt.LEV_WARN) {
 				passes = false;
 			}
@@ -535,7 +575,7 @@ public class StructureValidation {
 				details = elName + " permits maximum of " + max + "  " + targetList + " elements";
 			}
 			LogReference srcRef = resolveDocRef(docRef);
-			logger.logIssue(LogMgmt.TAG_MD, logLevel, target, msg, details, srcRef, logMsgSrcId);
+			logger.logIssue(LogMgmt.TAG_MD, logLevel, contextEl, msg, details, srcRef, logMsgSrcId);
 
 			if (logLevel > LogMgmt.LEV_WARN) {
 				passes = false;

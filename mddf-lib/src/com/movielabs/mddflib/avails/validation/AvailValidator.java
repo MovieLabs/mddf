@@ -21,6 +21,7 @@
  */
 package com.movielabs.mddflib.avails.validation;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -132,6 +133,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			msg = "Schema validation check PASSED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
 			if (validateC) {
+				initializeIdChecks();
 				validateConstraints();
 			}
 		}
@@ -490,6 +492,19 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 */
 	public void logIssue(int tag, int level, Object xmlElement, String msg, String explanation, LogReference srcRef,
 			String moduleId) {
+		logIssue(tag, level, xmlElement, null, msg, explanation, srcRef, moduleId);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.logging.IssueLogger#logIssue(int, int,
+	 * java.lang.Object, java.io.File, java.lang.String, java.lang.String,
+	 * com.movielabs.mddflib.logging.LogReference, java.lang.String)
+	 */
+	@Override
+	public void logIssue(int tag, int level, Object xmlElement, File srcFile, String msg, String explanation,
+			LogReference srcRef, String moduleId) {
 		Object target = null;
 		if (pedigreeMap == null) {
 			target = xmlElement;
@@ -499,6 +514,19 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 				target = ped.getSource();
 			}
 		}
-		loggingMgr.logIssue(tag, level, target, msg, explanation, srcRef, moduleId);
+		loggingMgr.logIssue(tag, level, target, srcFile, msg, explanation, srcRef, moduleId);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.util.CMValidator#setParent(com.movielabs.mddflib.util.
+	 * CMValidator)
+	 */
+	@Override
+	protected void setParent(CMValidator parent) {
+		this.parent = parent;
 	}
 }

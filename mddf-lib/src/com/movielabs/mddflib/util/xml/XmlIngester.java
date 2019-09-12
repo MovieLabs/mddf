@@ -208,6 +208,11 @@ public abstract class XmlIngester implements IssueLogger {
 		loggingMgr.logIssue(tag, level, target, msg, explanation, srcRef, moduleId);
 	}
 
+	public void logIssue(int tag, int level, Object target, File srcFile, String msg, String explanation,
+			LogReference srcRef, String moduleId) {
+		loggingMgr.logIssue(tag, level, target, srcFile, msg, explanation, srcRef, moduleId);
+	}
+
 	/**
 	 * Reads an XML-formatted file, converting it to a JDOM document that is
 	 * returned to the caller.
@@ -338,7 +343,7 @@ public abstract class XmlIngester implements IssueLogger {
 	 * 
 	 * @param mddfFmt
 	 */
-	public  void setMddfVersions(FILE_FMT mddfFmt) {
+	public void setMddfVersions(FILE_FMT mddfFmt) {
 		Map<String, String> uses = MddfContext.getReferencedXsdVersions(mddfFmt);
 		switch (mddfFmt.getStandard()) {
 		case "Avails":
@@ -387,7 +392,7 @@ public abstract class XmlIngester implements IssueLogger {
 	 * @param manifestSchemaVer
 	 * @throws IllegalArgumentException
 	 */
-	public  void setManifestVersion(String manifestSchemaVer) throws IllegalArgumentException {
+	public void setManifestVersion(String manifestSchemaVer) throws IllegalArgumentException {
 		FILE_FMT manifestFmt = MddfContext.identifyMddfFormat("manifest", manifestSchemaVer);
 		if (manifestFmt == null) {
 			throw new IllegalArgumentException("Unsupported Manifest Schema version " + manifestSchemaVer);
@@ -399,7 +404,7 @@ public abstract class XmlIngester implements IssueLogger {
 	 * @param mecSchemaVer
 	 * @throws IllegalArgumentException
 	 */
-	public  void setMdMecVersion(String mecSchemaVer) throws IllegalArgumentException {
+	public void setMdMecVersion(String mecSchemaVer) throws IllegalArgumentException {
 		FILE_FMT mecFmt = MddfContext.identifyMddfFormat("mdmec", mecSchemaVer);
 		if (mecFmt == null) {
 			throw new IllegalArgumentException("Unsupported MEC Schema version " + mecSchemaVer);
@@ -421,7 +426,7 @@ public abstract class XmlIngester implements IssueLogger {
 	 * @param availSchemaVer
 	 * @throws IllegalArgumentException
 	 */
-	public  void setAvailVersion(String availSchemaVer) throws IllegalArgumentException {
+	public void setAvailVersion(String availSchemaVer) throws IllegalArgumentException {
 		FILE_FMT availsFmt = MddfContext.identifyMddfFormat("avails", availSchemaVer);
 		if (availsFmt == null) {
 			throw new IllegalArgumentException("Unsupported Avails Schema version " + availSchemaVer);

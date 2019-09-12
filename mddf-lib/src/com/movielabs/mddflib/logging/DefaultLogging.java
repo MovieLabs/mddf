@@ -71,6 +71,11 @@ public class DefaultLogging implements LogMgmt {
 	@Override
 	public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
 			String moduleId) {
+		logIssue(tag, level, target, curInputFile, msg, explanation, srcRef, moduleId);
+	}
+
+	public void logIssue(int tag, int level, Object target, File srcFile, String msg, String explanation,
+			LogReference srcRef, String moduleId) {
 		int lineNum = -1;
 		if (target != null) {
 			if (target instanceof Located) {
@@ -80,14 +85,14 @@ public class DefaultLogging implements LogMgmt {
 
 			}
 		}
-		log(level, tag, msg, curInputFile, lineNum, moduleId, explanation, srcRef);
+		log(level, tag, msg, srcFile, lineNum, moduleId, explanation, srcRef);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.movielabs.mddflib.logging.LogMgmt#log(int, int,
-	 * java.lang.String, java.io.File, java.lang.String)
+	 * @see com.movielabs.mddflib.logging.LogMgmt#log(int, int, java.lang.String,
+	 * java.io.File, java.lang.String)
 	 */
 	@Override
 	public void log(int level, int tag, String msg, File file, String moduleId) {
@@ -97,8 +102,8 @@ public class DefaultLogging implements LogMgmt {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.movielabs.mddflib.logging.LogMgmt#log(int, int,
-	 * java.lang.String, java.io.File, int, java.lang.String, java.lang.String,
+	 * @see com.movielabs.mddflib.logging.LogMgmt#log(int, int, java.lang.String,
+	 * java.io.File, int, java.lang.String, java.lang.String,
 	 * com.movielabs.mddflib.logging.LogReference)
 	 */
 	@Override
@@ -115,8 +120,8 @@ public class DefaultLogging implements LogMgmt {
 		if (xmlFile == null) {
 			// xmlFile = curInputFile;
 			if (printToConsole) {
-				System.out.println(LogMgmt.logLevels[level]+": "+msg);
-			} 
+				System.out.println(LogMgmt.logLevels[level] + ": " + msg);
+			}
 			return;
 		}
 		// First get correct 'folder'
@@ -154,8 +159,8 @@ public class DefaultLogging implements LogMgmt {
 		String tagAsText = LogMgmt.logTags[tag];
 		LogEntryFolder tagNode = new LogEntryFolder(tagAsText, level);
 		/*
-		 * need to keep order consistent so figure where to insert. Allow for
-		 * situation where it is the first node or the child set is empty
+		 * need to keep order consistent so figure where to insert. Allow for situation
+		 * where it is the first node or the child set is empty
 		 */
 		int tagIdx = getTagIndex(tagAsText);
 		byLevel.add(tagNode);
@@ -179,8 +184,8 @@ public class DefaultLogging implements LogMgmt {
 		LogEntryFolder fileFolder = fileFolderMap.get(targetFile);
 		if (fileFolder == null) {
 			/*
-			 * Deal with possibility of multiple files with the same name being
-			 * processed (i.e. /foo/myFile.xml vs /bar/myFile.xml).
+			 * Deal with possibility of multiple files with the same name being processed
+			 * (i.e. /foo/myFile.xml vs /bar/myFile.xml).
 			 */
 			int suffix = 1;
 			String label = targetFile.getName();
@@ -268,16 +273,17 @@ public class DefaultLogging implements LogMgmt {
 	}
 
 	/**
-	 * @param printToConsole
-	 *            the printToConsole to set
+	 * @param printToConsole the printToConsole to set
 	 */
 	public void setPrintToConsole(boolean printToConsole) {
 		this.printToConsole = printToConsole;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.logging.LogMgmt#setCurrentFile(java.io.File, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.logging.LogMgmt#setCurrentFile(java.io.File,
+	 * boolean)
 	 */
 	public void setCurrentFile(File targetFile, boolean clear) {
 		this.curInputFile = targetFile;
@@ -311,8 +317,7 @@ public class DefaultLogging implements LogMgmt {
 	}
 
 	/**
-	 * @param infoIncluded
-	 *            the infoIncluded to set
+	 * @param infoIncluded the infoIncluded to set
 	 */
 	public void setInfoIncluded(boolean infoIncluded) {
 		this.infoIncluded = infoIncluded;
