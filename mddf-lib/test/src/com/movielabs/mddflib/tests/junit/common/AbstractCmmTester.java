@@ -152,5 +152,16 @@ public abstract class AbstractCmmTester extends CMValidator {
 			return null;
 		}
 		return xmlDoc;
+	} /*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * com.movielabs.mddflib.util.CMValidator#setParent(com.movielabs.mddflib.util.
+		 * CMValidator)
+		 */
+
+	@Override
+	protected void setParent(CMValidator parent) {
+		this.parent = parent;
 	}
 }

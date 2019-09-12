@@ -87,6 +87,7 @@ public class CMValidatorTest extends AbstractCmmTester {
 		 * run with error-free XML
 		 */
 		initialize("common/CM_base.xml");
+		initializeIdChecks() ;
 		super.validateConstraints();
 		int count = 0;
 		Set idSet = validateId("Audio", "AudioTrackID", true, true);
@@ -117,6 +118,7 @@ public class CMValidatorTest extends AbstractCmmTester {
 		id2typeMap.put("ContentID", "cid");
 		/* Run with error-generating XML */
 		initialize("common/CM_ID-errors.xml");
+		initializeIdChecks() ;
 		super.validateConstraints();
 		validateId("Audio", "AudioTrackID", true, true);
 		validateId("Video", "VideoTrackID", true, true);
@@ -148,6 +150,7 @@ public class CMValidatorTest extends AbstractCmmTester {
 		id2typeMap.put("ContentID", "cid");
 
 		initialize("common/CM_base.xml");
+		initializeIdChecks() ;
 		super.validateConstraints();
 		/*
 		 * IDs must be processed before XREFs can be validated..
@@ -182,6 +185,7 @@ public class CMValidatorTest extends AbstractCmmTester {
 		id2typeMap.put("ContentID", "cid");
 
 		initialize("common/CM_IdXref-errors.xml");
+		initializeIdChecks() ;
 		super.validateConstraints();
 		/*
 		 * IDs must be processed before XREFs can be validated..

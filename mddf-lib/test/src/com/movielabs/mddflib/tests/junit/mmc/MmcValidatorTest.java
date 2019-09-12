@@ -101,7 +101,6 @@ public class MmcValidatorTest extends MMCoreValidator {
 		}
 
 	}
- 
 
 	/**
 	 * @throws JDOMException
@@ -129,7 +128,7 @@ public class MmcValidatorTest extends MMCoreValidator {
 	 * @throws IOException
 	 * 
 	 */
-	//@Test
+	// @Test
 	public void testV1_Errors() throws IOException, JDOMException {
 		MddfTarget target = initialize("MMCore_v1_ERRORS.xml");
 		execute(target, "MMC-1");
@@ -155,9 +154,9 @@ public class MmcValidatorTest extends MMCoreValidator {
 		execute(target, "MMC-1");
 		try {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
 			throw e;
@@ -204,7 +203,7 @@ public class MmcValidatorTest extends MMCoreValidator {
 		}
 	}
 
-	protected void execute(MddfTarget target, String profile) throws IOException, JDOMException { 
+	protected void execute(MddfTarget target, String profile) throws IOException, JDOMException {
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "Testing with file " + target.getSrcFile().getCanonicalPath(), null,
 				"JUnit");
 		super.process(target, profile);

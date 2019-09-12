@@ -70,10 +70,11 @@ public class StructureValidationTest extends StructureValidation{
 	private static InstrumentedLogger iLog = new InstrumentedLogger();
 	private static String rsrcPath = "./test/resources/";
 	private JSONObject structDefs;
-	private Element rootEl; 
+	private Element rootEl;
+	private CMValidator validator; 
 	
 	public StructureValidationTest() {
-		super(null, iLog, "JUnit"); 
+		super( iLog, "JUnit"); 
 	}
 
 	/**
@@ -121,7 +122,7 @@ public class StructureValidationTest extends StructureValidation{
 			Element basicEl = basicElList.get(j);
 			for (int i = 0; i < rqmtSet.size(); i++) {
 				JSONObject nextRqmt = rqmtSet.getJSONObject(i);
-				boolean isValid = evaluateConstraint(basicEl, nextRqmt);
+				boolean isValid = evaluateConstraint(basicEl, nextRqmt, basicEl,null, null);
 				assertTrue(isValid);
 			}
 		}
@@ -242,7 +243,7 @@ public class StructureValidationTest extends StructureValidation{
 			}
 		}
 		try {
-			assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(5, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
