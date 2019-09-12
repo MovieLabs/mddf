@@ -199,6 +199,7 @@ public class AvailsValidatorTest extends AvailValidator {
 		try {
 			super.process(target, pedigreeMap);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new AssertionFailedError();
 		}
 	}
