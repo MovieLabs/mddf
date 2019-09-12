@@ -328,16 +328,18 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.movielabs.mddflib.logging.LogMgmt#getFileFolder(java.io.File)
 	 */
 	public LogEntryFolder getFileFolder(File targetFile) {
 		return treeView.getFileFolder(targetFile);
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.movielabs.mddflib.logging.LogMgmt#setCurrentFile(java.io.File)
 	 */
 	public void setCurrentFile(File targetFile, boolean clear) {
@@ -368,6 +370,11 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	@Override
 	public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
 			String moduleId) {
+		logIssue(tag, level, target, curInputFile, msg, explanation, srcRef, moduleId);
+	}
+
+	public void logIssue(int tag, int level, Object target, File srcFile, String msg, String explanation,
+			LogReference srcRef, String moduleId) {
 		int lineNum = -1;
 		if (target != null) {
 			if (target instanceof Located) {
@@ -390,7 +397,10 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 				lineNum = ((Integer) target).intValue();
 			}
 		}
-		log(level, tag, msg, curInputFile, lineNum, moduleId, explanation, srcRef);
+		if (srcFile == null) {
+			srcFile = curInputFile;
+		}
+		log(level, tag, msg, srcFile, lineNum, moduleId, explanation, srcRef);
 	}
 
 	/**
