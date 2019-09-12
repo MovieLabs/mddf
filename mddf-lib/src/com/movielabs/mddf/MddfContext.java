@@ -158,7 +158,8 @@ public class MddfContext {
 
 	}
 
-	public static FILE_FMT identifyMddfFormat(Element docRootEl) {
+	public static FILE_FMT identifyMddfFormat(Element targetEl) {
+		Element docRootEl = targetEl.getDocument().getRootElement();
 		String nSpaceUri = docRootEl.getNamespaceURI();
 		String schemaType = null;
 		if (nSpaceUri.contains("manifest")) {
