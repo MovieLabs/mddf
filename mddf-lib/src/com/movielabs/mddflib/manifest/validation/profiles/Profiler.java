@@ -32,6 +32,7 @@ import org.jdom2.Element;
 
 import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.util.CMValidator;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.StructureValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -90,7 +91,7 @@ public class Profiler {
 		this.logMsgSrcId = logMsgSrcId;
 		JSONObject ruleFile = XmlIngester.getMddfResource(PROFILE_DIR + profilingRules);
 		usecaseSet = ruleFile.getJSONObject("Profiles");
-		structHelper = new StructureValidation( logger, logMsgSrcId);
+		structHelper = new StructureValidation(logger, logMsgSrcId);
 	}
 
 	/**
@@ -99,13 +100,13 @@ public class Profiler {
 	 * @param rootEl
 	 * @return
 	 */
-	public List<String> evaluate(Element rootEl) {
+	public List<String> evaluate(Element rootEl, MddfTarget mddfTarget) {
 		List<String> matches = new ArrayList<String>();
 		Iterator<String> keys = usecaseSet.keys();
 		while (keys.hasNext()) {
 			String key = keys.next();
 			JSONObject useCaseDef = usecaseSet.getJSONObject(key);
-			if (matches(rootEl, useCaseDef)) {
+			if (matches(rootEl, mddfTarget, useCaseDef)) {
 				matches.add(useCaseDef.getString("ucid"));
 			}
 		}
@@ -117,7 +118,7 @@ public class Profiler {
 	 * @param useCaseDef
 	 * @return
 	 */
-	private boolean matches(Element targetEl, JSONObject useCaseDef) {
+	private boolean matches(Element targetEl, MddfTarget mddfTarget, JSONObject useCaseDef) {
 		String firstTestId = useCaseDef.getString("start");
 		JSONObject testSet = useCaseDef.getJSONObject("tests");
 		JSONObject test = testSet.getJSONObject(firstTestId);
@@ -137,7 +138,7 @@ public class Profiler {
 			JSONArray constraintSet = test.getJSONArray("constraint");
 			evalBlock: for (int i = 0; i < constraintSet.size(); i++) {
 				JSONObject constraint = constraintSet.getJSONObject(i);
-				boolean passes = structHelper.evaluateConstraint(targetEl, constraint, targetEl, null, null);
+				boolean passes = structHelper.evaluateConstraint(targetEl, constraint, targetEl, null, null, null);
 				if (mergeAnd) {
 					passesAll = passesAll && passes;
 					if (!passesAll) {

@@ -22,6 +22,7 @@
  */
 package com.movielabs.mddflib.util.xml;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +41,7 @@ import org.jdom2.xpath.XPathFactory;
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.logging.IssueLogger;
+import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import net.sf.json.JSONArray;
@@ -342,9 +344,9 @@ public class StructureValidation {
 	 * @param rqmt
 	 * @return
 	 */
-	public boolean validateDocStructure(Element rootEl, JSONObject rqmt) {
-		return validateDocStructure(rootEl, rqmt, null);
-	}
+//	public boolean validateDocStructure(Element rootEl, JSONObject rqmt) {
+//		return validateDocStructure(rootEl, rqmt, null);
+//	}
 
 	/**
 	 * Check to see if the XML satisfies the specified requirement. The
@@ -357,27 +359,38 @@ public class StructureValidation {
 	 * status will indicate to caller if an error was detected.
 	 * </p>
 	 * 
-	 * @param rootEl         for the MMC file
+	 * @param rootEl
 	 * @param rqmt
+	 * @param primaryfTarget
 	 * @param supportingMECs (may be empty)
 	 * @return
 	 */
-	public boolean validateDocStructure(Element rootEl, JSONObject rqmt, List<MddfTarget> supportingMECs) {
+	public boolean validateDocStructure(Element rootEl, JSONObject rqmt, MddfTarget primaryfTarget,
+			Map<MddfTarget, LogEntryFolder> supportingMECs) {
 		String targetPath = rqmt.getString("targetPath");
 		ArrayList<Element> rootElList = new ArrayList<Element>();
+		Map<Element, MddfTarget> contextMap = new HashMap<Element, MddfTarget>();
 		boolean MEC_Target = false;
 		if (targetPath.startsWith(KEY_MEC_REF)) {
+			/*
+			 * Evaluation of 'targetPath' requires the xPath to be applied to a supporting
+			 * MEC file rather than the primary (i.e., Manifest) file. This is NOT the same
+			 * as evaluating an associated constraint xPath against the MEC. The two are
+			 * Independent of each other.
+			 */
 			MEC_Target = true;
 			targetPath = targetPath.replace(KEY_MEC_REF, "");
 			if ((supportingMECs != null) && (!supportingMECs.isEmpty())) {
-				for (MddfTarget targetSrc : supportingMECs) {
+				for (MddfTarget targetSrc : supportingMECs.keySet()) {
 					Element mecRootEl = targetSrc.getXmlDoc().getRootElement();
 					rootElList.add(mecRootEl);
+					contextMap.put(mecRootEl, targetSrc);
 				}
 			}
 		} else {
 			// no need to mod the targetPath.
 			rootElList.add(rootEl);
+			contextMap.put(rootEl, primaryfTarget);
 		}
 		boolean allOk = true;
 		for (Element nextDocRoot : rootElList) {
@@ -388,26 +401,39 @@ public class StructureValidation {
 			boolean isOk = true;
 			if (rqmt.containsKey("constraint")) {
 				JSONArray constraintSet = rqmt.getJSONArray("constraint");
-				for (Element nextTargetEl : targetElList) {
+				/*
+				 * the 'contextEl' provides the focal point for the evaluation of a constraint.
+				 * They are located via the 'targetPath' in each JSON requirement spec. The
+				 * contextEl will be used to resolve any variables as well as for providing the
+				 * context for any error msgs added to the log. It *may* also provide the base
+				 * point for the evaluation of the XPaths in the requirement's 'constraint'.
+				 */
+				for (Element nextContextEl : targetElList) {
 					for (int i = 0; i < constraintSet.size(); i++) {
 						JSONObject constraint = constraintSet.getJSONObject(i);
 						/*
 						 * variables are always resolved using the 'nextTargetEl'.
 						 */
-						Map<String, String> varMap = resolveVariables(nextTargetEl, constraint);
+						Map<String, String> varMap = resolveVariables(nextContextEl, constraint);
 						/*
-						 * the 'baseEl' will be used as the starting point when evaluating the
-						 * constraint's xPath(s). If the 'nextTargetEl' is in the main doc (i.e,
-						 * MEC_Target == false) then baseEl = nextTargetEl. Otherwise the baseEl should
-						 * be set to the 'rootEl' passed as a calling argument to this method.
+						 * the 'contextEl' will be used as the starting point when evaluating the
+						 * constraint's xPath(s). If the 'nextContextEl' is in the main doc (i.e,
+						 * MEC_Target == false) then targetEl = nextContextEl. Otherwise the targetEl
+						 * should be set to the 'rootEl' passed as a calling argument to this method.
 						 */
-						Element baseEl;
+						Element targetEl;
 						if (MEC_Target) {
-							baseEl = rootEl;
+							targetEl = rootEl;
 						} else {
-							baseEl = nextTargetEl;
+							targetEl = nextContextEl;
 						}
-						isOk = evaluateConstraint(baseEl, constraint, nextTargetEl, varMap, supportingMECs) && isOk;
+						MddfTarget mddfContext = contextMap.get(nextDocRoot);
+						LogEntryFolder logFolder = null;
+						if (supportingMECs != null) {
+							logFolder = supportingMECs.get(mddfContext);
+						}
+						isOk = evaluateConstraint(targetEl, constraint, nextContextEl, varMap, logFolder,
+								supportingMECs) && isOk;
 					}
 				}
 			}
@@ -423,7 +449,8 @@ public class StructureValidation {
 						// NOTE: This block of code requires a 'targetPath' be defined
 						if (childRqmtSpec.has("targetPath")) {
 							// Recursive descent...
-							isOk = validateDocStructure(nextTargetEl, childRqmtSpec, supportingMECs) && isOk;
+							isOk = validateDocStructure(nextTargetEl, childRqmtSpec, primaryfTarget, supportingMECs)
+									&& isOk;
 						}
 					}
 				}
@@ -444,11 +471,12 @@ public class StructureValidation {
 	 * @param constraint
 	 * @param contextEl
 	 * @param varMap         [OPTIONAL]
+	 * @param targetFile
 	 * @param supportingMECs [OPTIONAL]
 	 * @return
 	 */
 	public boolean evaluateConstraint(Element target, JSONObject constraint, Element contextEl,
-			Map<String, String> varMap, List<MddfTarget> supportingMECs) {
+			Map<String, String> varMap, LogEntryFolder logFolder, Map<MddfTarget, LogEntryFolder> supportingMECs) {
 		boolean passes = true;
 		if (varMap == null) {
 			varMap = resolveVariables(target, constraint);
@@ -526,7 +554,7 @@ public class StructureValidation {
 		if ((supportingMECs != null) && (!supportingMECs.isEmpty())) {
 			for (int i = 0; i < externalPathList.size(); i++) {
 				String xpath = externalPathList.get(i);
-				for (MddfTarget targetSrc : supportingMECs) {
+				for (MddfTarget targetSrc : supportingMECs.keySet()) {
 					Element rootEl = targetSrc.getXmlDoc().getRootElement();
 					XPathExpression<?> xpExp = resolveXPath(xpath, varMap, rootEl);
 					List<?> nextElList = xpExp.evaluate(rootEl);
@@ -558,7 +586,7 @@ public class StructureValidation {
 				}
 			}
 			LogReference srcRef = resolveDocRef(docRef);
-			logger.logIssue(LogMgmt.TAG_MD, logLevel, contextEl, msg, details, srcRef, logMsgSrcId);
+			logger.logIssue(LogMgmt.TAG_MD, logLevel, contextEl, logFolder, msg, details, srcRef, logMsgSrcId);
 			if (logLevel > LogMgmt.LEV_WARN) {
 				passes = false;
 			}
@@ -575,7 +603,7 @@ public class StructureValidation {
 				details = elName + " permits maximum of " + max + "  " + targetList + " elements";
 			}
 			LogReference srcRef = resolveDocRef(docRef);
-			logger.logIssue(LogMgmt.TAG_MD, logLevel, contextEl, msg, details, srcRef, logMsgSrcId);
+			logger.logIssue(LogMgmt.TAG_MD, logLevel, contextEl, logFolder, msg, details, srcRef, logMsgSrcId);
 
 			if (logLevel > LogMgmt.LEV_WARN) {
 				passes = false;

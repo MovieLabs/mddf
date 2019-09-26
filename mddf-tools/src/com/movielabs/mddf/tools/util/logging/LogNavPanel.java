@@ -34,6 +34,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -366,13 +367,12 @@ public class LogNavPanel extends JPanel {
 	public static final Color backgroundPanel = new Color(205, 205, 205);
 	public static final Color backgroundPanelLabel = new Color(95, 158, 160);
 
-	// public static final Color backgroundHdrPanel = new Color(20, 52, 103);
-	// public static final Color disabledTextColor = new Color(200, 10, 10);
+	private static final String DEFAULT_TOOL_FOLDER_KEY = "%VALIDATOR";
 
 	private JTree tree;
 	private DefaultTreeModel treeModel;
 	private LogEntryFolder rootLogNode = new LogEntryFolder("", -1);
-	private Map<File, LogEntryFolder> fileFolderMap = new HashMap<File, LogEntryFolder>();
+	private Map<String, LogEntryFolder> fileFolderMap = new HashMap<String, LogEntryFolder>();
 	private int masterSeqNum = 0;
 	private String currentManifestId = "Default";
 
@@ -419,41 +419,6 @@ public class LogNavPanel extends JPanel {
 		initializeGui();
 	}
 
-	LogEntryFolder getFileFolder(File targetFile) {
-		LogEntryFolder fileFolder = fileFolderMap.get(targetFile);
-		if (fileFolder == null) {
-			/*
-			 * Deal with possibility of multiple files with the same name being processed
-			 * (i.e. /foo/myFile.xml vs /bar/myFile.xml).
-			 */
-			int suffix = 1;
-			String label = "";
-			if (targetFile != null) {
-				label = targetFile.getName();
-			} else {
-				label = "Validator";
-			}
-			String qualifiedName = label;
-			fileFolder = (LogEntryFolder) rootLogNode.getChild(label);
-			while (fileFolder != null) {
-				suffix++;
-				qualifiedName = label + " (" + suffix + ")";
-				fileFolder = (LogEntryFolder) rootLogNode.getChild(qualifiedName);
-			}
-			fileFolder = new LogEntryFolder(qualifiedName, -1);
-			fileFolderMap.put(targetFile, fileFolder);
-			rootLogNode.add(fileFolder);
-			for (int i = 0; i < LogMgmt.logLevels.length; i++) {
-				LogEntryFolder levelTNode = new LogEntryFolder(LogMgmt.logLevels[i], i);
-				fileFolder.add(levelTNode);
-			}
-			treeModel.nodeChanged(rootLogNode);
-			treeModel.reload();
-
-		}
-		return fileFolder;
-	}
-
 	/**
 	 * 
 	 */
@@ -478,8 +443,101 @@ public class LogNavPanel extends JPanel {
 		scrollPane.setBackground(backgroundPanel);
 		this.setBackground(backgroundPanel);
 
-		// renderer.setBackgroundNonSelectionColor(backgroundPanel);
-		// renderer.setBackgroundSelectionColor(backgroundPanelLabel);
+	}
+
+	LogEntryFolder getFileFolder(File targetFile, boolean create) {
+		/*
+		 * If the targetFile is NULL then put it in the Validator's folder
+		 * 
+		 */
+		String folderKey;
+		if (targetFile != null) {
+			folderKey = genFolderKey(targetFile);
+		} else {
+			folderKey = DEFAULT_TOOL_FOLDER_KEY; // <------------------------------------------- VALIDATOR is a
+													// catch-all folder
+		}
+		if (folderKey == null) {
+			String errMsg = "File not included in current context. File: " + targetFile.getPath();
+			throw new IllegalArgumentException(errMsg);
+		}
+		LogEntryFolder fileFolder = fileFolderMap.get(folderKey);
+		if (fileFolder == null) {
+			/*
+			 * File is within current context but has not yet been created.
+			 */
+			if (!create) {
+				return null;
+			}
+			/*
+			 * Deal with possibility of multiple files with the same name being processed
+			 * (i.e. /foo/myFile.xml vs /bar/myFile.xml).
+			 */
+			int suffix = 1;
+			String label = "";
+			if (targetFile != null) {
+				label = targetFile.getName();
+			} else {
+				label = "Validator";
+			}
+			String qualifiedName = label;
+			fileFolder = (LogEntryFolder) rootLogNode.getChild(label);
+			while (fileFolder != null) {
+				suffix++;
+				qualifiedName = label + " (" + suffix + ")";
+				fileFolder = (LogEntryFolder) rootLogNode.getChild(qualifiedName);
+			}
+			fileFolder = new LogEntryFolder(qualifiedName, -1);
+			fileFolder.setFile(targetFile);
+			fileFolderMap.put(folderKey, fileFolder);
+			/*
+			 * now add to the tree. This requires knowing its parent w/in the context.
+			 */
+			Stack<File> curCStack = parentLogger.getContextStack();
+			int idx = curCStack.indexOf(targetFile);
+			if (idx == -1) {
+				/* it isn't in the context (probably the 'VALIDATOR' folder) */
+				rootLogNode.add(fileFolder);
+			} else if (idx == 0) {
+				/* it's at the top of the context */
+				rootLogNode.add(fileFolder);
+			} else {
+				/* it's somewhere else in the context and therefore has a parent folder */
+				File parentFile = curCStack.get(idx - 1);
+				String parenKey = genFolderKey(parentFile);
+				LogEntryFolder parentFolder = fileFolderMap.get(parenKey);
+				parentFolder.add(fileFolder);
+			}
+			for (int i = 0; i < LogMgmt.logLevels.length; i++) {
+				LogEntryFolder levelTNode = new LogEntryFolder(LogMgmt.logLevels[i], i);
+				
+				fileFolder.add(levelTNode);
+			}
+			treeModel.nodeChanged(rootLogNode);
+			treeModel.reload();
+
+		}
+		return fileFolder;
+	}
+
+	private String genFolderKey(File targetFile) {
+		Stack<File> curCStack = parentLogger.getContextStack();
+		if (!curCStack.contains(targetFile)) {
+//			return null;
+			System.out.println("GenFolderKey: Not in context...."+targetFile.getName());
+		}
+		File[] stackArray = new File[curCStack.size()];
+		stackArray = curCStack.toArray(stackArray);
+		String key = "";
+		for (int i = 0; i < stackArray.length; i++) {
+			key = key + stackArray[i].getName();
+			if (stackArray[i] == targetFile) {
+				return key;
+			}
+			key = key.concat("<--");
+		}
+		key = key + targetFile.getName();
+		return key;
 	}
 
 	/**
@@ -490,14 +548,26 @@ public class LogNavPanel extends JPanel {
 	 * 
 	 * @param id
 	 */
-	public void setCurrentFileId(File targetFile, boolean clear) {
+	LogEntryFolder setCurrentFileId(File targetFile, boolean clear) {
+		if(targetFile == null) {
+			LogEntryFolder fileFolder = fileFolderMap.get(DEFAULT_TOOL_FOLDER_KEY);
+			return fileFolder;
+		}
 		currentManifestId = targetFile.getName();
-		LogEntryFolder fileFolder = getFileFolder(targetFile);
+		LogEntryFolder fileFolder = fileFolderMap.get(genFolderKey(targetFile));
+		boolean createdNewNode;
+		if (fileFolder != null) {
+			createdNewNode = false;
+		} else {
+			createdNewNode = true;
+			fileFolder = getFileFolder(targetFile, true);
+		}
 		if (clear) {
 			fileFolder.deleteMsgs();
 			treeModel.nodeChanged(fileFolder);
 			treeModel.reload();
 		}
+		return fileFolder;
 	}
 
 	/**
@@ -507,7 +577,7 @@ public class LogNavPanel extends JPanel {
 	 * @param logTag
 	 */
 	public void setFileMddfType(File targetFile, MDDF_TYPE type) {
-		LogEntryFolder fileFolder = getFileFolder(targetFile);
+		LogEntryFolder fileFolder = getFileFolder(targetFile, false);
 		if (fileFolder != null) {
 			fileFolder.setMddfType(type);
 		}
@@ -515,14 +585,14 @@ public class LogNavPanel extends JPanel {
 	}
 
 	public void setMddfFormat(File targetFile, FILE_FMT format) {
-		LogEntryFolder fileFolder = getFileFolder(targetFile);
+		LogEntryFolder fileFolder = getFileFolder(targetFile, false);
 		if (fileFolder != null) {
 			fileFolder.setMddfFormat(format);
 		}
 	}
 
 	public void setXml(File targetFile, Document docRootEl) {
-		LogEntryFolder fileFolder = getFileFolder(targetFile);
+		LogEntryFolder fileFolder = getFileFolder(targetFile, false);
 		if (fileFolder != null) {
 			fileFolder.setXml(docRootEl);
 		}
@@ -537,7 +607,7 @@ public class LogNavPanel extends JPanel {
 		for (LogEntryFolder next : fileFolderMap.values()) {
 			next.setXml(null);
 		}
-		fileFolderMap = new HashMap<File, LogEntryFolder>();
+		fileFolderMap = new HashMap<String, LogEntryFolder>();
 		masterSeqNum = 0;
 		treeModel.reload();
 	}
@@ -552,15 +622,14 @@ public class LogNavPanel extends JPanel {
 	 * @param srcRef
 	 * @return
 	 */
-	public LogEntryNode append(int level, int tag, String msg, File xmlFile, int line, String moduleID, String tooltip,
-			LogReference srcRef) {
+	public LogEntryNode append(int level, int tag, String msg, LogEntryFolder logFolder, int line, String moduleID,
+			String tooltip, LogReference srcRef) {
 		String tagAsText = LogMgmt.logTags[tag];
 		// First get correct 'folder'
-		LogEntryFolder byTargetFile = getFileFolder(xmlFile);
-		if (byTargetFile.getFile() == null) {
-			byTargetFile.setFile(xmlFile);
+		if (logFolder == null) {
+			logFolder = getFileFolder(null, true);
 		}
-		LogEntryFolder byLevel = (LogEntryFolder) byTargetFile.getChild(LogMgmt.logLevels[level]);
+		LogEntryFolder byLevel = (LogEntryFolder) logFolder.getChild(LogMgmt.logLevels[level]);
 		LogEntryFolder tagNode = (LogEntryFolder) byLevel.getChild(tagAsText);
 		if (tagNode == null) {
 			/*
@@ -587,7 +656,7 @@ public class LogNavPanel extends JPanel {
 			byLevel.add(tagNode);
 		}
 		/* now create a new LogEntryNode and add it to folder. */
-		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, byTargetFile, line, moduleID, masterSeqNum++,
+		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, logFolder, line, moduleID, masterSeqNum++,
 				tooltip, srcRef);
 		tagNode.addMsg(entryNode);
 		treeModel.nodeChanged(tagNode);

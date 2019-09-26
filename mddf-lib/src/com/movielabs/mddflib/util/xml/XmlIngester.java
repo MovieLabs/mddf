@@ -47,6 +47,7 @@ import org.xml.sax.SAXParseException;
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.logging.IssueLogger;
+import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import net.sf.json.JSON;
@@ -84,6 +85,7 @@ public abstract class XmlIngester implements IssueLogger {
 	protected MddfTarget curTarget;
 	protected File curFile;
 	protected String curFileName;
+	protected LogEntryFolder curLoggingFolder;
 
 	/*
 	 * should be changed by extending classes
@@ -205,12 +207,12 @@ public abstract class XmlIngester implements IssueLogger {
 
 	public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
 			String moduleId) {
-		loggingMgr.logIssue(tag, level, target, msg, explanation, srcRef, moduleId);
+		loggingMgr.logIssue(tag, level, target, curLoggingFolder, msg, explanation, srcRef, moduleId);
 	}
 
-	public void logIssue(int tag, int level, Object target, File srcFile, String msg, String explanation,
+	public void logIssue(int tag, int level, Object target, LogEntryFolder folder, String msg, String explanation,
 			LogReference srcRef, String moduleId) {
-		loggingMgr.logIssue(tag, level, target, srcFile, msg, explanation, srcRef, moduleId);
+		loggingMgr.logIssue(tag, level, target, folder, msg, explanation, srcRef, moduleId);
 	}
 
 	/**

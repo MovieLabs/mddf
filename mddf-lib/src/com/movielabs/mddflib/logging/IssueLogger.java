@@ -28,10 +28,15 @@ import java.io.File;
  * @author L. Levin, Critical Architectures LLC
  *
  */
+/**
+ * @author L. Levin, Critical Architectures LLC
+ *
+ */
 public interface IssueLogger {
 	/**
-	 * Log an issue with a specific construct within a file. The <tt>target</tt>
-	 * indicates the construct within the file and should be specified as either
+	 * Log an issue with a specific construct within the the default file. The
+	 * <tt>target</tt> indicates the construct within the file and should be
+	 * specified as either
 	 * <ul>
 	 * <li>an JDOM Element within an XML file, or</li>
 	 * <li>a <tt>POI Cell</tt> instance used to identify a cell in an XLSX
@@ -48,8 +53,26 @@ public interface IssueLogger {
 	 */
 	public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
 			String moduleId);
-	
 
-	public void logIssue(int tag, int level, Object target, File srcFile,  String msg, String explanation, LogReference srcRef,
-			String moduleId);
+	/**
+	 * Log an issue with a specific construct within a specified file. The
+	 * <tt>target</tt> indicates the construct within the file and should be
+	 * specified as either
+	 * <ul>
+	 * <li>an JDOM Element within an XML file, or</li>
+	 * <li>a <tt>POI Cell</tt> instance used to identify a cell in an XLSX
+	 * spreadsheet.</li>
+	 * </ul>
+	 * 
+	 * @param tag
+	 * @param level
+	 * @param target
+	 * @param srcFile
+	 * @param msg
+	 * @param explanation
+	 * @param srcRef
+	 * @param moduleId
+	 */
+	public void logIssue(int tag, int level, Object target, LogEntryFolder srcFile, String msg, String explanation,
+			LogReference srcRef, String moduleId);
 }

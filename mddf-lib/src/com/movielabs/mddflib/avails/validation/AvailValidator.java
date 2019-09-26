@@ -41,6 +41,7 @@ import org.jdom2.xpath.XPathExpression;
 
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.IssueLogger;
+import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.CMValidator;
@@ -108,7 +109,10 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * @return
 	 */
 	public boolean process(MddfTarget target, Map<Object, Pedigree> pedigreeMap) {
+		curFile = target.getSrcFile();
+		curLoggingFolder = loggingMgr.pushFileContext(curFile, true);
 		String msg = "Begining validation of Avails...";
+		
 		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, msg, target.getSrcFile(), logMsgSrcId);
 
 		availSchemaVer = identifyXsdVersion(target);
@@ -119,7 +123,6 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 
 		curTarget = target;
 		curRootEl = null;
-		curFile = target.getSrcFile();
 		curFileName = curFile.getName();
 		this.pedigreeMap = pedigreeMap;
 		curFileIsValid = true;
@@ -399,7 +402,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			if (rqmtSpec.has("targetPath")) {
 				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Structure check; key= " + key, curFile,
 						logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null) && curFileIsValid;
 			}
 		}
 		return;
@@ -492,10 +495,22 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 */
 	public void logIssue(int tag, int level, Object xmlElement, String msg, String explanation, LogReference srcRef,
 			String moduleId) {
-		logIssue(tag, level, xmlElement, null, msg, explanation, srcRef, moduleId);
+		logIssue(tag, level, xmlElement, curLoggingFolder, msg, explanation, srcRef, moduleId);
 	}
 
-	/*
+	/**
+	 * Log an issue after first determining the appropriate <i>target</i> to
+	 * associate with the log entry. The target indicates a construct within a file
+	 * being validated and should be specified as either
+	 * <ul>
+	 * <li>an JDOM Element within an XML file, or</li>
+	 * <li>a <tt>POI Cell</tt> instance used to identify a cell in an XLSX
+	 * spreadsheet.</li>
+	 * </ul>
+	 * Note that validation of XLSX files is only supported by the Avails validator
+	 * and that other validator classes do not, therefore, require this intermediate
+	 * stage when logging.
+	 * 
 	 * (non-Javadoc)
 	 * 
 	 * @see com.movielabs.mddflib.logging.IssueLogger#logIssue(int, int,
@@ -503,7 +518,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * com.movielabs.mddflib.logging.LogReference, java.lang.String)
 	 */
 	@Override
-	public void logIssue(int tag, int level, Object xmlElement, File srcFile, String msg, String explanation,
+	public void logIssue(int tag, int level, Object xmlElement, LogEntryFolder srcFile, String msg, String explanation,
 			LogReference srcRef, String moduleId) {
 		Object target = null;
 		if (pedigreeMap == null) {

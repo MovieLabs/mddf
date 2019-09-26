@@ -65,6 +65,7 @@ public class MecValidator extends CMValidator {
 
 	public boolean process(MddfTarget target) throws IOException, JDOMException {
 		curFile = target.getSrcFile();
+		loggingMgr.pushFileContext(curFile, true);
 		String schemaVer = identifyXsdVersion(target);
 		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, curFile, logMsgSrcId);
 		setMdMecVersion(schemaVer);
@@ -91,6 +92,7 @@ public class MecValidator extends CMValidator {
 			}
 		}
 		// clean up and go home
+		loggingMgr.popFileContext(curFile);
 		return curFileIsValid;
 	}
 
@@ -193,7 +195,7 @@ public class MecValidator extends CMValidator {
 			if (rqmtSpec.has("targetPath")) {
 				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MEC, "Structure check; key= " + key, curFile,
 						logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null) && curFileIsValid;
 			}
 		}
 

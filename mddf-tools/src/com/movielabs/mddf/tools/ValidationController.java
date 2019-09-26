@@ -292,6 +292,7 @@ public class ValidationController {
 				File aFile = (File) inputFiles[i];
 				String message = aFile.getName();
 				if (aFile.isFile()) {
+					logMgr.pushFileContext(aFile, true);
 					try {
 						validateFile(aFile, uxProfile);
 					} catch (Exception e) {
@@ -306,6 +307,7 @@ public class ValidationController {
 						/* Some memory mgmt??? */
 						System.gc();
 					}
+//					logMgr.popFileContext(aFile);
 				} else {
 					boolean isDir = aFile.isDirectory();
 					if (isDir && isRecursive) {
@@ -317,6 +319,7 @@ public class ValidationController {
 		} else {
 			// Process a single file
 			try {
+				logMgr.pushFileContext(srcFile, true);
 				validateFile(srcFile, uxProfile);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -330,11 +333,12 @@ public class ValidationController {
 			} finally {
 				/* Some memory mgmt??? */
 				System.gc();
+//				logMgr.popFileContext(srcFile);
 			}
 		}
 	}
 
-	protected void validateFile(File srcFile, String uxProfile) throws IOException, JDOMException {
+	protected void validateFile(File srcFile, String uxProfile) throws IOException, JDOMException { 
 		String fileType = StringUtils.extractFileType(srcFile.getAbsolutePath());
 		fileType = fileType.toLowerCase();
 		if (!(fileType.equals("xml") || fileType.equals("xlsx"))) {
@@ -358,8 +362,7 @@ public class ValidationController {
 			}
 			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, errMsg, srcFile, -1, MODULE_ID, supplemental, null);
 			return;
-		}
-		logMgr.setCurrentFile(srcFile, true);
+		} 
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "Validating " + srcFile.getPath(), srcFile, MODULE_ID);
 		Map<Object, Pedigree> pedigreeMap = null;
 		FILE_FMT srcMddfFmt = null;

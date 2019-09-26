@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.jdom2.located.Located;
@@ -48,11 +49,13 @@ public class DefaultLogging implements LogMgmt {
 	private LogEntryFolder rootLogNode = new LogEntryFolder("", -1);
 	private int masterSeqNum;
 	private List<LogEntryNode> entryList;
-	private File curInputFile;
+	private Stack<File> contextStack = new Stack<File>();
+//	private File curInputFile;
 	protected int minLevel = LogMgmt.LEV_WARN;
 	protected boolean printToConsole = false;
 	protected boolean infoIncluded;
 	private Map<File, LogEntryFolder> fileFolderMap = new HashMap<File, LogEntryFolder>();
+	private LogEntryFolder curLoggingFolder;
 
 	/**
 	 * 
@@ -71,10 +74,10 @@ public class DefaultLogging implements LogMgmt {
 	@Override
 	public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
 			String moduleId) {
-		logIssue(tag, level, target, curInputFile, msg, explanation, srcRef, moduleId);
+		logIssue(tag, level, target, curLoggingFolder, msg, explanation, srcRef, moduleId);
 	}
 
-	public void logIssue(int tag, int level, Object target, File srcFile, String msg, String explanation,
+	public void logIssue(int tag, int level, Object target, LogEntryFolder logFolder, String msg, String explanation,
 			LogReference srcRef, String moduleId) {
 		int lineNum = -1;
 		if (target != null) {
@@ -85,7 +88,8 @@ public class DefaultLogging implements LogMgmt {
 
 			}
 		}
-		log(level, tag, msg, srcFile, lineNum, moduleId, explanation, srcRef);
+		// TODO: FIX ASAP !!!!!!!
+		log(level, tag, msg, logFolder.getFile(), lineNum, moduleId, explanation, srcRef);
 	}
 
 	/*
@@ -211,6 +215,51 @@ public class DefaultLogging implements LogMgmt {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see com.movielabs.mddflib.logging.LogMgmt#setCurrentFile(java.io.File,
+	 * boolean)
+	 */
+	public void setCurrentFile(File targetFile, boolean clear) {
+		throw new UnsupportedOperationException();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.logging.LogMgmt#addChildFile(java.io.File,
+	 * java.io.File, boolean)
+	 */
+//	@Override
+//	public boolean addChildFile(File srcfile, File parentFile, boolean clear) {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.logging.LogMgmt#pushFileContext(java.io.File,
+	 * boolean)
+	 */
+	@Override
+	public LogEntryFolder pushFileContext(File targetFile, boolean clear) {
+		contextStack.push(targetFile);
+		curLoggingFolder = getFileFolder(targetFile);
+		return curLoggingFolder;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.logging.LogMgmt#popFileContext()
+	 */
+	@Override
+	public void popFileContext(File assumedTopFile) {
+		contextStack.pop();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.movielabs.mddf.util.UiLogger#clearLog()
 	 */
 	public void clearLog() {
@@ -277,16 +326,6 @@ public class DefaultLogging implements LogMgmt {
 	 */
 	public void setPrintToConsole(boolean printToConsole) {
 		this.printToConsole = printToConsole;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddflib.logging.LogMgmt#setCurrentFile(java.io.File,
-	 * boolean)
-	 */
-	public void setCurrentFile(File targetFile, boolean clear) {
-		this.curInputFile = targetFile;
 	}
 
 	/*

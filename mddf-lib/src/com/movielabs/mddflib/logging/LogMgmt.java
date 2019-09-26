@@ -98,8 +98,8 @@ public interface LogMgmt extends IssueLogger {
 	 * @param srcRef
 	 * @param moduleId
 	 */
-	void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
-			String moduleId);
+//	void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
+//			String moduleId);
 
 	/** 
 	 */
@@ -122,13 +122,34 @@ public interface LogMgmt extends IssueLogger {
 
 	/**
 	 * Set the file currently being processed. Until the next invocation of
-	 * <tt>setCurrentFile()</tt>, all subsequent log entries will be associated with
-	 * this file.
+	 * <tt>setCurrentFile()</tt>, all subsequent log entries will, be default, will
+	 * be associated with this file unless a different <tt>File</tt> is explicitly
+	 * identified.
 	 * 
 	 * @param srcfile
+	 * @deprecated use <tt>pushFileContext()</tt> and <tt>popFileContext()</tt> 
 	 */
 	public void setCurrentFile(File srcfile, boolean clear);
 
+//	/**
+//	 * *
+//	 * 
+//	 * Set the file currently being processed and, if the file folder needs to be
+//	 * created, append it as the <i>child</i> of the designated <tt>parentFile</tt>.
+//	 * If a file folder already exists, the <tt>parentFile</tt> is ignored but the
+//	 * <tt>clear</tt> flag will be used to determine if the existing contents of the
+//	 * folder should be deleted.
+//	 * 
+//	 * @param srcfile
+//	 * @param parentFile
+//	 * @param clear
+//	 * @return
+//	 */
+//	public abstract boolean addChildFile(File srcfile, File parentFile, boolean clear)
+	public abstract LogEntryFolder pushFileContext(File targetFile, boolean clear);
+
+	public abstract void popFileContext(File targetFile);
+	
 	/**
 	 * @param level
 	 */

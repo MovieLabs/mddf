@@ -37,6 +37,7 @@ import org.jdom2.JDOMException;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 
+import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
 import com.movielabs.mddflib.util.CMValidator;
@@ -74,7 +75,7 @@ public class ManifestValidator extends CMValidator {
 	}
 
 	private Map<String, List<Element>> supportingRsrcLocations;
-	private List<MddfTarget> supportingMECs;
+	private Map<MddfTarget, LogEntryFolder> supportingMECs;
 
 	/**
 	 * @param validateC
@@ -98,11 +99,12 @@ public class ManifestValidator extends CMValidator {
 	 * @throws JDOMException
 	 */
 	public boolean process(MddfTarget target) throws IOException, JDOMException {
+		curFile = target.getSrcFile();
+		loggingMgr.pushFileContext(curFile, true);
 		String schemaVer = identifyXsdVersion(target);
 		setManifestVersion(schemaVer);
 		rootNS = manifestNSpace;
 		curTarget = target;
-		curFile = target.getSrcFile();
 		curFileName = curFile.getName();
 		curFileIsValid = true;
 		curRootEl = null;
@@ -113,6 +115,7 @@ public class ManifestValidator extends CMValidator {
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
 			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
+			loggingMgr.popFileContext(curFile);
 			return false;
 		}
 
@@ -126,6 +129,7 @@ public class ManifestValidator extends CMValidator {
 			validateConstraints();
 			validateXrefs();
 		}
+		loggingMgr.popFileContext(curFile);
 		return curFileIsValid;
 	}
 
@@ -151,7 +155,7 @@ public class ManifestValidator extends CMValidator {
 	 */
 	protected void validateLocations() {
 		supportingRsrcLocations = new HashMap<String, List<Element>>();
-		supportingMECs = new ArrayList<MddfTarget>();
+		supportingMECs = new HashMap<MddfTarget, LogEntryFolder>();
 		String pre = manifestNSpace.getPrefix();
 		String baseLoc = curFile.getAbsolutePath();
 		LogReference srcRef = LogReference.getRef("MMM", "mmm_locType");
@@ -201,11 +205,11 @@ public class ManifestValidator extends CMValidator {
 
 					}
 					try {
-						loggingMgr.setCurrentFile(mecFile, true);
+						LogEntryFolder mecFolder = loggingMgr.pushFileContext(mecFile, true);
 						MddfTarget mecTarget = new MddfTarget(mecFile, loggingMgr);
 						boolean validMec = mecTool.process(mecTarget);
 						if (validMec) {
-							supportingMECs.add(mecTarget);
+							supportingMECs.put(mecTarget, mecFolder);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -214,7 +218,7 @@ public class ManifestValidator extends CMValidator {
 								+ e.getLocalizedMessage();
 						logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId);
 					} finally {
-						loggingMgr.setCurrentFile(curFile, false);
+						loggingMgr.popFileContext(mecFile);
 					}
 				} else {
 					/*
@@ -579,7 +583,7 @@ public class ManifestValidator extends CMValidator {
 			if (rqmtSpec.has("targetPath")) {
 				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, "Structure check; key= " + key, curFile,
 						logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, getSupportingMECs())
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, getSupportingMECs())
 						&& curFileIsValid;
 			}
 		}
@@ -608,7 +612,7 @@ public class ManifestValidator extends CMValidator {
 	 * 
 	 * @return
 	 */
-	protected List<MddfTarget> getSupportingMECs() {
+	protected Map<MddfTarget, LogEntryFolder> getSupportingMECs() {
 		return supportingMECs;
 	}
 

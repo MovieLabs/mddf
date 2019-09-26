@@ -389,7 +389,7 @@ public abstract class CMValidator extends XmlIngester {
 			// NOTE: This block of code requires a 'targetPath' be defined
 			if (rqmtSpec.has("targetPath")) {
 				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, "Structure check; key= " + key, curFile, logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null) && curFileIsValid;
 			}
 		}
 

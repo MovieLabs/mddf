@@ -120,9 +120,11 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 	public boolean process(MddfTarget target, String profileId )
 			throws JDOMException, IOException {
 		super.process(target);
+		loggingMgr.pushFileContext(curFile, false);
 		if (curFileIsValid) {
 			validateProfileConstraints();
 		}
+		loggingMgr.popFileContext(curFile);
 		return curFileIsValid;
 	}
 
@@ -131,7 +133,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 	 */
 	protected void validateProfileConstraints() {
 		// TESTING NEW and EXPERIMENTAL CODE....
-		List<String> matchedUseCases = profiler.evaluate(curRootEl);
+		List<String> matchedUseCases = profiler.evaluate(curRootEl, curTarget);
 
 		// ..................................
 		Element compEl = curRootEl.getChild("Compatibility", manifestNSpace);
@@ -176,7 +178,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 			if (rqmtSpec.has("targetPath")) {
 				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_PROFILE, "Structure check; key= " + key, curFile,
 						logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, getSupportingMECs()) && curFileIsValid;
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec,curTarget,  getSupportingMECs()) && curFileIsValid;
 			}
 		}
 		// --------------------------------------------------------------------------

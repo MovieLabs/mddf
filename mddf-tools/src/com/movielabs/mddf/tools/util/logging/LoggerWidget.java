@@ -21,6 +21,8 @@
  */
 package com.movielabs.mddf.tools.util.logging;
 
+import java.io.File;
+
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
@@ -37,5 +39,6 @@ public interface LoggerWidget extends LogMgmt {
 	public abstract void expand();
 
 	public abstract void collapse();
+	
 
 }

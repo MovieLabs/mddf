@@ -227,7 +227,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 			if (rqmtSpec.has("targetPath")) {
 				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MODEL, "Structure check; key= " + key, curFile,
 						logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec) && curFileIsValid;
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null) && curFileIsValid;
 			}
 		}
 
