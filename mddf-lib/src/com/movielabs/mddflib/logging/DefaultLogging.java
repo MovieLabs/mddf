@@ -49,13 +49,14 @@ public class DefaultLogging implements LogMgmt {
 	private LogEntryFolder rootLogNode = new LogEntryFolder("", -1);
 	private int masterSeqNum;
 	private List<LogEntryNode> entryList;
-	private Stack<File> contextStack = new Stack<File>();
+	private Stack<File> contextFileStack = new Stack<File>();
 //	private File curInputFile;
 	protected int minLevel = LogMgmt.LEV_WARN;
 	protected boolean printToConsole = false;
 	protected boolean infoIncluded;
 	private Map<File, LogEntryFolder> fileFolderMap = new HashMap<File, LogEntryFolder>();
 	private LogEntryFolder curLoggingFolder;
+	private File previousFile;
 
 	/**
 	 * 
@@ -87,9 +88,16 @@ public class DefaultLogging implements LogMgmt {
 				lineNum = ((Cell) target).getRowIndex();
 
 			}
-		}
-		// TODO: FIX ASAP !!!!!!!
-		log(level, tag, msg, logFolder.getFile(), lineNum, moduleId, explanation, srcRef);
+		} 
+		File activeFile = null;
+		if (logFolder != null ) {
+			activeFile = logFolder.getFile();
+		}else if ((!contextFileStack.isEmpty()) && contextFileStack.peek() != null) {
+			activeFile = contextFileStack.peek() ;			
+		}else if (curLoggingFolder != null){
+			activeFile = curLoggingFolder.getFile();
+		}		
+		log(level, tag, msg, activeFile, lineNum, moduleId, explanation, srcRef);
 	}
 
 	/*
@@ -221,19 +229,7 @@ public class DefaultLogging implements LogMgmt {
 	public void setCurrentFile(File targetFile, boolean clear) {
 		throw new UnsupportedOperationException();
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddflib.logging.LogMgmt#addChildFile(java.io.File,
-	 * java.io.File, boolean)
-	 */
-//	@Override
-//	public boolean addChildFile(File srcfile, File parentFile, boolean clear) {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-
+ 
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -242,7 +238,13 @@ public class DefaultLogging implements LogMgmt {
 	 */
 	@Override
 	public LogEntryFolder pushFileContext(File targetFile, boolean clear) {
-		contextStack.push(targetFile);
+		/*
+		 * first eliminate redundant pushes
+		 */
+		if ((!contextFileStack.isEmpty()) && (targetFile == contextFileStack.peek())) {
+			return curLoggingFolder;
+		}		
+		contextFileStack.push(targetFile);
 		curLoggingFolder = getFileFolder(targetFile);
 		return curLoggingFolder;
 	}
@@ -254,7 +256,24 @@ public class DefaultLogging implements LogMgmt {
 	 */
 	@Override
 	public void popFileContext(File assumedTopFile) {
-		contextStack.pop();
+
+		if (contextFileStack.isEmpty()) { 
+			return;
+		}
+		File curTopFile = contextFileStack.peek();
+		if (assumedTopFile != curTopFile) {
+			/*
+			 * check for redundant 'pop'. These get ignored same way we ignore redundant
+			 * push.
+			 */
+			if (previousFile   == assumedTopFile) {
+				return;
+			}
+			// something is out of wack
+			throw new IllegalStateException("ContextStack not popped.... file mis-match (current top: "
+					+ curTopFile.getName() + ", assumed top: " + assumedTopFile.getName());
+		}
+		previousFile =  contextFileStack.pop(); 		
 	}
 
 	/*
