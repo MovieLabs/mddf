@@ -79,8 +79,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	private JSplitPane splitPane;
 	private JMenu saveLogMenu;
 	private Stack<File> contextFileStack = new Stack<File>();
-	private Stack<LogEntryFolder> contextFolderStack = new Stack<LogEntryFolder>();
-//	private File curInputFile;
+	private Stack<LogEntryFolder> contextFolderStack = new Stack<LogEntryFolder>(); 
 	private int minLevel = LogMgmt.LEV_WARN;
 	private boolean infoIncluded = true;
 	private JTextField statusTextField;
@@ -347,10 +346,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	 * 
 	 * @see com.movielabs.mddflib.logging.LogMgmt#setCurrentFile(java.io.File)
 	 */
-	public void setCurrentFile(File targetFile, boolean clear) {
-//		this.curInputFile = targetFile;
-//		treeView.setCurrentFileId(targetFile, null, clear);
-//		valueChanged(null);
+	public void setCurrentFile(File targetFile, boolean clear) { 
 		throw new UnsupportedOperationException();
 	}
 
@@ -428,15 +424,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	Stack<File> getContextStack() {
 		return (Stack<File>) contextFileStack.clone();
 	}
-
-//	@Override
-//	public boolean addChildFile(File targetFile, File parentFile, boolean clear) {
-//		this.curInputFile = targetFile;
-//		boolean createdNewNode =treeView.setCurrentFileId(targetFile, parentFile, clear);
-//		valueChanged(null);
-//		return createdNewNode;
-//	}
-
+ 
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -485,11 +473,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 			} else if (target instanceof Integer) {
 				lineNum = ((Integer) target).intValue();
 			}
-		}
-//		if (srcFile == null) {String tooltip
-//			srcFile = getCurInputFile() ;
-//		}
-//		log(level, tag, msg, srcFile, lineNum, moduleId, explanation, srcRef);
+		} 
 		append(level, tag, msg, folder, lineNum, moduleId, explanation, srcRef);
 	}
 
@@ -555,10 +539,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 					break;
 				}
 			}
-		}
-//		if (logFolder == null) {
-//			throw new IllegalArgumentException("File not in loggin context; File: " + mddfFile.getName());
-//		}
+		} 
 		append(level, tag, msg, logFolder, line, moduleID, tooltip, srcRef);
 	}
 
