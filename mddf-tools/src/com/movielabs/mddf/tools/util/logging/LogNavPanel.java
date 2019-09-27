@@ -447,17 +447,41 @@ public class LogNavPanel extends JPanel {
 
 	}
 
+	/**
+	 * Returns the <tt>LogEntryFolder</tt> to used in the current processing context
+	 * for log messages associated with the <tt>targetFile</tt>. If no folder
+	 * currently exists, one will be created if <tt>create == true</tt>.
+	 * 
+	 * <p>
+	 * The folder returned is specific to the <i>context</i> in which a MDDF file is
+	 * being validated. For example, a MEC file may be validated may be validated on
+	 * it's own or as part of the validation process for one or more Manifests. The
+	 * errors and woarnings generated in each situation may vary. For this reason, a
+	 * single <tt>targetFile</tt> may be associated with multiple folders.
+	 * </p>
+	 * <p>
+	 * The correct folder to use in any situation is determined by the use of a
+	 * <i>folder key</i>. The key is generated based on the sequence of MDDF files
+	 * encountered while processing. The sequence is recorded on
+	 * <tt>contextStack</tt> maintained by the <tt>AdvLogPanel</tt> instance. For
+	 * example: <br/>
+	 * <tt>FILE KEY=MMC_Example.xml<--MEC_Example.xml</tt><br/>
+	 * would be the key to a folder to use when the file <tt>MEC_Example.xml</tt> is
+	 * being processed as a result of it being referenced as a metadata source by
+	 * <tt>MMC_Example.xml</tt>
+	 * </p>
+	 * 
+	 * @param targetFile
+	 * @param create
+	 * @return
+	 */
 	LogEntryFolder getFileFolder(File targetFile, boolean create) {
-		/*
-		 * If the targetFile is NULL then put it in the Validator's folder
-		 * 
-		 */
 		String folderKey;
 		if (targetFile != null) {
 			folderKey = genFolderKey(targetFile);
 		} else {
-			folderKey = DEFAULT_TOOL_FOLDER_KEY; // <------------------------------------------- VALIDATOR is a
-													// catch-all folder
+			/* If the targetFile is NULL then put it in the Validator's folder */
+			folderKey = DEFAULT_TOOL_FOLDER_KEY;
 		}
 		if (folderKey == null) {
 			String errMsg = "File not included in current context. File: " + targetFile.getPath();
@@ -535,14 +559,9 @@ public class LogNavPanel extends JPanel {
 
 	private String genFolderKey(File targetFile) {
 		Stack<File> curCStack = parentLogger.getContextStack();
-		if (!curCStack.contains(targetFile)) {
-//			return null;
-			System.out.println("GenFolderKey: Not in context...." + targetFile.getName());
-		}
 		File[] stackArray = new File[curCStack.size()];
 		stackArray = curCStack.toArray(stackArray);
 		String key = "";
-//		for (int i = 0; i < stackArray.length; i++) {
 		for (int i = stackArray.length - 1; i > -1; i--) {
 			key = key + stackArray[i].getName();
 			if (stackArray[i] == targetFile) {
@@ -551,7 +570,7 @@ public class LogNavPanel extends JPanel {
 			key = key.concat(KEY_SEP);
 		}
 		key = key + targetFile.getName();
-		System.out.println("FILE KEY=" + key);
+		// System.out.println("FILE KEY=" + key);
 		return key;
 	}
 
@@ -571,7 +590,7 @@ public class LogNavPanel extends JPanel {
 				key = key.concat(KEY_SEP);
 			}
 		}
-		System.out.println("STACK KEY=" + key);
+		// System.out.println("STACK KEY=" + key);
 		return key;
 	}
 
