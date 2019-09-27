@@ -466,7 +466,7 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 			logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, e.getMessage(), null, moduleId);
 		} catch (Exception e) {
 			e.printStackTrace();
-			String msg = "Unable to read XLSX: Invalid input format found";
+			String msg = "Unable to ingest XLSX: verify correct version was specified"; 
 			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, msg, null, moduleId);
 			return null;
 		}
