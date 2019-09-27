@@ -369,6 +369,8 @@ public class LogNavPanel extends JPanel {
 
 	private static final String DEFAULT_TOOL_FOLDER_KEY = "%VALIDATOR";
 
+	private static final String KEY_SEP = "<--";
+
 	private JTree tree;
 	private DefaultTreeModel treeModel;
 	private LogEntryFolder rootLogNode = new LogEntryFolder("", -1);
@@ -496,8 +498,19 @@ public class LogNavPanel extends JPanel {
 			Stack<File> curCStack = parentLogger.getContextStack();
 			int idx = curCStack.indexOf(targetFile);
 			if (idx == -1) {
-				/* it isn't in the context (probably the 'VALIDATOR' folder) */
-				rootLogNode.add(fileFolder);
+				/* it isn't in the context */
+				if (folderKey == DEFAULT_TOOL_FOLDER_KEY) {
+					// must be the 'VALIDATOR' folder
+					rootLogNode.add(fileFolder);
+				} else {
+					// add as child to whatever is at bottom of current context
+					LogEntryFolder parentFolder = fileFolderMap.get(genFolderKey());
+					if (parentFolder != null) {
+						parentFolder.add(fileFolder);
+					} else {
+						rootLogNode.add(fileFolder);
+					}
+				}
 			} else if (idx == 0) {
 				/* it's at the top of the context */
 				rootLogNode.add(fileFolder);
@@ -510,7 +523,7 @@ public class LogNavPanel extends JPanel {
 			}
 			for (int i = 0; i < LogMgmt.logLevels.length; i++) {
 				LogEntryFolder levelTNode = new LogEntryFolder(LogMgmt.logLevels[i], i);
-				
+
 				fileFolder.add(levelTNode);
 			}
 			treeModel.nodeChanged(rootLogNode);
@@ -524,19 +537,41 @@ public class LogNavPanel extends JPanel {
 		Stack<File> curCStack = parentLogger.getContextStack();
 		if (!curCStack.contains(targetFile)) {
 //			return null;
-			System.out.println("GenFolderKey: Not in context...."+targetFile.getName());
+			System.out.println("GenFolderKey: Not in context...." + targetFile.getName());
 		}
 		File[] stackArray = new File[curCStack.size()];
 		stackArray = curCStack.toArray(stackArray);
 		String key = "";
-		for (int i = 0; i < stackArray.length; i++) {
+//		for (int i = 0; i < stackArray.length; i++) {
+		for (int i = stackArray.length - 1; i > -1; i--) {
 			key = key + stackArray[i].getName();
 			if (stackArray[i] == targetFile) {
 				return key;
 			}
-			key = key.concat("<--");
+			key = key.concat(KEY_SEP);
 		}
 		key = key + targetFile.getName();
+		System.out.println("FILE KEY=" + key);
+		return key;
+	}
+
+	/**
+	 * Returns the <tt>folderKey</tt> for the top file in the context stack.
+	 * 
+	 * @return
+	 */
+	private String genFolderKey() {
+		Stack<File> curCStack = parentLogger.getContextStack();
+		File[] stackArray = new File[curCStack.size()];
+		stackArray = curCStack.toArray(stackArray);
+		String key = "";
+		for (int i = stackArray.length - 1; i > -1; i--) {
+			key = key + stackArray[i].getName();
+			if (i > 0) {
+				key = key.concat(KEY_SEP);
+			}
+		}
+		System.out.println("STACK KEY=" + key);
 		return key;
 	}
 
@@ -549,7 +584,7 @@ public class LogNavPanel extends JPanel {
 	 * @param id
 	 */
 	LogEntryFolder setCurrentFileId(File targetFile, boolean clear) {
-		if(targetFile == null) {
+		if (targetFile == null) {
 			LogEntryFolder fileFolder = fileFolderMap.get(DEFAULT_TOOL_FOLDER_KEY);
 			return fileFolder;
 		}
