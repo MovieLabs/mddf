@@ -131,21 +131,7 @@ public interface LogMgmt extends IssueLogger {
 	 */
 	public void setCurrentFile(File srcfile, boolean clear);
 
-//	/**
-//	 * *
-//	 * 
-//	 * Set the file currently being processed and, if the file folder needs to be
-//	 * created, append it as the <i>child</i> of the designated <tt>parentFile</tt>.
-//	 * If a file folder already exists, the <tt>parentFile</tt> is ignored but the
-//	 * <tt>clear</tt> flag will be used to determine if the existing contents of the
-//	 * folder should be deleted.
-//	 * 
-//	 * @param srcfile
-//	 * @param parentFile
-//	 * @param clear
-//	 * @return
-//	 */
-//	public abstract boolean addChildFile(File srcfile, File parentFile, boolean clear)
+
 	public abstract LogEntryFolder pushFileContext(File targetFile, boolean clear);
 
 	public abstract void popFileContext(File targetFile);
