@@ -24,6 +24,7 @@ package com.movielabs.mddflib.tests.junit.util.xml;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
@@ -50,6 +51,7 @@ import com.movielabs.mddflib.manifest.validation.ManifestValidator;
 import com.movielabs.mddflib.manifest.validation.MecValidator;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
 import com.movielabs.mddflib.util.CMValidator;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.StructureValidation;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -71,7 +73,9 @@ public class StructureValidationTest extends StructureValidation{
 	private static String rsrcPath = "./test/resources/";
 	private JSONObject structDefs;
 	private Element rootEl;
-	private CMValidator validator; 
+	private CMValidator validator;
+	private File srcFile;
+	private MddfTarget mddfTarget; 
 	
 	public StructureValidationTest() {
 		super( iLog, "JUnit"); 
@@ -122,7 +126,7 @@ public class StructureValidationTest extends StructureValidation{
 			Element basicEl = basicElList.get(j);
 			for (int i = 0; i < rqmtSet.size(); i++) {
 				JSONObject nextRqmt = rqmtSet.getJSONObject(i);
-				boolean isValid = evaluateConstraint(basicEl, nextRqmt, basicEl,null, null);
+				boolean isValid = evaluateConstraint(basicEl, nextRqmt, basicEl,null, null, null);
 				assertTrue(isValid);
 			}
 		}
@@ -153,7 +157,7 @@ public class StructureValidationTest extends StructureValidation{
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
 			// NOTE: This block of code requires a 'targetPath' be defined
 			if (rqmtSpec.has("targetPath")) {
-				boolean isValid = validateDocStructure(rootEl, rqmtSpec);
+				boolean isValid = validateDocStructure(rootEl, rqmtSpec, mddfTarget, null);
 			}
 		}
 		try {
@@ -183,7 +187,7 @@ public class StructureValidationTest extends StructureValidation{
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
 			// NOTE: This block of code requires a 'targetPath' be defined
 			if (rqmtSpec.has("targetPath")) {
-				boolean isValid = validateDocStructure(rootEl, rqmtSpec);
+				boolean isValid = validateDocStructure(rootEl, rqmtSpec, mddfTarget, null);
 			}
 		}
 		try {
@@ -211,7 +215,7 @@ public class StructureValidationTest extends StructureValidation{
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
 			// NOTE: This block of code requires a 'targetPath' be defined
 			if (rqmtSpec.has("targetPath")) {
-				boolean isValid = validateDocStructure(rootEl, rqmtSpec);
+				boolean isValid = validateDocStructure(rootEl, rqmtSpec, mddfTarget, null);
 			}
 		}
 		try {
@@ -239,7 +243,7 @@ public class StructureValidationTest extends StructureValidation{
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
 			// NOTE: This block of code requires a 'targetPath' be defined
 			if (rqmtSpec.has("targetPath")) {
-				boolean isValid = validateDocStructure(rootEl, rqmtSpec);
+				boolean isValid = validateDocStructure(rootEl, rqmtSpec, mddfTarget, null);
 			}
 		}
 		try {
@@ -287,7 +291,12 @@ public class StructureValidationTest extends StructureValidation{
 	private Document loadTestArtifact(String fileName) {
 		Document xmlDoc = null;
 		String srcFilePath = rsrcPath + fileName;
-		File srcFile = new File(srcFilePath);
+		srcFile = new File(srcFilePath);
+		try {
+			mddfTarget = new MddfTarget(srcFile, iLog);
+		} catch (FileNotFoundException e1) { 
+//			e1.printStackTrace();
+		}
 		if (srcFile.canRead()) {
 			try {
 				xmlDoc = XmlIngester.getAsXml(srcFile);
