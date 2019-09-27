@@ -21,7 +21,6 @@
  */
 package com.movielabs.mddflib.avails.validation;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -142,6 +141,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		}
 		// clean up and go home
 		this.pedigreeMap = null;
+		loggingMgr.popFileContext(curFile);
 		return curFileIsValid;
 	}
 
