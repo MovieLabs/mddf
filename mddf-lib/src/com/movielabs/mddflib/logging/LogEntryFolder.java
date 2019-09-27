@@ -29,8 +29,6 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.jdom2.Document;
-import org.jdom2.Element;
-
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddf.MddfContext.MDDF_TYPE;
 
