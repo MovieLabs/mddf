@@ -148,6 +148,25 @@ public interface LogMgmt extends IssueLogger {
 	public boolean isInfoIncluded();
 
 	/**
+	 * Convert a XLSX column number to the letter ID displayed to user. Examples:
+	 * <ul>
+	 * <li>Col# 0 -> 'A'</li>
+	 * <li>Col# 77 -> 'BZ'</li>
+	 * </ul>
+	 * 
+	 * @param colNum
+	 * @return
+	 */
+	static String mapColNum(int colNum) {
+		if (colNum >= 0 && colNum < 26)
+			return String.valueOf((char) ('A' + colNum));
+		else if (colNum > 25)
+			return mapColNum((colNum / 26) - 1) + mapColNum(colNum % 26);
+		else
+			return "#";
+	}
+
+	/**
 	 * @param severity
 	 * @return
 	 */
