@@ -79,7 +79,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	private JSplitPane splitPane;
 	private JMenu saveLogMenu;
 	private Stack<File> contextFileStack = new Stack<File>();
-	private Stack<LogEntryFolder> contextFolderStack = new Stack<LogEntryFolder>(); 
+	private Stack<LogEntryFolder> contextFolderStack = new Stack<LogEntryFolder>();
 	private int minLevel = LogMgmt.LEV_WARN;
 	private boolean infoIncluded = true;
 	private JTextField statusTextField;
@@ -346,7 +346,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	 * 
 	 * @see com.movielabs.mddflib.logging.LogMgmt#setCurrentFile(java.io.File)
 	 */
-	public void setCurrentFile(File targetFile, boolean clear) { 
+	public void setCurrentFile(File targetFile, boolean clear) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -388,14 +388,17 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 			return;
 		}
 		File curTopFile = contextFolderStack.peek().getFile();
-		if (assumedTopFile != curTopFile) {
+		if (!isSameFile(curTopFile, assumedTopFile)) {
 			/*
 			 * check for redundant 'pop'. These get ignored same way we ignore redundant
 			 * push.
 			 */
-			if (previousFolder != null && (previousFolder.getFile() == assumedTopFile)) {
-				return;
+			if (previousFolder != null) {
+				if (isSameFile(previousFolder.getFile(), assumedTopFile)) {
+					return;
+				}
 			}
+
 			// something is out of wack
 			throw new IllegalStateException("ContextStack not popped.... file mis-match (current top: "
 					+ curTopFile.getName() + ", assumed top: " + assumedTopFile.getName());
@@ -414,6 +417,20 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		valueChanged(null);
 	}
 
+	private boolean isSameFile(File a, File b) {
+		String path_A;
+		String path_B;
+		try {
+			path_A = a.getCanonicalPath();
+			path_B = b.getCanonicalPath();
+		} catch (IOException e) {
+			// not as reliable....
+			path_A = a.getAbsolutePath();
+			path_B = b.getAbsolutePath();
+		}
+		return (path_A.equals(path_B));
+	}
+
 	/**
 	 * Returns a clone of the <tt>contextStack</tt>. Since this is a copy and not
 	 * the original, it should be considered 'read-only' as any changes have no
@@ -424,7 +441,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	Stack<File> getContextStack() {
 		return (Stack<File>) contextFileStack.clone();
 	}
- 
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -464,7 +481,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 				lineNum = ((Cell) target).getRowIndex() + 1;
 				/* Prefix an 'explanation' with column ID (e.g., 'X', 'AA') */
 				int colNum = ((Cell) target).getColumnIndex();
-				String prefix = "Column " + mapColNum(colNum);
+				String prefix = "Column " + LogMgmt.mapColNum(colNum);
 				if ((explanation == null) || (explanation.isEmpty())) {
 					explanation = prefix;
 				} else {
@@ -473,21 +490,8 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 			} else if (target instanceof Integer) {
 				lineNum = ((Integer) target).intValue();
 			}
-		} 
+		}
 		append(level, tag, msg, folder, lineNum, moduleId, explanation, srcRef);
-	}
-
-	/**
-	 * @param colNum
-	 * @return
-	 */
-	private String mapColNum(int colNum) {
-		if (colNum >= 0 && colNum < 26)
-			return String.valueOf((char) ('A' + colNum));
-		else if (colNum > 25)
-			return mapColNum((colNum / 26) - 1) + mapColNum(colNum % 26);
-		else
-			return "#";
 	}
 
 	/*
@@ -539,7 +543,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 					break;
 				}
 			}
-		} 
+		}
 		append(level, tag, msg, logFolder, line, moduleID, tooltip, srcRef);
 	}
 
