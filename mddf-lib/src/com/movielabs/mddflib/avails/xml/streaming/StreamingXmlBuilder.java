@@ -191,6 +191,13 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		private void addDataToRow(String data) {
 			if (!haveFirstRow) {
 				rowContentsAsList.add(data);
+			} else if (curCell >= rowContentsAsArray.length) {
+				// error
+				String colID = LogMgmt.mapColNum(curCell);
+				int rowID = currentRow + 1;
+				String msg = "Ignoring cell " + colID + " in row " + rowID + ": out of bounds";
+				logger.log(LogMgmt.LEV_WARN, LogMgmt.TAG_XLATE, msg, null, moduleId);
+				return;
 			} else {
 				rowContentsAsArray[curCell++] = data;
 			}
@@ -466,7 +473,7 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 			logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, e.getMessage(), null, moduleId);
 		} catch (Exception e) {
 			e.printStackTrace();
-			String msg = "Unable to ingest XLSX: verify correct version was specified"; 
+			String msg = "Unable to ingest XLSX: verify correct version was specified";
 			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, msg, null, moduleId);
 			return null;
 		}
@@ -539,6 +546,7 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 			sheetParser.setContentHandler(handler);
 			sheetParser.parse(sheetSource);
 		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
 			throw new RuntimeException("SAX parser appears to be broken - " + e.getMessage());
 		}
 		int availCnt = availElRegistry.values().size();
@@ -564,7 +572,7 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 	 * @throws XlsxDataTermination
 	 */
 	void processRow(String[] row, int rowNum, boolean rowHasData) throws XlsxDataTermination {
-
+//		System.out.println("ProcessRow():: rowNum=" + rowNum + ", emptyRowCnt=" + emptyRowCnt);
 		// if we hit 5 empty rows one after another we terminate processing
 		if (rowHasData) {
 			emptyRowCnt = 0;
@@ -591,7 +599,13 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 			headerRow_0 = null; // not needed anymore so GC it
 			return;
 		case 2:
+			/* 3rd row may contain either comments or data */
+			if (row == null || (!rowHasData)) {
+				// 3rd row has been left blank (i.e., no '//OPT or //REQ comments)
+				return;
+			}
 			if (row[1].startsWith("//")) {
+				// row contains comments
 				return;
 			}
 		default:
@@ -601,7 +615,14 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		 * process a data row
 		 */
 		if (rowHasData) {
-			IngesterV1_7 ingester = new IngesterV1_7(row, rowNum, this, logger);
+			try {
+				IngesterV1_7 ingester = new IngesterV1_7(row, rowNum, this, logger);
+			} catch (Exception e) { 
+				e.printStackTrace();
+				int rowID = rowNum + 1;
+				String msg = "Unable to ingest data in row " + rowID+"; Exception while processing: "+e.getMessage() ;
+				logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, msg, null, moduleId);
+			}
 		}
 	}
 
@@ -957,8 +978,12 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.avails.xml.AbstractXmlBuilder#isRequired(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.avails.xml.AbstractXmlBuilder#isRequired(java.lang.
+	 * String, java.lang.String)
 	 */
 	public boolean isRequired(String elementName, String schema)
 			throws IllegalStateException, IllegalArgumentException {
@@ -976,15 +1001,23 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		return pedigreeMap;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.avails.xml.AbstractXmlBuilder#addToPedigree(java.lang.Object, com.movielabs.mddflib.avails.xml.Pedigree)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.avails.xml.AbstractXmlBuilder#addToPedigree(java.lang.
+	 * Object, com.movielabs.mddflib.avails.xml.Pedigree)
 	 */
 	public void addToPedigree(Object content, Pedigree source) {
 		pedigreeMap.put(content, source);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.avails.xml.AbstractXmlBuilder#mGenericElement(java.lang.String, java.lang.String, org.jdom2.Namespace)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.avails.xml.AbstractXmlBuilder#mGenericElement(java.lang
+	 * .String, java.lang.String, org.jdom2.Namespace)
 	 */
 	public Element mGenericElement(String name, String val, Namespace ns) {
 		Element el = new Element(name, ns);
@@ -1039,7 +1072,7 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		}
 		return formattedValue;
 	}
- 
+
 	/**
 	 * @param curRow
 	 */
@@ -1104,12 +1137,13 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		List<Element> assetList = avail2AssetMap.get(avail);
 		assetList.add(assetEl);
 	}
- 
+
 	/**
-	 * Metadata is created and added as content to the <tt>Asset</tt> element 
-	 * @param assetEl - <tt>Asset</tt> element the metadata is appended to.
-	 * @param workType -  determinines structure of the metadata being added.
-	 * @param row - a <tt>RowDataSrc</tt>
+	 * Metadata is created and added as content to the <tt>Asset</tt> element
+	 * 
+	 * @param assetEl  - <tt>Asset</tt> element the metadata is appended to.
+	 * @param workType - determinines structure of the metadata being added.
+	 * @param row      - a <tt>RowDataSrc</tt>
 	 */
 	public void createAssetMetadata(Element assetEl, String workType, RowDataSrc row) {
 		Element metadataEl = mdBuilder.appendMData(row, workType);
