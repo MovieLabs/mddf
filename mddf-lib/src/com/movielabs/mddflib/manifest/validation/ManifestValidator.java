@@ -75,7 +75,7 @@ public class ManifestValidator extends CMValidator {
 	}
 
 	private Map<String, List<Element>> supportingRsrcLocations;
-	private Map<MddfTarget, LogEntryFolder> supportingMECs;
+	protected Map<MddfTarget, LogEntryFolder> supportingMECs;
 
 	/**
 	 * @param validateC
@@ -161,14 +161,6 @@ public class ManifestValidator extends CMValidator {
 		LogReference srcRef = LogReference.getRef("MMM", "mmm_locType");
 		XPathExpression<Element> xpExp01 = xpfac.compile(".//" + pre + ":ContainerLocation", Filters.element(), null,
 				manifestNSpace);
-		MecValidator mecTool = new MecValidator(validateC, loggingMgr);
-		/*
-		 * setting the parent ManifestValidator in a separate method rather than via a
-		 * constructor, allows validation of a stand-alone MEC (i.e., independent of a
-		 * specific usage by a Manifest). HOWEVER, that means we MUST set the parent
-		 * prior to invoking the Validator's process() method.
-		 */
-		mecTool.setParent(this);
 		List<Element> cLocElList = xpExp01.evaluate(curRootEl);
 		outterLoop: for (int i = 0; i < cLocElList.size(); i++) {
 			Element clocEl = cLocElList.get(i);
@@ -192,34 +184,7 @@ public class ManifestValidator extends CMValidator {
 				/* is this being used to provide Metadata via a MEC file? */
 				Element grandParentEl = (Element) clocEl.getParent().getParent();
 				if (grandParentEl.getName().equals("Metadata")) {
-					File mecFile = new File(targetLoc);
-//					System.out.println("Possible MEC ref: " + targetLoc);
-					String infoMsg = "Validation of referenced MEC file required: " + mecFile.getName();
-					logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_INFO, clocEl, infoMsg, null, null, logMsgSrcId);
-					if (!(mecFile.canRead())) {
-						String errMsg = "Unable to validate referenced MEC file " + mecFile.getName();
-						String details = "File may be missing or unreadable";
-						logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId);
-						curFileIsValid = false;
-						continue outterLoop;
-
-					}
-					try {
-						LogEntryFolder mecFolder = loggingMgr.pushFileContext(mecFile, true);
-						MddfTarget mecTarget = new MddfTarget(mecFile, loggingMgr);
-						boolean validMec = mecTool.process(mecTarget);
-						if (validMec) {
-							supportingMECs.put(mecTarget, mecFolder);
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-						String errMsg = "Exception processing referenced MEC XML";
-						String details = "Attempt to validate referenced MEC file failed while parsing XML"
-								+ e.getLocalizedMessage();
-						logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId);
-					} finally {
-						loggingMgr.popFileContext(mecFile);
-					}
+					validateMecUsage(targetLoc, clocEl);
 				} else {
 					/*
 					 * For non-Metadata ContainerLocs, record the usage. Latter on it will get
@@ -237,6 +202,54 @@ public class ManifestValidator extends CMValidator {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+	}
+
+	/**
+	 * Validate a MEC file in the context of it's usage within the current Manifest.
+	 * This differs from the stand-alone validation of a MEC in that constraint
+	 * checks are made on the aggregated data provided in both files.
+	 * 
+	 * @param targetLoc
+	 * @param clocEl
+	 */
+	protected void validateMecUsage(String targetLoc, Element clocEl) {
+		MecValidator mecTool = new MecValidator(validateC, loggingMgr);
+		/*
+		 * setting the parent ManifestValidator in a separate method rather than via a
+		 * constructor, allows validation of a stand-alone MEC (i.e., independent of a
+		 * specific usage by a Manifest). HOWEVER, that means we MUST set the parent
+		 * prior to invoking the Validator's process() method.
+		 */
+		mecTool.setParent(this);
+		File mecFile = new File(targetLoc);
+		String infoMsg = "Validation of referenced MEC file required: " + mecFile.getName();
+		logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_INFO, clocEl, infoMsg, null, null, logMsgSrcId);
+		if (!(mecFile.canRead())) {
+			String errMsg = "Unable to validate referenced MEC file " + mecFile.getName();
+			String details = "File may be missing or unreadable";
+			LogReference srcRef = LogReference.getRef("MMM", "mmm_locType");
+			logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId);
+			curFileIsValid = false;
+			return;
+
+		}
+		try {
+			LogEntryFolder mecFolder = loggingMgr.pushFileContext(mecFile, true);
+			MddfTarget mecTarget = new MddfTarget(curTarget, mecFile, loggingMgr);
+			boolean validMec = mecTool.process(mecTarget);
+			if (validMec) {
+				supportingMECs.put(mecTarget, mecFolder);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			String errMsg = "Exception processing referenced MEC XML";
+			String details = "Attempt to validate referenced MEC file failed while parsing XML"
+					+ e.getLocalizedMessage();
+			LogReference srcRef = LogReference.getRef("MMM", "mmm_locType");
+			logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId);
+		} finally {
+			loggingMgr.popFileContext(mecFile);
 		}
 	}
 
