@@ -206,7 +206,7 @@ public class MecValidator extends CMValidator {
 	 * @see com.movielabs.mddflib.util.CMValidator#setParent(com.movielabs.mddflib.util.CMValidator)
 	 */
 	@Override
-	protected void setParent(CMValidator parent) {
+	public void setParent(CMValidator parent) {
 		this.parent = parent;		
 	}
 
