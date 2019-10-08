@@ -52,8 +52,7 @@ public class MddfTarget {
 	private ReusableInputStream streamSrc;
 	private Document xmlDoc = null;
 	private LogMgmt logMgr;
-	private MDDF_TYPE mddfType;
-	private String schemaType;
+	private MDDF_TYPE mddfType; 
 	private int logTag;
 
 	/**
@@ -121,16 +120,13 @@ public class MddfTarget {
 		 */
 		Element docRootEl = getXmlDoc().getRootElement();
 		String nSpaceUri = docRootEl.getNamespaceURI();  
-		if (nSpaceUri.contains("manifest")) {
-			schemaType = "manifest";
+		if (nSpaceUri.contains("manifest")) { 
 			logTag = LogMgmt.TAG_MANIFEST;
 			mddfType = MDDF_TYPE.MANIFEST;
-		} else if (nSpaceUri.contains("avails")) {
-			schemaType = "avails";
+		} else if (nSpaceUri.contains("avails")) { 
 			logTag = LogMgmt.TAG_AVAIL;
 			mddfType = MDDF_TYPE.AVAILS;
-		} else if (nSpaceUri.contains("mdmec")) {
-			schemaType = "mdmec";
+		} else if (nSpaceUri.contains("mdmec")) { 
 			logTag = LogMgmt.TAG_MEC;
 			mddfType = MDDF_TYPE.MEC;
 		} else {
