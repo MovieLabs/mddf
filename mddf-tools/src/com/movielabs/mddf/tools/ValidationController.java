@@ -649,7 +649,7 @@ public class ValidationController {
 				Set<String> foobar = supportingFiles.keySet();
 				for (String path : foobar) {
 					if (path.endsWith("xml") && !path.contains(":")) {
-						validateReferencedMddf(path, supportingFiles.get(path));
+						validateReferencedMddf(target, path, supportingFiles.get(path));
 					}
 				}
 			}
@@ -684,7 +684,7 @@ public class ValidationController {
 						Set<String> foobar = supportingFiles.keySet();
 						for (String path : foobar) {
 							if (path.endsWith("xml") && !path.contains(":")) {
-								validateReferencedMddf(path, supportingFiles.get(path));
+								validateReferencedMddf(target, path, supportingFiles.get(path));
 							}
 						}
 
@@ -699,7 +699,7 @@ public class ValidationController {
 		return isValid;
 	}
 
-	private void validateReferencedMddf(String path, List<Element> list) throws IOException, JDOMException {
+	private void validateReferencedMddf(MddfTarget parentTarget, String path, List<Element> list) throws IOException, JDOMException {
 		File mddfFile = new File(path);
 		String fileType = StringUtils.extractFileType(path);
 		fileType = fileType.toLowerCase();
@@ -710,9 +710,9 @@ public class ValidationController {
 			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, mddfFile, -1, MODULE_ID, supplemental, null);
 			return;
 		}
-		MddfTarget target;
+		MddfTarget curTarget;
 		try {
-			target = new MddfTarget(mddfFile, logMgr);
+			curTarget = new MddfTarget(parentTarget, mddfFile, logMgr);
 		} catch (FileNotFoundException e) {
 			String errMsg = "Referenced container not found";
 			for (Element clocEl : list) {
@@ -720,7 +720,7 @@ public class ValidationController {
 			}
 			return;
 		}
-		MDDF_TYPE type = target.getMddfType();
+		MDDF_TYPE type = curTarget.getMddfType();
 		switch (type) {
 		case MANIFEST:
 			String errMsg = "Skipping validation of ExternalManifest (not yet supported)";
@@ -731,13 +731,13 @@ public class ValidationController {
 		case MEC:
 			if (logNav != null) {
 				logNav.setFileMddfType(mddfFile, type);
-				logNav.setXml(mddfFile, target.getXmlDoc());
+				logNav.setXml(mddfFile, curTarget.getXmlDoc());
 			}
 			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MEC, "Validating referenced MEC file", mddfFile, MODULE_ID);
-			validateMEC(target);
+			validateMEC(curTarget);
 			break;
 		default:
-			logMgr.log(LogMgmt.LEV_ERR, target.getLogTag(),
+			logMgr.log(LogMgmt.LEV_ERR, curTarget.getLogTag(),
 					"Referenced file has unrecognized MDDF type " + type.toString(), mddfFile, MODULE_ID);
 
 		}
