@@ -52,16 +52,17 @@ public class MddfTarget {
 	private ReusableInputStream streamSrc;
 	private Document xmlDoc = null;
 	private LogMgmt logMgr;
-	private MDDF_TYPE mddfType; 
+	private MDDF_TYPE mddfType;
 	private int logTag;
+	private MddfTarget parentTarget = null;
 
 	/**
 	 * Construct target where the MDDF source is an XML file on the local file
 	 * system.
 	 * 
 	 * <p>
-	 * This constructor should NOT be used for cloud-based configurations unless
-	 * an uploaded file is first saved to the server's file system.
+	 * This constructor should NOT be used for cloud-based configurations unless an
+	 * uploaded file is first saved to the server's file system.
 	 * </p>
 	 * 
 	 * @param srcFile
@@ -69,9 +70,14 @@ public class MddfTarget {
 	 * @throws FileNotFoundException
 	 */
 	public MddfTarget(File srcFile, LogMgmt logMgr) throws FileNotFoundException {
+		this(null, srcFile, logMgr);
+	}
+
+	public MddfTarget(MddfTarget parent, File srcFile, LogMgmt logMgr) throws FileNotFoundException {
 		super();
 		this.srcFile = srcFile;
 		this.logMgr = logMgr;
+		this.parentTarget = parent;
 		InputStream mainStream = new FileInputStream(srcFile);
 		this.streamSrc = new ReusableInputStream(mainStream);
 		init();
@@ -79,8 +85,8 @@ public class MddfTarget {
 
 	/**
 	 * Construct target where the MDDF source is an <tt>InputStream</tt>. The
-	 * <tt>srcFile</tt> may or may not exist or be readable on the <i>local</i>
-	 * file system.
+	 * <tt>srcFile</tt> may or may not exist or be readable on the <i>local</i> file
+	 * system.
 	 * 
 	 * @param srcFile
 	 * @param xmlStreamSrc
@@ -95,18 +101,33 @@ public class MddfTarget {
 
 	/**
 	 * Construct target where the MDDF source is not an XML file (i.e., an
-	 * XLSX-encoded Avails). An XML-formatted translation must therefore be
-	 * provided as an argument to the constructor.
+	 * XLSX-encoded Avails). An XML-formatted translation must therefore be provided
+	 * as an argument to the constructor.
 	 * 
 	 * @param srcFile
 	 * @param xmlDoc
 	 * @param logMgr
 	 */
 	public MddfTarget(File srcFile, Document xmlDoc, LogMgmt logMgr) {
+		this(srcFile, xmlDoc, null, logMgr);
+	}
+
+	/**
+	 * Construct target where the MDDF source is not an XML file (i.e., an
+	 * XLSX-encoded Avails). An XML-formatted translation must therefore be provided
+	 * as an argument to the constructor.
+	 * 
+	 * @param srcFile
+	 * @param xmlDoc
+	 * @param parent
+	 * @param logMgr
+	 */
+	public MddfTarget(File srcFile, Document xmlDoc, MddfTarget parent, LogMgmt logMgr) {
 		super();
 		this.srcFile = srcFile;
 		this.logMgr = logMgr;
 		this.xmlDoc = xmlDoc;
+		this.parentTarget = parent;
 		buildStreamSrc();
 		init();
 	}
@@ -119,20 +140,20 @@ public class MddfTarget {
 		 * Identify type of XML file (i.e., Manifest, Avail, etc)
 		 */
 		Element docRootEl = getXmlDoc().getRootElement();
-		String nSpaceUri = docRootEl.getNamespaceURI();  
-		if (nSpaceUri.contains("manifest")) { 
+		String nSpaceUri = docRootEl.getNamespaceURI();
+		if (nSpaceUri.contains("manifest")) {
 			logTag = LogMgmt.TAG_MANIFEST;
 			mddfType = MDDF_TYPE.MANIFEST;
-		} else if (nSpaceUri.contains("avails")) { 
+		} else if (nSpaceUri.contains("avails")) {
 			logTag = LogMgmt.TAG_AVAIL;
 			mddfType = MDDF_TYPE.AVAILS;
-		} else if (nSpaceUri.contains("mdmec")) { 
+		} else if (nSpaceUri.contains("mdmec")) {
 			logTag = LogMgmt.TAG_MEC;
 			mddfType = MDDF_TYPE.MEC;
 		} else {
 			mddfType = null;
 		}
-		
+
 	}
 
 	/**
@@ -168,7 +189,6 @@ public class MddfTarget {
 		return streamSrc;
 	}
 
- 
 	/**
 	 * @return XML representation of the MDDF construct
 	 */
