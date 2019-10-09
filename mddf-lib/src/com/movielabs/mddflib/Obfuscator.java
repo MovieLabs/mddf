@@ -43,15 +43,20 @@ import com.movielabs.mddflib.logging.LogMgmt;
  *
  */
 public class Obfuscator {
-	public static enum Target {
-		Money("Term", "refered to as 'PriceValue' when formatted as Excel", ".//avails:Term/avails:Money"), ContractID(
-				"Transaction", "not supported in Excel formatted Avails", ".//avails:Transaction/avails:ContractID");
+	/**
+	 * identifies a type of Avails field that may contain sensitive information.
+	 * 
+	 *
+	 */
+	public static enum DataTarget {
+	Money("Term", "refered to as 'PriceValue' when formatted as Excel", ".//avails:Term/avails:Money"),
+	ContractID("Transaction", "not supported in Excel formatted Avails", ".//avails:Transaction/avails:ContractID");
 
 		private String qualifier;
 		private String toolTip;
 		String xpath;
 
-		private Target(String qualifier, String toolTip, String xpath) {
+		private DataTarget(String qualifier, String toolTip, String xpath) {
 			this.qualifier = qualifier;
 			this.toolTip = toolTip;
 			this.xpath = xpath;
@@ -77,10 +82,10 @@ public class Obfuscator {
 	 * @param xmlDoc
 	 * @param replacementMap
 	 * @param logMgr
-	 * @return a new Docuement with the indicated substitutions
+	 * @return a new Document with the indicated substitutions
 	 */
-	public static Document process(Document xmlDoc, Map<Target, String> replacementMap, LogMgmt logMgr) {
-		Map<Target, XPathExpression<?>> xpeMap = initialize(xmlDoc);
+	public static Document process(Document xmlDoc, Map<DataTarget, String> replacementMap, LogMgmt logMgr) {
+		Map<DataTarget, XPathExpression<?>> xpeMap = initialize(xmlDoc);
 		Document cleanXmlDoc = doReplacements(xmlDoc, xpeMap, replacementMap);
 		return cleanXmlDoc;
 	}
@@ -91,13 +96,13 @@ public class Obfuscator {
 	 * @param replacementMap
 	 * @return
 	 */
-	private static Document doReplacements(Document originalDoc, Map<Target, XPathExpression<?>> xpeMap,
-			Map<Target, String> replacementMap) {
+	private static Document doReplacements(Document originalDoc, Map<DataTarget, XPathExpression<?>> xpeMap,
+			Map<DataTarget, String> replacementMap) {
 		Document cleanDoc = originalDoc.clone();
 		Element rootEl = cleanDoc.getRootElement();
-		Iterator<Target> tIt = replacementMap.keySet().iterator();
+		Iterator<DataTarget> tIt = replacementMap.keySet().iterator();
 		while (tIt.hasNext()) {
-			Target nextKey = tIt.next();
+			DataTarget nextKey = tIt.next();
 			String replacementText = replacementMap.get(nextKey);
 			if ((replacementText != null) && (!replacementText.isEmpty())) {
 				XPathExpression<?> xpExpression = xpeMap.get(nextKey);
@@ -105,7 +110,7 @@ public class Obfuscator {
 				for (int i = 0; i < replElList.size(); i++) {
 					Object next = replElList.get(i);
 					if (next instanceof Element) {
-						Element nextEl = (Element) next; 
+						Element nextEl = (Element) next;
 						nextEl.setText(replacementText);
 					} else if (next instanceof Attribute) {
 						Attribute nextAtt = (Attribute) next;
@@ -120,7 +125,7 @@ public class Obfuscator {
 	/**
 	 * @param xmlDoc
 	 */
-	private static Map<Target, XPathExpression<?>> initialize(Document xmlDoc) {
+	private static Map<DataTarget, XPathExpression<?>> initialize(Document xmlDoc) {
 		List<Namespace> nsList = xmlDoc.getRootElement().getNamespacesInScope();
 		for (int i = 0; i < nsList.size(); i++) {
 			Namespace nextNS = nsList.get(i);
@@ -136,11 +141,11 @@ public class Obfuscator {
 				// ignore.
 			}
 		}
-		Map<Target, XPathExpression<?>> xpeMap = new HashMap<Target, XPathExpression<?>>();
-		EnumSet<Target> targetSet = EnumSet.allOf(Target.class);
-		Iterator<Target> tIt = targetSet.iterator();
+		Map<DataTarget, XPathExpression<?>> xpeMap = new HashMap<DataTarget, XPathExpression<?>>();
+		EnumSet<DataTarget> targetSet = EnumSet.allOf(DataTarget.class);
+		Iterator<DataTarget> tIt = targetSet.iterator();
 		while (tIt.hasNext()) {
-			Target next = tIt.next();
+			DataTarget next = tIt.next();
 			XPathExpression<Element> xpExpression = xpfac.compile(next.xpath, Filters.element(), null, availsNSpace,
 					mdNSpace);
 			xpeMap.put(next, xpExpression);
