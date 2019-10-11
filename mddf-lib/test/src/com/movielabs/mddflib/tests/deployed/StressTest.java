@@ -55,7 +55,8 @@ import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
- * Run diagnostic stress tests. Statistics on execution time and heap usage are collected.
+ * Run diagnostic stress tests. Statistics on execution time and heap usage are
+ * collected.
  * 
  * @author L. Levin, Critical Architectures LLC
  *
@@ -257,7 +258,7 @@ public class StressTest {
 		}
 		boolean isValid = true;
 		if (testMode.equals("cvrt")) {
-			iLog.log(LogMgmt.LEV_INFO, iLog.TAG_N_A, "Conversion of XML is a NO-OP.", srcFile, MODULE_ID);
+			iLog.log(LogMgmt.LEV_INFO, iLog.TAG_N_A, "Conversion of XML is a NO-OP.", target, MODULE_ID);
 			return;
 		}
 		AvailValidator tool1 = new AvailValidator(true, iLog);
@@ -287,8 +288,8 @@ public class StressTest {
 		pauseForInput("Ready to validate. Hit <Enter> when ready to continue");
 		Map<Object, Pedigree> pedigreeMap = (Map<Object, Pedigree>) results.get("pedigree");
 		MddfTarget target = new MddfTarget(srcFile, xmlDoc, iLog);
-		iLog.log(LogMgmt.LEV_INFO, iLog.TAG_N_A, "Validating file as a " + target.getMddfType().toString(), srcFile,
-				MODULE_ID);
+		String msg = "Validating file as a " + target.getMddfType().toString();
+		iLog.log(LogMgmt.LEV_INFO, iLog.TAG_N_A, msg, target, MODULE_ID);
 		boolean isValid = true;
 		AvailValidator tool1 = new AvailValidator(true, iLog);
 		isValid = tool1.process(target, pedigreeMap);

@@ -71,6 +71,7 @@ public class Translator {
 	 * Identifies what a given Avail format may be translated <b>to</b>.
 	 */
 	private static Map<FILE_FMT, List<FILE_FMT>> supported = new HashMap<FILE_FMT, List<FILE_FMT>>();
+	private static MddfTarget curTarget;
 
 	static {
 		/* identify what a given format may be translated TO */
@@ -179,7 +180,7 @@ public class Translator {
 	 * Convert an Avails file to other formats and save the translations to the
 	 * local file system.
 	 * 
-	 * @param input
+	 * @param inputTarget
 	 * @param xportFmts
 	 * @param exportDir
 	 * @param outFileName
@@ -188,17 +189,17 @@ public class Translator {
 	 * @return
 	 * @throws UnsupportedOperationException
 	 */
-	public static int translateAvails(MddfTarget input, EnumSet<FILE_FMT> xportFmts, File exportDir, String outFileName,
-			boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
+	public static int translateAvails(MddfTarget inputTarget, EnumSet<FILE_FMT> xportFmts, File exportDir,
+			String outFileName, boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
 		String dirPath = exportDir.getAbsolutePath();
-		return translateAvails(input, xportFmts, dirPath, outFileName, appendVersion, logMgr);
+		return translateAvails(inputTarget, xportFmts, dirPath, outFileName, appendVersion, logMgr);
 	}
 
 	/**
 	 * Convert an Avails file to other formats and save the translations to the
 	 * local file system.
 	 * 
-	 * @param input
+	 * @param inputTarget
 	 * @param selections
 	 * @param dirPath
 	 * @param outFileName
@@ -207,15 +208,16 @@ public class Translator {
 	 * @return
 	 * @throws UnsupportedOperationException
 	 */
-	public static int translateAvails(MddfTarget input, EnumSet<FILE_FMT> selections, String dirPath,
+	public static int translateAvails(MddfTarget inputTarget, EnumSet<FILE_FMT> selections, String dirPath,
 			String outFileName, boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
+		curTarget = inputTarget;
 		Iterator<FILE_FMT> selIt = selections.iterator();
 		int outputCnt = 0;
 		while (selIt.hasNext()) {
 			FILE_FMT targetFmt = selIt.next();
 			try {
 				if (targetFmt.getEncoding().equalsIgnoreCase("xlsx")) {
-					TemplateWorkBook wrkBook = convertToExcel(input, targetFmt, null, null, false, logMgr);
+					TemplateWorkBook wrkBook = convertToExcel(inputTarget, targetFmt, null, null, false, logMgr);
 					if (wrkBook != null) {
 						String fileName = outFileName;
 						fileName = fileName.replaceFirst("(?i)\\.xlsx$", "");
@@ -228,14 +230,14 @@ public class Translator {
 						try {
 							wrkBook.export(exported.getPath());
 							logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
-									"Saved translated file as " + exported.getPath(), input.getSrcFile(), moduleId);
+									"Saved translated file as " + exported.getPath(), inputTarget, moduleId);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					}
 					outputCnt++;
 				} else {
-					Document targetDoc = convertToXml(input, targetFmt, logMgr);
+					Document targetDoc = convertToXml(inputTarget, targetFmt, logMgr);
 					if (targetDoc != null) {
 						// did it work? if so, write to file system.
 						if (targetDoc != null) {
@@ -250,7 +252,7 @@ public class Translator {
 							// Save as XML
 							if (XmlIngester.writeXml(exported, targetDoc)) {
 								logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
-										"Saved translated file as " + exported.getPath(), input.getSrcFile(), moduleId);
+										"Saved translated file as " + exported.getPath(), inputTarget, moduleId);
 								outputCnt++;
 							}
 						}
@@ -258,27 +260,29 @@ public class Translator {
 				}
 			} catch (Exception e) {
 				if (e instanceof UnsupportedOperationException) {
-					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, e.getMessage(), input.getSrcFile(), moduleId);
+					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, e.getMessage(), inputTarget, moduleId);
 				} else {
 					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, "Exception while translating: " + e.getMessage(),
-							input.getSrcFile(), moduleId);
+							inputTarget, moduleId);
 					e.printStackTrace();
 				}
 			}
 		}
+		curTarget = null;
 		return outputCnt;
 	}
 
 	/**
 	 * Convert an Avails file to other formats
 	 * 
-	 * @param input
+	 * @param inputTarget
 	 * @param selections
 	 * @param logMgr
 	 * @return
 	 */
-	public static Map<FILE_FMT, Object> translateAvails(MddfTarget input, EnumSet<FILE_FMT> selections,
+	public static Map<FILE_FMT, Object> translateAvails(MddfTarget inputTarget, EnumSet<FILE_FMT> selections,
 			LogMgmt logMgr) {
+		curTarget = inputTarget;
 		HashMap<FILE_FMT, Object> resultMap = new HashMap<FILE_FMT, Object>();
 		Iterator<FILE_FMT> selIt = selections.iterator();
 		while (selIt.hasNext()) {
@@ -286,23 +290,24 @@ public class Translator {
 			try {
 				if (targetFmt.getEncoding().equalsIgnoreCase("xlsx")) {
 					// convert but don't save
-					TemplateWorkBook wrkBook = convertToExcel(input, targetFmt, null, null, false, logMgr);
+					TemplateWorkBook wrkBook = convertToExcel(inputTarget, targetFmt, null, null, false, logMgr);
 					resultMap.put(targetFmt, wrkBook);
 
 				} else {
-					Document targetDoc = convertToXml(input, targetFmt, logMgr);
+					Document targetDoc = convertToXml(inputTarget, targetFmt, logMgr);
 					resultMap.put(targetFmt, targetDoc);
 				}
 			} catch (Exception e) {
 				if (e instanceof UnsupportedOperationException) {
-					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, e.getMessage(), input.getSrcFile(), moduleId);
+					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, e.getMessage(), inputTarget, moduleId);
 				} else {
 					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, "Exception while translating: " + e.getMessage(),
-							input.getSrcFile(), moduleId);
+							inputTarget, moduleId);
 					e.printStackTrace();
 				}
 			}
 		}
+		curTarget = null;
 		return resultMap;
 	}
 
@@ -316,9 +321,9 @@ public class Translator {
 	 * @param logMgr
 	 * @return
 	 */
-	private static Document convertToXml(MddfTarget input, FILE_FMT targetFmt, LogMgmt logMgr)
+	private static Document convertToXml(MddfTarget inputTarget, FILE_FMT targetFmt, LogMgmt logMgr)
 			throws UnsupportedOperationException {
-		Document inputDoc = input.getXmlDoc();
+		Document inputDoc = inputTarget.getXmlDoc();
 		Document outputDoc = null;
 		/*
 		 * what's the schema used for the existing XML representation? It may already be
@@ -328,8 +333,7 @@ public class Translator {
 		FILE_FMT curFmt = MddfContext.identifyMddfFormat("avails", curVersion);
 		String targetVersion = targetFmt.getVersion();
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
-				"Translating to XML v" + targetFmt.getVersion() + " from XML v" + curVersion, input.getSrcFile(),
-				moduleId);
+				"Translating to XML v" + targetFmt.getVersion() + " from XML v" + curVersion, inputTarget, moduleId);
 		if (curVersion.equals(targetVersion)) {
 			return inputDoc;
 		} else {
@@ -476,7 +480,7 @@ public class Translator {
 	/**
 	 * Handle conversion of an XML formatted Avails to an Excel formated Avails.
 	 * 
-	 * @param xmlSrcDoc
+	 * @param inputTarget
 	 * @param targetXlsxFormat
 	 * @param dirPath
 	 * @param outFileName
@@ -485,16 +489,15 @@ public class Translator {
 	 * @return
 	 * @throws UnsupportedOperationException
 	 */
-	private static TemplateWorkBook convertToExcel(MddfTarget input, FILE_FMT targetXlsxFormat, String dirPath,
+	private static TemplateWorkBook convertToExcel(MddfTarget inputTarget, FILE_FMT targetXlsxFormat, String dirPath,
 			String outFileName, boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
 		Document xmlDoc = null;
-		Document xmlSrcDoc = input.getXmlDoc();
+		Document xmlSrcDoc = inputTarget.getXmlDoc();
 		String curVersion = XmlIngester.identifyXsdVersion(xmlSrcDoc.getRootElement());
 		FILE_FMT curFmt = MddfContext.identifyMddfFormat("avails", curVersion);
 		Version excelVer = null;
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
-				"Translating to Excel v" + targetXlsxFormat.getVersion() + " from XML v" + curVersion,
-				input.getSrcFile(), moduleId);
+		String msg = "Translating to Excel v" + targetXlsxFormat.getVersion() + " from XML v" + curVersion;
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, msg, inputTarget, moduleId);
 		FILE_FMT targetXmlFmt = null;
 		switch (targetXlsxFormat) {
 		case AVAILS_1_6:
@@ -705,7 +708,7 @@ public class Translator {
 		}
 		if (!removalList.isEmpty()) {
 			String msg = "Removing " + removalList.size() + " People elements";
-			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, null, null, "Translator");
+			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
 		}
 
 		targetPath = "//avails:GroupingEntity";
@@ -715,8 +718,8 @@ public class Translator {
 			targetEl.detach();
 		}
 		if (!removalList.isEmpty()) {
-			String msg = "Removing " + removalList.size() + " GroupingEntity elements";
-			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, null, null, "Translator");
+			String msg = "Removing " + removalList.size() + " GroupingEntity elements"; 
+			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
 		}
 
 		targetPath = "//avails:Transaction/avails:Duration";
@@ -726,8 +729,8 @@ public class Translator {
 			targetEl.detach();
 		}
 		if (!removalList.isEmpty()) {
-			String msg = "Removing " + removalList.size() + " Transaction/Duration elements";
-			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, null, null, "Translator");
+			String msg = "Removing " + removalList.size() + " Transaction/Duration elements"; 
+			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
 		}
 
 		targetPath = "/avails:AvailList/avails:Avail[@updateNum]";
@@ -786,8 +789,8 @@ public class Translator {
 		}
 		if (removedCnt > 0) {
 			String msg = "Removing " + removedCnt + " " + thing1 + " elements (max allowed exceeded)";
-			String details = "Only 1 " + thing1 + " allowed per Asset";
-			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, details, null, "Translator");
+			String details = "Only 1 " + thing1 + " allowed per Asset"; 
+			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, null, moduleId, details, null);
 		}
 
 		removedCnt = 0;
@@ -805,8 +808,8 @@ public class Translator {
 		}
 		if (removedCnt > 0) {
 			String msg = "Removing " + removedCnt + " " + thing2 + " elements (max allowed exceeded)";
-			String details = "Only 1 " + thing2 + " allowed per Asset";
-			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, details, null, "Translator");
+			String details = "Only 1 " + thing2 + " allowed per Asset"; 
+			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, null, moduleId, details, null);
 		}
 		// now remove @language and @region from any remaining
 		targetPath = "//avails:" + thing1 + "[@region]";
@@ -837,8 +840,8 @@ public class Translator {
 			targetEl.detach();
 		}
 		if (!removalList.isEmpty()) {
-			String msg = "Removing " + removalList.size() + " Licensee elements";
-			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, null, null, "Translator");
+			String msg = "Removing " + removalList.size() + " Licensee elements"; 
+			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, null, moduleId, null, null);
 		}
 
 		/*
@@ -861,8 +864,8 @@ public class Translator {
 			targetEl.detach();
 		}
 		if (!removalList.isEmpty()) {
-			String msg = "Removing " + removalList.size() + " unsupported Terms";
-			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, null, null, "Translator");
+			String msg = "Removing " + removalList.size() + " unsupported Terms"; 
+			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, null, moduleId, null, null);
 		}
 		return xmlDocOut;
 	}
@@ -942,8 +945,8 @@ public class Translator {
 				msg = "Removing " + attDesc + " from " + hitCnt + " elements.";
 			} else {
 				msg = "Removing " + attDesc + " from " + hitCnt + " " + targetDesc + " elements.";
-			}
-			logMgr.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_NOTICE, null, msg, null, null, "Translator");
+			} 
+			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, null, moduleId, null, null);
 		}
 		return hitCnt;
 	}

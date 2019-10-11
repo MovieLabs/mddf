@@ -100,7 +100,7 @@ public class ManifestValidator extends CMValidator {
 	 */
 	public boolean process(MddfTarget target) throws IOException, JDOMException {
 		curFile = target.getSrcFile();
-		loggingMgr.pushFileContext(curFile, true);
+		loggingMgr.pushFileContext(target);
 		String schemaVer = identifyXsdVersion(target);
 		setManifestVersion(schemaVer);
 		rootNS = manifestNSpace;
@@ -108,20 +108,20 @@ public class ManifestValidator extends CMValidator {
 		curFileName = curFile.getName();
 		curFileIsValid = true;
 		curRootEl = null;
-		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Schema Version " + schemaVer, curFile,
+		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Schema Version " + schemaVer, curTarget,
 				logMsgSrcId);
 
 		validateXml(target);
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
-			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
-			loggingMgr.popFileContext(curFile);
+			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curTarget, logMsgSrcId);
+			loggingMgr.popFileContext(target);
 			return false;
 		}
 
 		curRootEl = target.getXmlDoc().getRootElement();
 		String msg = "Schema validation check PASSED";
-		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
+		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, curTarget, logMsgSrcId);
 
 		initializeIdChecks();
 		validateLocations();
@@ -129,7 +129,7 @@ public class ManifestValidator extends CMValidator {
 			validateConstraints();
 			validateXrefs();
 		}
-		loggingMgr.popFileContext(curFile);
+		loggingMgr.popFileContext(target);
 		return curFileIsValid;
 	}
 
@@ -234,9 +234,10 @@ public class ManifestValidator extends CMValidator {
 			return;
 
 		}
+		MddfTarget mecTarget = null;
 		try {
-			LogEntryFolder mecFolder = loggingMgr.pushFileContext(mecFile, true);
-			MddfTarget mecTarget = new MddfTarget(curTarget, mecFile, loggingMgr);
+			mecTarget = new MddfTarget(curTarget, mecFile, loggingMgr);
+			LogEntryFolder mecFolder = loggingMgr.pushFileContext(mecTarget);
 			boolean validMec = mecTool.process(mecTarget);
 			if (validMec) {
 				supportingMECs.put(mecTarget, mecFolder);
@@ -249,7 +250,9 @@ public class ManifestValidator extends CMValidator {
 			LogReference srcRef = LogReference.getRef("MMM", "mmm_locType");
 			logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_ERR, clocEl, errMsg, details, srcRef, logMsgSrcId);
 		} finally {
-			loggingMgr.popFileContext(mecFile);
+			if (mecTarget != null) {
+				loggingMgr.popFileContext(mecTarget);
+			}
 		}
 	}
 
@@ -257,7 +260,7 @@ public class ManifestValidator extends CMValidator {
 	 * Validate everything that is not fully specified via the XSD.
 	 */
 	protected void validateConstraints() {
-		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, "Validating constraints", curFile, LOGMSG_ID);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, "Validating constraints", curTarget, LOGMSG_ID);
 		super.validateConstraints();
 
 		SchemaWrapper targetSchema = SchemaWrapper.factory("manifest-v" + MAN_VER);
@@ -437,7 +440,7 @@ public class ManifestValidator extends CMValidator {
 		JSONObject manifestVocab = (JSONObject) getVocabResource("manifest", vocabVer);
 		if (manifestVocab == null) {
 			String msg = "Unable to validate controlled vocab: missing resource file vocab_manifest_v" + vocabVer;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curTarget, logMsgSrcId);
 			curFileIsValid = false;
 			return;
 		}
@@ -483,7 +486,7 @@ public class ManifestValidator extends CMValidator {
 			JSONObject cmVocab = (JSONObject) getVocabResource("cm", CM_VER);
 			if (cmVocab == null) {
 				String msg = "Unable to validate controlled vocab: missing resource file";
-				loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
+				loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curTarget, logMsgSrcId);
 				curFileIsValid = false;
 				return;
 			}
@@ -575,7 +578,7 @@ public class ManifestValidator extends CMValidator {
 		default:
 			// Not supported for the version
 			String msg = "Unable to process; missing structure definitions for Manifest v" + MAN_VER;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curTarget, logMsgSrcId);
 			return;
 		}
 
@@ -583,7 +586,7 @@ public class ManifestValidator extends CMValidator {
 		if (structDefs == null) {
 			// LOG a FATAL problem.
 			String msg = "Unable to process; missing structure definitions for Manifest v" + MAN_VER;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curTarget, logMsgSrcId);
 			return;
 		}
 
@@ -594,7 +597,7 @@ public class ManifestValidator extends CMValidator {
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
 			// NOTE: This block of code requires a 'targetPath' be defined
 			if (rqmtSpec.has("targetPath")) {
-				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, "Structure check; key= " + key, curFile,
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MANIFEST, "Structure check; key= " + key, curTarget,
 						logMsgSrcId);
 				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, getSupportingMECs())
 						&& curFileIsValid;

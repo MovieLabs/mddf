@@ -142,7 +142,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		super.process(target);
 		if (!curFileIsValid) {
 			String msg = "CPE validation terminated.. file is not a valid Media Manifest";
-			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curTarget, logMsgSrcId);
 			return curFileIsValid;
 		}
 		/*
@@ -160,7 +160,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		}
 		if (!curFileIsValid) {
 			String msg = "CPE validation terminated prior to Profile Validation.. file is not a valid CPE Manifest";
-			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curTarget, logMsgSrcId);
 			return curFileIsValid;
 		}
 		switch (profileId) {
@@ -174,13 +174,13 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 			break;
 		case "IP-01":
 			String msg = "Profile ID 'IP-01' has been deprecated. 'IP-1' should be used instead.";
-			loggingMgr.log(LogMgmt.LEV_WARN, logMsgDefaultTag, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_WARN, logMsgDefaultTag, msg, curTarget, logMsgSrcId);
 		case "IP-1":
 			profileIP1Val.validateInfoModel(infoModel);
 			break;
 		default:
 			msg = "Unrecognized CPE Profile '" + profileId + "'";
-			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, curTarget, logMsgSrcId);
 			return false;
 		}
 		return curFileIsValid;
@@ -190,7 +190,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 	 * Validate everything that is not fully specified via the XSD.
 	 */
 	protected void validateConstraints() {
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints", curFile, LOGMSG_ID);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints", curTarget, LOGMSG_ID);
 		/*
 		 * Start with constraints defined for all Media Manifest files.
 		 */
@@ -214,7 +214,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		if (structDefs == null) {
 			// LOG a FATAL problem.
 			String msg = "Unable to process; missing CPE structure definitions " + cur_cpe_struc_defs;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MODEL, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MODEL, msg, curTarget, logMsgSrcId);
 			return;
 		}
 
@@ -225,7 +225,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
 			// NOTE: This block of code requires a 'targetPath' be defined
 			if (rqmtSpec.has("targetPath")) {
-				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MODEL, "Structure check; key= " + key, curFile,
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MODEL, "Structure check; key= " + key, curTarget,
 						logMsgSrcId);
 				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null) && curFileIsValid;
 			}
@@ -452,7 +452,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		List<Element> primaryExpSet = extractAlidMap(curRootEl);
 		if (primaryExpSet == null || (primaryExpSet.isEmpty())) {
 			String msg = "Terminating Model validation due to empty or missing ALIDExperienceMaps";
-			loggingMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_MODEL, msg, curFile, LOGMSG_ID);
+			loggingMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_MODEL, msg, curTarget, LOGMSG_ID);
 			curFileIsValid = false;
 			return infoModel;
 		}

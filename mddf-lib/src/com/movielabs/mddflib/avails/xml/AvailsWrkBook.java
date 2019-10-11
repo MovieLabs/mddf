@@ -35,10 +35,6 @@ import java.util.*;
 
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jdom2.Document;
@@ -47,6 +43,8 @@ import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.Translator;
+import com.movielabs.mddflib.util.xml.InterimMddfTarget;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * Wrapper for an Excel spreadsheet file comprising multiple individual sheets,
@@ -56,6 +54,8 @@ import com.movielabs.mddflib.util.Translator;
  * used when programmatically constructing an Avails (e.g. when converting an
  * XML-formatted Avails to the XLSX format).
  * 
+ * @deprecated StreamingXmlBuilder provides better memory utilization and
+ *             support for large Avails
  * 
  */
 public class AvailsWrkBook {
@@ -93,8 +93,6 @@ public class AvailsWrkBook {
 	 * @param inStream
 	 * @param logMgr
 	 * @return a Map&lt;String, Object&gt;
-	 * @deprecated StreamingXmlBuilder provides better memory utilization and
-	 *             support for large Avails
 	 */
 	public static Map<String, Object> convertSpreadsheet(File xslxFile, Version xlsxVersion, InputStream inStream,
 			LogMgmt logMgr) {
@@ -108,6 +106,17 @@ public class AvailsWrkBook {
 
 	public static Map<String, Object> mapToXml(AvailsSheet sheet, File xslxFile, Version xlsxVersion,
 			String description, LogMgmt logMgr) {
+
+		// needed for logging....
+		MddfTarget target;
+		try {
+			target = new InterimMddfTarget(xslxFile, logMgr);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		}
+
 		Version unknown = AvailsSheet.Version.valueOf("UNK");
 		if (xlsxVersion == null) {
 			xlsxVersion = unknown;
@@ -122,14 +131,14 @@ public class AvailsWrkBook {
 				// ERROR
 				String msg = "XLSX was identified as using " + xlsxVersion.name() + " but appears to be "
 						+ inferredVer.name();
-				logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, xslxFile, logMsgSrcId);
+				logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, target, logMsgSrcId);
 				return null;
 			}
 		}
 		// if still UNKNOWN we can't proceed
 		if (xlsxVersion.equals(unknown)) {
 			String msg = "Avails schema version MUST be provided for this file";
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, xslxFile, logMsgSrcId);
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, target, logMsgSrcId);
 			return null;
 		}
 		sheet.setVersion(xlsxVersion);
@@ -160,18 +169,17 @@ public class AvailsWrkBook {
 			break;
 		case V1_6:
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
-					"Version " + xlsxVersion + " has been deprecated and is no longer supported", xslxFile,
-					logMsgSrcId);
+					"Version " + xlsxVersion + " has been deprecated and is no longer supported", target, logMsgSrcId);
 			return null;
 		case UNK:
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", xslxFile, logMsgSrcId);
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", target, logMsgSrcId);
 			break;
 		default:
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported template version " + xlsxVersion, xslxFile,
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported template version " + xlsxVersion, target,
 					logMsgSrcId);
 			return null;
 		}
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + xlsxVersion + " format", xslxFile,
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + xlsxVersion + " format", target,
 				logMsgSrcId);
 		try {
 			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(sheet, description, xslxFile);
@@ -198,7 +206,18 @@ public class AvailsWrkBook {
 
 	public static AvailsSheet loadWorkBook(File xslxFile, LogMgmt logMgr, InputStream inStream, int sheetNum) {
 		boolean autoCorrect = false;
-		boolean exitOnError = false;
+		boolean exitOnError = false; 
+		InterimMddfTarget mddfTarget = null;
+		try {
+			mddfTarget = new InterimMddfTarget(xslxFile,  logMgr);
+		} catch (FileNotFoundException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found: " + xslxFile.getAbsolutePath(), mddfTarget,
+					logMsgSrcId);
+			return null;
+		}
+		
 		AvailsWrkBook wrkBook;
 		try {
 			if (inStream == null) {
@@ -206,15 +225,15 @@ public class AvailsWrkBook {
 			}
 			wrkBook = new AvailsWrkBook(inStream, xslxFile, logMgr, exitOnError, autoCorrect);
 		} catch (FileNotFoundException e1) {
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found: " + xslxFile.getAbsolutePath(), xslxFile,
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found: " + xslxFile.getAbsolutePath(), mddfTarget,
 					logMsgSrcId);
 			return null;
 		} catch (POIXMLException e1) {
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
-					"Unable to parse XLSX. Check for comments or embedded objects.", xslxFile, logMsgSrcId);
+					"Unable to parse XLSX. Check for comments or embedded objects.", mddfTarget, logMsgSrcId);
 			return null;
 		} catch (IOException e1) {
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", xslxFile, logMsgSrcId);
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", mddfTarget, logMsgSrcId);
 			return null;
 		}
 		AvailsSheet sheet;
@@ -300,6 +319,8 @@ public class AvailsWrkBook {
 	 * @param exitOnError true if validation errors should cause immediate failure
 	 * @param cleanupData true if minor validation errors should be auto-corrected
 	 * @throws IOException
+	 * @deprecated StreamingXmlBuilder provides better memory utilization and
+	 *             support for large Avails
 	 */
 	public AvailsWrkBook(InputStream inStream, File file, LogMgmt logger, boolean exitOnError, boolean cleanupData)
 			throws IOException {
@@ -321,6 +342,8 @@ public class AvailsWrkBook {
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 * @throws InvalidFormatException
+	 * @deprecated StreamingXmlBuilder provides better memory utilization and
+	 *             support for large Avails
 	 */
 	public AvailsWrkBook(File file, LogMgmt logger, boolean exitOnError, boolean cleanupData)
 			throws FileNotFoundException, IOException, POIXMLException, InvalidFormatException {

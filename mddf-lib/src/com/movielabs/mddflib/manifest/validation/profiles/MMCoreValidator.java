@@ -117,14 +117,13 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		return pucList;
 	}
 
-	public boolean process(MddfTarget target, String profileId )
-			throws JDOMException, IOException {
+	public boolean process(MddfTarget target, String profileId) throws JDOMException, IOException {
 		super.process(target);
-		loggingMgr.pushFileContext(curFile, false);
+		loggingMgr.pushFileContext(target);
 		if (curFileIsValid) {
 			validateProfileConstraints();
 		}
-		loggingMgr.popFileContext(curFile);
+		loggingMgr.popFileContext(target);
 		return curFileIsValid;
 	}
 
@@ -155,7 +154,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 			String msg = "Unrecognized MMC profile";
 			String details = profile + " is not a recognized MMC Profile";
 			LogReference srcRef = LogReference.getRef("MMC", "mmc01");
-			loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, profileEl, msg, details, srcRef, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, curTarget, profileEl, logMsgSrcId, details, srcRef);
 			curFileIsValid = false;
 			return;
 		}
@@ -166,7 +165,7 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		if (structDefs == null) {
 			// LOG a FATAL problem.
 			String msg = "Unable to process; missing structure definitions for MMC Profile " + structVer;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_PROFILE, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_PROFILE, msg, curTarget, logMsgSrcId);
 			return;
 		}
 		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
@@ -176,9 +175,10 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
 			// NOTE: This block of code requires a 'targetPath' be defined
 			if (rqmtSpec.has("targetPath")) {
-				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_PROFILE, "Structure check; key= " + key, curFile,
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_PROFILE, "Structure check; key= " + key, curTarget,
 						logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec,curTarget,  getSupportingMECs()) && curFileIsValid;
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, getSupportingMECs())
+						&& curFileIsValid;
 			}
 		}
 		// --------------------------------------------------------------------------
@@ -204,23 +204,24 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 			 * have a hierarchical tree-like structure) we keep track of how many
 			 * ExperienceIDs are NOT referenced w/in an ExperienceChild.
 			 */
-			String expId = expEl.getAttributeValue("ExperienceID").trim(); 
+			String expId = expEl.getAttributeValue("ExperienceID").trim();
 			String targetXPath = "./manifest:Experience/manifest:ExperienceChild/manifest:ExperienceID[.='" + expId
 					+ "']";
-			XPathExpression<Element> xpExpression2 = xpfac.compile(targetXPath, Filters.element(), null, manifestNSpace);
+			XPathExpression<Element> xpExpression2 = xpfac.compile(targetXPath, Filters.element(), null,
+					manifestNSpace);
 			List<Element> targetEl = xpExpression2.evaluate(expSetEl);
 			if (targetEl.isEmpty()) {
 				rootExpCount++;
 			}
- 
+
 		}
 		if (rootExpCount > 1) {
-			String msg = "Only one root Experience is allowed";
-			loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, expSetEl, msg, null, srcRef, logMsgSrcId);
+			String msg = "Only one root Experience is allowed"; 
+			loggingMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_PROFILE, msg, curTarget, logMsgSrcId);
 			curFileIsValid = false;
 		} else if (rootExpCount < 1) {
-			String msg = "Root Experience not found";
-			loggingMgr.logIssue(logMsgDefaultTag, LogMgmt.LEV_ERR, expSetEl, msg, null, srcRef, logMsgSrcId);
+			String msg = "Root Experience not found"; 
+			loggingMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_PROFILE, msg, curTarget, logMsgSrcId);
 			curFileIsValid = false;
 		}
 	}
@@ -236,5 +237,5 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		this.loggingMgr = logMgr;
 
 	}
-	 
+
 }

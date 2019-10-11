@@ -25,6 +25,11 @@ package com.movielabs.mddflib.logging;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.jdom2.located.Located;
+
+import com.movielabs.mddflib.util.xml.MddfTarget;
+
 /**
  * @author L. Levin, Critical Architectures LLC
  *
@@ -59,57 +64,37 @@ public interface LogMgmt extends IssueLogger {
 	public static final int TAG_XLSX = 11;
 	public static final int TAG_XLATE = 12;
 
+	public static final String DEFAULT_TOOL_FOLDER_KEY = "%VALIDATOR";
+	public static final String DEFAULT_TOOL_FOLDER_LABEL = "Validator";
+	public static final String KEY_SEP = "<--";
+
 	/**
 	 * @param lev
 	 * @param tag
 	 * @param msg
-	 * @param curFile
+	 * @param targetFile
 	 * @param moduleId
 	 */
-	void log(int lev, int tag, String msg, File curFile, String moduleId);
+	void log(int lev, int tag, String msg, MddfTarget targetFile, String moduleId);
 
 	/**
 	 * @param level
 	 * @param tag
 	 * @param msg
-	 * @param file
-	 * @param lineNumber
+	 * @param targetFile
+	 * @param targetData may be a XML Element, an XLSX cell, or <tt>null</tt>
 	 * @param moduleId
 	 * @param details
 	 * @param srcRef
 	 */
-	void log(int level, int tag, String msg, File file, int lineNumber, String moduleId, String details,
+	void log(int level, int tag, String msg, MddfTarget targetFile, Object targetData, String moduleId, String details,
 			LogReference srcRef);
-
-	/**
-	 * Log an issue with a specific construct within a file. The <tt>target</tt>
-	 * indicates the construct within the file and should be specified as either
-	 * <ul>
-	 * <li>an JDOM Element within an XML file, or</li>
-	 * <li>a <tt>POI Cell</tt> instance used to identify a cell in an XLSX
-	 * spreadsheet.</li>
-	 * </ul>
-	 * 
-	 * @param tag
-	 * @param level
-	 * @param target
-	 * @param msg
-	 * @param explanation
-	 * @param srcRef
-	 * @param moduleId
-	 */
-//	void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
-//			String moduleId);
 
 	/** 
 	 */
 	public void clearLog();
 
-	/**
-	 * @param targetFile
-	 * @return a <tt>LogEntryFolder</tt>
-	 */
-	public LogEntryFolder getFileFolder(File targetFile);
+	public LogEntryFolder assignFileFolder(MddfTarget target);
 
 	/**
 	 * Save the log messages in the desired location and format.
@@ -127,15 +112,14 @@ public interface LogMgmt extends IssueLogger {
 	 * identified.
 	 * 
 	 * @param srcfile
-	 * @deprecated use <tt>pushFileContext()</tt> and <tt>popFileContext()</tt> 
+	 * @deprecated use <tt>pushFileContext()</tt> and <tt>popFileContext()</tt>
 	 */
 	public void setCurrentFile(File srcfile, boolean clear);
 
+	public abstract LogEntryFolder pushFileContext(MddfTarget targetFile);
 
-	public abstract LogEntryFolder pushFileContext(File targetFile, boolean clear);
+	public abstract void popFileContext(MddfTarget targetFile);
 
-	public abstract void popFileContext(File targetFile);
-	
 	/**
 	 * @param level
 	 */
@@ -179,4 +163,57 @@ public interface LogMgmt extends IssueLogger {
 		}
 		return -1;
 	}
+
+	/**
+	 * Returns the <tt>folderKey</tt> for the targeted file. Key is generated using
+	 * the processing hierarchy indicated by the sequence of 'parent' MddfTargets.
+	 * 
+	 * @param target
+	 * @return
+	 */
+	public static String genFolderKey(MddfTarget target) {
+		String folderKey = null;
+		File targetFile = target.getSrcFile();
+		if (targetFile != null) {
+			folderKey = targetFile.getPath();
+		} else {
+			/* If the targetFile is NULL then put it in the Validator's folder */
+			folderKey = DEFAULT_TOOL_FOLDER_KEY;
+		}
+		MddfTarget parent = target.getParentTarget();
+		while (parent != null) {
+			File parentFile = parent.getSrcFile();
+			if (targetFile != null) {
+				folderKey = folderKey + KEY_SEP + parentFile.getPath();
+				parent = parent.getParentTarget();
+			} else {
+				/* If the targetFile is NULL then put it in the Validator's folder */
+				folderKey = DEFAULT_TOOL_FOLDER_KEY;
+				parent = null;
+			}
+		}
+		return folderKey;
+	}
+
+	public static int resolveLineNumber(Object targetData) {
+		int lineNum = -1;
+		if (targetData != null) {
+			if (targetData instanceof Located) {
+				lineNum = ((Located) targetData).getLine();
+			} else if (targetData instanceof Cell) {
+				/*
+				 * Add 1 to line number for display purposes. Code is zero-based index but Excel
+				 * spreadsheet displays using 1 as the 1st row.
+				 */
+				lineNum = ((Cell) targetData).getRowIndex() + 1;
+				/* Prefix an 'explanation' with column ID (e.g., 'X', 'AA') */
+				int colNum = ((Cell) targetData).getColumnIndex();
+				String prefix = "Column " + LogMgmt.mapColNum(colNum);
+			} else if (targetData instanceof Integer) {
+				lineNum = ((Integer) targetData).intValue();
+			}
+		}
+		return lineNum;
+	}
+
 }

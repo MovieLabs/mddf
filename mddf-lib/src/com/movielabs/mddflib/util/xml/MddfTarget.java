@@ -36,6 +36,7 @@ import org.xml.sax.SAXParseException;
 
 import com.gc.iotools.stream.is.InputStreamFromOutputStream;
 import com.movielabs.mddf.MddfContext.MDDF_TYPE;
+import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogMgmt;
 
 /**
@@ -50,11 +51,12 @@ import com.movielabs.mddflib.logging.LogMgmt;
 public class MddfTarget {
 	private File srcFile;
 	private ReusableInputStream streamSrc;
-	private Document xmlDoc = null;
-	private LogMgmt logMgr;
-	private MDDF_TYPE mddfType;
-	private int logTag;
+	protected Document xmlDoc = null;
+	protected LogMgmt logMgr;
+	protected MDDF_TYPE mddfType;
+	protected int logTag;
 	private MddfTarget parentTarget = null;
+	protected LogEntryFolder logFolder;
 
 	/**
 	 * Construct target where the MDDF source is an XML file on the local file
@@ -109,25 +111,12 @@ public class MddfTarget {
 	 * @param logMgr
 	 */
 	public MddfTarget(File srcFile, Document xmlDoc, LogMgmt logMgr) {
-		this(srcFile, xmlDoc, null, logMgr);
-	}
-
-	/**
-	 * Construct target where the MDDF source is not an XML file (i.e., an
-	 * XLSX-encoded Avails). An XML-formatted translation must therefore be provided
-	 * as an argument to the constructor.
-	 * 
-	 * @param srcFile
-	 * @param xmlDoc
-	 * @param parent
-	 * @param logMgr
-	 */
-	public MddfTarget(File srcFile, Document xmlDoc, MddfTarget parent, LogMgmt logMgr) {
 		super();
 		this.srcFile = srcFile;
 		this.logMgr = logMgr;
 		this.xmlDoc = xmlDoc;
-		this.parentTarget = parent;
+		logTag = LogMgmt.TAG_AVAIL;
+		mddfType = MDDF_TYPE.AVAILS;
 		buildStreamSrc();
 		init();
 	}
@@ -135,7 +124,7 @@ public class MddfTarget {
 	/**
 	 * 
 	 */
-	private void init() {
+	protected void init() {
 		/*
 		 * Identify type of XML file (i.e., Manifest, Avail, etc)
 		 */
@@ -153,7 +142,8 @@ public class MddfTarget {
 		} else {
 			mddfType = null;
 		}
-
+		// ??? do we need to save the folder or the key? Maybe add a getter?
+		logFolder = logMgr.assignFileFolder(this);
 	}
 
 	/**
@@ -200,12 +190,12 @@ public class MddfTarget {
 				int ln = e.getLineNumber();
 				String errMsg = "Invalid XML on or before line " + e.getLineNumber();
 				String supplemental = e.getMessage();
-				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, srcFile, ln, "XML", supplemental, null);
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, this, ln, "XML", supplemental, null);
 				return null;
 			} catch (IOException e) {
 				String errMsg = "Unable to access input source";
 				String supplemental = e.getMessage();
-				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, srcFile, -1, "XML", supplemental, null);
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, this, -1, "XML", supplemental, null);
 				return null;
 			}
 		}
@@ -213,6 +203,8 @@ public class MddfTarget {
 	}
 
 	/**
+	 * Returns the type of MDDF file (i.e., Manifest, Avails, etc.).
+	 * 
 	 * @return the mddfType
 	 */
 	public MDDF_TYPE getMddfType() {
@@ -225,4 +217,23 @@ public class MddfTarget {
 	public int getLogTag() {
 		return logTag;
 	}
+
+	/**
+	 * @return
+	 */
+	public LogEntryFolder getLogFolder() { 
+		return logFolder;
+	}
+
+	public MddfTarget getParentTarget() {
+		return parentTarget;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getKey() {
+		return LogMgmt.genFolderKey(this);
+	}
+
 }

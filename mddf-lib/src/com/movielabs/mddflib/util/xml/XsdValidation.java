@@ -100,7 +100,7 @@ public class XsdValidation {
 		} catch (SAXParseException e1) {
 			String msg = "Unable to process: " + e1.getMessage();
 			msg = msg.replace("schema_reference.4", "");
-			loggingMgr.log(LogMgmt.LEV_FATAL, logMsgDefaultTag, msg, srcFile, -1, moduleId, genericTooltip, null);
+			loggingMgr.log(LogMgmt.LEV_FATAL, logMsgDefaultTag, msg, target, null, moduleId, genericTooltip, null);
 			e1.printStackTrace();
 			return false;
 		} catch (SAXException e1) {
@@ -110,7 +110,7 @@ public class XsdValidation {
 		/*
 		 * Use a custom ErrorHandler for all SAXParseExceptions
 		 */
-		XsdErrorHandler errHandler = new XsdErrorHandler(srcFile);
+		XsdErrorHandler errHandler = new XsdErrorHandler(target);
 		// now do actual validation
 		try {
 			validator = schema.newValidator();
@@ -144,19 +144,19 @@ public class XsdValidation {
 			validator.validate(src);
 		} catch (IOException e) {
 			String msg = "Validation error -::" + getExceptionCause(e);
-			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, srcFile, -1, moduleId, genericTooltip, null);
+			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, target, -1, moduleId, genericTooltip, null);
 			return (false);
 		} catch (SAXException e) {
 			String msg = "Validation error -::" + getExceptionCause(e);
-			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, srcFile, -1, moduleId, genericTooltip, null);
+			loggingMgr.log(LogMgmt.LEV_ERR, logMsgDefaultTag, msg, target, -1, moduleId, genericTooltip, null);
 			return (false);
 		}
 		if (errHandler.errCount == 0) {
-			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "XML is valid", srcFile, -1, moduleId, null, null);
+			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "XML is valid", target, -1, moduleId, null, null);
 			return (true);
 		} else {
 			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Invalid XML, " + errHandler.errCount + " errors found",
-					srcFile, -1, moduleId, null, null);
+					target, -1, moduleId, null, null);
 			return (false);
 		}
 	}
@@ -205,14 +205,14 @@ public class XsdValidation {
 				}
 			}
 			break;
-		case "avails": 
+		case "avails":
 			break;
 		default:
 			break;
 		}
 		String xsdFile = XsdValidation.defaultRsrcLoc + mddfType + "-v" + xsdVer + ".xsd";
 
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Assigned XSD file " + xsdFile, target.getSrcFile(), -1,
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Assigned XSD file " + xsdFile, target, -1,
 				"XsdValidation", null, null);
 
 		URL xsdUrl = getClass().getClassLoader().getResource(xsdFile);
@@ -250,7 +250,7 @@ public class XsdValidation {
 			if (refSchema == null) {
 				// XML refers to an unknown schema
 				loggingMgr.log(LogMgmt.LEV_FATAL, logMsgDefaultTag, "Use of unsupported Namespace: prefix=" + prefix,
-						target.getSrcFile(), -1, "XsdValidation", null, null);
+						target, -1, "XsdValidation", null, null);
 				status = false;
 				continue;
 			}
@@ -260,7 +260,7 @@ public class XsdValidation {
 			if (!uriInXml.equals(uriInXsd)) {
 				String errMsg = "Invalid URI for Namespace: URI=" + uriInXml;
 				String details = "The URI must exactly match the URI used in the XSD";
-				loggingMgr.log(LogMgmt.LEV_FATAL, logMsgDefaultTag, errMsg, target.getSrcFile(), -1, "XsdValidation",
+				loggingMgr.log(LogMgmt.LEV_FATAL, logMsgDefaultTag, errMsg, target, -1, "XsdValidation",
 						null, null);
 				status = false;
 			}
@@ -302,13 +302,13 @@ public class XsdValidation {
 	 */
 	public class XsdErrorHandler implements ErrorHandler {
 		int errCount = 0;
-		private File srcFile;
+		private MddfTarget target;
 
 		/**
 		 * @param srcFile
 		 */
-		public XsdErrorHandler(File srcFile) {
-			this.srcFile = srcFile;
+		public XsdErrorHandler(MddfTarget target) {
+			this.target = target;
 		}
 
 		@Override
@@ -331,7 +331,7 @@ public class XsdValidation {
 			int lineNumber = exception.getLineNumber();
 			String message = parseSaxMessage(exception);
 			String explanation = "XML at line: " + lineNumber + " does not comply with schema :: " + message;
-			loggingMgr.log(level, LogMgmt.TAG_XSD, message, srcFile, lineNumber, "XsdValidation", explanation, null);
+			loggingMgr.log(level, LogMgmt.TAG_XSD, message, target, lineNumber, "XsdValidation", explanation, null);
 			if (level == LogMgmt.LEV_FATAL) {
 				throw new SAXException(explanation);
 			}

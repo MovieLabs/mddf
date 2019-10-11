@@ -108,19 +108,19 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * @return
 	 */
 	public boolean process(MddfTarget target, Map<Object, Pedigree> pedigreeMap) {
+		curTarget = target;
 		curFile = target.getSrcFile();
-		curLoggingFolder = loggingMgr.pushFileContext(curFile, true);
+		curLoggingFolder = loggingMgr.pushFileContext(target);
 		String msg = "Begining validation of Avails...";
 		
-		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, msg, target.getSrcFile(), logMsgSrcId);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, msg, curTarget, logMsgSrcId);
 
 		availSchemaVer = identifyXsdVersion(target);
 		loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, "Validating using Avails Schema Version " + availSchemaVer,
-				curFile, logMsgSrcId);
+				curTarget, logMsgSrcId);
 		setAvailVersion(availSchemaVer);
 		rootNS = availsNSpace;
 
-		curTarget = target;
 		curRootEl = null;
 		curFileName = curFile.getName();
 		this.pedigreeMap = pedigreeMap;
@@ -129,11 +129,11 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateXml(target);
 		if (!curFileIsValid) {
 			msg = "Schema validation check FAILED";
-			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curTarget, logMsgSrcId);
 		} else {
 			curRootEl = target.getXmlDoc().getRootElement();
 			msg = "Schema validation check PASSED";
-			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, curTarget, logMsgSrcId);
 			if (validateC) {
 				initializeIdChecks();
 				validateConstraints();
@@ -141,7 +141,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		}
 		// clean up and go home
 		this.pedigreeMap = null;
-		loggingMgr.popFileContext(curFile);
+		loggingMgr.popFileContext(target);
 		return curFileIsValid;
 	}
 
@@ -162,7 +162,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * Validate everything that is not fully specified via the XSD.
 	 */
 	protected void validateConstraints() {
-		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.LEV_INFO, "Validating constraints", curFile, LOGMSG_ID);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.LEV_INFO, "Validating constraints", curTarget, LOGMSG_ID);
 		super.validateConstraints();
 
 		SchemaWrapper availSchema = SchemaWrapper.factory("avails-v" + availSchemaVer);
@@ -227,7 +227,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		JSONObject availVocab = (JSONObject) getVocabResource("avail", vocabVer);
 		if (availVocab == null) {
 			String msg = "Unable to validate controlled vocab: missing resource file vocab_avail_v" + vocabVer;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curTarget, logMsgSrcId);
 			curFileIsValid = false;
 			return;
 		}
@@ -324,7 +324,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * schemas.
 	 */
 	protected void validateCMVocab() {
-		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Validating use of controlled vocabulary...", curFile,
+		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Validating use of controlled vocabulary...", curTarget,
 				LOGMSG_ID);
 		Namespace primaryNS = availsNSpace;
 		/*
@@ -336,7 +336,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		JSONObject cmVocab = (JSONObject) getVocabResource("cm", CM_VER);
 		if (cmVocab == null) {
 			String msg = "Unable to validate controlled vocab: missing resource file";
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curTarget, logMsgSrcId);
 			curFileIsValid = false;
 			return;
 		}
@@ -379,17 +379,17 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		default:
 			// LOG a FATAL problem.
 			String msg = "Unable to process; missing structure definitions for Avails v" + availSchemaVer;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curTarget, logMsgSrcId);
 			return;
 		}
 		loggingMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL,
-				"Validating structure using v" + structVer + " requirements", curFile, LOGMSG_ID);
+				"Validating structure using v" + structVer + " requirements", curTarget, LOGMSG_ID);
 
 		JSONObject availStructDefs = XmlIngester.getMddfResource("structure_avail", structVer);
 		if (availStructDefs == null) {
 			// LOG a FATAL problem.
 			String msg = "Unable to process; missing structure definitions for Avails v" + availSchemaVer;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, msg, curTarget, logMsgSrcId);
 			return;
 		}
 
@@ -400,7 +400,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
 			// NOTE: This block of code requires a 'targetPath' be defined
 			if (rqmtSpec.has("targetPath")) {
-				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Structure check; key= " + key, curFile,
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Structure check; key= " + key, curTarget,
 						logMsgSrcId);
 				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null) && curFileIsValid;
 			}

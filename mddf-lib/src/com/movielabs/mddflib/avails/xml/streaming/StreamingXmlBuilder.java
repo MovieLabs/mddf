@@ -23,6 +23,7 @@
 package com.movielabs.mddflib.avails.xml.streaming;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook.RESULT_STATUS;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.FormatConverter;
+import com.movielabs.mddflib.util.xml.InterimMddfTarget;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 
 /**
@@ -377,6 +379,13 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 	 */
 	public Map<String, Object> convert(File srcXslxFile, InputStream inStream, int sheetNum, String shortDesc)
 			throws IllegalStateException {
+		InterimMddfTarget mddfTarget = null;
+		try {
+			mddfTarget = new InterimMddfTarget(srcXslxFile,  logger);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Map<String, Object> results = new HashMap<String, Object>();
 		FILE_FMT srcMddfFmt = null;
 		switch (templateVersion) {
@@ -394,18 +403,18 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 			break;
 		case V1_6:
 			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
-					"Version " + templateVersion + " has been deprecated and is no longer supported", srcXslxFile,
+					"Version " + templateVersion + " has been deprecated and is no longer supported", mddfTarget,
 					moduleId);
 			return null;
 		case UNK:
-			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", srcXslxFile, moduleId);
+			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unable to identify XLSX format ", mddfTarget, moduleId);
 			break;
 		default:
 			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported template version " + templateVersion,
-					srcXslxFile, moduleId);
+					mddfTarget, moduleId);
 			return null;
 		}
-		Document xmlDoc = makeXmlAsJDom(srcXslxFile, inStream, 0, shortDesc);
+		Document xmlDoc = makeXmlAsJDom(mddfTarget, inStream, 0, shortDesc);
 		results.put("xlsx", srcXslxFile);
 		results.put("xml", xmlDoc);
 		results.put("pedigree", pedigreeMap);
@@ -421,10 +430,10 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 	 * @return
 	 * @throws IllegalStateException
 	 */
-	private Document makeXmlAsJDom(File srcXslxFile, InputStream inStream, int sheetNum, String shortDesc)
+	private Document makeXmlAsJDom(InterimMddfTarget mddfTarget ,InputStream inStream, int sheetNum, String shortDesc)
 			throws IllegalStateException {
 		this.shortDesc = shortDesc;
-		this.curSrcXslxFile = srcXslxFile;
+		this.curSrcXslxFile = mddfTarget.getSrcFile();
 		if (xsdVersion == null) {
 			String msg = "Unable to generate XML from XLSX: XSD version was not set or is unsupported.";
 			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, msg, null, moduleId);
@@ -442,9 +451,9 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		 * ingested an entire row,.
 		 */
 		try {
-			OPCPackage xlsxPackage = null;
+			OPCPackage xlsxPackage = null; 
 			if (inStream == null) {
-				xlsxPackage = OPCPackage.open(srcXslxFile.getPath(), PackageAccess.READ);
+				xlsxPackage = OPCPackage.open(curSrcXslxFile.getPath(), PackageAccess.READ);
 			} else {
 				xlsxPackage = OPCPackage.open(inStream);
 			}
@@ -482,7 +491,7 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 
 		finalizeDocument(doc, templateVersion);
 		String msg = "Completed ingesting XLSX file";
-		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
+		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, msg, mddfTarget, moduleId);
 		/*
 		 * re-set the interim structures to facilitate garbage collection
 		 */

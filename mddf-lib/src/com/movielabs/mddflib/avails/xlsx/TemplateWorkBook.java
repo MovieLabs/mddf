@@ -48,6 +48,7 @@ import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.util.xml.InterimMddfTarget;
 
 import net.sf.json.JSONObject;
 
@@ -140,7 +141,8 @@ public class TemplateWorkBook {
 				if (rowHelper != null) {
 					clone.addDataRow(rowHelper, clonedSheet);
 				} else {
-					log.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported XLSX version", srcFile, logMsgSrcId);
+					InterimMddfTarget target4log = new InterimMddfTarget(srcFile, log);
+					log.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported XLSX version", target4log, logMsgSrcId);
 					break rowLoop;
 				}
 			}

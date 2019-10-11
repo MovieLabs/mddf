@@ -21,7 +21,6 @@
  */
 package com.movielabs.mddflib.logging;
 
-import java.io.File;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.message.EntryMessage;
@@ -29,6 +28,8 @@ import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.MessageFactory;
 import org.apache.logging.log4j.util.MessageSupplier;
 import org.apache.logging.log4j.util.Supplier;
+
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * @author L. Levin, Critical Architectures LLC
@@ -39,17 +40,17 @@ public class Log4jAdapter implements org.apache.logging.log4j.Logger {
 	private LogMgmt toolLog;
 	private int tag;
 	private String moduleID;
-	private File file;
+	private MddfTarget curTarget;
 
 	public Log4jAdapter(LogMgmt toolLog, int tag, String moduleID) {
 		this.toolLog = toolLog;
 		this.tag = tag;
 		this.moduleID = moduleID;
-		this.file = null;
+		this.curTarget = null;
 	}
 
-	public void setFile(File currentFile) {
-		this.file = currentFile;
+	public void setTargetFile(MddfTarget file) {
+		this.curTarget = file;
 	}
 
 	/*
@@ -118,13 +119,13 @@ public class Log4jAdapter implements org.apache.logging.log4j.Logger {
 			try {
 				String rowS = parts[0].replaceFirst("Row[\\s]+", "");
 				row = Integer.parseInt(rowS);
-				toolLog.log(level, tag, msg, file, row, moduleID, null, null);
+				toolLog.log(level, tag, msg, curTarget, row, moduleID, null, null);
 				return;
 			} catch (Exception e) {
 				System.out.println(e.getLocalizedMessage() + ", Parsing '" + msg + "'");
 			}
 		}
-		toolLog.log(level, tag, msg, file, 0, moduleID, null, null);
+		toolLog.log(level, tag, msg, curTarget, null, moduleID, null, null);
 
 	}
 

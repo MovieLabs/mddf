@@ -38,6 +38,7 @@ import com.movielabs.mddflib.logging.DefaultLogging;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * Logger that facilitates JUnit testing by providing <tt>getCountForXYZ()</tt>
@@ -68,6 +69,16 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 
 		clearLog();
 		minLevel = LogMgmt.LEV_NOTICE; // default
+	}
+
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.logging.LogMgmt#assignFileFolder(com.movielabs.mddflib.util.xml.MddfTarget)
+	 */
+	@Override
+	public LogEntryFolder assignFileFolder(MddfTarget target) {
+		String id = target.getSrcFile().getName();
+		 LogEntryFolder folder  = new LogEntryFolder(id, -1, "ID_"+id); 
+		 return folder;
 	}
 
 	/**
@@ -127,7 +138,12 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	public int getCountForTag(int tag) {
 		return countByTag[tag];
 	}
+	protected void append(int level, int tag, String msg, LogEntryFolder fileFolder, int line, String moduleID,
+			String details, LogReference srcRef) {
 
+		record(level, tag, line, msg);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -135,7 +151,7 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	 * java.io.File, java.lang.String)
 	 */
 	@Override
-	public void log(int levInfo, int logTag, String msg, File curFile, String moduleId) {
+	public void log(int levInfo, int logTag, String msg, MddfTarget targetFile, String moduleId) {
 		record(levInfo, logTag, -1, msg);
 	}
 
@@ -147,9 +163,10 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	 * com.movielabs.mddflib.logging.LogReference)
 	 */
 	@Override
-	public void log(int level, int ltag, String msg, File file, int lineNumber, String moduleId, String details,
-			LogReference srcRef) {
-		record(level, ltag, lineNumber, msg);
+	public void log(int level, int ltag, String msg, MddfTarget targetFile, Object targetData, String moduleId,
+			String details, LogReference srcRef) {
+		int lineNum = LogMgmt.resolveLineNumber(targetData);
+		record(level, ltag, lineNum, msg);
 	}
 
 	/*
@@ -222,18 +239,7 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 		po.flush();
 		po.close();
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddflib.logging.LogMgmt#getFileFolder(java.io.File)
-	 */
-	@Override
-	public LogEntryFolder getFileFolder(File targetFile) {
-		// Not used or required for JUnit tests
-		return null;
-	}
-
+ 
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -242,7 +248,7 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	 */
 	@Override
 	public void saveAs(File outFile, String format) throws IOException {
-		// Not used or required for JUnit tests
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -252,8 +258,7 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	 */
 	@Override
 	public void setCurrentFile(File srcfile, boolean clear) {
-		// Not used or required for JUnit tests
-
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -263,20 +268,18 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	 */
 	@Override
 	public int getMinLevel() {
-		// Not used or required for JUnit tests
-		return 0;
+		throw new UnsupportedOperationException();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddflib.logging.LogMgmt#setInfoIncluded(boolean)
-	 */
-	@Override
-	public void setInfoIncluded(boolean flag) {
-		// Not used or required for JUnit tests
-
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see com.movielabs.mddflib.logging.LogMgmt#setInfoIncluded(boolean)
+//	 */
+//	@Override
+//	public void setInfoIncluded(boolean flag) {
+//		// ignore as we always do this
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -285,8 +288,7 @@ public class InstrumentedLogger extends DefaultLogging implements LogMgmt {
 	 */
 	@Override
 	public boolean isInfoIncluded() {
-		// Not used or required for JUnit tests
-		return true;
+		throw new UnsupportedOperationException();
 	}
 
 }

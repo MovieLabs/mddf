@@ -150,9 +150,7 @@ public class AvailsSheet {
 				headerList.add(key);
 				headerMap.put(key, new Integer(idx));
 			}
-		}
-		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLSX, "Found " + headerList.size() + " defined columns",
-				parent.getFile(), logMsgSrcId);
+		} 
 
 		/*
 		 * TYPE Check: Is this for movies or TV? The current rule is that this is
@@ -180,7 +178,7 @@ public class AvailsSheet {
 
 		if (isAvail(excelSheet.getRow(2))) {
 			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLSX, "Third row should not contain an Avail (reserved for header)",
-					parent.getFile(), logMsgSrcId);
+					null, logMsgSrcId);
 		}
 		for (int idxR = 3; idxR <= excelSheet.getLastRowNum(); idxR++) {
 			Row nextRow = excelSheet.getRow(idxR);

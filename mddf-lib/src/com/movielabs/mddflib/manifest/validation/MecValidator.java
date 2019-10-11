@@ -65,9 +65,9 @@ public class MecValidator extends CMValidator {
 
 	public boolean process(MddfTarget target) throws IOException, JDOMException {
 		curFile = target.getSrcFile();
-		loggingMgr.pushFileContext(curFile, true);
+		loggingMgr.pushFileContext(target);
 		String schemaVer = identifyXsdVersion(target);
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, curFile, logMsgSrcId);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Using Schema Version " + schemaVer, target, logMsgSrcId);
 		setMdMecVersion(schemaVer);
 		rootNS = mdmecNSpace;
 
@@ -80,19 +80,19 @@ public class MecValidator extends CMValidator {
 		// }
 		if (!curFileIsValid) {
 			String msg = "Schema validation check FAILED";
-			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curTarget, logMsgSrcId);
 			// return false;
 		} else {
 			curRootEl = target.getXmlDoc().getRootElement();
 			String msg = "Schema validation check PASSED";
-			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_INFO, logMsgDefaultTag, msg, curTarget, logMsgSrcId);
 			if (validateC) {
 				initializeIdChecks();
 				validateConstraints();
 			}
 		}
 		// clean up and go home
-		loggingMgr.popFileContext(curFile);
+		loggingMgr.popFileContext(target);
 		return curFileIsValid;
 	}
 
@@ -112,7 +112,7 @@ public class MecValidator extends CMValidator {
 	 * Validate everything that is not fully specified via the XSD.
 	 */
 	protected void validateConstraints() {
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints", curFile, LOGMSG_ID);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints", curTarget, LOGMSG_ID);
 		super.validateConstraints();
 
 		SchemaWrapper mecSchema = SchemaWrapper.factory("mdmec-v" + MDMEC_VER);
@@ -152,7 +152,7 @@ public class MecValidator extends CMValidator {
 	 */
 	protected void validateUsage() {
 
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints of MEC v"+MDMEC_VER, curFile, LOGMSG_ID);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints of MEC v"+MDMEC_VER, curTarget, LOGMSG_ID);
 		
 		super.validateUsage();
 		/*
@@ -172,7 +172,7 @@ public class MecValidator extends CMValidator {
 		default:
 			// Not supported for the version
 			String msg = "Unable to process; missing structure definitions for MEC v" + MDMEC_VER;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MEC, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MEC, msg, curTarget, logMsgSrcId);
 			return;
 		}
 
@@ -180,11 +180,11 @@ public class MecValidator extends CMValidator {
 		if (structDefs == null) {
 			// LOG a FATAL problem.
 			String msg = "Unable to process; missing structure definitions for MEC v" + MDMEC_VER;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MEC, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MEC, msg, curTarget, logMsgSrcId);
 			return;
 		}
 
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints with MEC structure-defs_v"+structVer, curFile, LOGMSG_ID);
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints with MEC structure-defs_v"+structVer, curTarget, LOGMSG_ID);
 		
 		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
 		Iterator<String> keys = rqmtSet.keys();
@@ -193,7 +193,7 @@ public class MecValidator extends CMValidator {
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
 			// NOTE: This block of code requires a 'targetPath' be defined
 			if (rqmtSpec.has("targetPath")) {
-				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MEC, "Structure check; key= " + key, curFile,
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MEC, "Structure check; key= " + key, curTarget,
 						logMsgSrcId);
 				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null) && curFileIsValid;
 			}

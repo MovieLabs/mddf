@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.jdom2.located.Located;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * Implements a basic logging capability not linked to a GUI. Intended usage is
@@ -48,20 +48,25 @@ public class DefaultLogging implements LogMgmt {
 
 	private LogEntryFolder rootLogNode = new LogEntryFolder("", -1);
 	private int masterSeqNum;
-	private List<LogEntryNode> entryList;
-	private Stack<File> contextFileStack = new Stack<File>();
-//	private File curInputFile;
+	private List<LogEntryNode> entryList; 
+	private Stack<String> contextStack = new Stack<String>();
+	private String previousContext = null;
 	protected int minLevel = LogMgmt.LEV_WARN;
 	protected boolean printToConsole = false;
 	protected boolean infoIncluded;
-	private Map<File, LogEntryFolder> fileFolderMap = new HashMap<File, LogEntryFolder>();
-	private LogEntryFolder curLoggingFolder;
-	private File previousFile;
+//	private Map<File, LogEntryFolder> fileFolderMap = new HashMap<File, LogEntryFolder>();
+	private LogEntryFolder curLoggingFolder; 
+	private LogEntryFolder curDefaultFolder  = new LogEntryFolder("DefaultFolder", -1, "fooBar"); 
 
 	/**
 	 * 
 	 */
-	public DefaultLogging() {
+	public DefaultLogging() { 
+		// add the folders for each TAG type...
+		for (int i = 0; i < LogMgmt.logLevels.length; i++) {
+			LogEntryFolder levelTNode = new LogEntryFolder(LogMgmt.logLevels[i], i);
+			curDefaultFolder.add(levelTNode);
+		}
 		clearLog();
 	}
 
@@ -78,26 +83,25 @@ public class DefaultLogging implements LogMgmt {
 		logIssue(tag, level, target, curLoggingFolder, msg, explanation, srcRef, moduleId);
 	}
 
-	public void logIssue(int tag, int level, Object target, LogEntryFolder logFolder, String msg, String explanation,
-			LogReference srcRef, String moduleId) {
-		int lineNum = -1;
-		if (target != null) {
-			if (target instanceof Located) {
-				lineNum = ((Located) target).getLine();
-			} else if (target instanceof Cell) {
-				lineNum = ((Cell) target).getRowIndex();
-
+	/**
+	 * @deprecated FIX to use MddfTarget instead of logFolder
+	 */
+	public void logIssue(int tag, int level, Object targetData, LogEntryFolder logFolder, String msg,
+			String explanation, LogReference srcRef, String moduleId) {
+		int lineNum = LogMgmt.resolveLineNumber(targetData);
+		if (targetData != null) {
+			if (targetData instanceof Cell) {
+				/* Prefix an 'explanation' with column ID (e.g., 'X', 'AA') */
+				int colNum = ((Cell) targetData).getColumnIndex();
+				String prefix = "Column " + LogMgmt.mapColNum(colNum);
+				if ((explanation == null) || (explanation.isEmpty())) {
+					explanation = prefix;
+				} else {
+					explanation = prefix + ": " + explanation;
+				}
 			}
-		} 
-		File activeFile = null;
-		if (logFolder != null ) {
-			activeFile = logFolder.getFile();
-		}else if ((!contextFileStack.isEmpty()) && contextFileStack.peek() != null) {
-			activeFile = contextFileStack.peek() ;			
-		}else if (curLoggingFolder != null){
-			activeFile = curLoggingFolder.getFile();
-		}		
-		log(level, tag, msg, activeFile, lineNum, moduleId, explanation, srcRef);
+		}
+		append(level, tag, msg, logFolder, lineNum, moduleId, explanation, srcRef);
 	}
 
 	/*
@@ -107,7 +111,7 @@ public class DefaultLogging implements LogMgmt {
 	 * java.io.File, java.lang.String)
 	 */
 	@Override
-	public void log(int level, int tag, String msg, File file, String moduleId) {
+	public void log(int level, int tag, String msg, MddfTarget file, String moduleId) {
 		append(level, tag, msg, file, -1, moduleId, null, null);
 	}
 
@@ -119,32 +123,51 @@ public class DefaultLogging implements LogMgmt {
 	 * com.movielabs.mddflib.logging.LogReference)
 	 */
 	@Override
-	public void log(int level, int tag, String msg, File file, int lineNumber, String moduleId, String details,
-			LogReference srcRef) {
-		append(level, tag, msg, file, lineNumber, moduleId, details, srcRef);
+	public void log(int level, int tag, String msg, MddfTarget file, Object targetData, String moduleId,
+			String explanation, LogReference srcRef) {
+		int lineNum = LogMgmt.resolveLineNumber(targetData);
+		if (targetData != null) {
+			if (targetData instanceof Cell) {
+				/* Prefix an 'explanation' with column ID (e.g., 'X', 'AA') */
+				int colNum = ((Cell) targetData).getColumnIndex();
+				String prefix = "Column " + LogMgmt.mapColNum(colNum);
+				if ((explanation == null) || (explanation.isEmpty())) {
+					explanation = prefix;
+				} else {
+					explanation = prefix + ": " + explanation;
+				}
+			}
+		}
+		append(level, tag, msg, file, lineNum, moduleId, explanation, srcRef);
 	}
 
-	protected void append(int level, int tag, String msg, File xmlFile, int line, String moduleID, String details,
+	protected void append(int level, int tag, String msg, MddfTarget target, int line, String moduleID, String details,
 			LogReference srcRef) {
+		LogEntryFolder logFolder = null;
+		if (target == null) {
+			/* default is whatever is at the top of the stack */
+			logFolder = rootLogNode;
+		} else {
+			logFolder = target.getLogFolder();
+		}
+		append(level, tag, msg, logFolder, line, moduleID, details, srcRef);
+	}
+
+	protected void append(int level, int tag, String msg, LogEntryFolder fileFolder, int line, String moduleID,
+			String details, LogReference srcRef) {
 		if (level < minLevel) {
 			return;
 		}
-		if (xmlFile == null) {
-			// xmlFile = curInputFile;
-			if (printToConsole) {
-				System.out.println(LogMgmt.logLevels[level] + ": " + msg);
-			}
-			return;
+		if(fileFolder == null) {
+			fileFolder = curDefaultFolder;
 		}
-		// First get correct 'folder'
 		String tagAsText = LogMgmt.logTags[tag];
-		LogEntryFolder byManifestFile = getFileFolder(xmlFile);
-		LogEntryFolder byLevel = (LogEntryFolder) byManifestFile.getChild(LogMgmt.logLevels[level]);
+		LogEntryFolder byLevel = (LogEntryFolder) fileFolder.getChild(LogMgmt.logLevels[level]);
 		LogEntryFolder tagNode = (LogEntryFolder) byLevel.getChild(tagAsText);
 		if (tagNode == null) {
 			tagNode = createTagNode(tag, level, byLevel);
 		}
-		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, byManifestFile, line, moduleID, masterSeqNum++,
+		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, fileFolder, line, moduleID, masterSeqNum++,
 				details, srcRef);
 		tagNode.addMsg(entryNode);
 		/*
@@ -191,33 +214,16 @@ public class DefaultLogging implements LogMgmt {
 		}
 		throw new IllegalArgumentException("Unsupported tag '" + tagAsText + "'");
 	}
+ 
 
-	public LogEntryFolder getFileFolder(File targetFile) {
-		LogEntryFolder fileFolder = fileFolderMap.get(targetFile);
-		if (fileFolder == null) {
-			/*
-			 * Deal with possibility of multiple files with the same name being processed
-			 * (i.e. /foo/myFile.xml vs /bar/myFile.xml).
-			 */
-			int suffix = 1;
-			String label = targetFile.getName();
-			String qualifiedName = label;
-			fileFolder = (LogEntryFolder) rootLogNode.getChild(label);
-			while (fileFolder != null) {
-				suffix++;
-				qualifiedName = label + " (" + suffix + ")";
-				fileFolder = (LogEntryFolder) rootLogNode.getChild(qualifiedName);
-			}
-			fileFolder = new LogEntryFolder(qualifiedName, -1);
-			fileFolder.setFile(targetFile);
-			fileFolderMap.put(targetFile, fileFolder);
-			rootLogNode.add(fileFolder);
-			for (int i = 0; i < LogMgmt.logLevels.length; i++) {
-				LogEntryFolder levelTNode = new LogEntryFolder(LogMgmt.logLevels[i], i);
-				fileFolder.add(levelTNode);
-			}
-		}
-		return fileFolder;
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.logging.LogMgmt#assignFileFolder(com.movielabs.mddflib.util.xml.MddfTarget)
+	 */
+	@Override
+	public LogEntryFolder assignFileFolder(MddfTarget target) { 
+		curDefaultFolder.setFile(target);
+		return curDefaultFolder;
+		
 	}
 
 	/*
@@ -229,7 +235,7 @@ public class DefaultLogging implements LogMgmt {
 	public void setCurrentFile(File targetFile, boolean clear) {
 		throw new UnsupportedOperationException();
 	}
- 
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -237,16 +243,16 @@ public class DefaultLogging implements LogMgmt {
 	 * boolean)
 	 */
 	@Override
-	public LogEntryFolder pushFileContext(File targetFile, boolean clear) {
+	public LogEntryFolder pushFileContext(MddfTarget target) {
 		/*
 		 * first eliminate redundant pushes
 		 */
-		if ((!contextFileStack.isEmpty()) && (targetFile == contextFileStack.peek())) {
-			return curLoggingFolder;
-		}		
-		contextFileStack.push(targetFile);
-		curLoggingFolder = getFileFolder(targetFile);
-		return curLoggingFolder;
+		if ((!contextStack.isEmpty()) && (target.getKey() == contextStack.peek())) {
+			return curDefaultFolder;
+		}
+		curDefaultFolder = target.getLogFolder(); 
+		contextStack.push(target.getKey()); 
+		return curDefaultFolder;
 	}
 
 	/*
@@ -255,25 +261,29 @@ public class DefaultLogging implements LogMgmt {
 	 * @see com.movielabs.mddflib.logging.LogMgmt#popFileContext()
 	 */
 	@Override
-	public void popFileContext(File assumedTopFile) {
-
-		if (contextFileStack.isEmpty()) { 
+	public void popFileContext(MddfTarget assumedTopTarget) {
+		if (contextStack.isEmpty()) {
+			// S/W error
 			return;
 		}
-		File curTopFile = contextFileStack.peek();
-		if (assumedTopFile != curTopFile) {
+		String curContextKey = contextStack.peek();
+		String assumedKey = assumedTopTarget.getKey(); 
+		if (!assumedKey.equals(curContextKey)) {
 			/*
 			 * check for redundant 'pop'. These get ignored same way we ignore redundant
 			 * push.
 			 */
-			if (previousFile   == assumedTopFile) {
-				return;
+			if (previousContext != null) { 
+				if (previousContext.equals(assumedKey)) {
+					return;
+				}
 			}
+
 			// something is out of wack
 			throw new IllegalStateException("ContextStack not popped.... file mis-match (current top: "
-					+ curTopFile.getName() + ", assumed top: " + assumedTopFile.getName());
+					+ curDefaultFolder.getLabel() + ", assumed top: " + assumedTopTarget.getSrcFile().getName());
 		}
-		previousFile =  contextFileStack.pop(); 		
+		previousContext = contextStack.pop();
 	}
 
 	/*

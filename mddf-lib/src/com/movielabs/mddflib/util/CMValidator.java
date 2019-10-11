@@ -264,7 +264,7 @@ public abstract class CMValidator extends XmlIngester {
 		JSONObject cmVocab = (JSONObject) getVocabResource("cm", vocabVer);
 		if (cmVocab == null) {
 			String msg = "Unable to validate controlled vocab: missing resource file vocab_cm_v" + vocabVer;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curTarget, logMsgSrcId);
 			curFileIsValid = false;
 			return;
 		}
@@ -377,7 +377,7 @@ public abstract class CMValidator extends XmlIngester {
 		if (structDefs == null) {
 			// LOG a FATAL problem.
 			String msg = "Unable to process; missing structure definitions for Common Metadata v" + CM_VER;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MD, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MD, msg, curTarget, logMsgSrcId);
 			return;
 		}
 
@@ -388,7 +388,7 @@ public abstract class CMValidator extends XmlIngester {
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
 			// NOTE: This block of code requires a 'targetPath' be defined
 			if (rqmtSpec.has("targetPath")) {
-				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, "Structure check; key= " + key, curFile, logMsgSrcId);
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, "Structure check; key= " + key, curTarget, logMsgSrcId);
 				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null) && curFileIsValid;
 			}
 		}
@@ -1327,7 +1327,7 @@ public abstract class CMValidator extends XmlIngester {
 		if (structDefs == null) {
 			// LOG a FATAL problem.
 			String msg = "Unable to process; missing structure definitions for vocab_digAsset v" + structVer;
-			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MD, msg, curFile, logMsgSrcId);
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MD, msg, curTarget, logMsgSrcId);
 			return;
 		}
 		/*
@@ -1347,7 +1347,7 @@ public abstract class CMValidator extends XmlIngester {
 		default:
 			// Not used in this type of MDDF file
 			loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD,
-					"Skipping DigitalAsset rqmt check; not used for this type of MDDF file", curFile, logMsgSrcId);
+					"Skipping DigitalAsset rqmt check; not used for this type of MDDF file", curTarget, logMsgSrcId);
 			return;
 		}
 		JSONObject rqmtSet = structDefs.getJSONObject("Audio");
@@ -1390,13 +1390,13 @@ public abstract class CMValidator extends XmlIngester {
 		while (keys.hasNext()) {
 			String key = keys.next();
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
-			loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, "DigitalAsset rqmt check; key= " + key, curFile,
+			loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, "DigitalAsset rqmt check; key= " + key, curTarget,
 					logMsgSrcId);
 			String xPath = rqmtSpec.getString("targetPath");
 			if (rqmtSpec.containsKey("children")) {
 				/* Recursive descent */
 				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, "DigitalAsset Recursive descent; key= " + key,
-						curFile, logMsgSrcId);
+						curTarget, logMsgSrcId);
 				JSONObject innerRqmtSet = rqmtSpec.getJSONObject("children");
 				for (Element nextAssetEl : assetList) {
 					validateDigitalAsset(xPath, nextAssetEl, innerRqmtSet);
@@ -1645,7 +1645,4 @@ public abstract class CMValidator extends XmlIngester {
 
 	protected abstract void setParent(CMValidator parent);
 
-//	void setParent(CMValidator parent) {
-//		this.parent = parent;
-//	}
 }

@@ -76,7 +76,7 @@ public class XlsxImportTest {
 		Version version = Version.V1_7;
 		File srcFile = new File(srcFilePath);
 
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
+		iLog.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
 
 		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(srcFile, version, null, iLog);
 		try {
@@ -97,7 +97,7 @@ public class XlsxImportTest {
 		Version version = Version.V1_7_2;
 		File srcFile = new File(srcFilePath);
 
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
+		iLog.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
 
 		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(srcFile, version, null, iLog);
 		try {
@@ -112,13 +112,35 @@ public class XlsxImportTest {
 	}
 
 	@Test
-	public void testIngestV1_7_3() {
+	public void testIngestMovie_V1_7_3() {
 		Version version = Version.V1_7_3;
 		String testFileName = "Movies_v1.7.3.xlsx";
 		String srcFilePath = rsrcPath + testFileName;
 		File srcFile = new File(srcFilePath);
 
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
+		iLog.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
+
+		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(srcFile, version, null, iLog);
+		try {
+			assertNotNull(results);
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			dumpXml((Document) results.get("xml"), testFileName);
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		} 
+	} 
+
+
+	@Test
+	public void testIngestTV_V1_7_3() {
+		Version version = Version.V1_7_3; 
+		String testFileName = "TV_v1.7.3.xlsx";
+		String srcFilePath = rsrcPath + testFileName;
+		File srcFile = new File(srcFilePath);
+
+		iLog.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
 
 		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(srcFile, version, null, iLog);
 		try {
@@ -130,32 +152,38 @@ public class XlsxImportTest {
 			dumpLog();
 			throw e;
 		}
-		testFileName = "TV_v1.7.3.xlsx";
-		srcFilePath = rsrcPath + testFileName;
-		srcFile = new File(srcFilePath);
-
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
-
-		results = AvailsWrkBook.convertSpreadsheet(srcFile, version, null, iLog);
-		try {
-			assertNotNull(results);
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			dumpXml((Document) results.get("xml"), testFileName);
-		} catch (AssertionFailedError e) {
-			dumpLog();
-			throw e;
-		}
 	}
 
+
 	@Test
-	public void testIngestV1_8() {
+	public void testIngest_MovieV1_8() {
 		Version version = Version.V1_8;
 		String testFileName = "Movies_v1.8.xlsx";
 		String srcFilePath = rsrcPath + testFileName;
 		File srcFile = new File(srcFilePath);
 
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
+		iLog.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
+
+		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(srcFile, version, null, iLog);
+		try {
+			assertNotNull(results);
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			dumpXml((Document) results.get("xml"), testFileName);
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		} 
+	}
+
+	@Test
+	public void testIngest_Tv_V1_8() {
+		Version version = Version.V1_8;
+		String testFileName = "TV_v1.8.xlsx";
+		String srcFilePath = rsrcPath + testFileName;
+		File srcFile = new File(srcFilePath);
+
+		iLog.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
 
 		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(srcFile, version, null, iLog);
 		try {
@@ -167,24 +195,7 @@ public class XlsxImportTest {
 			dumpLog();
 			throw e;
 		}
-		testFileName = "TV_v1.8.xlsx";
-		srcFilePath = rsrcPath + testFileName;
-		srcFile = new File(srcFilePath);
-
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
-
-		results = AvailsWrkBook.convertSpreadsheet(srcFile, version, null, iLog);
-		try {
-			assertNotNull(results);
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			dumpXml((Document) results.get("xml"), testFileName);
-		} catch (AssertionFailedError e) {
-			dumpLog();
-			throw e;
-		}
 	}
-
 	/**
 	 * @param string
 	 * @param object

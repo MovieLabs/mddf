@@ -59,6 +59,7 @@ import com.movielabs.mddflib.logging.LogEntryComparator;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogEntryNode.Field;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -106,50 +107,18 @@ public class SimpleXmlEditor {
 	private EditorMonitor owner = null;
 	private ArrayList<LogEntryNode> logMarkerList;
 	private JLabel msgField;
+	private MddfTarget curTarget;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					SimpleXmlEditor window = new SimpleXmlEditor();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+	public MddfTarget getCurTarget() {
+		return curTarget;
 	}
-
-	/**
-	 * @param logEntry
-	 * @return
-	 */
-	public static SimpleXmlEditor spawn(LogEntry logEntry) {
-		String filePath = logEntry.getFile().getAbsolutePath();
-		SimpleXmlEditor editor = spawn(filePath);
-		if (editor != null) {
-			if (logEntry instanceof LogEntryNode) {
-				editor.goTo((LogEntryNode) logEntry);
-			}
-		}
-		return editor;
-	}
-
-	public static SimpleXmlEditor spawn(String filePath) {
-		File file = new File(filePath);
-		if (!file.exists() || !file.isFile()) {
-			return null;
-		}
+ 
+	static SimpleXmlEditor spawn(MddfTarget target) {
 		SimpleXmlEditor spawnedEditor = new SimpleXmlEditor();
 		JFrame spawnedFrame = spawnedEditor.getFrame();
 		spawnedFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		spawnedFrame.setVisible(true);
-		if (filePath != null && !filePath.isEmpty()) {
-			spawnedEditor.load(filePath);
-		}
+		spawnedEditor.load(target);
 		spawnedEditor.goTo(0);
 		return spawnedEditor;
 	}
@@ -157,7 +126,7 @@ public class SimpleXmlEditor {
 	/**
 	 * Create the application.
 	 */
-	public SimpleXmlEditor() {
+	SimpleXmlEditor() {
 		initialize();
 	}
 
@@ -192,8 +161,9 @@ public class SimpleXmlEditor {
 		frame.addWindowListener(wl);
 	}
 
-	boolean load(String filePath) {
-		File file = new File(filePath);
+	boolean load(MddfTarget target) {
+		this.curTarget = target;
+		File file = target.getSrcFile();
 		if (!file.exists() || !file.isFile()) {
 			return false;
 		}
@@ -211,9 +181,8 @@ public class SimpleXmlEditor {
 
 	public void setVisible(boolean show) {
 		if (show) {
-			// Refresh log markers
-			LoggerWidget logger = GenericTool.consoleLogger;
-			LogEntryFolder logFolder = logger.getFileFolder(curFile);
+			// Refresh log markers 
+			LogEntryFolder logFolder = curTarget.getLogFolder();
 			List<LogEntryNode> msgList = logFolder.getMsgList();
 			this.showLogMarkers(msgList);
 		}
@@ -394,10 +363,10 @@ public class SimpleXmlEditor {
 	}
 
 	/**
-	 * @return the curFile
+	 * @return the curTarget
 	 */
-	public File getCurFile() {
-		return curFile;
+	public MddfTarget getMddfTarget() {
+		return curTarget;
 	}
 
 	/**
@@ -421,8 +390,8 @@ public class SimpleXmlEditor {
 
 	/**
 	 * Sets the location of the <tt>Frame</tt> relative to another
-	 * <tt>Component</tt> and de-iconifies the <tt>Frame</tt> if it is currently
-	 * in a minimized state.
+	 * <tt>Component</tt> and de-iconifies the <tt>Frame</tt> if it is currently in
+	 * a minimized state.
 	 * 
 	 * @param parent
 	 * 
@@ -441,8 +410,8 @@ public class SimpleXmlEditor {
 	}
 
 	/**
-	 * Set the monitoring entity. This will be notified of significant
-	 * life-cycle events such as the user closing the editor.
+	 * Set the monitoring entity. This will be notified of significant life-cycle
+	 * events such as the user closing the editor.
 	 * 
 	 * @param monitor
 	 */
@@ -452,8 +421,8 @@ public class SimpleXmlEditor {
 
 	/**
 	 * Show markers (i.e., icons) on lines corresponding to the provided list of
-	 * <tt>LogEntryNode</tt> instances. If the <tt>List</tt> is empty or null,
-	 * no markers will be shown.
+	 * <tt>LogEntryNode</tt> instances. If the <tt>List</tt> is empty or null, no
+	 * markers will be shown.
 	 * 
 	 * @param msgList
 	 */
@@ -522,9 +491,8 @@ public class SimpleXmlEditor {
 				break;
 			case AC_FR:
 				/*
-				 * Instead of directly accessing 'findReplDialog', use the
-				 * getter. That way a new dialog will be instantiated if
-				 * necessary.
+				 * Instead of directly accessing 'findReplDialog', use the getter. That way a
+				 * new dialog will be instantiated if necessary.
 				 */
 				frDialog.setVisible(true);
 				frDialog.setLocationRelativeTo(frame);
@@ -574,8 +542,8 @@ public class SimpleXmlEditor {
 			boolean working = true;
 			int count = 0;
 			/*
-			 * There may or may not be currently selected text. If there is, it
-			 * may or may not match the search criteria.
+			 * There may or may not be currently selected text. If there is, it may or may
+			 * not match the search criteria.
 			 */
 			String curSelText = xmlEditorPane.getSelectedText();
 			boolean selectionMatches;
@@ -704,9 +672,9 @@ public class SimpleXmlEditor {
 	}
 
 	/**
-	 * A <tt>WindowListener</tt> implementation that monitors the
-	 * <tt>JFrame</tt> and, where appropriate, passes event notifications to the
-	 * parent component that spawned it (e.g., the <tt>ValidatorTool</tt>).
+	 * A <tt>WindowListener</tt> implementation that monitors the <tt>JFrame</tt>
+	 * and, where appropriate, passes event notifications to the parent component
+	 * that spawned it (e.g., the <tt>ValidatorTool</tt>).
 	 * 
 	 * @author L. Levin, Critical Architectures LLC
 	 *
@@ -725,8 +693,7 @@ public class SimpleXmlEditor {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see java.awt.event.WindowListener#windowOpened(java.awt.event.
-		 * WindowEvent)
+		 * @see java.awt.event.WindowListener#windowOpened(java.awt.event. WindowEvent)
 		 */
 		@Override
 		public void windowOpened(WindowEvent e) {
@@ -735,8 +702,7 @@ public class SimpleXmlEditor {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see java.awt.event.WindowListener#windowClosing(java.awt.event.
-		 * WindowEvent)
+		 * @see java.awt.event.WindowListener#windowClosing(java.awt.event. WindowEvent)
 		 */
 		@Override
 		public void windowClosing(WindowEvent e) {
@@ -745,14 +711,16 @@ public class SimpleXmlEditor {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see java.awt.event.WindowListener#windowClosed(java.awt.event.
-		 * WindowEvent)
+		 * @see java.awt.event.WindowListener#windowClosed(java.awt.event. WindowEvent)
 		 */
 		@Override
 		public void windowClosed(WindowEvent e) {
 			if (owner != null) {
 				owner.editorHasClosed(myEditor);
 			}
+			// avoid memory leak....
+			curTarget = null;
+			logMarkerList = new ArrayList<LogEntryNode>();
 		}
 
 		/*

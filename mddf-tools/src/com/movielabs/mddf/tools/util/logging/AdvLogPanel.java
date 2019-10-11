@@ -48,14 +48,13 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.jdom2.located.Located;
-
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
 import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * A composite UI component that provides the user with the ability to filter,
@@ -78,13 +77,14 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	private LogPanel tableView;
 	private JSplitPane splitPane;
 	private JMenu saveLogMenu;
-	private Stack<File> contextFileStack = new Stack<File>();
-	private Stack<LogEntryFolder> contextFolderStack = new Stack<LogEntryFolder>();
+//	private Stack<File> contextFileStack = new Stack<File>();
+	private Stack<String> contextStack = new Stack<String>();
+	private String previousContext = null;
 	private int minLevel = LogMgmt.LEV_WARN;
 	private boolean infoIncluded = true;
 	private JTextField statusTextField;
 	private LogEntryFolder curDefaultFolder;
-	private LogEntryFolder previousFolder;
+//	private LogEntryFolder previousFolder;
 
 	public AdvLogPanel() {
 		treeView = new LogNavPanel(this);
@@ -244,7 +244,8 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		// BUG FIX: Handle both '.xml' and '.XML' endings...
 		key = key.toLowerCase();
 		if (key.endsWith(".xml")) {
-			SimpleXmlEditor editor = EditorMgr.getSingleton().getEditor(logEntry, this);
+			MddfTarget target = logEntry.getSrcFileNode().getMddfTarget();
+			SimpleXmlEditor editor = EditorMgr.getSingleton().getEditorFor(target, this, logEntry);
 			if (editor != null) {
 				editor.setVisible(true);
 			}
@@ -331,14 +332,10 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		treeView.collapse();
 
 	}
+ 
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.movielabs.mddflib.logging.LogMgmt#getFileFolder(java.io.File)
-	 */
-	public LogEntryFolder getFileFolder(File targetFile) {
-		return treeView.getFileFolder(targetFile, false);
+	public LogEntryFolder assignFileFolder(MddfTarget target) {
+		return treeView.assignFileFolder(target);
 	}
 
 	/*
@@ -349,10 +346,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	public void setCurrentFile(File targetFile, boolean clear) {
 		throw new UnsupportedOperationException();
 	}
-
-	File getCurInputFile() {
-		return contextFolderStack.peek().getFile();
-	}
+ 
 
 	/*
 	 * (non-Javadoc)
@@ -361,16 +355,16 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	 * boolean)
 	 */
 	@Override
-	public LogEntryFolder pushFileContext(File targetFile, boolean clear) {
+	public LogEntryFolder pushFileContext(MddfTarget target) {
 		/*
 		 * first eliminate redundant pushes
 		 */
-		if ((!contextFileStack.isEmpty()) && (targetFile == contextFileStack.peek())) {
+		if ((!contextStack.isEmpty()) && (target.getKey() == contextStack.peek())) {
 			return curDefaultFolder;
 		}
-		curDefaultFolder = treeView.setCurrentFileId(targetFile, clear);
-		contextFolderStack.push(curDefaultFolder);
-		contextFileStack.push(targetFile);
+		curDefaultFolder = target.getLogFolder();
+		treeView.setCurrentFileId(target.getKey(), false);
+		contextStack.push(target.getKey()); 
 		valueChanged(null);
 		return curDefaultFolder;
 	}
@@ -381,66 +375,41 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	 * @see com.movielabs.mddflib.logging.LogMgmt#popFileContext()
 	 */
 	@Override
-	public void popFileContext(File assumedTopFile) {
-		if (contextFolderStack.isEmpty()) {
+	public void popFileContext(MddfTarget assumedTopTarget) {
+		if (contextStack.isEmpty()) {
 			// S/W error
-//			throw new IllegalStateException("Empty Context Stack.... unable to pop");
 			return;
 		}
-		File curTopFile = contextFolderStack.peek().getFile();
-		if (!isSameFile(curTopFile, assumedTopFile)) {
+		String curContextKey = contextStack.peek();
+		String assumedKey = assumedTopTarget.getKey(); 
+		if (!assumedKey.equals(curContextKey)) {
 			/*
 			 * check for redundant 'pop'. These get ignored same way we ignore redundant
 			 * push.
 			 */
-			if (previousFolder != null) {
-				if (isSameFile(previousFolder.getFile(), assumedTopFile)) {
+			if (previousContext != null) { 
+				if (previousContext.equals(assumedKey)) {
 					return;
 				}
 			}
 
 			// something is out of wack
 			throw new IllegalStateException("ContextStack not popped.... file mis-match (current top: "
-					+ curTopFile.getName() + ", assumed top: " + assumedTopFile.getName());
+					+ curDefaultFolder.getLabel() + ", assumed top: " + assumedTopTarget.getSrcFile().getName());
 		}
-		previousFolder = contextFolderStack.pop();
-		contextFileStack.pop();
+		previousContext = contextStack.pop(); 
 		/*
 		 * are we at top of stack (i.e., done with a file and back to 'tool-level
 		 * logging')?
 		 */
-		if (contextFolderStack.isEmpty() || (contextFolderStack.peek() == null)) {
-			treeView.setCurrentFileId(null, false);
+		if (contextStack.isEmpty() || (contextStack.peek() == null)) {
+			treeView.setCurrentFileId(DEFAULT_TOOL_FOLDER_KEY, false);
 		} else {
-			treeView.setCurrentFileId(contextFolderStack.peek().getFile(), false);
+			treeView.setCurrentFileId(contextStack.peek(), false);
 		}
 		valueChanged(null);
 	}
-
-	private boolean isSameFile(File a, File b) {
-		String path_A;
-		String path_B;
-		try {
-			path_A = a.getCanonicalPath();
-			path_B = b.getCanonicalPath();
-		} catch (IOException e) {
-			// not as reliable....
-			path_A = a.getAbsolutePath();
-			path_B = b.getAbsolutePath();
-		}
-		return (path_A.equals(path_B));
-	}
-
-	/**
-	 * Returns a clone of the <tt>contextStack</tt>. Since this is a copy and not
-	 * the original, it should be considered 'read-only' as any changes have no
-	 * effect.
-	 * 
-	 * @return
-	 */
-	Stack<File> getContextStack() {
-		return (Stack<File>) contextFileStack.clone();
-	}
+  
 
 	/*
 	 * (non-Javadoc)
@@ -463,32 +432,23 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	 */
 	@Override
 	public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
-			String moduleId) {
-		logIssue(tag, level, target, contextFolderStack.peek(), msg, explanation, srcRef, moduleId);
+			String moduleId) { 
+		logIssue(tag, level, target, null, msg, explanation, srcRef, moduleId);
 	}
 
-	public void logIssue(int tag, int level, Object target, LogEntryFolder folder, String msg, String explanation,
+	public void logIssue(int tag, int level, Object targetData, LogEntryFolder folder, String msg, String explanation,
 			LogReference srcRef, String moduleId) {
-		int lineNum = -1;
-		if (target != null) {
-			if (target instanceof Located) {
-				lineNum = ((Located) target).getLine();
-			} else if (target instanceof Cell) {
-				/*
-				 * Add 1 to line number for display purposes. Code is zero-based index but Excel
-				 * spreadsheet displays using 1 as the 1st row.
-				 */
-				lineNum = ((Cell) target).getRowIndex() + 1;
+		int lineNum = LogMgmt.resolveLineNumber(targetData);
+		if (targetData != null) {
+			if (targetData instanceof Cell) {
 				/* Prefix an 'explanation' with column ID (e.g., 'X', 'AA') */
-				int colNum = ((Cell) target).getColumnIndex();
+				int colNum = ((Cell) targetData).getColumnIndex();
 				String prefix = "Column " + LogMgmt.mapColNum(colNum);
 				if ((explanation == null) || (explanation.isEmpty())) {
 					explanation = prefix;
 				} else {
 					explanation = prefix + ": " + explanation;
 				}
-			} else if (target instanceof Integer) {
-				lineNum = ((Integer) target).intValue();
 			}
 		}
 		append(level, tag, msg, folder, lineNum, moduleId, explanation, srcRef);
@@ -501,7 +461,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	 * java.io.File, java.lang.String)
 	 */
 	@Override
-	public void log(int level, int tag, String msg, File file, String moduleId) {
+	public void log(int level, int tag, String msg, MddfTarget file, String moduleId) {
 		append(level, tag, msg, file, -1, moduleId, null, null);
 	}
 
@@ -513,36 +473,42 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	 * com.movielabs.mddflib.logging.LogReference)
 	 */
 	@Override
-	public void log(int level, int tag, String msg, File file, int lineNumber, String moduleId, String details,
-			LogReference srcRef) {
-		append(level, tag, msg, file, lineNumber, moduleId, details, srcRef);
+	public void log(int level, int tag, String msg, MddfTarget targetFile, Object targetData, String moduleId,
+			String explanation, LogReference srcRef) {
+
+		int lineNum = LogMgmt.resolveLineNumber(targetData);
+		if (targetData != null) {
+			if (targetData instanceof Cell) {
+				/* Prefix an 'explanation' with column ID (e.g., 'X', 'AA') */
+				int colNum = ((Cell) targetData).getColumnIndex();
+				String prefix = "Column " + LogMgmt.mapColNum(colNum);
+				if ((explanation == null) || (explanation.isEmpty())) {
+					explanation = prefix;
+				} else {
+					explanation = prefix + ": " + explanation;
+				}
+			}
+		}
+		append(level, tag, msg, targetFile, lineNum, moduleId, explanation, srcRef);
 	}
 
 	/**
 	 * @param level
 	 * @param tag
 	 * @param msg
-	 * @param mddfFile if not null, must be in current context stack
+	 * @param target
 	 * @param line
 	 * @param moduleID
 	 * @param tooltip
 	 * @param srcRef
 	 */
-	protected void append(int level, int tag, String msg, File mddfFile, int line, String moduleID, String tooltip,
+	protected void append(int level, int tag, String msg, MddfTarget target, int line, String moduleID, String tooltip,
 			LogReference srcRef) {
 		LogEntryFolder logFolder = null;
-		if (mddfFile == null) {
-			/* default is whatever is at the top of the stack */
-			if (!contextFolderStack.isEmpty()) {
-				logFolder = contextFolderStack.peek();
-			}
+		if (target == null) { 
+			logFolder = curDefaultFolder;
 		} else {
-			for (int i = 0; i < contextFileStack.size(); i++) {
-				if (contextFileStack.get(i) == mddfFile) {
-					logFolder = contextFolderStack.get(i);
-					break;
-				}
-			}
+			logFolder = target.getLogFolder();
 		}
 		append(level, tag, msg, logFolder, line, moduleID, tooltip, srcRef);
 	}
@@ -560,9 +526,8 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 				return;
 			}
 		}
-		if (logFolder == null && (!contextFolderStack.isEmpty())) {
-			/* default is whatever is at the top of the stack */
-			logFolder = contextFolderStack.peek();
+		if (logFolder == null) { 
+			logFolder = curDefaultFolder;
 		}
 		List<LogEntryNode> entryList = new ArrayList<LogEntryNode>();
 		LogEntryNode entry = treeView.append(level, tag, msg, logFolder, line, moduleID, tooltip, srcRef);

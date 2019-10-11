@@ -23,6 +23,7 @@
 package com.movielabs.mddflib.tests.junit.common;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.MissingResourceException;
 
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.BeforeEach;
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
+import com.movielabs.mddflib.testsupport.MddfTestTarget;
 import com.movielabs.mddflib.util.CMValidator;
 import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.XmlIngester;
@@ -122,7 +124,9 @@ public abstract class AbstractCmmTester extends CMValidator {
 	 * @throws JDOMException
 	 */
 	protected JSONObject initialize(String mddfFile, String jsonFile) throws JDOMException, IOException {
-		Document xmlDoc = loadTestArtifact(mddfFile);
+	
+		MddfTestTarget testTarget= loadTestArtifact(mddfFile);
+		Document xmlDoc = testTarget.getXmlDoc();
 		curRootEl = xmlDoc.getRootElement();
 		FILE_FMT srcMddfFmt = MddfContext.identifyMddfFormat(curRootEl);
 		setMddfVersions(srcMddfFmt);
@@ -131,6 +135,7 @@ public abstract class AbstractCmmTester extends CMValidator {
 		if (jsonFile != null) {
 			jsonDefs = loadJSON(jsonFile);
 		}
+		iLog.pushFileContext(testTarget);
 		iLog.setPrintToConsole(false);
 		iLog.setMinLevel(iLog.LEV_DEBUG);
 		iLog.setInfoIncluded(true);
@@ -138,12 +143,19 @@ public abstract class AbstractCmmTester extends CMValidator {
 		return jsonDefs;
 	}
 
-	private Document loadTestArtifact(String fileName) {
+	private MddfTestTarget loadTestArtifact(String fileName) {
 		String srcFilePath = rsrcPath + fileName;
 		File srcFile = new File(srcFilePath);
+
 		if (!srcFile.canRead()) {
 			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
 
+		}
+		MddfTestTarget testTarget;
+		try {
+			testTarget = new MddfTestTarget(srcFile, iLog);
+		} catch (FileNotFoundException e1) {
+			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
 		}
 		Document xmlDoc;
 		try {
@@ -151,7 +163,8 @@ public abstract class AbstractCmmTester extends CMValidator {
 		} catch (Exception e) {
 			return null;
 		}
-		return xmlDoc;
+		testTarget.setXmlDoc(xmlDoc);
+		return testTarget;
 	} /*
 		 * (non-Javadoc)
 		 * 

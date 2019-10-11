@@ -31,22 +31,20 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.jdom2.Document;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddf.MddfContext.MDDF_TYPE;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * @author L. Levin, Critical Architectures LLC
  *
  */
 public class LogEntryFolder extends LogEntry {
-
+ 
 	private ArrayList<LogEntryNode> msgList;
-	private int level;
-	private MDDF_TYPE mddfType;
-	private FILE_FMT mddfFormat;
-	private Document xmlDoc = null;
-	/**
-	 * @param label
-	 * @param severityLevel
-	 */
+	private int level; 
+	private FILE_FMT mddfFormat; 
+	private String key = null;
+	private MddfTarget mddfTarget;
+
 	public LogEntryFolder(String label, int severityLevel) {
 		super(label);
 		this.setTag(label);
@@ -55,10 +53,22 @@ public class LogEntryFolder extends LogEntry {
 	}
 
 	/**
+	 * @param label
+	 * @param severityLevel
+	 */
+	public LogEntryFolder(String label, int severityLevel, String key) {
+		super(label);
+		this.setTag(label);
+		this.level = severityLevel;
+		this.key = key;
+		msgList = new ArrayList<LogEntryNode>();
+	}
+
+	/**
 	 * Override default implementation to return the folder's <tt>label</tt>
 	 * prefixed with the current message count. For example, if the the folder's
-	 * label is <tt>Errors</tt> and it contains 12 messages, the returned string
-	 * is '[12] Errors'.
+	 * label is <tt>Errors</tt> and it contains 12 messages, the returned string is
+	 * '[12] Errors'.
 	 * 
 	 * @see javax.swing.tree.DefaultMutableTreeNode#toString()
 	 */
@@ -87,51 +97,53 @@ public class LogEntryFolder extends LogEntry {
 		msgList.add(entryNode);
 	}
 
-	public void setFile(File myFile) {
-		this.myFile = myFile;
+	public MddfTarget getMddfTarget() {
+		return mddfTarget;
+	}
+
+	public void setFile(MddfTarget myTarget) {
+		if (mddfTarget != null) {
+			// OK to replace but only if the KEYs match
+			String curKey = LogMgmt.genFolderKey(mddfTarget);
+			String newKey = LogMgmt.genFolderKey(myTarget);
+			if (!newKey.equals(curKey)) {
+				throw new IllegalStateException("Replacement MddfTarget has non-matching key");
+			}
+		}
+		this.myFile = myTarget.getSrcFile();
+		this.mddfTarget = myTarget;
 	}
 
 	public File getFile() {
 		if (myFile != null) {
 			return myFile;
 		} else {
-			// Must be an intermediate-level folder so go to the top..
+			// Must be an intermediate-level folder so go up
 			LogEntryFolder fileEntry = (LogEntryFolder) getPath()[1];
 			return fileEntry.myFile;
 		}
 	}
-
-	/**
-	 * @param type
-	 */
-	public void setMddfType(MDDF_TYPE type) {
-		mddfType = type;
-	}
-
+ 
 	public MDDF_TYPE getMddfType() {
-		return mddfType;
+		return mddfTarget.getMddfType();
 	}
 
-	/**
-	 * @param format
-	 */
 	public void setMddfFormat(FILE_FMT format) {
-		mddfFormat = format; 
+		mddfFormat = format;
 	}
+
 
 	public FILE_FMT getMddfFormat() {
 		return mddfFormat;
 	}
 
 	/**
-	 * @param doc
+	 * Return the XML encoding of the MDDF file associated with this folder.
+	 * 
+	 * @return
 	 */
-	public void setXml(Document doc) {
-		xmlDoc = doc;
-	}
-
 	public Document getXml() {
-		return xmlDoc;
+		return mddfTarget.getXmlDoc();
 	}
 
 	public DefaultMutableTreeNode getChild(String id) {
@@ -150,7 +162,7 @@ public class LogEntryFolder extends LogEntry {
 	 */
 	public int getMsgCnt() {
 		int msgCnt = msgList.size();
-		Enumeration kinder = this.children();
+		Enumeration<LogEntry> kinder = this.children();
 		while (kinder.hasMoreElements()) {
 			LogEntryFolder nextChild = (LogEntryFolder) kinder.nextElement();
 			msgCnt = msgCnt + nextChild.getMsgCnt();
@@ -165,7 +177,7 @@ public class LogEntryFolder extends LogEntry {
 	public List<LogEntryNode> getMsgList() {
 		List<LogEntryNode> fullList = new ArrayList<LogEntryNode>();
 		fullList.addAll(msgList);
-		Enumeration kinder = this.children();
+		Enumeration<LogEntry> kinder = this.children();
 		while (kinder.hasMoreElements()) {
 			LogEntryFolder nextChild = (LogEntryFolder) kinder.nextElement();
 			fullList.addAll(nextChild.getMsgList());
@@ -182,7 +194,7 @@ public class LogEntryFolder extends LogEntry {
 	 */
 	public boolean hasErrorsMsgs(boolean forErrors) {
 		/* is this a 'leaf' folder or intermediate? */
-		Enumeration kinder = this.children();
+		Enumeration<LogEntry> kinder = this.children();
 		if (kinder.hasMoreElements()) {
 			boolean isErrFolder = this.getTagAsText().equals(LogMgmt.logLevels[LogMgmt.LEV_ERR]);
 			while (kinder.hasMoreElements()) {
@@ -196,8 +208,8 @@ public class LogEntryFolder extends LogEntry {
 				return false;
 			} else {
 				/*
-				 * if this folder or any ancestor folder has tag indicating
-				 * UiLogger.LEV_ERR then return TRUE
+				 * if this folder or any ancestor folder has tag indicating UiLogger.LEV_ERR
+				 * then return TRUE
 				 */
 				return forErrors;
 			}
@@ -214,7 +226,7 @@ public class LogEntryFolder extends LogEntry {
 	public int getHighestLevel() {
 		int highest = -1;
 		/* is this a 'leaf' folder or intermediate? */
-		Enumeration kinder = this.children();
+		Enumeration<LogEntry> kinder = this.children();
 		if (kinder.hasMoreElements()) {
 			LogEntryFolder infoFolder = null;
 			while (kinder.hasMoreElements()) {
@@ -241,12 +253,13 @@ public class LogEntryFolder extends LogEntry {
 	 */
 	public void deleteMsgs() {
 		msgList = new ArrayList<LogEntryNode>();
-		Enumeration kinder = this.children();
+		Enumeration<LogEntry> kinder = this.children();
 		while (kinder.hasMoreElements()) {
 			LogEntryFolder nextChild = (LogEntryFolder) kinder.nextElement();
 			nextChild.deleteMsgs();
 		}
 
 	}
+
 
 }

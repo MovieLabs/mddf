@@ -23,15 +23,12 @@ package com.movielabs.mddf.tools.util.xml;
 
 import java.awt.Component;
 import java.awt.Point;
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
-import com.movielabs.mddf.tools.GenericTool;
-import com.movielabs.mddf.tools.util.logging.LoggerWidget;
-import com.movielabs.mddflib.logging.LogEntry;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * This class acts as the coordinator of editor instances. The primary function
@@ -52,104 +49,59 @@ public class EditorMgr implements EditorMonitor {
 		}
 		return singleton;
 	}
+  
 
-	/**
-	 * Display an editor showing the file associated with the specified
-	 * <tt>LogEntryNode</tt> and then scroll to the line specified by the
-	 * <tt>LogEntryNode</tt>. If an editor has not yet been created for the
-	 * designated file, a new will be instantiated.
-	 * 
-	 * @param logEntry
-	 */
-	public SimpleXmlEditor getEditor(LogEntry logEntry, Component parent) {
-		// Key is the ABSOLUTE path to XML file
-		String key = logEntry.getFile().getAbsolutePath();
+	public SimpleXmlEditor getEditorFor(MddfTarget target,  Component guiParent, LogEntryNode logEntry) {
+		// Key is the MddfTarget's 'key'
+		String key = target.getKey();
 		if (key == null || (key.isEmpty())) {
 			return null;
 		}
 		SimpleXmlEditor editor = editorMap.get(key);
 
 		if (editor == null) {
-			editor = SimpleXmlEditor.spawn(logEntry);
+			editor = SimpleXmlEditor.spawn(target);
 			if (editor == null) {
 				// probably a problem with the underlying XML file
 				return null;
 			}
 			editorMap.put(key, editor);
 			editor.setMonitor(this);
-			if (parent != null) {
-				Point point = parent.getLocationOnScreen();
+			if (guiParent != null) {
+				Point point = guiParent.getLocationOnScreen();
 				int offset = editorMap.size() * 20;
 				point.translate(offset, offset);
 				editor.setLocation(point);
-			} 
+			}
 		}
-		List<LogEntryNode> msgList;
 		/* Make sure the displayed line markers are up-to-date */
-		if (logEntry instanceof LogEntryNode) {
-			LogEntryFolder file1 = (LogEntryFolder) ((LogEntryNode) logEntry).getFolder();
-			LogEntryFolder fileEntry = (LogEntryFolder) file1.getPath()[1];
-			msgList = fileEntry.getMsgList();
-			editor.showLogMarkers(msgList);
+		LogEntryFolder folder = target.getLogFolder();
+		List<LogEntryNode> msgList = folder.getMsgList();
+		editor.showLogMarkers(msgList);
+		
+		if (logEntry != null) {
+			LogEntryFolder file1 =  logEntry.getFolder();
+			LogEntryFolder fileEntry = (LogEntryFolder) file1.getPath()[1]; 
 			editor.goTo((LogEntryNode) logEntry);
-
-		} else {
-			msgList = ((LogEntryFolder) logEntry).getMsgList();
-			editor.showLogMarkers(msgList);
+		} else { 
 			if (!msgList.isEmpty()) {
 				editor.goTo(msgList.get(0));
-			}else{
+			} else {
 				editor.goTo(0);
 			}
 		}
-		return editor;
+		return editor; 
 	}
 
 	/**
-	 * Display an editor showing the designated file. If an editor has not yet
-	 * been created for the designated file, a new will be instantiated.
-	 * 
-	 * @param filePath
-	 * @param parent
-	 * @return
-	 */
-	public SimpleXmlEditor getEditor(String filePath, Component parent) {
-		if (filePath == null || (filePath.isEmpty())) {
-			return null;
-		}
-		SimpleXmlEditor editor = editorMap.get(filePath);
-		if (editor == null) {
-			editor = SimpleXmlEditor.spawn(filePath);
-			editorMap.put(filePath, editor);
-			editor.setMonitor(this);
-			if (parent != null) {
-				Point point = parent.getLocationOnScreen();
-				int offset = editorMap.size() * 20;
-				point.translate(offset, offset);
-				editor.setLocation(point);
-			}
-		}
-		/*
-		 * Since there is no LogEntry, we need to get the LogEntryFolder in
-		 * order to set any line markers.
-		 */
-		LoggerWidget logger = GenericTool.consoleLogger;
-		File file = new File(filePath);
-		LogEntryFolder logFolder = logger.getFileFolder(file);
-		List<LogEntryNode> msgList = logFolder.getMsgList();
-		editor.showLogMarkers(msgList);
-		return editor;
-	}
-
-	/**
-	 * Returns the editor instance for the designated file. If one does not
-	 * already exist, a <tt>null</tt> value is returned.
+	 * Returns the editor instance for the designated file. If one does not already
+	 * exist, a <tt>null</tt> value is returned.
 	 * 
 	 * @param filePath
 	 * @return
 	 */
-	public SimpleXmlEditor getEditorFor(String filePath) {
-		SimpleXmlEditor editor = editorMap.get(filePath);
+	public SimpleXmlEditor getEditorFor(MddfTarget target) {
+		SimpleXmlEditor editor = editorMap.get(target.getKey());
 		return editor;
 	}
 
@@ -161,7 +113,6 @@ public class EditorMgr implements EditorMonitor {
 	@Override
 	public void editorHasClosed(SimpleXmlEditor editor) {
 		// Key is the ABSOLUTE path to XML file
-		editorMap.remove(editor.getFilePath());
-
+		editorMap.remove(editor.getMddfTarget().getKey());
 	}
 }

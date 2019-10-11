@@ -23,6 +23,7 @@
 package com.movielabs.mddflib.avails.xml;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.FormatConverter;
+import com.movielabs.mddflib.util.xml.InterimMddfTarget;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 
 /**
@@ -56,7 +58,7 @@ import com.movielabs.mddflib.util.xml.SchemaWrapper;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class DefaultXmlBuilder  extends AbstractXmlBuilder{
+public class DefaultXmlBuilder extends AbstractXmlBuilder {
 
 	public static final String moduleId = "XmlBuilder";
 	private String xsdVersion;
@@ -82,8 +84,8 @@ public class DefaultXmlBuilder  extends AbstractXmlBuilder{
 	private Map<String, Element> assetElRegistry;
 	private Map<Element, AbstractRowHelper> element2SrcRowMap;
 	private LogMgmt logger;
-	private Version templateVersion;
-	private File curSrcXslxFile;
+	private Version templateVersion; 
+	private InterimMddfTarget curTarget;
 	private MetadataBuilder mdBuilder;
 	private XPathFactory xpfac = XPathFactory.instance();
 
@@ -162,7 +164,12 @@ public class DefaultXmlBuilder  extends AbstractXmlBuilder{
 	 */
 	public Document makeXmlAsJDom(AvailsSheet aSheet, String shortDesc, File srcXslxFile) throws IllegalStateException {
 		this.shortDesc = shortDesc;
-		this.curSrcXslxFile = srcXslxFile;
+		try {
+			this.curTarget = new InterimMddfTarget(srcXslxFile, logger);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		if (xsdVersion == null) {
 			String msg = "Unable to generate XML from XLSX: XSD version was not set or is unsupported.";
 			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, msg, null, moduleId);
@@ -191,26 +198,26 @@ public class DefaultXmlBuilder  extends AbstractXmlBuilder{
 		root.addNamespaceDeclaration(SchemaWrapper.xsiNSpace);
 		doc.setRootElement(root);
 		String msg = "Converting Excel Avails to XML v" + xsdVersion;
-		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
+		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
 		msg = "Processing spreadsheet '" + aSheet.getName() + "'; RowCount=" + aSheet.getRowCount();
-		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
+		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
 
 		// build document components row by row.
 		try {
 			rowLoop: for (Row row : aSheet.getRows()) {
 				msg = "Converting row " + row.getRowNum();
-				logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, null, moduleId);
+				logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
 				AbstractRowHelper rowHelper = AbstractRowHelper.createHelper(aSheet, row, logger);
 				if (rowHelper != null) {
 					rowHelper.makeAvail(this);
 				} else {
-					logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLATE, "Unsupported XLSX version", srcXslxFile, moduleId);
+					logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLATE, "Unsupported XLSX version", curTarget, moduleId);
 					break rowLoop;
 				}
 			}
 		} catch (Exception e) {
 			msg = "Exception while ingesting XLSX: " + e.getLocalizedMessage();
-			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
+			logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
 			e.printStackTrace();
 			return null;
 		}
@@ -233,7 +240,7 @@ public class DefaultXmlBuilder  extends AbstractXmlBuilder{
 		}
 		finalizeDocument(doc, aSheet.getVersion());
 		msg = "Completed ingesting XLSX file";
-		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, srcXslxFile, moduleId);
+		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
 		return doc;
 	}
 
@@ -254,12 +261,12 @@ public class DefaultXmlBuilder  extends AbstractXmlBuilder{
 		 * handle?
 		 */
 		String alid = alidPedigree.getRawValue();
-		logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, curSrcXslxFile,
-				"Looking for Avail with ALID=[" + alid + "]", null, null, moduleId);
+		String msg = "Looking for Avail with ALID=[" + alid + "]";
+		logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
 		Element availEL = availElRegistry.get(alid);
 		if (availEL == null) {
-			logger.logIssue(LogMgmt.TAG_XLATE, LogMgmt.LEV_DEBUG, curSrcXslxFile,
-					"Building Avail with ALID=[" + alid + "]", null, null, moduleId);
+			msg = "Building Avail with ALID=[" + alid + "]";
+			logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
 			availEL = new Element("Avail", getAvailsNSpace());
 			/*
 			 * No data value for the Avail element itself but for purposes of error logging
@@ -321,12 +328,12 @@ public class DefaultXmlBuilder  extends AbstractXmlBuilder{
 			String curValue = mapWorkType(curRow);
 			if (!definedValue.equals(curValue)) {
 				// Generate error msg
-				String msg = "Inconsistent WorkType; value not compatable with 1st definition of referenced Avail";
+				msg = "Inconsistent WorkType; value not compatable with 1st definition of referenced Avail";
 				int row4log = srcRow.getRowNumber() + 1;
 				String details = "AVAIL was 1st defined in row " + row4log + " which specifies AvailAsset/WorkType as "
 						+ srcRow.getData("AvailAsset/WorkType") + " and requires WorkType=" + definedValue;
-				Cell sourceCell = curRow.sheet.getCell("AvailAsset/WorkType", curRow.getRowNumber());
-				logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, sourceCell, msg, details, null, moduleId);
+				Cell sourceCell = curRow.sheet.getCell("AvailAsset/WorkType", curRow.getRowNumber());				 
+				logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, msg, curTarget, sourceCell, moduleId, null, null);
 			}
 		}
 		return availEL;
@@ -403,11 +410,15 @@ public class DefaultXmlBuilder  extends AbstractXmlBuilder{
 		return mdMecNSpace;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.avails.xml.AbstractXmlBuilder#isRequired(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.avails.xml.AbstractXmlBuilder#isRequired(java.lang.
+	 * String, java.lang.String)
 	 */
-	public boolean isRequired(String elementName, String schema) throws IllegalStateException, IllegalArgumentException {
+	public boolean isRequired(String elementName, String schema)
+			throws IllegalStateException, IllegalArgumentException {
 		if (xsdVersion == null) {
 			throw new IllegalStateException("The XSD version was not set or is unsupported.");
 		}
@@ -519,7 +530,6 @@ public class DefaultXmlBuilder  extends AbstractXmlBuilder{
 		}
 	}
 
-
 	/**
 	 * Create an XML element
 	 * 
@@ -533,6 +543,7 @@ public class DefaultXmlBuilder  extends AbstractXmlBuilder{
 		el.setText(formatted);
 		return el;
 	}
+
 	/**
 	 * @param row
 	 */
@@ -668,7 +679,8 @@ public class DefaultXmlBuilder  extends AbstractXmlBuilder{
 		String avPrefix = availsNSpace.getPrefix();
 		String xpath_VolMD = "//" + avPrefix + ":VolumeMetadata";
 		XPathExpression<Element> xpExp_VolMetadata = xpfac.compile(xpath_VolMD, Filters.element(), null, availsNSpace);
-		String xpath_EpisodeNum = "./" + avPrefix + ":EpisodeMetadata/" + avPrefix + ":EpisodeNumber/"+ mdNSpace.getPrefix() + ":Number";
+		String xpath_EpisodeNum = "./" + avPrefix + ":EpisodeMetadata/" + avPrefix + ":EpisodeNumber/"
+				+ mdNSpace.getPrefix() + ":Number";
 		XPathExpression<Element> xpExp_EpisodeNum = xpfac.compile(xpath_EpisodeNum, Filters.element(), null,
 				availsNSpace, mdNSpace);
 
