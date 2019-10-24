@@ -35,40 +35,37 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import java.awt.Color;
 
-import javax.swing.border.TitledBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.TreePath;
 
-import org.jdom2.Document;
-
 import javax.swing.JButton;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Stack;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.ButtonGroup;
@@ -94,7 +91,6 @@ import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
 import com.movielabs.mddflib.avails.xlsx.TemplateWorkBook;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
 import com.movielabs.mddflib.logging.LogEntryFolder;
-import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.Translator;
 import com.movielabs.mddflib.util.xml.MddfTarget;
@@ -142,7 +138,6 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			consoleLogger.collapse();
 			try {
 				controller.validate(srcPath, uxProfile);
-				refreshEditor(srcPath);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -167,8 +162,39 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			} catch (InterruptedException e) {
 				e.getCause().printStackTrace();
 			}
+			MddfTarget curTarget;
+			try {
+				curTarget = new MddfTarget(new File(srcPath), consoleLogger);
+				refreshEditor(curTarget);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			frame.setCursor(null); // turn off the wait cursor
 			setRunningState(false);
+		}
+
+		private void refreshEditor(MddfTarget target) {
+			/*
+			 * Is there an XmlEditor for the file? If so, make sure editor is up to-date
+			 * with latest log entries. To deal with MEC files validated as children of a
+			 * Manifest, we also need to descend the hierarchy.
+			 */
+			EditorMgr edMgr = EditorMgr.getSingleton();
+			// ..........
+			Stack<MddfTarget> targetList = new Stack<MddfTarget>();
+			targetList.push(target);
+			while (!targetList.empty()) {
+				MddfTarget nextT = targetList.pop();
+				SimpleXmlEditor editor = edMgr.getEditorFor(nextT);
+				if (editor != null) {
+					List msgList = nextT.getLogFolder().getMsgList();
+					editor.showLogMarkers(msgList);
+				}
+				targetList.addAll(Collections.list(nextT.children()));
+			}
+
+			
 		}
 	}
 
@@ -329,7 +355,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected JCheckBoxMenuItem validateBestPracCBox;
 	protected JCheckBoxMenuItem compressCBoxMenuItem;
 	protected JPanel mainPanel;
-	protected JButton runValidatorBtn; 
+	protected JButton runValidatorBtn;
 	protected JToolBar validatorToolBar;
 	protected JButton editFileBtn;
 	protected Map<String, File> selectedFiles = new HashMap<String, File>();
@@ -437,8 +463,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected JToolBar getValidationTools() {
 		if (validatorToolBar == null) {
 			validatorToolBar = new JToolBar();
-
-			validatorToolBar.add(getEditFileBtn());
+ 
 			validatorToolBar.add(getRunValidationBtn());
 
 			JLabel fileLabel = new JLabel("File");
@@ -459,8 +484,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		boolean enableUI = !running;
 		openFileMI.setEnabled(enableUI);
 		openFileMI.setEnabled(enableUI);
-		runScriptMI.setEnabled(enableUI);
-		editFileBtn.setEnabled(enableUI);
+		runScriptMI.setEnabled(enableUI); 
 		inputSrcTField.setEnabled(enableUI);
 	}
 
@@ -477,30 +501,14 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 					if (running) {
 						editFileBtn.setEnabled(false);
 						return;
-					}
-					editFile();
+					} 
 				}
 			});
 			editFileBtn.setEnabled(false);
 		}
 		return editFileBtn;
 	}
-
-	/**
-	 * 
-	 */
-	protected void editFile() {
-		String manifestPath = fileInputDir.getAbsolutePath();
-		/* Is it an XML file? */
-		if (manifestPath.endsWith(".xml")) {
-			SimpleXmlEditor editor = EditorMgr.getSingleton().getEditor(manifestPath, frame);
-
-			if (editor != null) {
-				editor.setVisible(true);
-			}
-		}
-
-	}
+ 
 
 	/**
 	 * @return
@@ -931,7 +939,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		inputSrcTField.setText(name);
 		inputSrcTField.setToolTipText(target.getAbsolutePath());
 		getRunValidationBtn().setEnabled(true);
-		getEditFileBtn().setEnabled(target.isFile());
+//		getEditFileBtn().setEnabled(target.isFile());
 		/*
 		 * Store for possible recall be user via menu selection
 		 */
@@ -1124,14 +1132,14 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	 * 
 	 * @param srcPath
 	 */
-	protected void refreshEditor(String srcPath) {
-		SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath);
-		if (xmlEditor != null) {
-			LogEntryFolder logFolder = consoleLogger.getFileFolder(xmlEditor.getCurFile());
-			List<LogEntryNode> msgList = logFolder.getMsgList();
-			xmlEditor.showLogMarkers(msgList);
-		}
-	}
+//	protected void refreshEditor(String srcPath) {
+//		SimpleXmlEditor xmlEditor = EditorMgr.getSingleton().getEditorFor(srcPath);
+//		if (xmlEditor != null) {
+//			LogEntryFolder logFolder = consoleLogger.getFileFolder(xmlEditor.getCurFile());
+//			List<LogEntryNode> msgList = logFolder.getMsgList();
+//			xmlEditor.showLogMarkers(msgList);
+//		}
+//	}
 
 	/**
 	 * keep track of recently accessed files
