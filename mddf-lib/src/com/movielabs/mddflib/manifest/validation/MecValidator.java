@@ -42,7 +42,6 @@ public class MecValidator extends CMValidator {
 
 	public static final String LOGMSG_ID = "MecValidator";
 
-
 	protected static HashMap<String, String> mec_id2typeMap;
 	static {
 		mec_id2typeMap = new HashMap<String, String>();
@@ -144,7 +143,7 @@ public class MecValidator extends CMValidator {
 		 */
 
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -152,8 +151,9 @@ public class MecValidator extends CMValidator {
 	 */
 	protected void validateUsage() {
 
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints of MEC v"+MDMEC_VER, curTarget, LOGMSG_ID);
-		
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints of MEC v" + MDMEC_VER, curTarget,
+				LOGMSG_ID);
+
 		super.validateUsage();
 		/*
 		 * Load JSON that defines various constraints on structure of the XML This is
@@ -163,11 +163,21 @@ public class MecValidator extends CMValidator {
 		String structVer = null;
 		switch (MDMEC_VER) {
 		case "2.4":
-		case "2.5": 
-		case "2.6": 
+		case "2.5":
+			/*
+			 * v2.4 and 2.5 differ only in which version of Common Metadata is referenced.
+			 */
+			structVer = "2.4";
+			break;
+		case "2.6":
 		case "2.7":
 		case "2.7.1":
-			structVer = "2.4";
+			/*
+			 * v2.6, 2.7 differ only in which version of Common Metadata is referenced.
+			 * V2.7.1 removes the enumeration for DisplayIndicators which does not impact
+			 * structural constraints.
+			 */
+			structVer = "2.6";
 			break;
 		default:
 			// Not supported for the version
@@ -184,8 +194,9 @@ public class MecValidator extends CMValidator {
 			return;
 		}
 
-		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "Validating constraints with MEC structure-defs_v"+structVer, curTarget, LOGMSG_ID);
-		
+		loggingMgr.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag,
+				"Validating constraints with MEC structure-defs_v" + structVer, curTarget, LOGMSG_ID);
+
 		JSONObject rqmtSet = structDefs.getJSONObject("StrucRqmts");
 		Iterator<String> keys = rqmtSet.keys();
 		while (keys.hasNext()) {
@@ -195,19 +206,24 @@ public class MecValidator extends CMValidator {
 			if (rqmtSpec.has("targetPath")) {
 				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MEC, "Structure check; key= " + key, curTarget,
 						logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null) && curFileIsValid;
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null)
+						&& curFileIsValid;
 			}
 		}
 
 		return;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.util.CMValidator#setParent(com.movielabs.mddflib.util.CMValidator)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.util.CMValidator#setParent(com.movielabs.mddflib.util.
+	 * CMValidator)
 	 */
 	@Override
 	public void setParent(CMValidator parent) {
-		this.parent = parent;		
+		this.parent = parent;
 	}
 
 }
