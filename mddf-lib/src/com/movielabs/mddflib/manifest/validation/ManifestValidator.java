@@ -323,8 +323,7 @@ public class ManifestValidator extends CMValidator {
 		validateId("Metadata", "ContentID", true, true);
 
 		// added in v1.7:
-		validateId("ExternalManifest", "ManifestID", true, true);
-		validateId("ExternalManifestID", null, true, true);
+		validateId("ExternalManifest", "ManifestID", true, true); 
 
 		/*
 		 * Check ID for everything else...
@@ -391,9 +390,8 @@ public class ManifestValidator extends CMValidator {
 
 		validateXRef(".//manifest:ALIDExperienceMap/manifest:ExperienceID", "Experience");
 
-		// added in v1.7:
-		xpath = ".//manifest:Inventory/manifest:ExternalManifest/@ManifestID";
-		validateXRef(xpath, "ExternalManifestID");
+		// added in v1.7: 
+		validateXRef(".//manifest:ExternalManifestID", "ExternalManifest");
 
 		/*
 		 * SPECIAL CASE: For v1.7 and after.... When ExternalManifestID is present in a
