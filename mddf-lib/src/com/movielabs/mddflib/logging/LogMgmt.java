@@ -93,6 +93,8 @@ public interface LogMgmt extends IssueLogger {
 	/** 
 	 */
 	public void clearLog();
+	
+	public void clearLog(MddfTarget target);
 
 	public LogEntryFolder assignFileFolder(MddfTarget target);
 

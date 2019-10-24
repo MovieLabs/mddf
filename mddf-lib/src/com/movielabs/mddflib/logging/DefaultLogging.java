@@ -53,8 +53,7 @@ public class DefaultLogging implements LogMgmt {
 	private String previousContext = null;
 	protected int minLevel = LogMgmt.LEV_WARN;
 	protected boolean printToConsole = false;
-	protected boolean infoIncluded;
-//	private Map<File, LogEntryFolder> fileFolderMap = new HashMap<File, LogEntryFolder>();
+	protected boolean infoIncluded; 
 	private LogEntryFolder curLoggingFolder; 
 	private LogEntryFolder curDefaultFolder  = new LogEntryFolder("DefaultFolder", -1, "fooBar"); 
 
@@ -297,6 +296,14 @@ public class DefaultLogging implements LogMgmt {
 		masterSeqNum = 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.movielabs.mddflib.logging.LogMgmt#clearLog(com.movielabs.mddflib.util.xml.MddfTarget)
+	 */
+	@Override
+	public void clearLog(MddfTarget target) { 
+		curLoggingFolder.removeAllChildren();
+	}
+	
 	/**
 	 * Save the log messages in the desired location and format.
 	 * 
@@ -390,5 +397,6 @@ public class DefaultLogging implements LogMgmt {
 	public void setInfoIncluded(boolean infoIncluded) {
 		this.infoIncluded = infoIncluded;
 	}
+
 
 }
