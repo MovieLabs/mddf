@@ -184,8 +184,8 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 		// --------------------------------------------------------------------------
 		/*
 		 * now check the additional constraints identified in MMC Section 2.1.2. This
-		 * are currently NOT supportable via the JSON-based 'structure validation'
-		 * mechanism
+		 * are currently NOT easily supportable via the JSON-based 'structure
+		 * validation' mechanism
 		 */
 		LogReference srcRef = LogReference.getRef("MMC", "mmc01");
 
@@ -215,12 +215,16 @@ public class MMCoreValidator extends ManifestValidator implements ProfileValidat
 			}
 
 		}
+		/*
+		 * QUESTION: is the 'single root' constraint something specific to a given
+		 * profile?
+		 */
 		if (rootExpCount > 1) {
-			String msg = "Only one root Experience is allowed"; 
-			loggingMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_PROFILE, msg, curTarget, logMsgSrcId);
+			String msg = rootExpCount+" root Experiences found. Only one  is recommended";
+			loggingMgr.log(LogMgmt.LEV_WARN, LogMgmt.TAG_PROFILE, msg, curTarget, logMsgSrcId);
 			curFileIsValid = false;
 		} else if (rootExpCount < 1) {
-			String msg = "Root Experience not found"; 
+			String msg = "Root Experience not found";
 			loggingMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_PROFILE, msg, curTarget, logMsgSrcId);
 			curFileIsValid = false;
 		}
