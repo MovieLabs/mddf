@@ -38,7 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
 import com.movielabs.mddflib.Obfuscator;
-import com.movielabs.mddflib.Obfuscator.Target;
+import com.movielabs.mddflib.Obfuscator.DataTarget;
 
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
@@ -55,8 +55,8 @@ public class MaskerDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JTextField destTextField;
 	private ArrayList<JCheckBox> cBoxList = new ArrayList<JCheckBox>();
-	private HashMap<Target, JCheckBox> cBoxMap = new HashMap<Target, JCheckBox>();
-	private HashMap<Target, JTextField> tFieldMap = new HashMap<Target, JTextField>();
+	private HashMap<DataTarget, JCheckBox> cBoxMap = new HashMap<DataTarget, JCheckBox>();
+	private HashMap<DataTarget, JTextField> tFieldMap = new HashMap<DataTarget, JTextField>();
 	private JTextField fileNameField;
 	private String ttipFileName = "Default name is same as input file's. Change either the file name or the directory unless you want to overwite the input file.";
 	private File curSrcFile;
@@ -227,7 +227,7 @@ public class MaskerDialog extends JDialog {
 		gbc_lblReplacementValue.gridy = 4;
 		contentPanel.add(lblReplacementValue, gbc_lblReplacementValue);
 		// ....................................
-		Target target = Target.Money;
+		DataTarget target = DataTarget.Money;
 		JCheckBox cbTermMoney = new JCheckBox(target.toString());
 		cbTermMoney.setHorizontalAlignment(SwingConstants.LEFT);
 		cbTermMoney.setToolTipText(target.getToolTip());
@@ -251,7 +251,7 @@ public class MaskerDialog extends JDialog {
 		tFieldMap.put(target, textField_Money);
 
 		// ....................................
-		target = Target.ContractID;
+		target = DataTarget.ContractID;
 		JCheckBox cbTransContract = new JCheckBox(target.toString());
 		cbTransContract.setHorizontalAlignment(SwingConstants.LEFT);
 		cbTransContract.setToolTipText(target.getToolTip());
@@ -297,10 +297,10 @@ public class MaskerDialog extends JDialog {
 		String outDirPath = destTextField.getText();
 		File outputFile = new File(outDirPath, outFileName);
 		// need to get replacement strings....
-		Map<Target, String> replacementMap = new HashMap<Target, String>();
-		Iterator<Target> keyIt = cBoxMap.keySet().iterator();
+		Map<DataTarget, String> replacementMap = new HashMap<DataTarget, String>();
+		Iterator<DataTarget> keyIt = cBoxMap.keySet().iterator();
 		while (keyIt.hasNext()) {
-			Target key = keyIt.next();
+			DataTarget key = keyIt.next();
 			JCheckBox cbx = cBoxMap.get(key);
 			if (cbx.isSelected()) {
 				JTextField jtf = tFieldMap.get(key);
