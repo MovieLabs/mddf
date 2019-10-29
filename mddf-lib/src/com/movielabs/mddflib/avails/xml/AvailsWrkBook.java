@@ -108,14 +108,7 @@ public class AvailsWrkBook {
 			String description, LogMgmt logMgr) {
 
 		// needed for logging....
-		MddfTarget target;
-		try {
-			target = new InterimMddfTarget(xslxFile, logMgr);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return null;
-		}
+		MddfTarget target = new InterimMddfTarget(xslxFile, logMgr);
 
 		Version unknown = AvailsSheet.Version.valueOf("UNK");
 		if (xlsxVersion == null) {
@@ -206,18 +199,8 @@ public class AvailsWrkBook {
 
 	public static AvailsSheet loadWorkBook(File xslxFile, LogMgmt logMgr, InputStream inStream, int sheetNum) {
 		boolean autoCorrect = false;
-		boolean exitOnError = false; 
-		InterimMddfTarget mddfTarget = null;
-		try {
-			mddfTarget = new InterimMddfTarget(xslxFile,  logMgr);
-		} catch (FileNotFoundException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found: " + xslxFile.getAbsolutePath(), mddfTarget,
-					logMsgSrcId);
-			return null;
-		}
-		
+		boolean exitOnError = false;
+		InterimMddfTarget mddfTarget = new InterimMddfTarget(xslxFile, logMgr); 
 		AvailsWrkBook wrkBook;
 		try {
 			if (inStream == null) {
@@ -225,15 +208,16 @@ public class AvailsWrkBook {
 			}
 			wrkBook = new AvailsWrkBook(inStream, xslxFile, logMgr, exitOnError, autoCorrect);
 		} catch (FileNotFoundException e1) {
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found: " + xslxFile.getAbsolutePath(), mddfTarget,
-					logMsgSrcId);
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "File not found: " + xslxFile.getAbsolutePath(),
+					mddfTarget, logMsgSrcId);
 			return null;
 		} catch (POIXMLException e1) {
 			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL,
 					"Unable to parse XLSX. Check for comments or embedded objects.", mddfTarget, logMsgSrcId);
 			return null;
 		} catch (IOException e1) {
-			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", mddfTarget, logMsgSrcId);
+			logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "IO Exception when accessing file", mddfTarget,
+					logMsgSrcId);
 			return null;
 		}
 		AvailsSheet sheet;

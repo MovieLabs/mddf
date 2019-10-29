@@ -84,7 +84,7 @@ public class DefaultXmlBuilder extends AbstractXmlBuilder {
 	private Map<String, Element> assetElRegistry;
 	private Map<Element, AbstractRowHelper> element2SrcRowMap;
 	private LogMgmt logger;
-	private Version templateVersion; 
+	private Version templateVersion;
 	private InterimMddfTarget curTarget;
 	private MetadataBuilder mdBuilder;
 	private XPathFactory xpfac = XPathFactory.instance();
@@ -164,12 +164,7 @@ public class DefaultXmlBuilder extends AbstractXmlBuilder {
 	 */
 	public Document makeXmlAsJDom(AvailsSheet aSheet, String shortDesc, File srcXslxFile) throws IllegalStateException {
 		this.shortDesc = shortDesc;
-		try {
-			this.curTarget = new InterimMddfTarget(srcXslxFile, logger);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		this.curTarget = new InterimMddfTarget(srcXslxFile, logger);
 		if (xsdVersion == null) {
 			String msg = "Unable to generate XML from XLSX: XSD version was not set or is unsupported.";
 			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, msg, null, moduleId);
@@ -332,7 +327,7 @@ public class DefaultXmlBuilder extends AbstractXmlBuilder {
 				int row4log = srcRow.getRowNumber() + 1;
 				String details = "AVAIL was 1st defined in row " + row4log + " which specifies AvailAsset/WorkType as "
 						+ srcRow.getData("AvailAsset/WorkType") + " and requires WorkType=" + definedValue;
-				Cell sourceCell = curRow.sheet.getCell("AvailAsset/WorkType", curRow.getRowNumber());				 
+				Cell sourceCell = curRow.sheet.getCell("AvailAsset/WorkType", curRow.getRowNumber());
 				logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, msg, curTarget, sourceCell, moduleId, null, null);
 			}
 		}

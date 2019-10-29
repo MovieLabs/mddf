@@ -379,13 +379,7 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 	 */
 	public Map<String, Object> convert(File srcXslxFile, InputStream inStream, int sheetNum, String shortDesc)
 			throws IllegalStateException {
-		InterimMddfTarget mddfTarget = null;
-		try {
-			mddfTarget = new InterimMddfTarget(srcXslxFile,  logger);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		InterimMddfTarget mddfTarget =  new InterimMddfTarget(srcXslxFile,  logger); 
 		Map<String, Object> results = new HashMap<String, Object>();
 		FILE_FMT srcMddfFmt = null;
 		switch (templateVersion) {
