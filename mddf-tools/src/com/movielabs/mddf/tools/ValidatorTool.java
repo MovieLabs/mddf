@@ -52,7 +52,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -162,13 +161,11 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			} catch (InterruptedException e) {
 				e.getCause().printStackTrace();
 			}
-			MddfTarget curTarget;
-			try {
-				curTarget = new MddfTarget(new File(srcPath), consoleLogger);
+			File targetFile = new File(srcPath);
+			if (targetFile.isFile()) {
+				MddfTarget curTarget;
+				curTarget = new MddfTarget(targetFile, consoleLogger);
 				refreshEditor(curTarget);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			frame.setCursor(null); // turn off the wait cursor
 			setRunningState(false);
@@ -194,7 +191,6 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 				targetList.addAll(Collections.list(nextT.children()));
 			}
 
-			
 		}
 	}
 
@@ -463,7 +459,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	protected JToolBar getValidationTools() {
 		if (validatorToolBar == null) {
 			validatorToolBar = new JToolBar();
- 
+
 			validatorToolBar.add(getRunValidationBtn());
 
 			JLabel fileLabel = new JLabel("File");
@@ -484,7 +480,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		boolean enableUI = !running;
 		openFileMI.setEnabled(enableUI);
 		openFileMI.setEnabled(enableUI);
-		runScriptMI.setEnabled(enableUI); 
+		runScriptMI.setEnabled(enableUI);
 		inputSrcTField.setEnabled(enableUI);
 	}
 
@@ -501,14 +497,13 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 					if (running) {
 						editFileBtn.setEnabled(false);
 						return;
-					} 
+					}
 				}
 			});
 			editFileBtn.setEnabled(false);
 		}
 		return editFileBtn;
 	}
- 
 
 	/**
 	 * @return
