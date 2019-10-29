@@ -38,10 +38,10 @@ import com.movielabs.mddflib.util.xml.MddfTarget;
  *
  */
 public class LogEntryFolder extends LogEntry {
- 
+
 	private ArrayList<LogEntryNode> msgList;
-	private int level; 
-	private FILE_FMT mddfFormat; 
+	private int level;
+	private FILE_FMT mddfFormat;
 	private String key = null;
 	private MddfTarget mddfTarget;
 
@@ -102,14 +102,17 @@ public class LogEntryFolder extends LogEntry {
 	}
 
 	public void setFile(MddfTarget myTarget) {
-		if (mddfTarget != null) {
-			// OK to replace but only if the KEYs match
-			String curKey = LogMgmt.genFolderKey(mddfTarget);
-			String newKey = LogMgmt.genFolderKey(myTarget);
-			if (!newKey.equals(curKey)) {
-				throw new IllegalStateException("Replacement MddfTarget has non-matching key");
-			}
-		}
+//		if (mddfTarget != null) {
+		/*
+		 * OK to replace but only if the KEYs match???? causes bug in cloud validator
+		 * and may be unnecessary
+		 */
+//			String curKey = LogMgmt.genFolderKey(mddfTarget);
+//			String newKey = LogMgmt.genFolderKey(myTarget);
+//			if (!newKey.equals(curKey)) {
+//				throw new IllegalStateException("Replacement MddfTarget has non-matching key");
+//			}
+//		}
 		this.myFile = myTarget.getSrcFile();
 		this.mddfTarget = myTarget;
 	}
@@ -123,7 +126,7 @@ public class LogEntryFolder extends LogEntry {
 			return fileEntry.myFile;
 		}
 	}
- 
+
 	public MDDF_TYPE getMddfType() {
 		return mddfTarget.getMddfType();
 	}
@@ -131,7 +134,6 @@ public class LogEntryFolder extends LogEntry {
 	public void setMddfFormat(FILE_FMT format) {
 		mddfFormat = format;
 	}
-
 
 	public FILE_FMT getMddfFormat() {
 		return mddfFormat;
@@ -260,6 +262,5 @@ public class LogEntryFolder extends LogEntry {
 		}
 
 	}
-
 
 }
