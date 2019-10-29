@@ -82,7 +82,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 	}
 
 	@AfterEach
-	public void tearDown() { 
+	public void tearDown() {
 	}
 
 	/**
@@ -91,15 +91,11 @@ public class ManifestValidatorTest extends ManifestValidator {
 	protected MddfTarget initialize(String testFileName) {
 		String srcFilePath = rsrcPath + testFileName;
 		File srcFile = new File(srcFilePath);
-		try {
-			MddfTarget target = new MddfTarget(srcFile, iLog);
-			return target;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (!srcFile.exists()) {
 			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
 		}
-
+		MddfTarget target = new MddfTarget(srcFile, iLog);
+		return target;
 	}
 
 	/**
@@ -173,8 +169,8 @@ public class ManifestValidatorTest extends ManifestValidator {
 		execute(target);
 		try {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-			assertEquals(9, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(7, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(11, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(4, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
@@ -254,7 +250,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 		}
 	}
 
-	//@Test
+	// @Test
 	public void testMEC_Usage() throws IOException, JDOMException {
 		MddfTarget target = initialize("Manifest_w_MEC_v1.6.xml");
 		execute(target);

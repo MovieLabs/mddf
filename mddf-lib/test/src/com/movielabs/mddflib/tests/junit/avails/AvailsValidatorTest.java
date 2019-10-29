@@ -82,17 +82,13 @@ public class AvailsValidatorTest extends AvailValidator {
 	protected MddfTarget initialize(String testFileName) {
 		String srcFilePath = rsrcPath + testFileName;
 		File srcFile = new File(srcFilePath);
-		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
-
-		try {
-			MddfTarget target = new MddfTarget(srcFile, iLog);
-			return target;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit"); 
+		
+		if(!srcFile.exists()) {
 			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
-		}
-
+		} 
+			MddfTarget target = new MddfTarget(srcFile, iLog);
+		return target;
 	}
 
 	/**

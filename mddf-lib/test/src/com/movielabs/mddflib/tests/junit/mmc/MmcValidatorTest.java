@@ -91,15 +91,11 @@ public class MmcValidatorTest extends MMCoreValidator {
 
 		String srcFilePath = rsrcPath + testFileName;
 		File srcFile = new File(srcFilePath);
-		try {
-			MddfTarget target = new MddfTarget(srcFile, iLog);
-			return target;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(!srcFile.exists()) {
 			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
-		}
-
+		} 
+			MddfTarget target = new MddfTarget(srcFile, iLog);
+			return target; 
 	}
 
 	/**
@@ -175,7 +171,7 @@ public class MmcValidatorTest extends MMCoreValidator {
 		try {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
@@ -195,7 +191,7 @@ public class MmcValidatorTest extends MMCoreValidator {
 		try {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 //		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE)); 
 		} catch (AssertionFailedError e) {
 			dumpLog();

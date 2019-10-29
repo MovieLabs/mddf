@@ -90,16 +90,11 @@ public class MecValidatorTest extends MecValidator {
 	protected MddfTarget initialize(String testFileName) {
 		String srcFilePath = rsrcPath + testFileName;
 		File srcFile = new File(srcFilePath);
-		try {
-			MddfTarget target = new MddfTarget(srcFile, iLog);
-			return target;
-		} catch (FileNotFoundException e) {
+		if(!srcFile.exists()) {
 			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
-		} catch (Exception e) {
-			dumpLog();
-			throw e;
-		}
-
+		} 
+			MddfTarget target = new MddfTarget(srcFile, iLog);
+			return target; 
 	}
 
 	@Test

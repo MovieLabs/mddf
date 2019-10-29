@@ -125,15 +125,11 @@ public class CpeValidatorTest extends CpeValidator {
 	protected MddfTarget getTarget(String testFileName) {
 		String srcFilePath = rsrcPath + testFileName;
 		File srcFile = new File(srcFilePath);
-		try {
-			MddfTarget target = new MddfTarget(srcFile, iLog);
-			return target;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(!srcFile.exists()) {
 			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
-		}
-
+		} 
+			MddfTarget target = new MddfTarget(srcFile, iLog);
+			return target; 
 	}
 
 	/**

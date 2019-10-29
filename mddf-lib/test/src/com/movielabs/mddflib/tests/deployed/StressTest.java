@@ -33,6 +33,7 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -245,13 +246,12 @@ public class StressTest {
 	 * @param i
 	 */
 	private void runXmlTest(File srcFile, Version version, int i) {
-		MddfTarget target;
-		try {
-			target = new MddfTarget(srcFile, iLog);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return;
+
+		if (!srcFile.exists()) {
+			throw new MissingResourceException("Missing test artifact " + srcFile.getAbsolutePath(), "File",
+					srcFile.getName());
 		}
+		MddfTarget target = new MddfTarget(srcFile, iLog);
 		Document xmlDoc = target.getXmlDoc();
 		if (testMode.equals("load")) {
 			return;
@@ -287,7 +287,7 @@ public class StressTest {
 
 		pauseForInput("Ready to validate. Hit <Enter> when ready to continue");
 		Map<Object, Pedigree> pedigreeMap = (Map<Object, Pedigree>) results.get("pedigree");
-		MddfTarget target = new MddfTarget(srcFile, xmlDoc, iLog);
+		MddfTarget target = new MddfTarget(xmlDoc, srcFile, iLog);
 		String msg = "Validating file as a " + target.getMddfType().toString();
 		iLog.log(LogMgmt.LEV_INFO, iLog.TAG_N_A, msg, target, MODULE_ID);
 		boolean isValid = true;

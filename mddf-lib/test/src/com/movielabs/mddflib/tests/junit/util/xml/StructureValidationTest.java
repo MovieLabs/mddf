@@ -30,6 +30,7 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -67,7 +68,7 @@ import net.sf.json.JSONObject;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class StructureValidationTest extends StructureValidation{
+public class StructureValidationTest extends StructureValidation {
 
 	private static InstrumentedLogger iLog = new InstrumentedLogger();
 	private static String rsrcPath = "./test/resources/";
@@ -75,10 +76,10 @@ public class StructureValidationTest extends StructureValidation{
 	private Element rootEl;
 	private CMValidator validator;
 	private File srcFile;
-	private MddfTarget mddfTarget; 
-	
+	private MddfTarget mddfTarget;
+
 	public StructureValidationTest() {
-		super( iLog, "JUnit"); 
+		super(iLog, "JUnit");
 	}
 
 	/**
@@ -126,7 +127,7 @@ public class StructureValidationTest extends StructureValidation{
 			Element basicEl = basicElList.get(j);
 			for (int i = 0; i < rqmtSet.size(); i++) {
 				JSONObject nextRqmt = rqmtSet.getJSONObject(i);
-				boolean isValid = evaluateConstraint(basicEl, nextRqmt, basicEl,null, null, null);
+				boolean isValid = evaluateConstraint(basicEl, nextRqmt, basicEl, null, null, null);
 				assertTrue(isValid);
 			}
 		}
@@ -277,7 +278,7 @@ public class StructureValidationTest extends StructureValidation{
 			break;
 		}
 		validator.setMddfVersions(srcMddfFmt);
-		
+
 		if (jsonFile != null) {
 			structDefs = loadJSON(jsonFile);
 		}
@@ -292,11 +293,11 @@ public class StructureValidationTest extends StructureValidation{
 		Document xmlDoc = null;
 		String srcFilePath = rsrcPath + fileName;
 		srcFile = new File(srcFilePath);
-		try {
-			mddfTarget = new MddfTarget(srcFile, iLog);
-		} catch (FileNotFoundException e1) { 
-//			e1.printStackTrace();
+
+		if (!srcFile.exists()) {
+			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
 		}
+		mddfTarget = new MddfTarget(srcFile, iLog);
 		if (srcFile.canRead()) {
 			try {
 				xmlDoc = XmlIngester.getAsXml(srcFile);

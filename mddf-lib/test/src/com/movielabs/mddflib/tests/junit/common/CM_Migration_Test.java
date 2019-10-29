@@ -54,12 +54,12 @@ import com.movielabs.mddflib.util.xml.MddfTarget;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class CM_Migration_Test   {
+public class CM_Migration_Test {
 
 	private static String rsrcPath = "./test/resources/common/CM_2.7.1/";
 	private InstrumentedLogger iLog = new InstrumentedLogger();
 
-	public CM_Migration_Test() { 
+	public CM_Migration_Test() {
 	}
 
 	/**
@@ -89,14 +89,11 @@ public class CM_Migration_Test   {
 	protected MddfTarget initialize(String testFileName) {
 		String srcFilePath = rsrcPath + testFileName;
 		File srcFile = new File(srcFilePath);
-		try {
-			MddfTarget target = new MddfTarget(srcFile, iLog);
-			return target;
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (!srcFile.exists()) {
 			throw new MissingResourceException("Missing test artifact " + srcFilePath, "File", srcFilePath);
 		}
+		MddfTarget target = new MddfTarget(srcFile, iLog);
+		return target;
 
 	}
 
@@ -229,7 +226,7 @@ public class CM_Migration_Test   {
 			throw e;
 		}
 	}
-	
+
 	@Test
 	public void testMEC_v2_7() throws IOException, JDOMException {
 		MddfTarget target = initialize("MEC_v2.7_F.xml");
@@ -259,7 +256,8 @@ public class CM_Migration_Test   {
 	        xmlns:md="http://www.movielabs.com/schema/md/v2.7/md"
 		    xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		    xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.1.xsd">
+		    xsi:schemaLocation=
+	"http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.1.xsd">
 	 * </pre>
 	 * 
 	 * @throws IOException
