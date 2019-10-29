@@ -46,17 +46,15 @@ public class InterimMddfTarget extends MddfTarget {
 	 * @param logMgr
 	 * @throws FileNotFoundException
 	 */
-	public InterimMddfTarget(File srcFile, LogMgmt logMgr) throws FileNotFoundException {
-		super(srcFile, logMgr);
-	}
- 
-
-	protected void init() {
-		// defaults (may be overridden)
+	public InterimMddfTarget(File srcFile, LogMgmt logMgr)  {
+		super( );
+		this.srcFile = srcFile;
+		this.logMgr = logMgr;
 		logTag = LogMgmt.TAG_N_A;
 		mddfType = MDDF_TYPE.AVAILS;
 		logFolder = logMgr.assignFileFolder(this);
 	}
+	 
  
 
 	public ReusableInputStream getXmlStreamSrc() {

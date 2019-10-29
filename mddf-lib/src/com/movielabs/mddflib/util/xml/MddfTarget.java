@@ -27,14 +27,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
-import org.jdom2.output.XMLOutputter;
 import org.xml.sax.SAXParseException;
 
-import com.gc.iotools.stream.is.InputStreamFromOutputStream;
 import com.movielabs.mddf.MddfContext.MDDF_TYPE;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -48,15 +47,18 @@ import com.movielabs.mddflib.logging.LogMgmt;
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class MddfTarget {
-	private File srcFile;
-	private ReusableInputStream streamSrc;
+public class MddfTarget extends DefaultMutableTreeNode {
+	protected File srcFile;
+	private ReusableInputStream streamSrc = null;
 	protected Document xmlDoc = null;
 	protected LogMgmt logMgr;
 	protected MDDF_TYPE mddfType;
 	protected int logTag;
-	private MddfTarget parentTarget = null;
 	protected LogEntryFolder logFolder;
+
+	protected MddfTarget() {
+		super();
+	}
 
 	/**
 	 * Construct target where the MDDF source is an XML file on the local file
@@ -71,34 +73,85 @@ public class MddfTarget {
 	 * @param logMgr
 	 * @throws FileNotFoundException
 	 */
-	public MddfTarget(File srcFile, LogMgmt logMgr) throws FileNotFoundException {
-		this(null, srcFile, logMgr);
-	}
-
-	public MddfTarget(MddfTarget parent, File srcFile, LogMgmt logMgr) throws FileNotFoundException {
+	public MddfTarget(File srcFile, LogMgmt logMgr) { 
 		super();
 		this.srcFile = srcFile;
 		this.logMgr = logMgr;
-		this.parentTarget = parent;
-		InputStream mainStream = new FileInputStream(srcFile);
-		this.streamSrc = new ReusableInputStream(mainStream);
-		init();
+		logFolder = logMgr.assignFileFolder(this);
+		try {
+			InputStream mainStream = new FileInputStream(srcFile);
+			this.streamSrc = new ReusableInputStream(mainStream);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		identifyXmlContext();
 	}
 
 	/**
-	 * Construct target where the MDDF source is an <tt>InputStream</tt>. The
-	 * <tt>srcFile</tt> may or may not exist or be readable on the <i>local</i> file
-	 * system.
+	 * Construct target where the MDDF source is an XML file on the local file
+	 * system and it is being used as a secondary source of data (i.e., a MEC file
+	 * referenced by a Manifest).
+	 * 
+	 * <p>
+	 * This constructor should NOT be used for cloud-based configurations unless an
+	 * uploaded file is first saved to the server's file system.
+	 * </p>
+	 * 
+	 * @param parent
+	 * @param srcFile
+	 * @param logMgr
+	 */
+	public MddfTarget(MddfTarget parent, File srcFile, LogMgmt logMgr) {
+		super();
+		this.srcFile = srcFile;
+		this.logMgr = logMgr;
+		if (parent != null) {
+			parent.add(this);
+		}
+		logFolder = logMgr.assignFileFolder(this);
+		try {
+			InputStream mainStream = new FileInputStream(srcFile);
+			this.streamSrc = new ReusableInputStream(mainStream);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		identifyXmlContext();
+	}
+
+	/**
+	 * Construct target where the MDDF source is an <tt>InputStream</tt> that may be
+	 * used to obtain an XML file. The <tt>srcFile</tt> may or may not exist or be
+	 * readable on the <i>local</i> file system.
 	 * 
 	 * @param srcFile
 	 * @param xmlStreamSrc
 	 */
 	public MddfTarget(File srcFile, InputStream xmlStreamSrc, LogMgmt logMgr) {
+		this(null, srcFile, xmlStreamSrc, logMgr);
+	}
+
+	/**
+	 * Construct target where the MDDF source is an <tt>InputStream</tt> that may be
+	 * used to obtain an XML file that is used as a secondary source of data (i.e.,
+	 * a MEC file referenced by a Manifest). The <tt>srcFile</tt> may or may not
+	 * exist or be readable on the <i>local</i> file system.
+	 * 
+	 * @param parent
+	 * @param srcFile
+	 * @param xmlStreamSrc
+	 */
+	public MddfTarget(MddfTarget parent, File srcFile, InputStream xmlStreamSrc, LogMgmt logMgr) {
 		super();
 		this.srcFile = srcFile;
 		this.logMgr = logMgr;
+		if (parent != null) {
+			parent.add(this);
+		}
+		logFolder = logMgr.assignFileFolder(this);
 		this.streamSrc = new ReusableInputStream(xmlStreamSrc);
-		init();
+		identifyXmlContext();
 	}
 
 	/**
@@ -106,28 +159,24 @@ public class MddfTarget {
 	 * XLSX-encoded Avails). An XML-formatted translation must therefore be provided
 	 * as an argument to the constructor.
 	 * 
-	 * @param srcFile
 	 * @param xmlDoc
+	 * @param srcFile
 	 * @param logMgr
 	 */
-	public MddfTarget(File srcFile, Document xmlDoc, LogMgmt logMgr) {
+	public MddfTarget(Document xmlDoc, File srcFile, LogMgmt logMgr) {
 		super();
 		this.srcFile = srcFile;
 		this.logMgr = logMgr;
 		this.xmlDoc = xmlDoc;
 		logTag = LogMgmt.TAG_AVAIL;
 		mddfType = MDDF_TYPE.AVAILS;
-		buildStreamSrc();
-		init();
+		logFolder = logMgr.assignFileFolder(this); 
 	}
 
 	/**
-	 * 
+	 * Identify type of XML file (i.e., Manifest, Avail, etc)
 	 */
-	protected void init() {
-		/*
-		 * Identify type of XML file (i.e., Manifest, Avail, etc)
-		 */
+	protected void identifyXmlContext() {
 		Element docRootEl = getXmlDoc().getRootElement();
 		String nSpaceUri = docRootEl.getNamespaceURI();
 		if (nSpaceUri.contains("manifest")) {
@@ -142,25 +191,8 @@ public class MddfTarget {
 		} else {
 			mddfType = null;
 		}
-		// ??? do we need to save the folder or the key? Maybe add a getter?
-		logFolder = logMgr.assignFileFolder(this);
 	}
-
-	/**
-	 * @see http://io-tools.sourceforge.net/easystream/user_guide/
-	 *      convert_outputstream_to_inputstream.html
-	 */
-	private void buildStreamSrc() {
-		final InputStreamFromOutputStream<String> xmlStreamSrc = new InputStreamFromOutputStream<String>() {
-			@Override
-			protected String produce(final OutputStream dataSink) throws Exception {
-				XMLOutputter outputter = new XMLOutputter();
-				outputter.output(xmlDoc, dataSink);
-				return "FooBar";
-			}
-		};
-		this.streamSrc = new ReusableInputStream(xmlStreamSrc);
-	}
+ 
 
 	/**
 	 * @return the srcFile
@@ -221,19 +253,30 @@ public class MddfTarget {
 	/**
 	 * @return
 	 */
-	public LogEntryFolder getLogFolder() { 
+	public LogEntryFolder getLogFolder() {
 		return logFolder;
 	}
 
 	public MddfTarget getParentTarget() {
-		return parentTarget;
+		return (MddfTarget) this.getParent();
 	}
 
 	/**
+	 * when dealing with files uploaded to the cloud, all we have to work with is
+	 * the file's name... any info re the original path is lost. As a result, we
+	 * have a problem re the use of the MddfTarget's 'key' which is (partially)
+	 * path-based.
+	 * 
+	 * The solution (for now) is to accept the limitation to the cloud validator's
+	 * ability to differentiate 2 files with same name
+	 * 
 	 * @return
 	 */
 	public String getKey() {
 		return LogMgmt.genFolderKey(this);
 	}
 
+	public void setParent(MutableTreeNode newParent) {
+		super.setParent(newParent);
+	}
 }
