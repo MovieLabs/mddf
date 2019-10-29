@@ -43,7 +43,7 @@ import com.movielabs.mddf.tools.util.VersionChooserDialog;
 import com.movielabs.mddf.tools.util.logging.AdvLogPanel;
 import com.movielabs.mddf.tools.util.logging.LogNavPanel;
 import com.movielabs.mddflib.Obfuscator;
-import com.movielabs.mddflib.Obfuscator.Target;
+import com.movielabs.mddflib.Obfuscator.DataTarget;
 import com.movielabs.mddflib.avails.validation.AvailValidator;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
@@ -58,6 +58,7 @@ import com.movielabs.mddflib.manifest.validation.profiles.MMCoreValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator;
 import com.movielabs.mddflib.util.StringUtils;
 import com.movielabs.mddflib.util.Translator;
+import com.movielabs.mddflib.util.xml.InterimMddfTarget;
 import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -292,9 +293,15 @@ public class ValidationController {
 				File aFile = (File) inputFiles[i];
 				String message = aFile.getName();
 				if (aFile.isFile()) {
-					logMgr.pushFileContext(aFile, true);
+					/*
+					 * this is a initial target for use in early logging. If all goes well it get
+					 * over-ridden very quickly.
+					 */
+					MddfTarget target = new InterimMddfTarget(aFile, logMgr);
+					logMgr.pushFileContext(target);
+					logMgr.clearLog(target);
 					try {
-						validateFile(aFile, uxProfile);
+						validateFile(target, uxProfile);
 					} catch (Exception e) {
 						String msg = e.getMessage();
 						if (msg == null) {
@@ -302,7 +309,7 @@ public class ValidationController {
 							msg = e.toString();
 						}
 						String details = "Exception while validating; file processing terminated.";
-						logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_MANIFEST, msg, aFile, -1, MODULE_ID, details, null);
+						logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_MANIFEST, msg, target, null, MODULE_ID, details, null);
 					} finally {
 						/* Some memory mgmt??? */
 						System.gc();
@@ -318,9 +325,15 @@ public class ValidationController {
 			}
 		} else {
 			// Process a single file
+			/*
+			 * this is a initial target for use in early logging. If all goes well it get
+			 * over-ridden very quickly.
+			 */
+			MddfTarget target = new InterimMddfTarget(srcFile, logMgr);
 			try {
-				logMgr.pushFileContext(srcFile, true);
-				validateFile(srcFile, uxProfile);
+				logMgr.pushFileContext(target);
+				logMgr.clearLog(target);
+				validateFile(target, uxProfile);
 			} catch (Exception e) {
 				e.printStackTrace();
 				String msg = e.getLocalizedMessage();
@@ -329,16 +342,16 @@ public class ValidationController {
 				}
 				String loc = e.getStackTrace()[0].toString();
 				String details = "Exception while validating; " + loc;
-				logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, srcFile, -1, MODULE_ID, details, null);
+				logMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, target, null, MODULE_ID, details, null);
 			} finally {
 				/* Some memory mgmt??? */
 				System.gc();
-//				logMgr.popFileContext(srcFile);
 			}
 		}
 	}
 
-	protected void validateFile(File srcFile, String uxProfile) throws IOException, JDOMException { 
+	protected void validateFile(MddfTarget target, String uxProfile) throws IOException, JDOMException {
+		File srcFile = target.getSrcFile();
 		String fileType = StringUtils.extractFileType(srcFile.getAbsolutePath());
 		fileType = fileType.toLowerCase();
 		if (!(fileType.equals("xml") || fileType.equals("xlsx"))) {
@@ -360,20 +373,19 @@ public class ValidationController {
 				supplemental = "Avails Excel support restricted to 'xlsx'. All other formats are potential security risk";
 				break;
 			}
-			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, errMsg, srcFile, -1, MODULE_ID, supplemental, null);
+			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, errMsg, target, -1, MODULE_ID, supplemental, null);
 			return;
-		} 
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "Validating " + srcFile.getPath(), srcFile, MODULE_ID);
+		}
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "Validating " + srcFile.getPath(), target, MODULE_ID);
 		Map<Object, Pedigree> pedigreeMap = null;
 		FILE_FMT srcMddfFmt = null;
 		Document xmlDoc = null;
-		MddfTarget target = null;
 		if (fileType.equals("xlsx")) {
 			/* The XLSX format is only supported with AVAILS files */
 			Map<String, Object> results = convertSpreadsheet_v2(srcFile);
 			if (results == null) {
 				String msg = "Unable to convert Excel to XML";
-				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, srcFile, -1, MODULE_ID, null, null);
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, target, -1, MODULE_ID, null, null);
 				return;
 			} else {
 				RESULT_STATUS completionStatus = (RESULT_STATUS) results.get("status");
@@ -384,7 +396,7 @@ public class ValidationController {
 				pedigreeMap = (Map<Object, Pedigree>) results.get("pedigree");
 				xmlDoc = (Document) results.get("xml");
 				srcMddfFmt = (FILE_FMT) results.get("srcFmt");
-				target = new MddfTarget(srcFile, xmlDoc, logMgr);
+				target = new MddfTarget( xmlDoc, srcFile,logMgr);
 				/* Some memory mgmt??? */
 				results = null;
 				System.gc();
@@ -397,7 +409,7 @@ public class ValidationController {
 			}
 			srcMddfFmt = MddfContext.identifyMddfFormat(xmlDoc.getRootElement());
 			if (logNav != null) {
-				logNav.setMddfFormat(srcFile, srcMddfFmt);
+				logNav.setMddfFormat(target, srcMddfFmt);
 			}
 		} else {
 			/*
@@ -407,23 +419,19 @@ public class ValidationController {
 			 */
 			String errMsg = "Skipping file: Unsupported file type";
 			String supplemental = null;
-			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, errMsg, srcFile, -1, MODULE_ID, supplemental, null);
+			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, errMsg, null, -1, MODULE_ID, supplemental, null);
 			return;
 		}
 
-//		XmlIngester.setSourceDirPath(srcFile.getAbsolutePath());
 		MDDF_TYPE mddfType = target.getMddfType();
 		int logTag = target.getLogTag();
 		if (mddfType == null) {
 			String errMsg = "Validation terminated: Unable to identify file type.";
-			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, srcFile, -1, MODULE_ID, null, null);
+			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, target, -1, MODULE_ID, null, null);
 			return;
 		}
-		if (logNav != null) {
-			logNav.setFileMddfType(srcFile, mddfType);
-			logNav.setXml(srcFile, xmlDoc);
-		}
-		logMgr.log(LogMgmt.LEV_INFO, logTag, "Validating file as a " + mddfType.toString(), srcFile, MODULE_ID);
+
+		logMgr.log(LogMgmt.LEV_INFO, logTag, "Validating file as a " + mddfType.toString(), target, MODULE_ID);
 		boolean isValid;
 		switch (mddfType) {
 		case MANIFEST:
@@ -441,7 +449,7 @@ public class ValidationController {
 					String baseFileName = trimFileName(srcFile.getName());
 					xportFmts.remove(srcMddfFmt);
 					int cnt = Translator.translateAvails(target, xportFmts, exportDir, baseFileName, true, logMgr);
-					logMgr.log(LogMgmt.LEV_INFO, logTag, "Exported in " + cnt + " format(s)", srcFile, MODULE_ID);
+					logMgr.log(LogMgmt.LEV_INFO, logTag, "Exported in " + cnt + " format(s)", target, MODULE_ID);
 				}
 			}
 			break;
@@ -516,6 +524,7 @@ public class ValidationController {
 	 * 
 	 * @param xslxFile
 	 * @return
+	 * @deprecated
 	 */
 	private Map<String, Object> convertSpreadsheet_v1(File xslxFile) {
 
@@ -532,7 +541,8 @@ public class ValidationController {
 		if (results != null) {
 			FILE_FMT srcMddfFmt = (FILE_FMT) results.get("srcFmt");
 			if (logNav != null) {
-				logNav.setMddfFormat(xslxFile, srcMddfFmt);
+				// comented out so code compiles.....
+//				logNav.setMddfFormat(xslxFile, srcMddfFmt);
 			}
 		}
 		return results;
@@ -557,26 +567,31 @@ public class ValidationController {
 		isValid = tool1.process(target, pedigreeMap);
 		if (!isValid) {
 			String msg = "Validation FAILED; Terminating processing of file";
-			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, target.getSrcFile(), -1, MODULE_ID, null, null);
+			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, target, -1, MODULE_ID, null, null);
 
 			return isValid;
 		}
 		// ----------------------------------------------------------------
 		String msg = "AVAIL Validation completed";
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, target.getSrcFile(), -1, MODULE_ID, null, null);
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, target, -1, MODULE_ID, null, null);
 		return isValid;
 	}
 
-	public void obfuscateAvail(File inFile, File outFile, Map<Target, String> replacementMap) {
-		System.out.println("Obfuscate " + inFile.getName());
-		System.out.println("Output to " + outFile.getName());
+	public void obfuscateAvail(File inFile, File outFile, Map<DataTarget, String> replacementMap) {
+
+		MddfTarget availsTarget = new MddfTarget(inFile, logMgr);
+		if (!inFile.canRead()) { 
+			String msg = "Obfuscation failed: File not found or is not readable";
+			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, availsTarget, null, MODULE_ID, null, null);
+			return;
+		}
 		Document xmlDoc;
 		String fileType = StringUtils.extractFileType(inFile.getAbsolutePath());
 		if (fileType.equals("xlsx")) {
 			Map<String, Object> results = convertSpreadsheet_v2(inFile);
 			if (results == null) {
 				String msg = "Obfuscation failed: Unable to convert Excel to XML";
-				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, inFile, -1, MODULE_ID, null, null);
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, availsTarget, null, MODULE_ID, null, null);
 				return;
 			}
 			xmlDoc = (Document) results.get("xml");
@@ -587,25 +602,25 @@ public class ValidationController {
 				int ln = e.getLineNumber();
 				String errMsg = "Processing terminate due to invalid XML on or before line " + e.getLineNumber();
 				String supplemental = e.getMessage();
-				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, inFile, ln, MODULE_ID, supplemental, null);
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, availsTarget, ln, MODULE_ID, supplemental, null);
 				return;
 			} catch (IOException e) {
 				e.printStackTrace();
 				String errMsg = "Processing terminate due to invalid XML file";
 				String supplemental = e.getMessage();
-				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, inFile, -1, MODULE_ID, supplemental, null);
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, availsTarget, null, MODULE_ID, supplemental, null);
 				return;
 			}
 		} else {
 			String errMsg = "File type '" + fileType + "' is not supported";
-			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, inFile, -1, MODULE_ID, null, null);
+			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, availsTarget, null, MODULE_ID, null, null);
 			return;
 		}
 		Document changedDoc = Obfuscator.process(xmlDoc, replacementMap, logMgr);
 		XmlIngester.writeXml(outFile, changedDoc);
 
 		String msg = "Obfuscated output in " + outFile.getAbsolutePath();
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, inFile, -1, MODULE_ID, null, null);
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, availsTarget, null, MODULE_ID, null, null);
 
 	}
 
@@ -615,12 +630,12 @@ public class ValidationController {
 		isValid = tool1.process(target);
 		if (!isValid) {
 			String msg = "Validation FAILED; Terminating processing of file";
-			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MEC, msg, target.getSrcFile(), -1, MODULE_ID, null, null);
+			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MEC, msg, target, -1, MODULE_ID, null, null);
 			return false;
 		}
 		// ----------------------------------------------------------------
 		String msg = "MEC Validation completed";
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MEC, msg, target.getSrcFile(), -1, MODULE_ID, null, null);
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MEC, msg, target, -1, MODULE_ID, null, null);
 		return isValid;
 	}
 
@@ -636,9 +651,6 @@ public class ValidationController {
 	 */
 	protected boolean validateManifest(MddfTarget target) throws IOException, JDOMException {
 		boolean isValid = true;
-
-//		String schemaVer = ManifestValidator.identifyXsdVersion(target);
-//		ManifestValidator.setManifestVersion(schemaVer);
 
 		List<String> profileNameList = identifyProfiles(target);
 		if (profileNameList.isEmpty() || profileNameList.contains("none")) {
@@ -660,14 +672,11 @@ public class ValidationController {
 				// ProfileValidator referenceInstance = profileMap.get(profile);
 				if (!supportedProfileKeys.contains(profile)) {
 					String msg = "Unrecognized Profile: " + profile;
-					logMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_PROFILE, msg, target.getSrcFile(), -1, MODULE_ID, null,
-							null);
+					logMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_PROFILE, msg, target, -1, MODULE_ID, null, null);
 				} else {
 					String msg = "Validating compatibility with Profile '" + profile + "'";
-					logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_PROFILE, msg, target.getSrcFile(), -1, MODULE_ID, null,
-							null);
-					// String pvClass =
-					// referenceInstance.getClass().getSimpleName();
+					logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_PROFILE, msg, target, -1, MODULE_ID, null, null);
+
 					ProfileValidator pValidator = null;
 					switch (profile) {
 					case "IP-0":
@@ -695,11 +704,19 @@ public class ValidationController {
 		}
 		// ----------------------------------------------------------------
 		String msg = "MANIFEST Validation completed";
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, target.getSrcFile(), -1, MODULE_ID, null, null);
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, msg, target, -1, MODULE_ID, null, null);
 		return isValid;
 	}
 
-	private void validateReferencedMddf(MddfTarget parentTarget, String path, List<Element> list) throws IOException, JDOMException {
+	/**
+	 * @param parentTarget
+	 * @param path
+	 * @param list
+	 * @throws IOException
+	 * @throws JDOMException
+	 */
+	private void validateReferencedMddf(MddfTarget parentTarget, String path, List<Element> list)
+			throws IOException, JDOMException {
 		File mddfFile = new File(path);
 		String fileType = StringUtils.extractFileType(path);
 		fileType = fileType.toLowerCase();
@@ -707,38 +724,43 @@ public class ValidationController {
 			// ERROR
 			String errMsg = "Referenced location does not contain MDDF file.";
 			String supplemental = "Invalid file extension";
-			logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, mddfFile, -1, MODULE_ID, supplemental, null);
+			/*
+			 * Since a given file may have been referenced by more than 1 <ContainerLoc>
+			 * element, we may need to gen multiple error msgs.
+			 */
+			for (Element containerLocEl : list) {
+				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, parentTarget, containerLocEl, MODULE_ID,
+						supplemental, null);
+			}
 			return;
 		}
-		MddfTarget curTarget;
-		try {
-			curTarget = new MddfTarget(parentTarget, mddfFile, logMgr);
-		} catch (FileNotFoundException e) {
-			String errMsg = "Referenced container not found";
+		MddfTarget curTarget  = new MddfTarget(parentTarget, mddfFile, logMgr);
+		if(!mddfFile.exists()) {
+			String logMsg = "Referenced container not found";
 			for (Element clocEl : list) {
-				logMgr.logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, clocEl, errMsg, null, null, MODULE_ID);
+				logMgr.log(LogMgmt.LEV_WARN, LogMgmt.TAG_MANIFEST, logMsg, parentTarget, clocEl, MODULE_ID, null, null);
 			}
 			return;
 		}
 		MDDF_TYPE type = curTarget.getMddfType();
 		switch (type) {
 		case MANIFEST:
-			String errMsg = "Skipping validation of ExternalManifest (not yet supported)";
+			String logMsg = "Skipping validation of ExternalManifest (not yet supported)";
 			for (Element clocEl : list) {
-				logMgr.logIssue(LogMgmt.TAG_MANIFEST, LogMgmt.LEV_WARN, clocEl, errMsg, null, null, MODULE_ID);
+				logMgr.log(LogMgmt.LEV_WARN, LogMgmt.TAG_MANIFEST, logMsg, parentTarget, clocEl, MODULE_ID, null, null);
 			}
 			break;
 		case MEC:
-			if (logNav != null) {
-				logNav.setFileMddfType(mddfFile, type);
-				logNav.setXml(mddfFile, curTarget.getXmlDoc());
-			}
-			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MEC, "Validating referenced MEC file", mddfFile, MODULE_ID);
+			logMsg = "Validating referenced MEC file";
+			logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_MANIFEST, logMsg, parentTarget, null, MODULE_ID, null, null);
 			validateMEC(curTarget);
 			break;
 		default:
-			logMgr.log(LogMgmt.LEV_ERR, curTarget.getLogTag(),
-					"Referenced file has unrecognized MDDF type " + type.toString(), mddfFile, MODULE_ID);
+			logMsg = "Referenced file has unrecognized MDDF type " + type.toString();
+			int tag = curTarget.getLogTag();
+			for (Element containerLocEl : list) {
+				logMgr.log(LogMgmt.LEV_ERR, tag, logMsg, parentTarget, containerLocEl, MODULE_ID, null, null);
+			}
 
 		}
 
@@ -771,15 +793,14 @@ public class ValidationController {
 				String nextName = nextProfile.getTextNormalize();
 				if (!supportedProfileKeys.contains(nextName)) {
 					String msg = "Compatibility/Profile specifies unrecognized Profile: " + nextName;
-					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_PROFILE, msg, target.getSrcFile(), -1, MODULE_ID, null,
-							null);
+					logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_PROFILE, msg, target, -1, MODULE_ID, null, null);
 				} else if (!profileNameList.contains(nextName)) {
 					profileNameList.add(nextName);
 				}
 			}
 		}
 		String msg = "Applicable profiles: " + profileNameList.toString();
-		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_PROFILE, msg, target.getSrcFile(), -1, MODULE_ID, null, null);
+		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_PROFILE, msg, target, -1, MODULE_ID, null, null);
 		return profileNameList;
 	}
 
