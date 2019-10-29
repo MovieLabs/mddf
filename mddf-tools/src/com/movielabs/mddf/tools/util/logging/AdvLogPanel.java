@@ -197,6 +197,13 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		return menu;
 	}
 
+	@Override
+	public void clearLog(MddfTarget target) {		
+		treeView.clearLog(target); 
+		this.invalidate();
+		this.repaint();		
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -401,11 +408,12 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		/*
 		 * are we at top of stack (i.e., done with a file and back to 'tool-level
 		 * logging')?
-		 */
-		if (contextStack.isEmpty() || (contextStack.peek() == null)) {
-			treeView.setCurrentFileId(DEFAULT_TOOL_FOLDER_KEY, false);
-		} else {
-			treeView.setCurrentFileId(contextStack.peek(), false);
+		 */ 
+		MddfTarget parentTarget = assumedTopTarget.getParentTarget();
+		if(parentTarget == null) {
+			curDefaultFolder =treeView.setCurrentFileId(DEFAULT_TOOL_FOLDER_KEY, false);
+		}else { 
+			curDefaultFolder =treeView.setCurrentFileId(parentTarget.getKey(), false);
 		}
 		valueChanged(null);
 	}

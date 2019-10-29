@@ -30,10 +30,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
+
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -106,11 +110,11 @@ public class LogNavPanel extends JPanel {
 			if (target == null) {
 				return;
 			}
-			//TODO: should really use FILE_FMT here....
+			// TODO: should really use FILE_FMT here....
 			isXml = target.getSrcFile().getAbsolutePath().endsWith(".xml");
-			
+
 			int maxErrLevelFound = fileFolder.getHighestLevel();
-			boolean fileSelected = (node == fileFolder); 
+			boolean fileSelected = (node == fileFolder);
 			MDDF_TYPE mddfType = target.getMddfType();
 			/*
 			 * Step 2: Now we can construct the pop-up and enable/disable specific menu
@@ -126,17 +130,12 @@ public class LogNavPanel extends JPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					ValidatorTool.getTool().runTool();
-					if (isXml) {
-						/*
-						 * Is there an XmlEditor for the file? If so, make sure editor is up to-date
-						 * with latest log entries
-						 */
-						EditorMgr edMgr = EditorMgr.getSingleton();
-						SimpleXmlEditor editor = edMgr.getEditorFor(target);
-						if (editor != null) {
-							editor.showLogMarkers(node.getMsgList());
-						}
-					}
+					// ================================
+					/*
+					 * Moved the code handling updates to an XmlEditor to the SwingWorker in the
+					 * Validation tool due to possible thread synchronization issue
+					 */
+					// ================================
 				}
 			});
 
@@ -172,7 +171,7 @@ public class LogNavPanel extends JPanel {
 						xlateDialog.setVisible(true);
 						EnumSet<FILE_FMT> selections = xlateDialog.getSelections();
 						if (!selections.isEmpty()) {
-							MddfTarget target = new MddfTarget(srcFile, doc, parentLogger);
+							MddfTarget target = new MddfTarget(doc,  srcFile, parentLogger);
 							ValidatorTool.getTool().runTranslation(target, selections, xlateDialog.getOutputDir(),
 									xlateDialog.getOutputFilePrefix(), xlateDialog.addVersion());
 						}
@@ -443,8 +442,6 @@ public class LogNavPanel extends JPanel {
 		this.setBackground(backgroundPanel);
 
 	}
- 
- 
 
 	public LogEntryFolder getFileFolder(MddfTarget target) {
 		String folderKey = LogMgmt.genFolderKey(target);
@@ -509,8 +506,6 @@ public class LogNavPanel extends JPanel {
 		}
 		return fileFolder;
 	}
- 
- 
 
 	/**
 	 * Set the file ID to associate with any new log entries. This results in all
@@ -524,8 +519,8 @@ public class LogNavPanel extends JPanel {
 		if (folderKey == null) {
 			LogEntryFolder fileFolder = fileFolderMap.get(LogMgmt.DEFAULT_TOOL_FOLDER_KEY);
 			return fileFolder;
-		} 
-		LogEntryFolder fileFolder = fileFolderMap.get(folderKey); 
+		}
+		LogEntryFolder fileFolder = fileFolderMap.get(folderKey);
 		if (clear) {
 			fileFolder.deleteMsgs();
 			treeModel.nodeChanged(fileFolder);
@@ -533,7 +528,6 @@ public class LogNavPanel extends JPanel {
 		}
 		return fileFolder;
 	}
- 
 
 	public void setMddfFormat(MddfTarget target, FILE_FMT format) {
 		String folderKey = LogMgmt.genFolderKey(target);
@@ -542,15 +536,21 @@ public class LogNavPanel extends JPanel {
 			fileFolder.setMddfFormat(format);
 		}
 	}
- 
+
 	/**
 	 * 
 	 */
 	public void clearLog() {
 		rootLogNode.deleteMsgs();
-		rootLogNode.removeAllChildren(); 
+		rootLogNode.removeAllChildren();
 		fileFolderMap = new HashMap<String, LogEntryFolder>();
 		masterSeqNum = 0;
+		treeModel.reload();
+	}
+
+	public void clearLog(MddfTarget target) {
+		LogEntryFolder targetFolder = getFileFolder(target);
+		targetFolder.deleteMsgs();
 		treeModel.reload();
 	}
 
