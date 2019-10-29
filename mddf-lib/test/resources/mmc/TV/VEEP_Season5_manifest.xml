@@ -75,6 +75,14 @@
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:ExternalManifest>
+		<!-- SERIES manifest -->
+		<manifest:ExternalManifest ManifestID="md:manifestid:eidr-s:CF5A-AB7E-A4DB-35FA-BAC5-M">
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>./VEEP_Season5_E5_manifest.xml
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:ExternalManifest>
+		
 	</manifest:Inventory>
 	<manifest:PictureGroups>
 		<manifest:PictureGroup

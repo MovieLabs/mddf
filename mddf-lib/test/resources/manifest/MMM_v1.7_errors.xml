@@ -188,8 +188,7 @@
 			    <manifest:Relationship>issupplementto</manifest:Relationship>
 			    <!-- ERROR: ExperienceID is defined in this manifest but should be in the EXTERNAL manifest -->
 			    <manifest:ExperienceID>md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:delta</manifest:ExperienceID>
-			    <!-- WARNING: The element is never referenced by it's ID -->
-			    <!-- WARNING: ID syntax does not conform to recommendations  -->
+			    <!-- ERROR:  Invalid cross-reference: the referenced ExternalManifest is not defined in this manifest-->
 			    <manifest:ExternalManifestID>sofaspud:000</manifest:ExternalManifestID>
 			</manifest:ExperienceChild>
 		</manifest:Experience>
@@ -227,7 +226,7 @@
 			    <manifest:Relationship>issupplementto</manifest:Relationship>
 			    <!-- ERROR: ExperienceID is defined in this manifest but should be in the EXTERNAL manifest -->
 			    <manifest:ExperienceID>md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha</manifest:ExperienceID>
-			    <!-- WARNING: The element is never referenced by it's ID -->
+			    <!-- ERROR:  Invalid cross-reference: the referenced ExternalManifest is not defined in this manifest-->
 			    <manifest:ExternalManifestID>md:manifestid:eidr-s:E6CA-AB58-E298-7BA0-E574-Z</manifest:ExternalManifestID>
 			</manifest:ExperienceChild>
 		</manifest:Experience>

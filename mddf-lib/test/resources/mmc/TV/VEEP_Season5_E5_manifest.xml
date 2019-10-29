@@ -78,6 +78,13 @@
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Metadata>
+		<!-- SERIES manifest -->
+		<manifest:ExternalManifest ManifestID="md:manifestid:eidr-s:CF5A-AB7E-A4DB-35FA-BAC5-M">
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>./VEEP_Season5_E5_manifest.xml
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:ExternalManifest>
 	</manifest:Inventory>
 	<manifest:Presentations>
 		<manifest:Presentation
@@ -109,10 +116,9 @@
 			<manifest:Picture>
 				<manifest:PictureID>md:pictureid:eidr-x:2D99-3C1C-9F31-3E10-3411-1:season5-photo.de
 				</manifest:PictureID>
-				<manifest:ImageID>md:imageid:eidr-x:2D99-3C1C-9F31-3E10-3411-1:season5-photo.de
-				</manifest:ImageID>
+				<manifest:ImageID>md:imageid:eidr-x:2D99-3C1C-9F31-3E10-3411-1:season5-photo.de   </manifest:ImageID>
 				<manifest:ImageID>md:imageid:eidr-x:2D99-3C1C-9F31-3E10-3411-1:season5-photo.en
-				</manifest:ImageID>
+				    </manifest:ImageID>
 			</manifest:Picture>
 		</manifest:PictureGroup>
 	</manifest:PictureGroups>

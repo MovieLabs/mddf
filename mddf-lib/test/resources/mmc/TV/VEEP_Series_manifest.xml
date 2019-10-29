@@ -154,14 +154,12 @@
 				</manifest:ExternalManifestID>
 			</manifest:ExperienceChild>
 		</manifest:Experience>
-	</manifest:Experiences>
-	<!--
+	</manifest:Experiences> 
 	<manifest:ALIDExperienceMaps>
 		<manifest:ALIDExperienceMap>
 			<manifest:ALID>md:alid:org:number.hbo.com:787232</manifest:ALID>
 			<manifest:ExperienceID>md:experienceid:org:number.hbo.com:787232.1
 			</manifest:ExperienceID>
 		</manifest:ALIDExperienceMap>
-	</manifest:ALIDExperienceMaps>
-	-->
+	</manifest:ALIDExperienceMaps> 
 </manifest:MediaManifest>
