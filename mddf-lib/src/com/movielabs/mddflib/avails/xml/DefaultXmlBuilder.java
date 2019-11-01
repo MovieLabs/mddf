@@ -22,8 +22,6 @@
  */
 package com.movielabs.mddflib.avails.xml;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,7 +45,7 @@ import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.FormatConverter;
-import com.movielabs.mddflib.util.xml.InterimMddfTarget;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 
 /**
@@ -85,7 +83,7 @@ public class DefaultXmlBuilder extends AbstractXmlBuilder {
 	private Map<Element, AbstractRowHelper> element2SrcRowMap;
 	private LogMgmt logger;
 	private Version templateVersion;
-	private InterimMddfTarget curTarget;
+	private MddfTarget curTarget;
 	private MetadataBuilder mdBuilder;
 	private XPathFactory xpfac = XPathFactory.instance();
 
@@ -162,9 +160,9 @@ public class DefaultXmlBuilder extends AbstractXmlBuilder {
 	 * @return a JAXP document
 	 * @throws IllegalStateException
 	 */
-	public Document makeXmlAsJDom(AvailsSheet aSheet, String shortDesc, File srcXslxFile) throws IllegalStateException {
-		this.shortDesc = shortDesc;
-		this.curTarget = new InterimMddfTarget(srcXslxFile, logger);
+	public Document makeXmlAsJDom(AvailsSheet aSheet, String shortDesc, MddfTarget target) throws IllegalStateException {
+		this.shortDesc = shortDesc; 
+		this.curTarget = target;
 		if (xsdVersion == null) {
 			String msg = "Unable to generate XML from XLSX: XSD version was not set or is unsupported.";
 			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, msg, null, moduleId);
