@@ -23,7 +23,6 @@
 package com.movielabs.mddflib.avails.xml.streaming;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -69,7 +68,7 @@ import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook.RESULT_STATUS;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.FormatConverter;
-import com.movielabs.mddflib.util.xml.InterimMddfTarget;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.SchemaWrapper;
 
 /**
@@ -377,9 +376,9 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 	 * @return results
 	 * @throws IllegalStateException
 	 */
-	public Map<String, Object> convert(File srcXslxFile, InputStream inStream, int sheetNum, String shortDesc)
-			throws IllegalStateException {
-		InterimMddfTarget mddfTarget =  new InterimMddfTarget(srcXslxFile,  logger); 
+	public Map<String, Object> convert(MddfTarget mddfTarget , InputStream inStream, int sheetNum, String shortDesc)
+			throws IllegalStateException { 
+		File srcXslxFile = mddfTarget.getSrcFile();
 		Map<String, Object> results = new HashMap<String, Object>();
 		FILE_FMT srcMddfFmt = null;
 		switch (templateVersion) {
@@ -424,7 +423,7 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 	 * @return
 	 * @throws IllegalStateException
 	 */
-	private Document makeXmlAsJDom(InterimMddfTarget mddfTarget ,InputStream inStream, int sheetNum, String shortDesc)
+	private Document makeXmlAsJDom( MddfTarget mddfTarget ,InputStream inStream, int sheetNum, String shortDesc)
 			throws IllegalStateException {
 		this.shortDesc = shortDesc;
 		this.curSrcXslxFile = mddfTarget.getSrcFile();
