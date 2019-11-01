@@ -49,6 +49,7 @@ import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.xml.InterimMddfTarget;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 import net.sf.json.JSONObject;
 
@@ -147,7 +148,8 @@ public class TemplateWorkBook {
 				}
 			}
 			File outFile = new File(outputDir, outFileName);
-			clone.export(outFile.getCanonicalPath());
+			MddfTarget target = new MddfTarget(srcFile, log);
+			clone.export(target, outFile.getCanonicalPath());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -318,9 +320,9 @@ public class TemplateWorkBook {
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	public void export(String destPath) throws FileNotFoundException, IOException {
+	public void export(MddfTarget target, String destPath) throws FileNotFoundException, IOException {
 		/* hide empty columns */
-		hideEmptyColumns();
+		hideEmptyColumns(target);
 		/* adjust column widths */
 		int sheetCnt = workbook.getNumberOfSheets();
 		for (int i = 0; i < sheetCnt; i++) {
@@ -335,12 +337,12 @@ public class TemplateWorkBook {
 		}
 		try (FileOutputStream outputStream = new FileOutputStream(destPath)) {
 			workbook.write(outputStream);
-			logger.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "XLSX saved to " + destPath, null, logMsgSrcId);
+			logger.log(LogMgmt.LEV_DEBUG, logMsgDefaultTag, "XLSX saved to " + destPath, target, logMsgSrcId);
 
 		}
 	}
 
-	private int hideEmptyColumns() {
+	private int hideEmptyColumns(MddfTarget target) {
 		int hiddenColCnt = 0;
 		int sheetCnt = workbook.getNumberOfSheets();
 		for (int i = 0; i < sheetCnt; i++) {
@@ -357,7 +359,7 @@ public class TemplateWorkBook {
 			}
 		}
 		logger.log(LogMgmt.LEV_INFO, logMsgDefaultTag,
-				hiddenColCnt + " empty XLSX columns have been hidden on " + sheetCnt + " worksheets", null,
+				hiddenColCnt + " empty XLSX columns have been hidden on " + sheetCnt + " worksheets", target,
 				logMsgSrcId);
 		return hiddenColCnt;
 	}
