@@ -99,7 +99,7 @@ public class MddfContext {
 	}
 
 	public enum MDDF_TYPE {
-		MEC, AVAILS, MANIFEST
+		MEC, AVAILS, MANIFEST, UNK
 	};
 
 	public enum FILE_FMT {
