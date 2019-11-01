@@ -41,9 +41,9 @@ import org.jdom2.Document;
 
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
+import com.movielabs.mddflib.avails.xml.streaming.StreamingXmlBuilder;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.util.Translator;
-import com.movielabs.mddflib.util.xml.InterimMddfTarget;
 import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
@@ -65,8 +65,7 @@ public class AvailsWrkBook {
 		CANCELLED, COMPLETED
 	};
 
-	private File file;
-	private ArrayList<AvailsSheet> sheets;
+	private File file; 
 	private LogMgmt logger;
 	private boolean exitOnError;
 	private boolean cleanupData;
@@ -92,23 +91,27 @@ public class AvailsWrkBook {
 	 * @param xlsxVersion xlsx template version
 	 * @param inStream
 	 * @param logMgr
-	 * @return a Map&lt;String, Object&gt;
+	 * @return a Map&lt;String, Object&gt; 
 	 */
 	public static Map<String, Object> convertSpreadsheet(File xslxFile, Version xlsxVersion, InputStream inStream,
 			LogMgmt logMgr) {
-		int sheetNum = 0; // KLUDGE for now
-		AvailsSheet sheet = loadWorkBook(xslxFile, logMgr, inStream, sheetNum);
+		int sheetNum = 0; // KLUDGE for now 
 		String inFileName = xslxFile.getName();
 		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
-		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp);
-		return mapToXml(sheet, xslxFile, xlsxVersion, shortDesc, logMgr);
+		String shortDesc = String.format("generated XML from %s:Sheet_%s on %s", inFileName, sheetNum, timeStamp); 
+		
+		MddfTarget target = new MddfTarget(xslxFile, logMgr);
+
+		StreamingXmlBuilder bldr = new StreamingXmlBuilder(logMgr, xlsxVersion);
+		Map<String, Object> results = bldr.convert(target, null, 0, shortDesc);
+		return results;		
 	}
 
 	public static Map<String, Object> mapToXml(AvailsSheet sheet, File xslxFile, Version xlsxVersion,
 			String description, LogMgmt logMgr) {
 
 		// needed for logging....
-		MddfTarget target = new InterimMddfTarget(xslxFile, logMgr);
+		MddfTarget target = new MddfTarget(xslxFile, logMgr);
 
 		Version unknown = AvailsSheet.Version.valueOf("UNK");
 		if (xlsxVersion == null) {
@@ -175,7 +178,7 @@ public class AvailsWrkBook {
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting XLSX in " + xlsxVersion + " format", target,
 				logMsgSrcId);
 		try {
-			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(sheet, description, xslxFile);
+			Document xmlJDomDoc = xBuilder.makeXmlAsJDom(sheet, description, target);
 			if (xmlJDomDoc == null) {
 				// Ingest failed
 				return null;
@@ -200,7 +203,7 @@ public class AvailsWrkBook {
 	public static AvailsSheet loadWorkBook(File xslxFile, LogMgmt logMgr, InputStream inStream, int sheetNum) {
 		boolean autoCorrect = false;
 		boolean exitOnError = false;
-		InterimMddfTarget mddfTarget = new InterimMddfTarget(xslxFile, logMgr); 
+		MddfTarget mddfTarget = new MddfTarget(xslxFile, logMgr); 
 		AvailsWrkBook wrkBook;
 		try {
 			if (inStream == null) {
@@ -312,7 +315,6 @@ public class AvailsWrkBook {
 		this.logger = logger;
 		this.exitOnError = exitOnError;
 		this.cleanupData = cleanupData;
-		sheets = new ArrayList<AvailsSheet>();
 		wrkBook = new XSSFWorkbook(inStream);
 	}
 
