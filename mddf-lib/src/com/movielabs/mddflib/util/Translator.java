@@ -228,7 +228,7 @@ public class Translator {
 						}
 						File exported = new File(dirPath, fileName);
 						try {
-							wrkBook.export(exported.getPath());
+							wrkBook.export( inputTarget,  exported.getPath());
 							logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
 									"Saved translated file as " + exported.getPath(), inputTarget, moduleId);
 						} catch (Exception e) {
