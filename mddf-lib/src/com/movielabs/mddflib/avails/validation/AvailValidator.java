@@ -376,6 +376,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		case "2.2":
 		case "2.2.1":
 			structVer = "2.2";
+			break;
 		default:
 			// LOG a FATAL problem.
 			String msg = "Unable to process; missing structure definitions for Avails v" + availSchemaVer;
