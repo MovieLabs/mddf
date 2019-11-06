@@ -27,6 +27,7 @@
 
 ---
 ## <a name="h_News">1) What's New</a>
+* 2019-Nov-06: v1.7 released
 * 2019-Aug-27: v1.6 released
 * 2019-June-24: v1.5.3 released
 * 2019-May-24: v1.5.2 released

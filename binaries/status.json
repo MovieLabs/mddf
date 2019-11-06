@@ -1,7 +1,7 @@
 {
-  "build.timestamp": "2019-Aug-26 21:17:55 UTC",
-  "mddf.lib.version": "1.6",
-  "mddf.tool.build": "M",
-  "mddf.tool.version": "1.6",
-  "userMsg": "Update significantly reduces memory usage<br> when processing Avails. See ChangeLog for full details."
+  "build.timestamp": "2019-Nov-06 10:35:42 UTC",
+  "mddf.lib.version": "1.7",
+  "mddf.tool.build": "B",
+  "mddf.tool.version": "1.7",
+  "userMsg": "Multiple bug fixes.<br>Enhance support for MEC usage by a Manifest.<br>See ChangeLog for deatils."
 }

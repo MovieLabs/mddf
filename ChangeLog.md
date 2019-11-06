@@ -5,20 +5,24 @@
 
 ## Versioning
 
-### mddf-lib 1.6.1
+### mddf-lib 1.7 
 
-#### rc1
-* Bug Fix: MMC structure validation was incomplete when MEC file used to provide metadata.
-* Bug Fix: Correct use of Audio/SubType not verified when pressent in a MEC file.
 * Enhancement: structure check may specify a XPath constraint to be applied to a supporting MEC file.
       Change made in support of BUG FIX re use of MEC files w/in a Manifest.
+* Enhancement: absence of TitleSort or Summary190 in MEC v2.6 or later results in NOTICE re backward compatibility
+* UI: Edit button removed from Validator tool bar.
+* Bug Fix: fix incorrect validation of ExternalManifestID uniqueness and xrefs 
+* Bug Fix: Avails XLSX ingest was being aborted by sheets not in conformance with template (e.g., data in extraneous columns)
+* Bug Fix: MMC structure validation was incomplete when MEC file used to provide metadata.
+* Bug Fix: Correct use of Audio/SubType not verified when present in a MEC file.
 * Internal: use of static methods and fields in Validator classes reduced to allow simultaneous instantiation
        of multiple Validators. Change made in support of BUG FIX re use of MEC files w/in a Manifest.
 * Internal: change to LogMgmt API allows simultaneous instantiation of multiple Validators targeting different files
+* Internal: changes in MecValidator and ManifestValidator method access to allow sub-classing by cloud-specific extensions
 
 ### mddf-lib v1.6 
 
-* ENHANCEMENT: Memory usage when ingesting large XLSX-formated Avails has been significantly reduced.
+* Enhancement: Memory usage when ingesting large XLSX-formated Avails has been significantly reduced.
 * Enhancement: Identification of ArtReference by means other that ImageID generates Best Practice notice
 * User Interface: Manifest Profiles are no longer enterable via UI. Feature removed due to schema enhancements,
 * Bug Fix: MMC detection of extra 'root' Experiences.
