@@ -58,7 +58,6 @@ import com.movielabs.mddflib.manifest.validation.profiles.MMCoreValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator;
 import com.movielabs.mddflib.util.StringUtils;
 import com.movielabs.mddflib.util.Translator;
-import com.movielabs.mddflib.util.xml.InterimMddfTarget;
 import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
@@ -292,12 +291,8 @@ public class ValidationController {
 			for (int i = 0; i < fileCount; i++) {
 				File aFile = (File) inputFiles[i];
 				String message = aFile.getName();
-				if (aFile.isFile()) {
-					/*
-					 * this is a initial target for use in early logging. If all goes well it get
-					 * over-ridden very quickly.
-					 */
-					MddfTarget target = new InterimMddfTarget(aFile, logMgr);
+				if (aFile.isFile()) { 
+					MddfTarget target = new MddfTarget(aFile, logMgr); 
 					logMgr.pushFileContext(target);
 					logMgr.clearLog(target);
 					try {
@@ -313,8 +308,7 @@ public class ValidationController {
 					} finally {
 						/* Some memory mgmt??? */
 						System.gc();
-					}
-//					logMgr.popFileContext(aFile);
+					} 
 				} else {
 					boolean isDir = aFile.isDirectory();
 					if (isDir && isRecursive) {
@@ -324,12 +318,8 @@ public class ValidationController {
 				}
 			}
 		} else {
-			// Process a single file
-			/*
-			 * this is a initial target for use in early logging. If all goes well it get
-			 * over-ridden very quickly.
-			 */
-			MddfTarget target = new InterimMddfTarget(srcFile, logMgr);
+			// Process a single file 
+			MddfTarget target = new MddfTarget(srcFile, logMgr);  
 			try {
 				logMgr.pushFileContext(target);
 				logMgr.clearLog(target);
@@ -382,7 +372,7 @@ public class ValidationController {
 		Document xmlDoc = null;
 		if (fileType.equals("xlsx")) {
 			/* The XLSX format is only supported with AVAILS files */
-			Map<String, Object> results = convertSpreadsheet_v2(srcFile);
+			Map<String, Object> results = convertSpreadsheet_v2(target);
 			if (results == null) {
 				String msg = "Unable to convert Excel to XML";
 				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, target, -1, MODULE_ID, null, null);
@@ -395,14 +385,14 @@ public class ValidationController {
 				srcFile = (File) results.get("xlsx");
 				pedigreeMap = (Map<Object, Pedigree>) results.get("pedigree");
 				xmlDoc = (Document) results.get("xml");
-				srcMddfFmt = (FILE_FMT) results.get("srcFmt");
-				target = new MddfTarget( xmlDoc, srcFile,logMgr);
+				srcMddfFmt = (FILE_FMT) results.get("srcFmt"); 
+				target.setXmlDoc(xmlDoc);
+				logNav.setMddfFormat(target, srcMddfFmt);
 				/* Some memory mgmt??? */
 				results = null;
 				System.gc();
 			}
-		} else if (fileType.equals("xml")) {
-			target = new MddfTarget(srcFile, logMgr);
+		} else if (fileType.equals("xml")) { 
 			xmlDoc = target.getXmlDoc();// XmlIngester.getAsXml(srcFile);
 			if (target == null) {
 				return;
@@ -495,7 +485,7 @@ public class ValidationController {
 	 * @param logMgr
 	 * @return a Map&lt;String, Object&gt;
 	 */
-	private Map<String, Object> convertSpreadsheet_v2(File xslxFile) {
+	private Map<String, Object> convertSpreadsheet_v2(MddfTarget target) {
 		VersionChooserDialog vcd = new VersionChooserDialog();
 		vcd.setLocationRelativeTo(logNav);
 		vcd.setVisible(true);
@@ -508,7 +498,7 @@ public class ValidationController {
 
 		StreamingXmlBuilder bldr = new StreamingXmlBuilder(logMgr, xlsxVersion);
 		String shortDesc = "Converted using STREAMING XML builder";
-		Map<String, Object> results = bldr.convert(xslxFile, null, 0, shortDesc);
+		Map<String, Object> results = bldr.convert(target, null, 0, shortDesc);
 		return results;
 	}
 
@@ -578,7 +568,6 @@ public class ValidationController {
 	}
 
 	public void obfuscateAvail(File inFile, File outFile, Map<DataTarget, String> replacementMap) {
-
 		MddfTarget availsTarget = new MddfTarget(inFile, logMgr);
 		if (!inFile.canRead()) { 
 			String msg = "Obfuscation failed: File not found or is not readable";
@@ -588,7 +577,7 @@ public class ValidationController {
 		Document xmlDoc;
 		String fileType = StringUtils.extractFileType(inFile.getAbsolutePath());
 		if (fileType.equals("xlsx")) {
-			Map<String, Object> results = convertSpreadsheet_v2(inFile);
+			Map<String, Object> results = convertSpreadsheet_v2(availsTarget);
 			if (results == null) {
 				String msg = "Obfuscation failed: Unable to convert Excel to XML";
 				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_AVAIL, msg, availsTarget, null, MODULE_ID, null, null);
@@ -742,6 +731,9 @@ public class ValidationController {
 			}
 			return;
 		}
+		// Loading the XML will result in the target figuring out the MDDF_TYPE
+		curTarget.getXmlDoc();
+		//..................................
 		MDDF_TYPE type = curTarget.getMddfType();
 		switch (type) {
 		case MANIFEST:
