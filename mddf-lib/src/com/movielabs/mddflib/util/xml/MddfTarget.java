@@ -55,6 +55,7 @@ public class MddfTarget extends DefaultMutableTreeNode {
 	protected MDDF_TYPE mddfType;
 	protected int logTag;
 	protected LogEntryFolder logFolder;
+	private boolean srcIsXml = true;
 
 	protected MddfTarget() {
 		super();
@@ -73,19 +74,12 @@ public class MddfTarget extends DefaultMutableTreeNode {
 	 * @param logMgr
 	 * @throws FileNotFoundException
 	 */
-	public MddfTarget(File srcFile, LogMgmt logMgr) { 
+	public MddfTarget(File srcFile, LogMgmt logMgr) {
 		super();
 		this.srcFile = srcFile;
+		srcIsXml = srcFile.getName().toLowerCase().endsWith(".xml");
 		this.logMgr = logMgr;
-		logFolder = logMgr.assignFileFolder(this);
-		try {
-			InputStream mainStream = new FileInputStream(srcFile);
-			this.streamSrc = new ReusableInputStream(mainStream);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		identifyXmlContext();
+		logFolder = logMgr.assignFileFolder(this); 
 	}
 
 	/**
@@ -105,53 +99,52 @@ public class MddfTarget extends DefaultMutableTreeNode {
 	public MddfTarget(MddfTarget parent, File srcFile, LogMgmt logMgr) {
 		super();
 		this.srcFile = srcFile;
+		srcIsXml = srcFile.getName().toLowerCase().endsWith(".xml");
 		this.logMgr = logMgr;
 		if (parent != null) {
 			parent.add(this);
 		}
-		logFolder = logMgr.assignFileFolder(this);
-		try {
-			InputStream mainStream = new FileInputStream(srcFile);
-			this.streamSrc = new ReusableInputStream(mainStream);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		identifyXmlContext();
+		logFolder = logMgr.assignFileFolder(this); 
 	}
 
 	/**
 	 * Construct target where the MDDF source is an <tt>InputStream</tt> that may be
-	 * used to obtain an XML file. The <tt>srcFile</tt> may or may not exist or be
-	 * readable on the <i>local</i> file system.
+	 * used to obtain an MDDDF file. The <tt>srcFile</tt> may or may not exist or be
+	 * readable on the <i>local</i> file system. If the MDDF data being targeted is an
+	 * XLSX-formatted Avail file the <tt>isXMl</tt> flag should be set to <tt>false</tt>.
 	 * 
 	 * @param srcFile
-	 * @param xmlStreamSrc
+	 * @param streamSrc
+	 * @param logMgr
+	 * @param isXml
 	 */
-	public MddfTarget(File srcFile, InputStream xmlStreamSrc, LogMgmt logMgr) {
-		this(null, srcFile, xmlStreamSrc, logMgr);
+	public MddfTarget(File srcFile, InputStream streamSrc, LogMgmt logMgr, boolean isXml) {
+		this(null, srcFile, streamSrc, logMgr, isXml);
 	}
 
 	/**
 	 * Construct target where the MDDF source is an <tt>InputStream</tt> that may be
-	 * used to obtain an XML file that is used as a secondary source of data (i.e.,
+	 * used to obtain an MDDF file that is used as a secondary source of data (e.g.,
 	 * a MEC file referenced by a Manifest). The <tt>srcFile</tt> may or may not
-	 * exist or be readable on the <i>local</i> file system.
+	 * exist or be readable on the <i>local</i> file system. If the MDDF data being targeted is an
+	 * XLSX-formatted Avail file the <tt>isXMl</tt> flag should be set to <tt>false</tt>.
 	 * 
 	 * @param parent
 	 * @param srcFile
-	 * @param xmlStreamSrc
+	 * @param streamSrc
+	 * @param logMgr
+	 * @param isXml
 	 */
-	public MddfTarget(MddfTarget parent, File srcFile, InputStream xmlStreamSrc, LogMgmt logMgr) {
+	public MddfTarget(MddfTarget parent, File srcFile, InputStream streamSrc, LogMgmt logMgr, boolean isXml) {
 		super();
 		this.srcFile = srcFile;
 		this.logMgr = logMgr;
+		this.srcIsXml = isXml;
 		if (parent != null) {
 			parent.add(this);
 		}
 		logFolder = logMgr.assignFileFolder(this);
-		this.streamSrc = new ReusableInputStream(xmlStreamSrc);
-		identifyXmlContext();
+		this.streamSrc = new ReusableInputStream(streamSrc); 
 	}
 
 	/**
@@ -166,18 +159,98 @@ public class MddfTarget extends DefaultMutableTreeNode {
 	public MddfTarget(Document xmlDoc, File srcFile, LogMgmt logMgr) {
 		super();
 		this.srcFile = srcFile;
+		srcIsXml = srcFile.getName().toLowerCase().endsWith(".xml");
 		this.logMgr = logMgr;
 		this.xmlDoc = xmlDoc;
 		logTag = LogMgmt.TAG_AVAIL;
 		mddfType = MDDF_TYPE.AVAILS;
-		logFolder = logMgr.assignFileFolder(this); 
+		logFolder = logMgr.assignFileFolder(this);
+	}
+
+	/**
+	 * @return the srcFile
+	 */
+	public File getSrcFile() {
+		return srcFile;
+	}
+
+	/**
+	 * Returns an <tt>ReusableInputStream</tt> that can be used to read an MDDF file.
+	 * 
+	 * @return the streamSrc
+	 */
+	public ReusableInputStream getXmlStreamSrc() {
+		return streamSrc;
+	}
+
+	public boolean srcIsXml() {
+		return srcIsXml;
+	}
+
+	/**
+	 * @return XML representation of the MDDF construct
+	 */
+	public Document getXmlDoc() {
+		if (xmlDoc == null) {
+			try {
+				loadXml();
+			} catch (SAXParseException e) {
+				int ln = e.getLineNumber();
+				String errMsg = "Invalid XML on or before line " + e.getLineNumber();
+				String supplemental = e.getMessage();
+				logMgr.log(LogMgmt.LEV_ERR, logTag, errMsg, this, ln, "XML", supplemental, null);
+			}
+		}
+		return xmlDoc;
+	}
+
+	private void loadXml() throws SAXParseException {
+		if(!srcIsXml) {
+			throw new IllegalStateException("Can not load XML from a non-XML source");
+		}
+		if (streamSrc == null) {
+			try {
+				InputStream mainStream = new FileInputStream(srcFile);
+				this.streamSrc = new ReusableInputStream(mainStream);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if (streamSrc == null) {
+			return;
+		}
+		try {
+			xmlDoc = XmlIngester.getAsXml(streamSrc);
+			identifyXmlContext();
+		} catch (IOException e) {
+			String errMsg = "Unable to access input source";
+			String supplemental = e.getMessage();
+			logMgr.log(LogMgmt.LEV_ERR, logTag, errMsg, this, -1, "XML", supplemental, null);
+		} finally {
+			try {
+				streamSrc.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public MDDF_TYPE setXmlDoc(Document doc) {
+		this.xmlDoc = doc;
+		identifyXmlContext();
+		return mddfType;
 	}
 
 	/**
 	 * Identify type of XML file (i.e., Manifest, Avail, etc)
 	 */
 	protected void identifyXmlContext() {
-		Element docRootEl = getXmlDoc().getRootElement();
+		if (xmlDoc == null) {
+			return;
+		}
+		Element docRootEl = xmlDoc.getRootElement();
 		String nSpaceUri = docRootEl.getNamespaceURI();
 		if (nSpaceUri.contains("manifest")) {
 			logTag = LogMgmt.TAG_MANIFEST;
@@ -189,49 +262,8 @@ public class MddfTarget extends DefaultMutableTreeNode {
 			logTag = LogMgmt.TAG_MEC;
 			mddfType = MDDF_TYPE.MEC;
 		} else {
-			mddfType = null;
+			mddfType = MDDF_TYPE.UNK;
 		}
-	}
- 
-
-	/**
-	 * @return the srcFile
-	 */
-	public File getSrcFile() {
-		return srcFile;
-	}
-
-	/**
-	 * Returns an <tt>ReusableInputStream</tt> that can be used to read an XML
-	 * representation of the MDDF file.
-	 * 
-	 * @return the streamSrc
-	 */
-	public ReusableInputStream getXmlStreamSrc() {
-		return streamSrc;
-	}
-
-	/**
-	 * @return XML representation of the MDDF construct
-	 */
-	public Document getXmlDoc() {
-		if (xmlDoc == null) {
-			try {
-				xmlDoc = XmlIngester.getAsXml(streamSrc);
-			} catch (SAXParseException e) {
-				int ln = e.getLineNumber();
-				String errMsg = "Invalid XML on or before line " + e.getLineNumber();
-				String supplemental = e.getMessage();
-				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, this, ln, "XML", supplemental, null);
-				return null;
-			} catch (IOException e) {
-				String errMsg = "Unable to access input source";
-				String supplemental = e.getMessage();
-				logMgr.log(LogMgmt.LEV_ERR, LogMgmt.TAG_N_A, errMsg, this, -1, "XML", supplemental, null);
-				return null;
-			}
-		}
-		return xmlDoc;
 	}
 
 	/**
