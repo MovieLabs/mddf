@@ -30,13 +30,13 @@ import org.jdom2.Element;
 
 import com.movielabs.mddf.MddfContext.MDDF_TYPE;
 import com.movielabs.mddflib.logging.LogMgmt;
-import com.movielabs.mddflib.util.xml.InterimMddfTarget;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 
 /**
  * @author L. Levin, Critical Architectures LLC
  *
  */
-public class MddfTestTarget extends InterimMddfTarget {
+public class MddfTestTarget extends MddfTarget {
 
 	/**
 	 * @param srcFile
@@ -52,7 +52,7 @@ public class MddfTestTarget extends InterimMddfTarget {
 		this.mddfType = mddfType;
 	}
 	
-	public void setXmlDoc(Document doc) {
+	public MDDF_TYPE setXmlDoc(Document doc) {
 		xmlDoc = doc;
 		/*
 		 * Identify type of XML file (i.e., Manifest, Avail, etc)
@@ -71,5 +71,6 @@ public class MddfTestTarget extends InterimMddfTarget {
 		} else {
 			mddfType = null;
 		}
+		return mddfType;
 	}
 }
