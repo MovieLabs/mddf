@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdmec:CoreMetadata 
+    xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" 
+    xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.1.xsd">
+	<mdmec:Basic ContentID="md:cid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.2">
+		<md:LocalizedInfo language="en" default="true">
+			<md:TitleDisplay60>The Counselor</md:TitleDisplay60>
+			<md:TitleSort>Counselor, The</md:TitleSort>
+			<md:ArtReference resolution="1789x2560">md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.en</md:ArtReference>
+			<md:Summary190>Michael Fassbender, Brad Pitt, Cameron Diaz, Javier Bardem and Penélope Cruz sizzle in this action-packed thriller from visionary director Ridley Scott and acclaimed writer Cormac McCarthy.</md:Summary190>
+			<md:Summary4000>Michael Fassbender, Brad Pitt, Cameron Diaz, Javier Bardem and Penélope Cruz sizzle in this action-packed thriller from visionary director Ridley Scott and acclaimed writer Cormac McCarthy. A savvy lawyer (Fassbender) known for doing the right thing for the wrong people dives into a treacherous drug deal for some quick cash...but he soon learns that having it all could mean losing everything.</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Drama</md:Genre>
+			<md:Genre level="1">Crime</md:Genre>
+			<md:OriginalTitle>The Counselor</md:OriginalTitle>
+			<md:CopyrightLine>20th Century Fox</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:LocalizedInfo language="fr">
+			<md:TitleDisplay60>Cartel</md:TitleDisplay60>
+			<md:TitleSort>Cartel</md:TitleSort>
+			<md:ArtReference resolution="1789x2560">md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.fr</md:ArtReference>
+			<md:Summary190>Un avocat respecté, excité par l’argent facile et le danger, plonge dans le trafic de drogues et accepte de convoyer un chargement de cocaïne depuis la frontière mexicaine.</md:Summary190>
+			<md:Summary4000>Un avocat respecté, excité par l’argent facile et le danger, plonge dans le trafic de drogues et accepte de convoyer un chargement de cocaïne depuis la frontière mexicaine. Sauf que cette décision prise à la légère va l’entrainer dans une fatale descente aux enfers…</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Drama</md:Genre>
+			<md:Genre level="1">Crime</md:Genre>
+			<md:OriginalTitle>The Counselor</md:OriginalTitle>
+			<md:CopyrightLine>20th Century Fox</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:LocalizedInfo language="ru">
+			<md:TitleDisplay60>Советник</md:TitleDisplay60>
+			<md:TitleSort>Советник</md:TitleSort>
+			<md:ArtReference resolution="1789x2560">md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.ru</md:ArtReference>
+			<md:Summary190>Успешный адвокат, стоящий практически на вершине успеха и на пороге собственной свадьбы, из любопытства и, конечно, ради денег соглашается на предложение своего давнего знакомого, имеющего...</md:Summary190>
+			<md:Summary4000>Успешный адвокат, стоящий практически на вершине успеха и на пороге собственной свадьбы, из любопытства и, конечно, ради денег соглашается на предложение своего давнего знакомого, имеющего тесные связи с преступным миром, перевезти из Мексики в США партию кокаина стоимостью 20 млн. долларов. Ведь он в любой момент легко и безболезненно сможет выйти из игры. Но не тут-то было…</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Drama</md:Genre>
+			<md:Genre level="1">Crime</md:Genre>
+			<md:OriginalTitle>The Counselor</md:OriginalTitle>
+			<md:CopyrightLine>20th Century Fox</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:LocalizedInfo language="it">
+			<md:TitleDisplay60>The Counselor - Il Procuratore</md:TitleDisplay60>
+			<md:TitleSort>The Counselor - Il Procuratore</md:TitleSort>
+			<md:ArtReference resolution="1789x2560">md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.it</md:ArtReference>
+			<md:Summary190>The Counselor è ambientato principalmente nella frontiera e racconta la storia di un procuratore (il cui nome non viene mai pronunciato) che si mette in affari con Reiner, un conoscente...</md:Summary190>
+			<md:Summary4000>The Counselor è ambientato principalmente nella frontiera e racconta la storia di un procuratore (il cui nome non viene mai pronunciato) che si mette in affari con Reiner, un conoscente dalle losche amicizie. L'idea è di prelevare un carico di cocaina del valore di 20 milioni di dollari a sud del confine e spacciarla con l'aiuto di un poco di buono di nome Westray. Naturalmente niente va secondo i piani.. …</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Drama</md:Genre>
+			<md:Genre level="1">Crime</md:Genre>
+			<md:OriginalTitle>The Counselor</md:OriginalTitle>
+			<md:CopyrightLine>20th Century Fox</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:LocalizedInfo language="es">
+			<md:TitleDisplay60>El Consejero</md:TitleDisplay60>
+			<md:TitleSort>Consejero, El</md:TitleSort>
+			<md:ArtReference resolution="1789x2560">md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.es</md:ArtReference>
+			<md:Summary190>Narra la historia de un respetado abogado del sudoeste de Estados Unidos que se introduce en el mundo del tráfico de drogas.</md:Summary190>
+			<md:Summary4000>Narra la historia de un respetado abogado del sudoeste de Estados Unidos que se introduce en el mundo del tráfico de drogas.</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Drama</md:Genre>
+			<md:Genre level="1">Crime</md:Genre>
+			<md:OriginalTitle>The Counselor</md:OriginalTitle>
+			<md:CopyrightLine>20th Century Fox</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:LocalizedInfo language="es-419">
+			<md:TitleDisplay60>El Abogado Del Crimen</md:TitleDisplay60>
+			<md:TitleSort>Abogado Del Crimen, El</md:TitleSort>
+			<md:ArtReference resolution="1789x2560">md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.es-419</md:ArtReference>
+			<md:Summary190>El legendario realizador de cine Ridley Scott y el autor ganador del Premio Pulitzer, Cormac McCarthy (No Es País para Viejos) han unido fuerzas en el thriller EL ABOGADO DEL CRIMEN...</md:Summary190>
+			<md:Summary4000>El legendario realizador de cine Ridley Scott y el autor ganador del Premio Pulitzer, Cormac McCarthy (No Es País para Viejos) han unido fuerzas en el thriller EL ABOGADO DEL CRIMEN, protagonizado por Michael Fassbender, Penélope Cruz, Cameron Diaz, Javier Bardem y Brad Pitt. McCarthy, realiza su debut como guionista y Scott entreteje el ingenio característico del autor y el humor negro con un escenario de pesadilla, en donde un respetado abogado coquetea por primera vez con un acuerdo de negocio que se sale de control.</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Drama</md:Genre>
+			<md:Genre level="1">Crime</md:Genre>
+			<md:OriginalTitle>The Counselor</md:OriginalTitle>
+			<md:CopyrightLine>20th Century Fox</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:LocalizedInfo language="ko">
+			<md:TitleDisplay60>카운슬러</md:TitleDisplay60>
+			<md:TitleSort>카운슬러</md:TitleSort>
+			<md:ArtReference resolution="1000x1440">md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.ko</md:ArtReference>
+			<md:Summary190>젊고 유능한 변호사 ‘카운슬러’는 아름다운 약혼녀 로라에게 프로포즈하기 위해 최고급 다이아몬드 반지를 마련한다.</md:Summary190>
+			<md:Summary4000>젊고 유능한 변호사 ‘카운슬러’는 아름다운 약혼녀 로라에게 프로포즈하기 위해 최고급 다이아몬드 반지를 마련한다. 호화로운 삶에 빠진 타락한 사업가 라이너는 재정 위기에 몰린 카운슬러를 유혹해 쉽게 돈을 벌 수 있는 마약밀매 사업을 제안한다. 라이너가 소개한 미스터리한 마약 중개인 웨스트레이는지독한 범죄세계에 발을 들여놓는 카운슬러에게 경고하고, 라이너의 치명적인 여자친구인 말키나는 그들 주변을 맴도는 가운데운반 중이던 거액의 마약이 사라지는 일이 벌어지는데…올 가을, 그들의 위험한 거래가 시작된다!</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Drama</md:Genre>
+			<md:Genre level="1">Crime</md:Genre>
+			<md:OriginalTitle>The Counselor</md:OriginalTitle>
+			<md:CopyrightLine>20th Century Fox</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:LocalizedInfo language="de">
+			<md:TitleDisplay60>The Counselor</md:TitleDisplay60>
+			<md:TitleSort>The Counselor</md:TitleSort>
+			<md:ArtReference resolution="1789x2560">md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.de</md:ArtReference>
+			<md:Summary190>Der visionäre Filmemacher Ridley Scott hat mit THE COUNSELOR und einem hochkarätigen Ensemble-Cast einen düsteren, höchst intensiven Thriller mit Sogwirkung in Szene gesetzt.</md:Summary190>
+			<md:Summary4000>Der visionäre Filmemacher Ridley Scott hat mit THE COUNSELOR und einem hochkarätigen Ensemble-Cast einen düsteren, höchst intensiven Thriller mit Sogwirkung in Szene gesetzt.  Michael  Fassbender spielt den COUNSELOR, einen Rechtsanwalt, der sich, verblendet von der Gier nach Macht und Geld, durch ein illegales Drogengeschäft mit fatalen Folgen in eine lebensbedrohliche Abwärtsspirale katapultiert. Das Zusammenspiel von Intrige und folgenschwerer Entscheidung zieht ihn an einen nie erahnten Abgrund.</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Drama</md:Genre>
+			<md:Genre level="1">Crime</md:Genre>
+			<md:OriginalTitle>The Counselor</md:OriginalTitle>
+			<md:CopyrightLine>20th Century Fox</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:LocalizedInfo language="pt-BR">
+			<md:TitleDisplay60>O Conselheiro Do Crime</md:TitleDisplay60>
+			<md:TitleSort>O Conselheiro Do Crime</md:TitleSort>
+			<md:ArtReference resolution="1789x2560">md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.pt-BR</md:ArtReference>
+			<md:Summary190>Um advogado (Michael Fassbender) está prestes a se casar com sua noiva (Penélope Cruz), e decide juntar dinheiro participando de um dos esquemas ilegais organizados por seus clientes.</md:Summary190>
+			<md:Summary4000>Um advogado (Michael Fassbender) está prestes a se casar com sua noiva (Penélope Cruz), e decide juntar dinheiro participando de um dos esquemas ilegais organizados por seus clientes. O plano envolve o tráfico de centenas de quilos de droga, no valor de 20 milhões de dólares. Apesar de hesitar no início, ele aceita. Mas a execução do esquema não ocorre como planejado, e logos todos serão visados pelos chefes de um cartel mexicano. Enquanto os outros parceiros têm experiência no crime e sabem como desaparecer, o advogado não sabe como agir, e teme pela segurança de sua noiva. Sem escapatória, este homem perturbado começa a refletir sobre seus atos, tendo que aceitar as consequências brutais de seu envolvimento no crime.</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Drama</md:Genre>
+			<md:Genre level="1">Crime</md:Genre>
+			<md:OriginalTitle>The Counselor</md:OriginalTitle>
+			<md:CopyrightLine>20th Century Fox</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:LocalizedInfo language="nl-nl">
+			<md:TitleDisplay60>The Counselor</md:TitleDisplay60>
+			<md:TitleSort>The Counselor</md:TitleSort>
+			<md:ArtReference resolution="1789x2560">md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.blx</md:ArtReference>
+			<md:Summary190>Verleid door het rijke en spannende leven van de georganiseerde misdaad, besluit een advocaat (“The Counselor”) mee te werken aan één illegale deal.</md:Summary190>
+			<md:Summary4000>Verleid door het rijke en spannende leven van de georganiseerde misdaad, besluit een advocaat (“The Counselor”) mee te werken aan één illegale deal. Al snel komt hij er achter dat er geen weg terug is en dat hij moet vrezen voor zijn leven, en dat van zijn dierbaren.</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Drama</md:Genre>
+			<md:Genre level="1">Crime</md:Genre>
+			<md:OriginalTitle>The Counselor</md:OriginalTitle>
+			<md:CopyrightLine>20th Century Fox</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:RunLength>PT117M00.0S</md:RunLength>
+		<md:ReleaseYear>2013</md:ReleaseYear>
+		<md:ReleaseDate>2013-10-25</md:ReleaseDate>
+		<!-- For the trailer, the only important field in the ReleaseHistory is DistrTerritory. -->
+			<md:ReleaseHistory>
+			<md:ReleaseType>Theatrical</md:ReleaseType>
+			<md:DistrTerritory>
+				<md:country>CA</md:country>
+			</md:DistrTerritory>
+			<md:Date>2013</md:Date>
+		</md:ReleaseHistory>
+		<md:WorkType>Promotion</md:WorkType>
+		<md:PictureColorType>color</md:PictureColorType>
+		<!-- The following ratings should be for the trailer, not the film.  Not sure if these are correct for this trailer. -->
+		<md:RatingSet>
+			<md:Rating>
+				<md:Region>
+					<md:country>CA</md:country>
+				</md:Region>
+				<md:System>CHVRS</md:System>
+				<md:Value>14A</md:Value>
+			</md:Rating>
+		</md:RatingSet>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>1</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Michael Fassbender</md:DisplayName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>2</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Penélope Cruz</md:DisplayName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>3</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Cameron Diaz</md:DisplayName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>4</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Javier Bardem</md:DisplayName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>5</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Brad Pitt</md:DisplayName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Director</md:JobFunction>
+				<md:JobDisplay>Director</md:JobDisplay>
+				<md:BillingBlockOrder>1</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Ridley Scott</md:DisplayName>
+			</md:Name>
+		</md:People>
+		<md:SequenceInfo>
+		     <md:Number>1</md:Number>
+		</md:SequenceInfo>
+	</mdmec:Basic>
+</mdmec:CoreMetadata>

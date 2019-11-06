@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdmec:CoreMetadata 
+    xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" 
+    xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.1.xsd">
+	<mdmec:Basic ContentID="md:cid:eidr-s:AD07-310C-C59D-6785-C63A-G">
+		<md:LocalizedInfo language="en" default="true">
+			<md:TitleDisplay60>The Counselor</md:TitleDisplay60>
+			<md:TitleDisplayUnlimited>The Counselor</md:TitleDisplayUnlimited>
+			<md:TitleSort>Counselor, The</md:TitleSort>
+			<md:ArtReference resolution="1789x2560">md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.en</md:ArtReference>
+			<md:Summary190>Michael Fassbender, Brad Pitt, Cameron Diaz, Javier Bardem and Penélope Cruz sizzle in this action-packed thriller from visionary director Ridley Scott and acclaimed writer Cormac McCarthy.</md:Summary190>
+			<md:Summary4000>Michael Fassbender, Brad Pitt, Cameron Diaz, Javier Bardem and Penélope Cruz sizzle in this action-packed thriller from visionary director Ridley Scott and acclaimed writer Cormac McCarthy. A savvy lawyer (Fassbender) known for doing the right thing for the wrong people dives into a treacherous drug deal for some quick cash...but he soon learns that having it all could mean losing everything.</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Drama</md:Genre>
+			<md:Genre level="1">Crime</md:Genre>
+			<md:OriginalTitle>The Counselor</md:OriginalTitle>
+			<md:CopyrightLine>20th Century Fox</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:RunLength>PT117M00.0S</md:RunLength>
+		<md:ReleaseYear>2013</md:ReleaseYear>
+		<!-- Release date is optional and preferred by some -->
+		<md:ReleaseDate>2013-10-25</md:ReleaseDate>
+		<!-- release history is optional and can be used if there are different release years for different territories. -->
+		<md:ReleaseHistory>
+			<md:ReleaseType wide="true">Theatrical</md:ReleaseType>
+			<md:DistrTerritory>
+				<md:country>US</md:country>
+			</md:DistrTerritory>
+			<md:Date scheduled="true">2013</md:Date>
+			<md:Description>Theatrical</md:Description>
+			<md:ReleaseOrg organizationID="10.5237/6AED-87CB" idType="EIDRPartyID">
+				<md:DisplayName>20th Century Fox Distribution</md:DisplayName>
+				<md:SortName>20th Century Fox Distribution</md:SortName>
+				<md:AlternateName>Fox</md:AlternateName>
+			</md:ReleaseOrg>
+		</md:ReleaseHistory>
+		<!-- end of release history, dates -->
+		<md:WorkType>movie</md:WorkType>
+		<md:PictureColorType>color</md:PictureColorType>
+		<md:RatingSet>
+			<!-- each rating specifies exactly one country, system and value -->
+			<!-- see http://www.movielabs.com/md/ratings/current.html for ratings -->
+			<md:Rating>
+				<md:Region>
+					<md:country>US</md:country>
+				</md:Region>
+				<md:System>MPAA</md:System>
+				<md:Value>R</md:Value>
+			</md:Rating>
+			<md:Rating>
+				<md:Region>
+					<md:country>CA</md:country>
+				</md:Region>
+				<md:System>CHVRS</md:System>
+				<md:Value>14A</md:Value>
+			</md:Rating>
+		</md:RatingSet>
+		<!-- people are used for the cast and crew.  -->
+		<md:People>
+			<md:Job>
+				<!-- JobFunction is required by the spec, but JobDisplay can be more specific -->
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>1</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Michael Fassbender</md:DisplayName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>2</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Penélope Cruz</md:DisplayName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>3</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Cameron Diaz</md:DisplayName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>4</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Javier Bardem</md:DisplayName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>5</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Brad Pitt</md:DisplayName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Director</md:JobFunction>
+				<md:JobDisplay>Director</md:JobDisplay>
+				<md:BillingBlockOrder>1</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Ridley Scott</md:DisplayName>
+			</md:Name>
+		</md:People>
+	</mdmec:Basic>
+</mdmec:CoreMetadata>

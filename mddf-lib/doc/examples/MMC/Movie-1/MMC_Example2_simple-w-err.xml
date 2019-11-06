@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest:MediaManifest 
+  xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.8/manifest" 
+  xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.8/manifest manifest-v1.8.1.xsd"
+  ManifestID="SofaSpud.Example"
+  updateNum="1">
+	<manifest:Compatibility>
+		<manifest:SpecVersion>1.5</manifest:SpecVersion>
+		<manifest:Profile>MMC-1</manifest:Profile>
+	</manifest:Compatibility>
+	<manifest:Inventory>
+		<!-- Main audio file for movie -->
+		<manifest:Audio AudioTrackID="md:audtrackid:eidr-x:AD07-310C-C59D-6785-C63A-G:feature.audio.en">
+			<md:Type>primary</md:Type>
+			<md:Language>en</md:Language>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>./resources/CounselorThe_AD07-310C-C59D-6785-C63A-G_feature_video_ENG.mpg</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Audio>
+		<!--  Trailer  -->
+		<manifest:Audio AudioTrackID="md:audtrackid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1.audio.en">
+			<md:Type>primary</md:Type>
+			<md:Language>en</md:Language>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>./resources/CounselorThe_AD07-310C-C59D-6785-C63A-G_trailer_video_ENG.mpg</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Audio>
+		<!--  main video file for the movie  -->
+		<manifest:Video VideoTrackID="md:vidtrackid:eidr-x:AD07-310C-C59D-6785-C63A-G:feature.video">
+			<md:Type>primary</md:Type>
+			<md:Picture/>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>./resources/CounselorThe_AD07-310C-C59D-6785-C63A-G_feature_video_ENG.mpg</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Video>
+		<!--  video files for the trailers -->
+		<manifest:Video VideoTrackID="md:vidtrackid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1.video.en">
+			<md:Type>primary</md:Type>
+			<md:Picture/>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>./resources/CounselorThe_AD07-310C-C59D-6785-C63A-G_trailer_video_ENG.mpg</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Video>
+		<!--  subtitle and caption components for the feature  -->
+		<manifest:Subtitle SubtitleTrackID="md:subtrackid:eidr-x:AD07-310C-C59D-6785-C63A-G:feature.caption.en">
+			<md:Type>SDH</md:Type>
+			<md:Language>en</md:Language>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>./resources/CounselorThe_AD07-310C-C59D-6785-C63A-G_closed_caption_ENG.scc</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Subtitle>
+		<!--  movie poster artwork is listed as images  -->
+		<manifest:Image ImageID="md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.en">
+			<md:Width>1789</md:Width>
+			<md:Height>2560</md:Height>
+			<md:Encoding>jpg</md:Encoding>
+			<md:Language>en</md:Language>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>./resources/CounselorThe_AD07-310C-C59D-6785-C63A-G_art_US.jpg</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<manifest:Metadata ContentID="md:cid:eidr-s:AD07-310C-C59D-6785-C63A-G">
+			<manifest:ContainerReference type="common">
+				<manifest:ContainerLocation>./resources/ManifestCore_Example1_MEC_movie-simple.xml</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Metadata>
+		<manifest:Metadata ContentID="md:cid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1">
+			<manifest:ContainerReference type="common">
+				<manifest:ContainerLocation>./resources/ManifestCore_Example1_MEC_Trailer1.xml</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Metadata>
+	</manifest:Inventory>
+	<!--  presentations are defined for all the inventory that is synched together. they are references of the video, audio, and subtitle inventory -->
+	<manifest:Presentations>
+		<!--  the main feature presentation  -->
+		<manifest:Presentation PresentationID="md:presentationid:eidr-x:AD07-310C-C59D-6785-C63A-G:feature.presentation">
+			<manifest:TrackMetadata>
+				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
+				<manifest:VideoTrackReference>
+					<manifest:VideoTrackID>md:vidtrackid:eidr-x:AD07-310C-C59D-6785-C63A-G:feature.video</manifest:VideoTrackID>
+				</manifest:VideoTrackReference>
+				<manifest:AudioTrackReference>
+					<manifest:AudioTrackID>md:audtrackid:eidr-x:AD07-310C-C59D-6785-C63A-G:feature.audio.en</manifest:AudioTrackID>
+				</manifest:AudioTrackReference>
+				<manifest:SubtitleTrackReference>
+					<manifest:SubtitleTrackID>md:subtrackid:eidr-x:AD07-310C-C59D-6785-C63A-G:feature.caption.en</manifest:SubtitleTrackID>
+				</manifest:SubtitleTrackReference>
+			</manifest:TrackMetadata>
+		</manifest:Presentation>
+		<!--  Trailer  -->
+		<manifest:Presentation PresentationID="md:presentationid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1.presentation">
+			<manifest:TrackMetadata>
+				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
+				<manifest:VideoTrackReference>
+					<manifest:VideoTrackID>md:vidtrackid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1.video.en</manifest:VideoTrackID>
+				</manifest:VideoTrackReference>
+				<manifest:AudioTrackReference>
+					<manifest:AudioTrackID>md:audtrackid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1.audio.en</manifest:AudioTrackID>
+				</manifest:AudioTrackReference>
+			</manifest:TrackMetadata>
+		</manifest:Presentation>
+	</manifest:Presentations>
+	<manifest:PictureGroups>
+	    <manifest:PictureGroup PictureGroupID="md:picturegroupid:eidr-x:AD07-310C-C59D-6785-C63A-G:feature">
+	      <manifest:Picture>
+		<manifest:PictureID>md:pictureid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.en</manifest:PictureID>
+		<manifest:ImageID>md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.en</manifest:ImageID>
+		<manifest:LanguageInImage>en</manifest:LanguageInImage>
+	      </manifest:Picture>
+	    </manifest:PictureGroup>
+	    <manifest:PictureGroup PictureGroupID="md:picturegroupid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1">
+	      <manifest:Picture>
+		<manifest:PictureID>md:pictureid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.en</manifest:PictureID>
+		<manifest:ImageID>md:imageid:eidr-x:AD07-310C-C59D-6785-C63A-G:art.en</manifest:ImageID>
+		<manifest:LanguageInImage>en</manifest:LanguageInImage>
+	      </manifest:Picture>
+	    </manifest:PictureGroup>	
+	</manifest:PictureGroups>	  
+	<manifest:Experiences>
+		<!-- Root Experience -->
+		<manifest:Experience ExperienceID="md:experienceid:eidr-x:AD07-310C-C59D-6785-C63A-G:experience" version="1.0">
+			<manifest:ContentID>md:cid:eidr-s:AD07-310C-C59D-6785-C63A-G</manifest:ContentID>
+			<manifest:Audiovisual ContentID="md:cid:eidr-s:AD07-310C-C59D-6785-C63A-G">
+				<manifest:Type>Main</manifest:Type>
+				<manifest:SubType>Feature</manifest:SubType>
+				<manifest:PresentationID>md:presentationid:eidr-x:AD07-310C-C59D-6785-C63A-G:feature.presentation</manifest:PresentationID>
+			</manifest:Audiovisual>
+			<manifest:PictureGroupID>md:picturegroupid:eidr-x:AD07-310C-C59D-6785-C63A-G:feature</manifest:PictureGroupID>
+			<manifest:ExperienceChild>
+				<manifest:Relationship>ispromotionfor</manifest:Relationship>
+				<manifest:ExperienceID>md:experienceid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1.experience</manifest:ExperienceID>
+			</manifest:ExperienceChild>
+			<!-- MultiLanguage -->
+		</manifest:Experience>
+		<!-- Child Experiences (international) -->
+		<manifest:Experience ExperienceID="md:experienceid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1.experience" version="1.0">
+			<manifest:ContentID>md:cid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1</manifest:ContentID>
+			<manifest:Audiovisual ContentID="md:cid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1">
+				<manifest:Type>Promotion</manifest:Type>
+				<manifest:SubType>Default Trailer</manifest:SubType>
+				<manifest:PresentationID>md:presentationid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1.presentation</manifest:PresentationID> 
+			</manifest:Audiovisual>
+			<manifest:PictureGroupID>md:picturegroupid:eidr-x:AD07-310C-C59D-6785-C63A-G:trailer.1</manifest:PictureGroupID>
+		</manifest:Experience>
+	</manifest:Experiences>
+	<manifest:ALIDExperienceMaps>
+		<manifest:ALIDExperienceMap>
+			<manifest:ALID>md:alid:eidr-s:AD07-310C-C59D-6785-C63A-G</manifest:ALID>
+			<manifest:ExperienceID>md:experienceid:eidr-x:AD07-310C-C59D-6785-C63A-G:experience</manifest:ExperienceID>
+		</manifest:ALIDExperienceMap>
+	</manifest:ALIDExperienceMaps>
+</manifest:MediaManifest>

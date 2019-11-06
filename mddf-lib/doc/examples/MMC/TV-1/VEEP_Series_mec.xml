@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdmec:CoreMetadata 
+    xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" 
+    xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.1.xsd">
+	<mdmec:Basic ContentID="md:cid:eidr-s:CF5A-AB7E-A4DB-35FA-BAC5-M">
+		<md:LocalizedInfo language="de">
+			<md:TitleDisplay60>Veep</md:TitleDisplay60>
+			<md:TitleDisplayUnlimited>Veep</md:TitleDisplayUnlimited>
+			<md:TitleSort>Veep</md:TitleSort>
+			<md:ArtReference resolution="800x800">md:imageid:eidr-x:CF5A-AB7E-A4DB-35FA-BAC5-M:series-photo.de</md:ArtReference>
+			<md:Summary190 cast="false">Julia Louis-Dreyfus ist der Vizepräsident der Vereinigten Staaten in dieser HBO Komödie-Reihe, die ihrer stürmischen täglichen Existenz folgt, wie sie politische Feuer ausstellt, öffentliche und private Anforderungen jongliert und die Interessen des leitenden Angestellten verteidigt.</md:Summary190>
+			<md:Summary4000 cast="false">Senatorin Selina Meyer ist gerade Vizepräsidentin der Vereinigten Staaten geworden... und entdeckte, dass der Job nichts ist, wie sie erwartet hatte - aber alles, wovor sie gewarnt wurde.  Julia Louis-Dreyfus spielt die Hauptrolle in dieser HBO-Comedy-Serie, die dem wirbelnden Alltag von Vizepräsident Meyer folgt, während sie politische Feuer entfacht, öffentliche und private Forderungen jongliert und die Interessen des Geschäftsführers verteidigt - mit dem sie eine einzigartig dysfunktionale Beziehung. Die Besetzung des Ensembles umfasst Tony Hale als Selinas rechte Hand; Anna Chlumsky als ihre Stabschefin; Matt Walsh als ihr verwitterter Sprecher;
+ Reid Scott als ehrgeiziger politischer Berater; Timothy C. Simons als ahnungslose Verbindungsperson des Weißen Hauses; und Sufe Bradshaw als allgegenwärtige Assistentin von Selina.</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Comedy</md:Genre>
+			<md:Genre level="1" source="http://www.loc.gov/rr/mopic/miggen.html">Political</md:Genre>			
+			<md:OriginalTitle>Veep</md:OriginalTitle>
+			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<!-- Must have exactly 1 default LocalizedInfo matching the language of the original production" -->
+		<md:LocalizedInfo language="en" default="true">
+			<md:TitleDisplay60>Veep</md:TitleDisplay60>
+			<md:TitleDisplayUnlimited>Veep</md:TitleDisplayUnlimited>
+			<md:TitleSort>Veep</md:TitleSort>
+			<md:ArtReference resolution="800x800">md:imageid:eidr-x:CF5A-AB7E-A4DB-35FA-BAC5-M:series-photo.en</md:ArtReference>
+			<md:Summary190 cast="false">Julia Louis-Dreyfus is the Vice President of the United States in this HBO comedy series that follows her whirlwind day-to-day existence as she puts out political fires, juggles public and private demands and defends the interests of the chief executive.</md:Summary190>
+			<md:Summary4000 cast="false">Senator Selina Meyer has just become the Vice President of the United States...and discovered that the job is nothing like she expected--but everything she was warned about. Julia Louis-Dreyfus stars in this HBO comedy series that follows the whirlwind day-to-day existence of Vice President Meyer as she puts out political fires, juggles public and private demands and defends the interests of the chief executive--with whom she shares a uniquely dysfunctional relationship. The ensemble cast includes Tony Hale as Selina's right-hand man; Anna Chlumsky as her chief of staff; Matt Walsh as her weathered spokesperson; Reid Scott as an ambitious political aide; Timothy C. Simons as a clueless White House liaison; and Sufe Bradshaw as Selina's seen-it-all assistant.</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Comedy</md:Genre>
+			<md:Genre level="1" source="http://www.loc.gov/rr/mopic/miggen.html">Political</md:Genre>			
+			<md:OriginalTitle>Veep</md:OriginalTitle>
+			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
+		</md:LocalizedInfo>
+		<md:ReleaseYear>2012</md:ReleaseYear>
+		<md:ReleaseDate>2012-04-22</md:ReleaseDate>
+		<md:ReleaseHistory>
+			<md:ReleaseType>original</md:ReleaseType>
+			<md:DistrTerritory>
+				<md:country>DE</md:country>
+			</md:DistrTerritory>
+			<md:Date>2016-05-22</md:Date>
+		</md:ReleaseHistory>
+		<md:WorkType>Series</md:WorkType>
+		<md:RatingSet>
+			<md:Rating>
+				<md:Region>
+					<md:country>DE</md:country>
+				</md:Region>
+				<md:System>FSK</md:System>
+				<md:Value>16</md:Value>
+			</md:Rating>
+			<md:AdultContent>false</md:AdultContent>
+		</md:RatingSet>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>1</md:BillingBlockOrder>
+				<md:Character>Selina Meyer</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Julia Louis-Dreyfus</md:DisplayName>
+				<md:SortName>Louis-Dreyfus,Louis-Dreyfus</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>10</md:BillingBlockOrder>
+				<md:Character>Richard</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Sam Richardson</md:DisplayName>
+				<md:SortName>Richardson,Richardson</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>2</md:BillingBlockOrder>
+				<md:Character>Gary</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Tony Hale</md:DisplayName>
+				<md:SortName>Hale,Hale</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>3</md:BillingBlockOrder>
+				<md:Character>Amy</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Anna Chlumsky</md:DisplayName>
+				<md:SortName>Chlumsky,Chlumsky</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>4</md:BillingBlockOrder>
+				<md:Character>Dan Egan</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Reid Scott</md:DisplayName>
+				<md:SortName>Scott,Scott</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>5</md:BillingBlockOrder>
+				<md:Character>Mike McClintock</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Matt Walsh</md:DisplayName>
+				<md:SortName>Walsh,Walsh</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>6</md:BillingBlockOrder>
+				<md:Character>Jonah</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Timothy C. Simons</md:DisplayName>
+				<md:SortName>Simons,Simons</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>7</md:BillingBlockOrder>
+				<md:Character>Sue</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Sufe Bradshaw</md:DisplayName>
+				<md:SortName>Bradshaw,Bradshaw</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>8</md:BillingBlockOrder>
+				<md:Character>Ben</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Kevin Dunn</md:DisplayName>
+				<md:SortName>Dunn,Dunn</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Actor</md:JobFunction>
+				<md:JobDisplay>Actor</md:JobDisplay>
+				<md:BillingBlockOrder>9</md:BillingBlockOrder>
+				<md:Character>Kent Davison</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Gary Cole</md:DisplayName>
+				<md:SortName>Cole,Cole</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Director</md:JobFunction>
+				<md:JobDisplay>Director</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Chris Addison</md:DisplayName>
+				<md:SortName>Addison,Addison</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Julia Louis-Dreyfus</md:DisplayName>
+				<md:SortName>Louis-Dreyfus,Louis-Dreyfus</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Georgia Pritchett</md:DisplayName>
+				<md:SortName>Pritchett,Pritchett</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Morgan Sackett</md:DisplayName>
+				<md:SortName>Sackett,Sackett</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Will Smith</md:DisplayName>
+				<md:SortName>Smith,Smith</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Christopher Godsick</md:DisplayName>
+				<md:SortName>Godsick,Godsick</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Dave Mandel</md:DisplayName>
+				<md:SortName>Mandel,Mandel</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Lew Morton</md:DisplayName>
+				<md:SortName>Morton,Morton</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Frank Rich</md:DisplayName>
+				<md:SortName>Rich,Rich</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Peter Huyck</md:DisplayName>
+				<md:SortName>Huyck,Huyck</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Alex Gregory</md:DisplayName>
+				<md:SortName>Gregory,Gregory</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Sean Grey</md:DisplayName>
+				<md:SortName>Grey,Grey</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Producer</md:JobFunction>
+				<md:JobDisplay>Producer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Jim Margolis</md:DisplayName>
+				<md:SortName>Margolis,Margolis</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Writer</md:JobFunction>
+				<md:JobDisplay>Writer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Sean Gray</md:DisplayName>
+				<md:SortName>Gray,Gray</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Writer</md:JobFunction>
+				<md:JobDisplay>Writer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Georgia Pritchett</md:DisplayName>
+				<md:SortName>Pritchett,Pritchett</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Writer</md:JobFunction>
+				<md:JobDisplay>Writer</md:JobDisplay>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Will Smith</md:DisplayName>
+				<md:SortName>Smith,Smith</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:CountryOfOrigin>
+			<md:country>US</md:country>
+		</md:CountryOfOrigin>
+		<md:PrimarySpokenLanguage>en</md:PrimarySpokenLanguage>
+		<md:OriginalLanguage>en</md:OriginalLanguage>
+		<md:AssociatedOrg role="distributor">
+			<md:DisplayName>HBO</md:DisplayName>
+		</md:AssociatedOrg>
+	</mdmec:Basic>
+</mdmec:CoreMetadata>
