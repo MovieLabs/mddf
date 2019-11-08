@@ -142,7 +142,7 @@ body {
       style="background: url(http://movielabs.com/images/interior-hero-bg.jpg); background-size: cover; background-position: center center;">
       <div class="page-center">
          <!-- InstanceBeginEditable name="Title" -->
-         <h1>MDDF Validator Tool (v1.6)</h1>
+         <h1>MDDF Validator Tool (v1.7)</h1>
          <!-- InstanceEndEditable -->
       </div>
    </div>
@@ -169,7 +169,7 @@ body {
                   </td>
                   <td width="75%" valign="top" id="primaryContent">
                      <h3 class="title">Release Notes</h3>
-                     <h3 class="subtitle">Release 1.6</h3>
+                     <h3 class="subtitle">Release 1.7</h3>
                      <div class="entry">
                         <h4>Status: Released</h4>
                         <p>
@@ -209,24 +209,34 @@ body {
                            <strong>Change Log</strong>
                         </h4>
                         <p>
-                           This release of the desktop Validation tool has been upgraded to use the latest
-                           <tt>mddf-lib</tt>
-                           release. The main focus of this release has been on changes intended to reduce the memory required when validating 
-                           large Avails files. Specific changes are:
-                           <ul>
-                              <li>Enhancement: Memory usage when ingesting large XLSX-formated Avails has been significantly reduced.</li>
-                              <li>Enhancement: Identification of ArtReference by means other that ImageID generates Best Practice notice.</li>
-                              <li>User Interface: Manifest Profiles are no longer enterable via UI. Feature removed due to schema enhancements.</li>   
-                              <li>Bug Fix: MMC detection of extra 'root' Experiences.</li>
-                              <li>Bug Fix: Eliminated memory leak when clearing log.</li>
-                           </ul>
+                           The main focus of this release has been on corrections to how MEC files are handled when
+                           referenced by a Manifest. Prior to this release, Manifest/MMC structure validation was
+                           incomplete when MEC files were used to provide metadata. MEC files present a special case in
+                           that they may be validated in one of two contexts:
+                           <ol>
+                              <li>as a stand-alone entity, or</li>
+                              <li>as part of a Manifest that references the MEC file as a source of metadata.</li>
+                           </ol>
+                           What constitutes an error will, therefore, depended on the validation context. Prior to this
+                           release, the validation process did not correctly factor in the context.
+                        </p>
+                        <p>Additional changes are:
+                        <ul>
+                           <li>Enhancement: absence of TitleSort or Summary190 in MEC v2.6 or later results in
+                              NOTICE re backward compatibility.</li>
+                           <li>Bug Fix: fixed incorrect validation of ExternalManifestID uniqueness and xrefs</li>
+                           <li>Bug Fix: Avails XLSX ingest was being aborted by sheets not in conformance with
+                              template (e.g., data in extraneous columns)</li>
+                           <li>Bug Fix: Correct use of Audio/SubType not verified when present in a MEC file..</li>
+                           <li>UI: Edit button removed from Validator tool bar.</li>
+                        </ul>
                         </p>
                         <h4>
                            <strong>Known Bugs</strong>
                         </h4>
                         <ul>
                            <li>consistency of Encoding/ChannelMapping is not checked when the number of Audio
-                              channels is 1.</li> 
+                              channels is 1.</li>
                         </ul>
                      </div>
                   </td>
