@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdmec:CoreMetadata 
+  xmlns="http://www.movielabs.com/schema/md/v2.7/md" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" 
+  xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
+  xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.xsd">
+  <!-- This Bonus Example comes from a different source https://www.carseywolf.ucsb.edu/pollock-events/script-screen-veep/ -->
+	<mdmec:Basic ContentID="md:cid:org:www.carseywolf.ucsb.edu:pollock-events:script-screen-veep">
+		<md:LocalizedInfo language="en" default="true">
+			<md:TitleDisplay60>VEEP - From Script to Screen</md:TitleDisplay60>
+			<md:TitleDisplayUnlimited>VEEP - From Script to Screen</md:TitleDisplayUnlimited>
+			<md:TitleSort>VEEP - From Script to Screen</md:TitleSort>
+			<md:ArtReference resolution="800x800">md:imageid:org:www.carseywolf.ucsb.edu:pollock-events:script-screen-veep.photo1.en</md:ArtReference>
+			<md:Summary190 cast="false">Actress/Producer Julia Louis-Dreyfus, Writer/Executive Producer/Director David Mandel and Actor Tony Hale talk about realizing the HBO series Veep.</md:Summary190>
+			<md:Summary400 cast="false">Actress/Producer Julia Louis-Dreyfus, Writer/Executive Producer/Director David Mandel and Actor Tony Hale talk about realizing the HBO series  .</md:Summary400>
+			<md:Summary4000 cast="false">Actress/Producer Julia Louis-Dreyfus, Writer/Executive Producer/Director David Mandel and Actor Tony Hale talk about realizing the HBO series Veep.</md:Summary4000>
+			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Comedy</md:Genre>
+			<md:Genre level="1" source="http://www.loc.gov/rr/mopic/miggen.html">Political</md:Genre>				
+			<md:OriginalTitle>VEEP - From Script to Screen</md:OriginalTitle>			
+			<md:CopyrightLine>2017 Home Box Office, Inc.</md:CopyrightLine>
+		</md:LocalizedInfo> 
+		<md:ReleaseYear>2017</md:ReleaseYear>
+		<md:ReleaseDate>2017-04-29</md:ReleaseDate>
+		<md:WorkType>Supplemental</md:WorkType>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Guest</md:JobFunction>
+				<md:JobDisplay>Guest</md:JobDisplay>
+				<md:BillingBlockOrder>1</md:BillingBlockOrder>
+				<md:Character>Selina Meyer</md:Character>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Julia Louis-Dreyfus</md:DisplayName>
+				<md:SortName>Louis-Dreyfus,Louis-Dreyfus</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Guest</md:JobFunction>
+				<md:JobDisplay>Guest</md:JobDisplay>
+				<md:BillingBlockOrder>2</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Tony Hale</md:DisplayName>
+				<md:SortName>Hale,Tony</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Guest</md:JobFunction>
+				<md:JobDisplay>Guest</md:JobDisplay>
+				<md:BillingBlockOrder>3</md:BillingBlockOrder>
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Dave Mandel</md:DisplayName>
+				<md:SortName>Mandel,Dave</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:People>
+			<md:Job>
+				<md:JobFunction>Host</md:JobFunction>
+				<md:JobDisplay>Host</md:JobDisplay> 
+			</md:Job>
+			<md:Job>
+				<md:JobFunction>Executive Producer</md:JobFunction>
+				<md:JobDisplay>Executive Producer</md:JobDisplay> 
+			</md:Job>
+			<md:Name>
+				<md:DisplayName>Matt Ryan</md:DisplayName>
+				<md:SortName>Ryan,Matt</md:SortName>
+			</md:Name>
+		</md:People>
+		<md:CountryOfOrigin>
+			<md:country>US</md:country>
+		</md:CountryOfOrigin>
+		<md:PrimarySpokenLanguage>en</md:PrimarySpokenLanguage>
+		<md:AssociatedOrg role="sponsor">
+			<md:DisplayName>UCSB Carsey-Wolf Center</md:DisplayName>
+		</md:AssociatedOrg>
+		<md:SequenceInfo>
+			<md:Number>6</md:Number>
+			<md:HouseSequence>6</md:HouseSequence>
+		</md:SequenceInfo>
+		<!-- Supplement to Series. Parent ContentID matches ContentID in Series MEC file -->
+		<md:Parent relationshipType="issupplementto">
+			<md:ParentContentID>md:cid:eidr-s:CF5A-AB7E-A4DB-35FA-BAC5-M</md:ParentContentID>
+		</md:Parent>
+	</mdmec:Basic>
+</mdmec:CoreMetadata>
