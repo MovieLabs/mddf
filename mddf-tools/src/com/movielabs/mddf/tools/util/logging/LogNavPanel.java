@@ -171,7 +171,7 @@ public class LogNavPanel extends JPanel {
 						xlateDialog.setVisible(true);
 						EnumSet<FILE_FMT> selections = xlateDialog.getSelections();
 						if (!selections.isEmpty()) {
-							MddfTarget target = new MddfTarget(doc,  srcFile, parentLogger);
+							MddfTarget target = new MddfTarget(doc, srcFile, parentLogger);
 							ValidatorTool.getTool().runTranslation(target, selections, xlateDialog.getOutputDir(),
 									xlateDialog.getOutputFilePrefix(), xlateDialog.addVersion());
 						}
@@ -462,11 +462,17 @@ public class LogNavPanel extends JPanel {
 			 */
 			int suffix = 1;
 			String label = "";
-			File targetFile = target.getSrcFile();
-			if (targetFile != null) {
-				label = targetFile.getName();
-			} else {
+			MddfTarget parent = null;
+			if (target == null) {
 				label = LogMgmt.DEFAULT_TOOL_FOLDER_LABEL;
+			} else {
+				File targetFile = target.getSrcFile();
+				if (targetFile != null) {
+					label = targetFile.getName();
+				} else {
+					label = LogMgmt.DEFAULT_TOOL_FOLDER_LABEL;
+				}
+				  parent = target.getParentTarget();
 			}
 			String qualifiedName = label;
 			fileFolder = (LogEntryFolder) rootLogNode.getChild(label);
@@ -480,8 +486,7 @@ public class LogNavPanel extends JPanel {
 			fileFolderMap.put(folderKey, fileFolder);
 			/*
 			 * now add to the tree. This requires knowing its parent w/in the context.
-			 */
-			MddfTarget parent = target.getParentTarget();
+			 */ 
 			if (parent == null) {
 				// must be the 'VALIDATOR' folder
 				rootLogNode.add(fileFolder);

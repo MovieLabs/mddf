@@ -76,15 +76,13 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	private LogNavPanel treeView;
 	private LogPanel tableView;
 	private JSplitPane splitPane;
-	private JMenu saveLogMenu;
-//	private Stack<File> contextFileStack = new Stack<File>();
+	private JMenu saveLogMenu; 
 	private Stack<String> contextStack = new Stack<String>();
 	private String previousContext = null;
 	private int minLevel = LogMgmt.LEV_WARN;
 	private boolean infoIncluded = true;
 	private JTextField statusTextField;
-	private LogEntryFolder curDefaultFolder;
-//	private LogEntryFolder previousFolder;
+	private LogEntryFolder curDefaultFolder; 
 
 	public AdvLogPanel() {
 		treeView = new LogNavPanel(this);
@@ -143,6 +141,8 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 			}
 
 		});
+		// this needs to come last ....
+		curDefaultFolder = treeView.assignFileFolder(null);
 	}
 
 	public void setSize() {
@@ -198,10 +198,10 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	}
 
 	@Override
-	public void clearLog(MddfTarget target) {		
-		treeView.clearLog(target); 
+	public void clearLog(MddfTarget target) {
+		treeView.clearLog(target);
 		this.invalidate();
-		this.repaint();		
+		this.repaint();
 	}
 
 	/*
@@ -339,7 +339,6 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		treeView.collapse();
 
 	}
- 
 
 	public LogEntryFolder assignFileFolder(MddfTarget target) {
 		return treeView.assignFileFolder(target);
@@ -353,7 +352,6 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	public void setCurrentFile(File targetFile, boolean clear) {
 		throw new UnsupportedOperationException();
 	}
- 
 
 	/*
 	 * (non-Javadoc)
@@ -371,7 +369,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 		}
 		curDefaultFolder = target.getLogFolder();
 		treeView.setCurrentFileId(target.getKey(), false);
-		contextStack.push(target.getKey()); 
+		contextStack.push(target.getKey());
 		valueChanged(null);
 		return curDefaultFolder;
 	}
@@ -388,13 +386,13 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 			return;
 		}
 		String curContextKey = contextStack.peek();
-		String assumedKey = assumedTopTarget.getKey(); 
+		String assumedKey = assumedTopTarget.getKey();
 		if (!assumedKey.equals(curContextKey)) {
 			/*
 			 * check for redundant 'pop'. These get ignored same way we ignore redundant
 			 * push.
 			 */
-			if (previousContext != null) { 
+			if (previousContext != null) {
 				if (previousContext.equals(assumedKey)) {
 					return;
 				}
@@ -404,20 +402,19 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 			throw new IllegalStateException("ContextStack not popped.... file mis-match (current top: "
 					+ curDefaultFolder.getLabel() + ", assumed top: " + assumedTopTarget.getSrcFile().getName());
 		}
-		previousContext = contextStack.pop(); 
+		previousContext = contextStack.pop();
 		/*
 		 * are we at top of stack (i.e., done with a file and back to 'tool-level
 		 * logging')?
-		 */ 
+		 */
 		MddfTarget parentTarget = assumedTopTarget.getParentTarget();
-		if(parentTarget == null) {
-			curDefaultFolder =treeView.setCurrentFileId(DEFAULT_TOOL_FOLDER_KEY, false);
-		}else { 
-			curDefaultFolder =treeView.setCurrentFileId(parentTarget.getKey(), false);
+		if (parentTarget == null) {
+			curDefaultFolder = treeView.setCurrentFileId(DEFAULT_TOOL_FOLDER_KEY, false);
+		} else {
+			curDefaultFolder = treeView.setCurrentFileId(parentTarget.getKey(), false);
 		}
 		valueChanged(null);
 	}
-  
 
 	/*
 	 * (non-Javadoc)
@@ -440,7 +437,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	 */
 	@Override
 	public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
-			String moduleId) { 
+			String moduleId) {
 		logIssue(tag, level, target, null, msg, explanation, srcRef, moduleId);
 	}
 
@@ -513,7 +510,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 	protected void append(int level, int tag, String msg, MddfTarget target, int line, String moduleID, String tooltip,
 			LogReference srcRef) {
 		LogEntryFolder logFolder = null;
-		if (target == null) { 
+		if (target == null) {
 			logFolder = curDefaultFolder;
 		} else {
 			logFolder = target.getLogFolder();
@@ -534,7 +531,7 @@ public class AdvLogPanel extends JPanel implements LoggerWidget, TreeSelectionLi
 				return;
 			}
 		}
-		if (logFolder == null) { 
+		if (logFolder == null) {
 			logFolder = curDefaultFolder;
 		}
 		List<LogEntryNode> entryList = new ArrayList<LogEntryNode>();

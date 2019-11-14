@@ -102,19 +102,12 @@ public class LogEntryFolder extends LogEntry {
 	}
 
 	public void setFile(MddfTarget myTarget) {
-//		if (mddfTarget != null) {
-		/*
-		 * OK to replace but only if the KEYs match???? causes bug in cloud validator
-		 * and may be unnecessary
-		 */
-//			String curKey = LogMgmt.genFolderKey(mddfTarget);
-//			String newKey = LogMgmt.genFolderKey(myTarget);
-//			if (!newKey.equals(curKey)) {
-//				throw new IllegalStateException("Replacement MddfTarget has non-matching key");
-//			}
-//		}
-		this.myFile = myTarget.getSrcFile();
 		this.mddfTarget = myTarget;
+		if (myTarget != null) {
+			this.myFile = myTarget.getSrcFile();
+		}else {
+			this.myFile = null; 
+		}
 	}
 
 	public File getFile() {

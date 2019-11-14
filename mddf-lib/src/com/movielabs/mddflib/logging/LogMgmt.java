@@ -48,7 +48,7 @@ public interface LogMgmt extends IssueLogger {
 	public static final int LEV_INFO = 5;
 
 	public static String[] logTags = { "Manifest", "CPE Model", "Profile", "Best Prac.", "Action", "Other", "Avail",
-			"Common MD", "Rating", "XML", "MEC", "XLSX", "XLATE" };
+			"Common MD", "Rating", "XML", "MEC", "XLSX", "XLATE", "Offer" };
 	public static final int TAG_MANIFEST = 0;
 	public static final int TAG_MODEL = 1;
 	public static final int TAG_PROFILE = 2;
@@ -63,6 +63,7 @@ public interface LogMgmt extends IssueLogger {
 	public static final int TAG_MEC = 10;
 	public static final int TAG_XLSX = 11;
 	public static final int TAG_XLATE = 12;
+	public static final int TAG_OFFER = 13;
 
 	public static final String DEFAULT_TOOL_FOLDER_KEY = "%VALIDATOR";
 	public static final String DEFAULT_TOOL_FOLDER_LABEL = "Validator";
@@ -175,6 +176,11 @@ public interface LogMgmt extends IssueLogger {
 	 */
 	public static String genFolderKey(MddfTarget target) {
 		String folderKey = null;
+		if(target == null) {
+			/* If the target is NULL then put it in the Validator's folder */
+			folderKey = DEFAULT_TOOL_FOLDER_KEY;
+			return folderKey;
+		} 
 		File targetFile = target.getSrcFile();
 		if (targetFile != null) {
 			folderKey = targetFile.getPath();
