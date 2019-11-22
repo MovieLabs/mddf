@@ -13,9 +13,7 @@ Step 3:  Two methods in `MddfContext` also needs to be updated:
 Step 4: if the new version is backwards compatible with a previous version's _vocab_ file, the linkage needs to specified in `XmiIngester.getVocabResource()`. If it is not backwards compatible, a new JSON file with
 version-specific terminology must be added to the resource package (see Step 1 above)
 
-Step 5: if a _structure_ file is used during validation, the version to use will be specified in the Validator's `validateUsgage()` method.
-
-Step 6: there are a few methods in the Validator classes that have version-specific logic. These may
+Step 5: there are a few methods in the Validator classes that have version-specific logic. These may
 require modification. The specific classes and methods to check are:
 
 * for Common Metadata:
@@ -31,6 +29,8 @@ require modification. The specific classes and methods to check are:
   
 * for MEC:
   * `MECValidator.validateUsage()`
+  
+Step 6: It is __strongly recommended__ that version-specific `JUnit` tests are added to the test suite.
 
 Note that adding support for a new version of the Avails XLSX format requires a different set of steps (see below)
 
