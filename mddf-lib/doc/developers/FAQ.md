@@ -15,6 +15,23 @@ version-specific terminology must be added to the resource package (see Step 1 a
 
 Step 5: if a _structure_ file is used during validation, the version to use will be specified in the Validator's `validateUsgage()` method.
 
+Step 6: there are a few methods in the Validator classes that have version-specific logic. These may
+require modification. The specific classes and methods to check are:
+
+* for Common Metadata:
+  * `CMValidator.validateUsage()` 
+  * `CMValidator.validateDigitalAssets()`
+  
+* for Avails:
+  * `AvailValidator.validateConstraints()`
+  * `AvailValidator.validateUsage()`
+  
+* for Manifests:
+  * `ManifestValidator.validateUsage()`
+  
+* for MEC:
+  * `MECValidator.validateUsage()`
+
 Note that adding support for a new version of the Avails XLSX format requires a different set of steps (see below)
 
 ### 2. How do you add support for a new version of the Avails XLSX template?
