@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.jdom2.Attribute;
 import org.jdom2.Comment;
@@ -882,23 +883,24 @@ public class Translator {
 	private static Document simpleConversion(Document xmlDocIn, FILE_FMT srcFmt, FILE_FMT targetFmt) {
 		XMLOutputter outputter = new XMLOutputter();
 		String inDoc = outputter.outputString(xmlDocIn);
-		Map<String, String> srcVers = MddfContext.getReferencedXsdVersions(srcFmt);
-		Map<String, String> targetVers = MddfContext.getReferencedXsdVersions(targetFmt);
-		String outDoc = convertNS(inDoc, "md", srcVers.get("MD"), targetVers.get("MD"));
-		outDoc = convertNS(outDoc, "mdmec", srcVers.get("MDMEC"), targetVers.get("MDMEC"));
-		outDoc = convertNS(outDoc, "avails", srcFmt.getVersion(), targetFmt.getVersion());
-		return regenXml(outDoc);
-	}
-
-	private static String convertNS(String inDoc, String schema, String verIn, String verOut) {
-		String target = "/schema/" + schema + "/v" + verIn + "/" + schema;
-		String replacement = "/schema/" + schema + "/v" + verOut + "/" + schema;
-		String t1 = inDoc.replaceFirst(target, replacement);
-
-		target = schema + "-v" + verIn + ".xsd";
-		replacement = schema + "-v" + verOut + ".xsd";
-		String outDoc = t1.replaceFirst(target, replacement);
-		return outDoc;
+		Map<String, Namespace> srcNS = MddfContext.getRequiredNamespaces(srcFmt);
+		Map<String, Namespace> targetNS = MddfContext.getRequiredNamespaces(targetFmt);
+		Set<String> nsKeys = srcNS.keySet();
+		for (String key : nsKeys) {
+			// 1st the actual xmlns declarations...
+			Namespace srcNSpace = srcNS.get(key);
+			Namespace targetNSpace = targetNS.get(key);			
+			String t1 = inDoc.replaceFirst(srcNSpace.getURI(), targetNSpace.getURI());
+			// now handle a possible schemaLocation:
+			String prefix = srcNSpace.getPrefix();
+			String verIn = srcFmt.getVersion();
+			String verOut = targetFmt.getVersion();
+			String target = prefix + "-v" + verIn + ".xsd";
+			String replacement = prefix + "-v" + verOut + ".xsd";
+			String outDoc = t1.replaceFirst(target, replacement);
+			inDoc = outDoc;
+		}
+		return regenXml(inDoc);
 	}
 
 	/**
