@@ -79,7 +79,7 @@ public class MddfTarget extends DefaultMutableTreeNode {
 		this.srcFile = srcFile;
 		srcIsXml = srcFile.getName().toLowerCase().endsWith(".xml");
 		this.logMgr = logMgr;
-		logFolder = logMgr.assignFileFolder(this); 
+		logFolder = logMgr.assignFileFolder(this);
 	}
 
 	/**
@@ -104,14 +104,15 @@ public class MddfTarget extends DefaultMutableTreeNode {
 		if (parent != null) {
 			parent.add(this);
 		}
-		logFolder = logMgr.assignFileFolder(this); 
+		logFolder = logMgr.assignFileFolder(this);
 	}
 
 	/**
 	 * Construct target where the MDDF source is an <tt>InputStream</tt> that may be
 	 * used to obtain an MDDDF file. The <tt>srcFile</tt> may or may not exist or be
-	 * readable on the <i>local</i> file system. If the MDDF data being targeted is an
-	 * XLSX-formatted Avail file the <tt>isXMl</tt> flag should be set to <tt>false</tt>.
+	 * readable on the <i>local</i> file system. If the MDDF data being targeted is
+	 * an XLSX-formatted Avail file the <tt>isXMl</tt> flag should be set to
+	 * <tt>false</tt>.
 	 * 
 	 * @param srcFile
 	 * @param streamSrc
@@ -126,8 +127,9 @@ public class MddfTarget extends DefaultMutableTreeNode {
 	 * Construct target where the MDDF source is an <tt>InputStream</tt> that may be
 	 * used to obtain an MDDF file that is used as a secondary source of data (e.g.,
 	 * a MEC file referenced by a Manifest). The <tt>srcFile</tt> may or may not
-	 * exist or be readable on the <i>local</i> file system. If the MDDF data being targeted is an
-	 * XLSX-formatted Avail file the <tt>isXMl</tt> flag should be set to <tt>false</tt>.
+	 * exist or be readable on the <i>local</i> file system. If the MDDF data being
+	 * targeted is an XLSX-formatted Avail file the <tt>isXMl</tt> flag should be
+	 * set to <tt>false</tt>.
 	 * 
 	 * @param parent
 	 * @param srcFile
@@ -144,7 +146,7 @@ public class MddfTarget extends DefaultMutableTreeNode {
 			parent.add(this);
 		}
 		logFolder = logMgr.assignFileFolder(this);
-		this.streamSrc = new ReusableInputStream(streamSrc); 
+		this.streamSrc = new ReusableInputStream(streamSrc);
 	}
 
 	/**
@@ -175,7 +177,8 @@ public class MddfTarget extends DefaultMutableTreeNode {
 	}
 
 	/**
-	 * Returns an <tt>ReusableInputStream</tt> that can be used to read an MDDF file.
+	 * Returns an <tt>ReusableInputStream</tt> that can be used to read an MDDF
+	 * file.
 	 * 
 	 * @return the streamSrc
 	 */
@@ -205,7 +208,7 @@ public class MddfTarget extends DefaultMutableTreeNode {
 	}
 
 	private void loadXml() throws SAXParseException {
-		if(!srcIsXml) {
+		if (!srcIsXml) {
 			throw new IllegalStateException("Can not load XML from a non-XML source");
 		}
 		if (streamSrc == null) {
@@ -256,8 +259,20 @@ public class MddfTarget extends DefaultMutableTreeNode {
 			logTag = LogMgmt.TAG_MANIFEST;
 			mddfType = MDDF_TYPE.MANIFEST;
 		} else if (nSpaceUri.contains("avails")) {
-			logTag = LogMgmt.TAG_AVAIL;
-			mddfType = MDDF_TYPE.AVAILS;
+			/*
+			 * Need root-element to identify if this is an Avails or an OrderStatus
+			 */
+			String elName = docRootEl.getName();
+			switch (elName) {
+			case "AvailList":
+				logTag = LogMgmt.TAG_AVAIL;
+				mddfType = MDDF_TYPE.AVAILS;
+				break;
+			case "OfferStatusList":
+				logTag = LogMgmt.TAG_OFFER;
+				mddfType = MDDF_TYPE.OSTATUS;
+				break;				
+			}
 		} else if (nSpaceUri.contains("mdmec")) {
 			logTag = LogMgmt.TAG_MEC;
 			mddfType = MDDF_TYPE.MEC;
