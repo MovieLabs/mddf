@@ -153,7 +153,8 @@ public class LogNavPanel extends JPanel {
 			});
 
 			add(new JSeparator());
-			if (mddfType == MDDF_TYPE.AVAILS) {
+			String encoding = fileFolder.getMddfFormat().getEncoding();
+			if (encoding.equalsIgnoreCase("xlsx")) {
 				JMenuItem xlateLogMItem = new JMenuItem("Translate");
 				add(xlateLogMItem);
 				xlateLogMItem.setEnabled(maxErrLevelFound < LogMgmt.LEV_ERR);
