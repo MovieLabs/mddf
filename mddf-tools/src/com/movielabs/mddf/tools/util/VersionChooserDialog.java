@@ -24,6 +24,7 @@ package com.movielabs.mddf.tools.util;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +34,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -54,6 +56,8 @@ public class VersionChooserDialog extends JDialog implements ActionListener {
 	private ButtonGroup btnGroup;
 	private AvailsSheet.Version selectedVersion;
 	protected boolean cancelled;
+	private JComboBox contentOptions;
+	private JPanel contentTypePanel;
 	private static String title = "Version Chooser";
 	private static String logoPath = GenericTool.imageRsrcPath + "logo_movielabs.jpg";
 
@@ -72,6 +76,7 @@ public class VersionChooserDialog extends JDialog implements ActionListener {
 
 		getContentPane().add(getChoicePanel(), BorderLayout.CENTER);
 
+		getContentPane().add(getContentDropDown(), BorderLayout.EAST);
 		// Adds the button panel
 		buttonPanel = new JPanel();
 		buttonPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -88,10 +93,10 @@ public class VersionChooserDialog extends JDialog implements ActionListener {
 			}
 		});
 		getRootPane().setDefaultButton(okButton);
-		
+
 		JButton btnCancel = new JButton("Cancel");
 		buttonPanel.add(btnCancel);
-		btnCancel.addActionListener(new ActionListener() { 
+		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cancelled = true;
 				setVisible(false);
@@ -117,6 +122,18 @@ public class VersionChooserDialog extends JDialog implements ActionListener {
 			addButtons();
 		}
 		return choicePanel;
+	}
+
+	private Component getContentDropDown() {
+		if (contentTypePanel == null) {
+			contentTypePanel = new JPanel();
+			String[] options = { "Avails", "OfferStatus" };
+			contentOptions = new JComboBox(options);
+			contentOptions.setSelectedIndex(0);
+			contentTypePanel.add(contentOptions, BorderLayout.NORTH);
+			contentOptions.setEnabled(false);
+		}
+		return contentTypePanel;
 	}
 
 	private void addButtons() {
@@ -156,7 +173,18 @@ public class VersionChooserDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String value = e.getActionCommand();
 		selectedVersion = AvailsSheet.Version.valueOf(value);
+		switch (value) {
+		case "V1_9":
+			contentOptions.setEnabled(true);
+			break;
+		default:
+			contentOptions.setEnabled(false);
+			contentOptions.setSelectedIndex(0);
+		}
 	}
-	
-	
+
+	public String getContentType() { 
+		return  (String) contentOptions.getSelectedItem();
+	}
+
 }
