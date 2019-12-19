@@ -62,6 +62,7 @@ import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.avails.xml.RowDataSrc;
+import com.movielabs.mddflib.avails.xml.XlsxIngestException;
 import com.movielabs.mddflib.avails.xml.AbstractXmlBuilder;
 import com.movielabs.mddflib.avails.xml.MetadataBuilder;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
@@ -281,6 +282,9 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		this.logger = logger;
 		this.templateVersion = sstVersion;
 		switch (templateVersion) {
+		case V1_9:
+			setVersion("2.5");
+			break; 
 		case V1_8:
 			setVersion("2.4");
 			break;
@@ -298,6 +302,8 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 					moduleId);
 			throw new IllegalArgumentException("Unsupported Avails Schema version " + templateVersion);
 		}
+		logger.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, "Ingesting as XLSX version " + templateVersion, null,
+				moduleId);
 	}
 
 	/**
@@ -376,8 +382,8 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 	 * @return results
 	 * @throws IllegalStateException
 	 */
-	public Map<String, Object> convert(MddfTarget mddfTarget , InputStream inStream, int sheetNum, String shortDesc)
-			throws IllegalStateException { 
+	public Map<String, Object> convert(MddfTarget mddfTarget, InputStream inStream, int sheetNum, String shortDesc)
+			throws IllegalStateException {
 		File srcXslxFile = mddfTarget.getSrcFile();
 		Map<String, Object> results = new HashMap<String, Object>();
 		FILE_FMT srcMddfFmt = null;
@@ -423,7 +429,7 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 	 * @return
 	 * @throws IllegalStateException
 	 */
-	private Document makeXmlAsJDom( MddfTarget mddfTarget ,InputStream inStream, int sheetNum, String shortDesc)
+	private Document makeXmlAsJDom(MddfTarget mddfTarget, InputStream inStream, int sheetNum, String shortDesc)
 			throws IllegalStateException {
 		this.shortDesc = shortDesc;
 		this.curSrcXslxFile = mddfTarget.getSrcFile();
@@ -444,7 +450,7 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		 * ingested an entire row,.
 		 */
 		try {
-			OPCPackage xlsxPackage = null; 
+			OPCPackage xlsxPackage = null;
 			if (inStream == null) {
 				xlsxPackage = OPCPackage.open(curSrcXslxFile.getPath(), PackageAccess.READ);
 			} else {
@@ -619,10 +625,11 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		if (rowHasData) {
 			try {
 				IngesterV1_7 ingester = new IngesterV1_7(row, rowNum, this, logger);
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				e.printStackTrace();
 				int rowID = rowNum + 1;
-				String msg = "Unable to ingest data in row " + rowID+"; Exception while processing: "+e.getMessage() ;
+				String msg = "Unable to ingest data in row " + rowID + "; Exception while processing: "
+						+ e.getMessage();
 				logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, msg, null, moduleId);
 			}
 		}
@@ -851,6 +858,9 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 			Element alidEl = mGenericElement("ALID", alid, getAvailsNSpace());
 			availEL.addContent(alidEl);
 			addToPedigree(alidEl, alidPedigree);
+			
+			// new for v1.9 and 2.5...
+			curRow.process(availEL, "AssociatedALID", getAvailsNSpace(),   "Avail/AssociatedALID", ";");
 
 			availEL.addContent(curRow.mDisposition());
 			availEL.addContent(curRow.mPublisher("Licensor", "Avail/DisplayName"));
@@ -936,10 +946,16 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		case "Short":
 			availType = "single";
 			break;
-		case "Volume":
-		case "Season":
-		case "Episode":
 		case "Collection":
+			availType = "bundle";
+			break;
+		case "Supplemental":
+			availType = "suplement";
+			break;
+		case "Volume":
+		case "Series":
+		case "Season":
+		case "Episode": 
 		default:
 			availType = workTypeSS.toLowerCase();
 		}
