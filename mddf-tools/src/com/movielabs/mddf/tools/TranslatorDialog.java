@@ -318,17 +318,17 @@ public class TranslatorDialog extends JDialog {
 		if (excelFmtMenu == null) {
 			excelFmtMenu = new JPopupMenu();
 
-			JCheckBox cbXlsxV1_7 = new JCheckBox("XLSX 1.7");
-			excelFmtMenu.add(cbXlsxV1_7);
-			cBoxList.add(cbXlsxV1_7);
-			cBoxMap.put(FILE_FMT.AVAILS_1_7, cbXlsxV1_7);
-			xlateCBoxes.add(cbXlsxV1_7);
+			JCheckBox cbXlsxV1_9 = new JCheckBox("XLSX 1.9");
+			excelFmtMenu.add(cbXlsxV1_9);
+			cBoxList.add(cbXlsxV1_9);
+			cBoxMap.put(FILE_FMT.AVAILS_1_9, cbXlsxV1_9);
+			xlateCBoxes.add(cbXlsxV1_9);
 
-			JCheckBox cbXlsxV1_7_2 = new JCheckBox("XLSX 1.7.2");
-			excelFmtMenu.add(cbXlsxV1_7_2);
-			cBoxList.add(cbXlsxV1_7_2);
-			cBoxMap.put(FILE_FMT.AVAILS_1_7_2, cbXlsxV1_7_2);
-			xlateCBoxes.add(cbXlsxV1_7_2);
+			JCheckBox cbXlsxV1_8 = new JCheckBox("XLSX 1.8");
+			excelFmtMenu.add(cbXlsxV1_8);
+			cBoxList.add(cbXlsxV1_8);
+			cBoxMap.put(FILE_FMT.AVAILS_1_8, cbXlsxV1_8);
+			xlateCBoxes.add(cbXlsxV1_8);
 
 			JCheckBox cbXlsxV1_7_3 = new JCheckBox("XLSX 1.7.3");
 			excelFmtMenu.add(cbXlsxV1_7_3);
@@ -336,11 +336,17 @@ public class TranslatorDialog extends JDialog {
 			cBoxMap.put(FILE_FMT.AVAILS_1_7_3, cbXlsxV1_7_3);
 			xlateCBoxes.add(cbXlsxV1_7_3);
 
-			JCheckBox cbXlsxV1_8 = new JCheckBox("XLSX 1.8");
-			excelFmtMenu.add(cbXlsxV1_8);
-			cBoxList.add(cbXlsxV1_8);
-			cBoxMap.put(FILE_FMT.AVAILS_1_8, cbXlsxV1_8);
-			xlateCBoxes.add(cbXlsxV1_8);
+			JCheckBox cbXlsxV1_7_2 = new JCheckBox("XLSX 1.7.2");
+			excelFmtMenu.add(cbXlsxV1_7_2);
+			cBoxList.add(cbXlsxV1_7_2);
+			cBoxMap.put(FILE_FMT.AVAILS_1_7_2, cbXlsxV1_7_2);
+			xlateCBoxes.add(cbXlsxV1_7_2);
+
+			JCheckBox cbXlsxV1_7 = new JCheckBox("XLSX 1.7");
+			excelFmtMenu.add(cbXlsxV1_7);
+			cBoxList.add(cbXlsxV1_7);
+			cBoxMap.put(FILE_FMT.AVAILS_1_7, cbXlsxV1_7);
+			xlateCBoxes.add(cbXlsxV1_7);
 		}
 		return excelFmtMenu;
 	}
@@ -369,6 +375,12 @@ public class TranslatorDialog extends JDialog {
 	private JPopupMenu getXmlFormatMenu() {
 		if (xmlFmtMenu == null) {
 			xmlFmtMenu = new JPopupMenu();
+
+			JCheckBox cbXmlV2_5 = new JCheckBox("XML 2.5");
+			xmlFmtMenu.add(cbXmlV2_5);
+			cBoxList.add(cbXmlV2_5);
+			cBoxMap.put(FILE_FMT.AVAILS_2_5, cbXmlV2_5);
+			xlateCBoxes.add(cbXmlV2_5);
 
 			JCheckBox cbXmlV2_4 = new JCheckBox("XML 2.4");
 			xmlFmtMenu.add(cbXmlV2_4);
