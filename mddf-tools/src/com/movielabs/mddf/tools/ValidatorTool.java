@@ -277,13 +277,13 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 	}
 
 	public class CleanExcelWorker extends SwingWorker<Void, StatusMsg> {
-		private File srcFile;
+		private MddfTarget target;
 		private String dirPath;
 		private String fileName;
 
-		public CleanExcelWorker(File srcFile, String dirPath, String fileName) {
+		public CleanExcelWorker(MddfTarget target, String dirPath, String fileName) {
 			super();
-			this.srcFile = srcFile;
+			this.target = target;
 			this.dirPath = dirPath;
 			this.fileName = fileName;
 		}
@@ -294,7 +294,7 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 			frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			getTxtStatus().setText("Starting clone-n-clean.....");
 			LogMgmt logger = getConsoleLogPanel();
-			TemplateWorkBook.clone(srcFile, dirPath, fileName, logger);
+			TemplateWorkBook.clone(target, dirPath, fileName, logger);  // <<----------------------------- need the MDDF_TARGET
 			frame.setCursor(null); // turn off the wait cursor
 			setRunningState(false);
 			return null;
@@ -1235,8 +1235,8 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		worker.execute();
 	}
 
-	public void cleanup(File srcFile, String dirPath, String fileName) {
-		SwingWorker<Void, StatusMsg> worker = new ValidatorTool.CleanExcelWorker(srcFile, dirPath, fileName);
+	public void cleanup(MddfTarget target, String dirPath, String fileName) {
+		SwingWorker<Void, StatusMsg> worker = new ValidatorTool.CleanExcelWorker(target, dirPath, fileName);
 		worker.execute();
 	}
 
