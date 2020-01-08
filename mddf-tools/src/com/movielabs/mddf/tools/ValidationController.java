@@ -56,6 +56,8 @@ import com.movielabs.mddflib.manifest.validation.ManifestValidator;
 import com.movielabs.mddflib.manifest.validation.MecValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.MMCoreValidator;
 import com.movielabs.mddflib.manifest.validation.profiles.ProfileValidator;
+import com.movielabs.mddflib.status.offer.OfferStatusValidator;
+import com.movielabs.mddflib.status.offer.StreamingOStatusBuilder;
 import com.movielabs.mddflib.util.StringUtils;
 import com.movielabs.mddflib.util.Translator;
 import com.movielabs.mddflib.util.xml.MddfTarget;
@@ -371,7 +373,7 @@ public class ValidationController {
 		FILE_FMT srcMddfFmt = null;
 		Document xmlDoc = null;
 		if (fileType.equals("xlsx")) {
-			/* The XLSX format is only supported with AVAILS files */
+			/* The XLSX format is only supported with AVAILS and OfferStatus files */
 			Map<String, Object> results = convertSpreadsheet_v2(target);
 			if (results == null) {
 				String msg = "Unable to convert Excel to XML";
@@ -393,10 +395,10 @@ public class ValidationController {
 				System.gc();
 			}
 		} else if (fileType.equals("xml")) { 
-			xmlDoc = target.getXmlDoc();// XmlIngester.getAsXml(srcFile);
 			if (target == null) {
 				return;
 			}
+			xmlDoc = target.getXmlDoc();// XmlIngester.getAsXml(srcFile);
 			srcMddfFmt = MddfContext.identifyMddfFormat(xmlDoc.getRootElement());
 			if (logNav != null) {
 				logNav.setMddfFormat(target, srcMddfFmt);
@@ -430,7 +432,9 @@ public class ValidationController {
 		case AVAILS:
 			isValid = validateAvail(target, pedigreeMap);
 			if ((!isValid || DBG_XLSX) && (fileType.equals("xlsx"))) {
-				File outputLoc = new File(tempDir, "TRACE_" + srcFile.getName().replace("xlsx", "xml"));
+				String newName =  srcFile.getName().replace("xlsx", "xml");
+				newName =  newName.replace("XLSX", "xml");
+				File outputLoc = new File(tempDir, "TRACE_" +newName);
 				XmlIngester.writeXml(outputLoc, xmlDoc);
 			}
 			if (isValid) {
@@ -446,6 +450,13 @@ public class ValidationController {
 		case MEC:
 			validateMEC(target);
 			break;
+		case OSTATUS:
+			validateStatus(target);
+			String newName =  srcFile.getName().replace("xlsx", "xml");
+			newName =  newName.replace("XLSX", "xml");
+			File outputLoc = new File(tempDir, "TRACE_" +newName);
+			XmlIngester.writeXml(outputLoc, xmlDoc);
+			break;
 		}
 	}
 
@@ -455,7 +466,7 @@ public class ValidationController {
 	 * @param name
 	 * @return
 	 */
-	private String trimFileName(String name) {
+	public static String trimFileName(String name) {
 		int trimAt = name.lastIndexOf(".");
 		if (trimAt > 0) {
 			name = name.substring(0, trimAt);
@@ -486,7 +497,7 @@ public class ValidationController {
 	 * @return a Map&lt;String, Object&gt;
 	 */
 	private Map<String, Object> convertSpreadsheet_v2(MddfTarget target) {
-		VersionChooserDialog vcd = new VersionChooserDialog();
+		VersionChooserDialog vcd = new VersionChooserDialog(target.getSrcFile());
 		vcd.setLocationRelativeTo(logNav);
 		vcd.setVisible(true);
 		if (vcd.isCancelled()) {
@@ -494,11 +505,23 @@ public class ValidationController {
 			results.put("status", RESULT_STATUS.CANCELLED);
 			return results;
 		}
-		Version xlsxVersion = vcd.getSelected();
 
-		StreamingXmlBuilder bldr = new StreamingXmlBuilder(logMgr, xlsxVersion);
 		String shortDesc = "Converted using STREAMING XML builder";
-		Map<String, Object> results = bldr.convert(target, null, 0, shortDesc);
+		
+		Version xlsxVersion = vcd.getSelected();
+		String contentType = vcd.getContentType();
+		Map<String, Object> results = null;
+		switch (contentType) {
+		case "Avails":
+			StreamingXmlBuilder bldr1 = new StreamingXmlBuilder(logMgr, xlsxVersion);
+			results = bldr1.convert(target, null, 0, shortDesc);
+			break;
+		case "OfferStatus":
+			StreamingOStatusBuilder bldr2 = new StreamingOStatusBuilder(logMgr, xlsxVersion);
+			results = bldr2.convert(target, null, 0, shortDesc);
+			
+			break;
+		}
 		return results;
 	}
 
@@ -518,7 +541,7 @@ public class ValidationController {
 	 */
 	private Map<String, Object> convertSpreadsheet_v1(File xslxFile) {
 
-		VersionChooserDialog vcd = new VersionChooserDialog();
+		VersionChooserDialog vcd = new VersionChooserDialog(xslxFile);
 		vcd.setLocationRelativeTo(logNav);
 		vcd.setVisible(true);
 		if (vcd.isCancelled()) {
@@ -531,7 +554,7 @@ public class ValidationController {
 		if (results != null) {
 			FILE_FMT srcMddfFmt = (FILE_FMT) results.get("srcFmt");
 			if (logNav != null) {
-				// comented out so code compiles.....
+				// commented out so code compiles.....
 //				logNav.setMddfFormat(xslxFile, srcMddfFmt);
 			}
 		}
@@ -611,6 +634,12 @@ public class ValidationController {
 		String msg = "Obfuscated output in " + outFile.getAbsolutePath();
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_AVAIL, msg, availsTarget, null, MODULE_ID, null, null);
 
+	}
+
+	private void validateStatus(MddfTarget target) {
+		OfferStatusValidator tool1 = new OfferStatusValidator(validateC, logMgr);
+		boolean isValid = tool1.process(target);
+		
 	}
 
 	protected boolean validateMEC(MddfTarget target) throws IOException, JDOMException {
