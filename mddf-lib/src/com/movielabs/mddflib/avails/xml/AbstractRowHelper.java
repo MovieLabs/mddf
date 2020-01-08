@@ -50,9 +50,10 @@ public abstract class AbstractRowHelper  implements RowDataSrc{
 	protected Pedigree workTypePedigree;
 	protected LogMgmt logger;
 
-	public static AbstractRowHelper createHelper(AvailsSheet aSheet, Row row, LogMgmt logger) {
-		Version ver = aSheet.getVersion();
+	public static AbstractRowHelper createHelper(Version ver, AvailsSheet aSheet, Row row, LogMgmt logger) {
+//		Version ver = aSheet.getVersion();
 		switch (ver) {
+		case V1_9:
 		case V1_8:
 			return new RowToXmlHelperV1_8(aSheet, row, logger);
 		case V1_7_3:

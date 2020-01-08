@@ -47,8 +47,8 @@ public class AvailsSheet {
 	 *
 	 */
 	public static enum Version {
-		V1_8("Version 1.8"), V1_7_3("Version 1.7.3"), V1_7_2("Version 1.7.2"), V1_7("Version 1.7"), V1_6("Version 1.6"),
-		UNK("Unkown");
+		V1_9("Version 1.9"), V1_8("Version 1.8"), V1_7_3("Version 1.7.3"), V1_7_2("Version 1.7.2"), V1_7("Version 1.7"),
+		V1_6("Version 1.6"), UNK("Unkown");
 
 		private Version(String label) {
 			this.label = label;
@@ -69,6 +69,8 @@ public class AvailsSheet {
 	 */
 	public static Version map2Version(FILE_FMT fFmt) {
 		switch (fFmt) {
+		case AVAILS_1_9:
+			return Version.V1_9;
 		case AVAILS_1_8:
 			return Version.V1_8;
 		case AVAILS_1_7_3:
@@ -136,7 +138,7 @@ public class AvailsSheet {
 		headerList = new ArrayList<String>();
 		headerMap = new HashMap<String, Integer>();
 		for (Cell headerCell : headerRow2) {
-			int idx = headerCell.getColumnIndex(); 
+			int idx = headerCell.getColumnIndex();
 			String value = dataF.formatCellValue(headerCell);
 			if ((value != null) && !value.isEmpty()) {
 				String prefix;
@@ -150,7 +152,7 @@ public class AvailsSheet {
 				headerList.add(key);
 				headerMap.put(key, new Integer(idx));
 			}
-		} 
+		}
 
 		/*
 		 * TYPE Check: Is this for movies or TV? The current rule is that this is
@@ -176,7 +178,7 @@ public class AvailsSheet {
 		 * Skip over the header rows and process all data rows...
 		 */
 
-		if (isAvail(excelSheet.getRow(2))) {
+		if (containsData(excelSheet.getRow(2))) {
 			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLSX, "Third row should not contain an Avail (reserved for header)",
 					null, logMsgSrcId);
 		}
@@ -185,7 +187,7 @@ public class AvailsSheet {
 			if (nextRow == null) {
 				break;
 			}
-			if (isAvail(nextRow)) {
+			if (containsData(nextRow)) {
 				rows.add(nextRow);
 			}
 		}
@@ -247,14 +249,15 @@ public class AvailsSheet {
 	}
 
 	/**
-	 * Determine if a spreadsheet row contains an Avail. Determination is based on
-	 * the contents of the Disposition/EntryType column.
+	 * Determine if a spreadsheet row contains a data entry. Determination is based on
+	 * the contents of the Avail/ALID column. This is a REQUIRED field in all the
+	 * MDDF files that can be encoded as XLSX (i.e., Avails, OfferStatus).
 	 * 
 	 * @param nextRow
 	 * @return true iff the row is an avail
 	 */
-	private boolean isAvail(Row nextRow) {
-		int eTypeCol = getColumnIdx("Disposition/EntryType");
+	private boolean containsData(Row nextRow) {
+		int eTypeCol = getColumnIdx("Avail/ALID");
 		/*
 		 * Use 1st cell to determine if this is an Avails row. Other possibilities are
 		 * and empty row or a comment row, both of which should be skipped.

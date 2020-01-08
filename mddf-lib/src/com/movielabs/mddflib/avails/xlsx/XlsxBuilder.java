@@ -501,15 +501,15 @@ public class XlsxBuilder {
 			Map<String, List<XPathExpression>> categoryMappings) {
 		// Q1: is <avails:CaptionExemption> set?
 		XPathExpression<Element> cePath = null;
-		if((context != null)&& (!context.isEmpty())) {
+		if ((context != null) && (!context.isEmpty())) {
 			String contextKey = "AvailMetadata:CaptionExemption" + CONTEXT_DELIM + context;
 			if (categoryMappings.containsKey(contextKey)) {
 				cePath = categoryMappings.get(contextKey).get(0);
-			} 
+			}
 		}
 		if (cePath == null) {
 			cePath = categoryMappings.get("AvailMetadata:CaptionExemption").get(0);
-		}   
+		}
 		Element targetEl = cePath.evaluateFirst(baseEl);
 		boolean exemptionProvided;
 		if (targetEl == null) {
@@ -842,7 +842,12 @@ public class XlsxBuilder {
 	 * @throws IllegalArgumentException
 	 */
 	private void setXmlVersion(String availSchemaVer) throws IllegalArgumentException {
+		// TODO: migrate this code to use of MddfContext.getReferencedXsdVersions()
 		switch (availSchemaVer) {
+		case "2.5":
+			MD_VER = "2.8";
+			MDMEC_VER = "2.8";
+			break;
 		case "2.4":
 			// TODO: resolve the md-v2.7.1 import issue.....
 //<xs:import namespace="http://www.movielabs.com/schema/md/v2.7/md" schemaLocation="md-v2.7.1.xsd"/>

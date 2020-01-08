@@ -42,6 +42,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xml.AbstractRowHelper;
 import com.movielabs.mddflib.avails.xml.AvailsSheet;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
@@ -110,13 +111,14 @@ public class TemplateWorkBook {
 	 * <li>empty columns will be hidden</li>
 	 * </ol>
 	 * 
-	 * @param srcFile
+	 * @param srcTarget
 	 * @param outputDir
 	 * @param outFileName
 	 * @param log
 	 * @return
 	 */
-	public static boolean clone(File srcFile, String outputDir, String outFileName, LogMgmt log) {
+	public static boolean clone(MddfTarget srcTarget, String outputDir, String outFileName, LogMgmt log) {
+		File srcFile = srcTarget.getSrcFile();
 		try {
 			AvailsWrkBook srcWrkBook = new AvailsWrkBook(srcFile, log, true, false);
 			AvailsSheet srcSheet = srcWrkBook.ingestSheet(0);
@@ -127,28 +129,35 @@ public class TemplateWorkBook {
 			 * mappingDefs. The defs are version and category dependent.
 			 * 
 			 */
-			Version ver = srcSheet.getVersion();
-			JSONObject mappingsByVersion = XlsxBuilder.mappings.getJSONObject(ver.name());
+			FILE_FMT fmt =  srcTarget.getLogFolder().getMddfFormat();
+			Version xlsxVer = AvailsSheet.map2Version(fmt);
+			JSONObject mappingsByVersion = XlsxBuilder.mappings.getJSONObject(xlsxVer.name());
 			String category = srcSheet.getName();
-			JSONObject mappingDefs = mappingsByVersion.getJSONObject(category);
+			/* prior to v1.8 the sheet name had to be 'Movie' or 'TV ' */
+			JSONObject mappingDefs = mappingsByVersion.getJSONObject(category);  
+			if(mappingDefs == null || mappingDefs.isNullObject()) {
+				 mappingDefs = mappingsByVersion.getJSONObject("AllAvails");  
+			}
+			if(mappingDefs == null || mappingDefs.isNullObject()) {
+				log.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Clone op unable to identify content (sheet name:  "+category+")",  srcTarget, logMsgSrcId);
+				return false;
+			}
 			ArrayList<String> colIdList = new ArrayList<String>();
 			colIdList.addAll(mappingDefs.keySet());
 			XSSFSheet clonedSheet = clone.addSheet(category, colIdList);
 			// now we can copy the rows.
 
 			rowLoop: for (Row row : srcSheet.getRows()) {
-				AbstractRowHelper rowHelper = AbstractRowHelper.createHelper(srcSheet, row, log);
+				AbstractRowHelper rowHelper = AbstractRowHelper.createHelper(xlsxVer, srcSheet, row, log);
 				if (rowHelper != null) {
 					clone.addDataRow(rowHelper, clonedSheet);
-				} else {
-					MddfTarget target4log = new MddfTarget(srcFile, log);
-					log.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported XLSX version", target4log, logMsgSrcId);
+				} else { 
+					log.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_AVAIL, "Unsupported XLSX version "+xlsxVer,  srcTarget, logMsgSrcId);
 					break rowLoop;
 				}
 			}
-			File outFile = new File(outputDir, outFileName);
-			MddfTarget target = new MddfTarget(srcFile, log);
-			clone.export(target, outFile.getCanonicalPath());
+			File outFile = new File(outputDir, outFileName); 
+			clone.export(srcTarget, outFile.getCanonicalPath());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
