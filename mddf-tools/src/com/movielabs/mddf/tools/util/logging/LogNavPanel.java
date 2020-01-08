@@ -30,14 +30,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
-
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -65,7 +61,6 @@ import com.movielabs.mddf.tools.TranslatorDialog;
 import com.movielabs.mddf.tools.ValidatorTool;
 import com.movielabs.mddf.tools.util.FileChooserDialog;
 import com.movielabs.mddf.tools.util.xml.EditorMgr;
-import com.movielabs.mddf.tools.util.xml.SimpleXmlEditor;
 import com.movielabs.mddflib.logging.LogEntryFolder;
 import com.movielabs.mddflib.logging.LogEntryNode;
 import com.movielabs.mddflib.logging.LogMgmt;
@@ -110,12 +105,12 @@ public class LogNavPanel extends JPanel {
 			if (target == null) {
 				return;
 			}
-			// TODO: should really use FILE_FMT here....
-			isXml = target.getSrcFile().getAbsolutePath().endsWith(".xml");
-
+			FILE_FMT curFmt = fileFolder.getMddfFormat();
+			isXml = curFmt.getEncoding().equals("xml");
 			int maxErrLevelFound = fileFolder.getHighestLevel();
 			boolean fileSelected = (node == fileFolder);
 			MDDF_TYPE mddfType = target.getMddfType();
+			boolean isAvail = (mddfType == MDDF_TYPE.AVAILS);
 			/*
 			 * Step 2: Now we can construct the pop-up and enable/disable specific menu
 			 * items based on the context.
@@ -147,105 +142,103 @@ public class LogNavPanel extends JPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					EditorMgr edMgr = EditorMgr.getSingleton();
-					MddfTarget target = node.getMddfTarget();
 					edMgr.getEditorFor(target, parentLogger, null);
 				}
 			});
 
 			add(new JSeparator());
 			String encoding = fileFolder.getMddfFormat().getEncoding();
-			if (encoding.equalsIgnoreCase("xlsx")) {
-				JMenuItem xlateLogMItem = new JMenuItem("Translate");
-				add(xlateLogMItem);
-				xlateLogMItem.setEnabled(maxErrLevelFound < LogMgmt.LEV_ERR);
-				xlateLogMItem.addActionListener(new ActionListener() {
+			JMenuItem xlateLogMItem = new JMenuItem("Translate");
+			add(xlateLogMItem);
+			xlateLogMItem.setEnabled(maxErrLevelFound < LogMgmt.LEV_ERR);
+			xlateLogMItem.addActionListener(new ActionListener() {
 
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						TranslatorDialog xlateDialog = TranslatorDialog.getDialog();
-						Document doc = fileFolder.getXml();
-						File srcFile = fileFolder.getFile();
-						FILE_FMT curFmt = fileFolder.getMddfFormat();
-						xlateDialog.setContext(curFmt, srcFile);
-						Point p = tree.getLocationOnScreen();
-						xlateDialog.setLocation((int) p.getX(), (int) p.getY());
-						xlateDialog.setVisible(true);
-						EnumSet<FILE_FMT> selections = xlateDialog.getSelections();
-						if (!selections.isEmpty()) {
-							MddfTarget target = new MddfTarget(doc, srcFile, parentLogger);
-							ValidatorTool.getTool().runTranslation(target, selections, xlateDialog.getOutputDir(),
-									xlateDialog.getOutputFilePrefix(), xlateDialog.addVersion());
-						}
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					TranslatorDialog xlateDialog = TranslatorDialog.getDialog();
+					Document doc = fileFolder.getXml();
+					File srcFile = fileFolder.getFile();
+					xlateDialog.setContext(curFmt, srcFile);
+					Point p = tree.getLocationOnScreen();
+					xlateDialog.setLocation((int) p.getX(), (int) p.getY());
+					xlateDialog.setVisible(true);
+					EnumSet<FILE_FMT> selections = xlateDialog.getSelections();
+					if (!selections.isEmpty()) {
+						MddfTarget target = new MddfTarget(doc, srcFile, parentLogger);
+						ValidatorTool.getTool().runTranslation(target, selections, xlateDialog.getOutputDir(),
+								xlateDialog.getOutputFilePrefix(), xlateDialog.addVersion());
 					}
-				});
+				}
+			});
 
-				JMenuItem compressAvailsMItem = new JMenuItem("Compress ");
-				compressAvailsMItem.setToolTipText("Hide empty Excel columns");
-				add(compressAvailsMItem);
-				FILE_FMT curFmt = fileFolder.getMddfFormat();
-				compressAvailsMItem.setEnabled(curFmt.getEncoding().equals("xlsx"));
-				compressAvailsMItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						File srcFile = fileFolder.getFile();
-						File saveToFile = FileChooserDialog.getFilePath("Save file as...", srcFile.getAbsolutePath(),
-								null, "AVAIL", parentLogger);
-						String dirPath;
-						String fileName;
-						if (saveToFile.exists() && saveToFile.isDirectory()) {
-							dirPath = saveToFile.getPath();
-							fileName = fileFolder.getFile().getName();
-						} else {
-							dirPath = saveToFile.getParent();
-							fileName = saveToFile.getName();
-						}
-						ValidatorTool.getTool().compress(srcFile, dirPath, fileName);
+//			if (encoding.equalsIgnoreCase("xlsx")) {
+			JMenuItem compressAvailsMItem = new JMenuItem("Compress ");
+			compressAvailsMItem.setToolTipText("Hide empty Excel columns");
+			add(compressAvailsMItem);
+			/*
+			 * NOTE: Compression and Reformat functions are not supported for OfferStatus
+			 * worksheets.
+			 */
+			compressAvailsMItem.setEnabled(!isXml && isAvail);
+			compressAvailsMItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					File srcFile = fileFolder.getFile();
+					File saveToFile = FileChooserDialog.getFilePath("Save file as...", srcFile.getAbsolutePath(), null,
+							"AVAIL", parentLogger);
+					String dirPath;
+					String fileName;
+					if (saveToFile.exists() && saveToFile.isDirectory()) {
+						dirPath = saveToFile.getPath();
+						fileName = fileFolder.getFile().getName();
+					} else {
+						dirPath = saveToFile.getParent();
+						fileName = saveToFile.getName();
 					}
-				});
+					ValidatorTool.getTool().compress(srcFile, dirPath, fileName);
+				}
+			});
 
-				JMenuItem reformatAvailsMItem = new JMenuItem("Reformat");
-				reformatAvailsMItem.setToolTipText("Reorder columns; Hide empty columns");
-				add(reformatAvailsMItem);
-				curFmt = fileFolder.getMddfFormat();
-				reformatAvailsMItem.setEnabled(curFmt.getEncoding().equals("xlsx"));
-				reformatAvailsMItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						File srcFile = fileFolder.getFile();
-						File saveToFile = FileChooserDialog.getFilePath("Save file as...", srcFile.getAbsolutePath(),
-								null, "AVAIL", parentLogger);
-						String dirPath;
-						String fileName;
-						if (saveToFile.exists() && saveToFile.isDirectory()) {
-							dirPath = saveToFile.getPath();
-							fileName = fileFolder.getFile().getName();
-						} else {
-							dirPath = saveToFile.getParent();
-							fileName = saveToFile.getName();
-						}
-						ValidatorTool.getTool().cleanup(srcFile, dirPath, fileName);
+			JMenuItem reformatAvailsMItem = new JMenuItem("Reformat");
+			reformatAvailsMItem.setToolTipText("Reorder columns; Hide empty columns");
+			add(reformatAvailsMItem);
+			reformatAvailsMItem.setEnabled(!isXml && isAvail);
+			reformatAvailsMItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					File srcFile = fileFolder.getFile();
+					File saveToFile = FileChooserDialog.getFilePath("Save file as...", srcFile.getAbsolutePath(), null,
+							"AVAIL", parentLogger);
+					String dirPath;
+					String fileName;
+					if (saveToFile.exists() && saveToFile.isDirectory()) {
+						dirPath = saveToFile.getPath();
+						fileName = fileFolder.getFile().getName();
+					} else {
+						dirPath = saveToFile.getParent();
+						fileName = saveToFile.getName();
 					}
-				});
+					ValidatorTool.getTool().cleanup(target, dirPath, fileName);
+				}
+			});
 
-				JMenuItem maskAvailsMItem = new JMenuItem("Export Obfuscated");
-				maskAvailsMItem.setToolTipText("Work-in-progress");
-				maskAvailsMItem.setEnabled(false);
-				add(maskAvailsMItem);
-				maskAvailsMItem.addActionListener(new ActionListener() {
+			JMenuItem maskAvailsMItem = new JMenuItem("Export Obfuscated");
+			maskAvailsMItem.setToolTipText("Work-in-progress");
+			maskAvailsMItem.setEnabled(false);
+			add(maskAvailsMItem);
+			maskAvailsMItem.addActionListener(new ActionListener() {
 
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						MaskerDialog xlateDialog = MaskerDialog.getDialog();
-						Document doc = fileFolder.getXml();
-						FILE_FMT curFmt = fileFolder.getMddfFormat();
-						File srcFile = fileFolder.getFile();
-						xlateDialog.setContext(srcFile);
-						xlateDialog.setVisible(true);
-					}
-				});
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					MaskerDialog xlateDialog = MaskerDialog.getDialog();
+					File srcFile = fileFolder.getFile();
+					xlateDialog.setContext(srcFile);
+					xlateDialog.setVisible(true);
+				}
+			});
 
-				add(new JSeparator());
-			}
+			add(new JSeparator());
+//			}
 
 			JMenuItem deleteLogMItem = new JMenuItem("Delete from Log");
 			add(deleteLogMItem);
@@ -473,7 +466,7 @@ public class LogNavPanel extends JPanel {
 				} else {
 					label = LogMgmt.DEFAULT_TOOL_FOLDER_LABEL;
 				}
-				  parent = target.getParentTarget();
+				parent = target.getParentTarget();
 			}
 			String qualifiedName = label;
 			fileFolder = (LogEntryFolder) rootLogNode.getChild(label);
@@ -487,7 +480,7 @@ public class LogNavPanel extends JPanel {
 			fileFolderMap.put(folderKey, fileFolder);
 			/*
 			 * now add to the tree. This requires knowing its parent w/in the context.
-			 */ 
+			 */
 			if (parent == null) {
 				// must be the 'VALIDATOR' folder
 				rootLogNode.add(fileFolder);
