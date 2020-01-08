@@ -28,6 +28,7 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -39,9 +40,12 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import com.movielabs.mddf.tools.GenericTool;
+import com.movielabs.mddf.tools.ValidationController;
 import com.movielabs.mddflib.avails.xml.AvailsSheet;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import java.awt.FlowLayout;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 /**
  * Dialog used to designate file version when submitting an Avails in XLSX
@@ -60,8 +64,9 @@ public class VersionChooserDialog extends JDialog implements ActionListener {
 	private JPanel contentTypePanel;
 	private static String title = "Version Chooser";
 	private static String logoPath = GenericTool.imageRsrcPath + "logo_movielabs.jpg";
+	private JTextField textField;
 
-	public VersionChooserDialog() {
+	public VersionChooserDialog(File srcFile) {
 		super(null, Dialog.ModalityType.APPLICATION_MODAL);
 		setTitle(title);
 		// center of screen (default may be overridden by caller)
@@ -73,6 +78,20 @@ public class VersionChooserDialog extends JDialog implements ActionListener {
 		// Add the header panel
 		DialogHeaderPanel header = new DialogHeaderPanel(appLogo, title, "Avails XLSX version");
 		getContentPane().add(header, BorderLayout.NORTH);
+		
+		JPanel panel = new JPanel();
+		header.add(panel, BorderLayout.SOUTH);
+		
+		JLabel lblNewLabel = new JLabel("Source: ");
+		panel.add(lblNewLabel);
+		
+		textField = new JTextField();
+		textField.setEditable(false);
+		String fileName = srcFile.getName();
+		fileName = ValidationController.trimFileName(fileName);
+		textField.setText(fileName);
+		panel.add(textField);
+		textField.setColumns(20);
 
 		getContentPane().add(getChoicePanel(), BorderLayout.CENTER);
 
