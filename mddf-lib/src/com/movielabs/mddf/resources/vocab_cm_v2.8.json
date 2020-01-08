@@ -1,0 +1,185 @@
+{
+	"cm": 
+	{
+		"WorkType": 
+		[
+			"Album",
+			"Song",
+			"Music Video",
+			"Ring Tone",
+			"Other Music",
+			"Movie",
+			"Short",
+			"Series",
+			"Season",
+			"Volume",
+			"Episode",
+			"Non-episodic Show",
+			"Promotion",
+			"Ad",
+			"Excerpt",
+			"Supplemental",
+			"Collection",
+			"Franchise",
+			"App",
+			"Immersive",
+			"Mixed-Media",
+			"Gallery",
+			"Other",
+			"Visual Art",
+			"Performing Art",
+			"Book",
+			"Serial",
+			"Comic Book",
+			"Comic Strip",
+			"Competition",
+			"Amusement",
+			"AntiPiracy",
+			"DistributionLogo",
+			"Rating",
+			"DubbingCredit",
+			"Intermission",
+			"EditNotice",
+			"Health"
+		],
+
+		"ColorType": 
+		[
+			"color",
+			"bandw",
+			"colorized",
+			"composite",
+			"unknown"
+		],
+
+		"PictureFormat": 
+		[
+			"Letterbox",
+			"Pillarbox",
+			"Full",
+			"Stretch",
+			"Pan and Scan",
+			"360",
+			"Other"
+		],
+
+		"ReleaseType": 
+		[
+			"original",
+			"Blu-ray",
+			"Broadcast",
+			"DVD",
+			"Festival",
+			"Hospitality",
+			"InternetBuy",
+			"InternetRent",
+			"local",
+			"PayTV",
+			"Production",
+			"Theatrical",
+			"VOD",
+			"AVOD",
+			"PVOD",
+			"SVOD",
+			"FOD"
+		],
+
+		"TitleAlternate@type": 
+		[
+			"alternative",
+			"misspelling",
+			"StartsWith"
+		],
+
+		"Parent@relationshipType": 
+		[
+			"isclipof",
+			"isepisodeof",
+			"isseasonof",
+			"ispartof",
+			"isderivedfrom",
+			"iscompositeof",
+			"issupplementto",
+			"ispromotionfor",
+			"isbasedon",
+			"isdescendantof"
+		],
+		
+		"ContainerType":
+		[
+		"3GP",
+		"3GP2",
+		"AC3",
+		"AIFF",
+		"ASF",
+		"atmos",
+		"AVI",
+		"CFF",
+		"DAMF",
+		"DIVX",
+		"DTS",
+		"FLV",
+		"HCT",
+		"IMF",
+		"ISO",
+		"JPEG",
+		"M4V",
+		"MJ2",
+		"MP4",
+		"MKV",
+		"MPEG-2 (TS)",
+		"MPEG-2 (PS)",
+		"MXF",
+		"Ogg",
+		"Quicktime (MOV)",
+		"PNG",
+		"RIFF",
+		"RM",
+		"SWF",
+		"TIFF",
+		"WMV",
+		"VOB",
+		"XMF",
+		"ZIP",
+		"other"
+		],
+
+		"Relationship/Type": 
+		[
+			"isbasedon",
+			"iswithin"
+		],
+
+		"EntryClass": 
+		[
+			"Episode",
+			"Installment",
+			"Part",
+			"Season"
+		],
+
+		"GroupingEntity/Type": 
+		[
+			"Publisher",
+			"Universe",
+			"Brand",
+			"Franchise"
+		],
+
+		"Compliance/Disposition": 
+		[
+			"pass",
+			"fail",
+			"pending",
+			"other"
+		],
+
+		"Gender": 
+		[
+			"male",
+			"female",
+			"neutral",
+			"other"
+		]
+	}
+}

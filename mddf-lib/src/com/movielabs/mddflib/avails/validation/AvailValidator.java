@@ -183,6 +183,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateUsage();
 
 		switch (availSchemaVer) {
+		case "2.5":
 		case "2.4":
 			/* Validate indexed sequences that must be continuously increasing */
 			validateIndexing("BundledAsset", availsNSpace, "sequence", "Asset", availsNSpace, true, true, true, false);
@@ -256,6 +257,11 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		allowed = availVocab.optJSONArray("SeriesStatus");
 		docRef = LogReference.getRef(doc, "avail05");
 		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "SeriesStatus", allowed, docRef, true, true);
+		
+		allowed = availVocab.optJSONArray("VolumeStatus");
+		// ---------- W.I.P: bug fix due to change for v2.4 and later
+//		docRef = LogReference.getRef(doc, "avail05");
+//		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "SeriesStatus", allowed, docRef, true, true);
 
 		allowed = availVocab.optJSONArray("DateTimeCondition");
 		docRef = LogReference.getRef(doc, "avail06");
@@ -317,6 +323,11 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateVocab(nSpaces, "//avails:Term/avails:Text[../@termName='TitleStatus']", false, allowed, docRef, true,
 				true, tag4log, "@termName='TitleStatus'");
 
+		// added v2.5
+		allowed = availVocab.optJSONArray("@termName='TPRType'");
+		docRef = null;
+		validateVocab(nSpaces, "//avails:Term/avails:Text[../@termName='TPRType']", false, allowed, docRef, false,
+				true, tag4log, "@termName='TPRType'");
 	}
 
 	/**
@@ -363,6 +374,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 */
 		String structVer = null;
 		switch (availSchemaVer) {
+		case "2.5":
+			structVer = "2.5";
+			break;
 		case "2.4":
 			structVer = "2.4";
 			break;

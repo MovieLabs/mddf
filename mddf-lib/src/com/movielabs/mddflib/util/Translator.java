@@ -62,6 +62,58 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
  * Performs translation of an Avails file from one format or version to another
  * and then exports (i.e., saves) the translated file(s).
  * 
+ * <h3>Peer-to-Peer Translations:</h3>
+ * <p>
+ * <i>Peer-to-peer translation</i> refers to the conversion between equivalent
+ * release of the XML and XLSX Avails specifications. The supported pairings
+ * are:
+ * 
+ * 
+ * <table summary="">
+ * <tr>
+ * <td><b>XML</b></td>
+ * <td>&lt;----&gt;</td>
+ * <td><b>XLSX</b></td>
+ * </tr>
+ * <tr>
+ * <td>v2.2</td>
+ * <td></td>
+ * <td>1.7</td>
+ * </tr>
+ * <tr >
+ * <td>v2.2.2</td>
+ * <td></td>
+ * <td>v1.7.2</td>
+ * </tr>
+ * <tr>
+ * <td>v2.3</td>
+ * <td></td>
+ * <td>v1.7.3</td>
+ * </tr>
+ * <tr>
+ * <td>v2.4</td>
+ * <td></td>
+ * <td>v1.8</td>
+ * </tr>
+ * <tr>
+ * <td>v2.5</td>
+ * <td></td>
+ * <td>v1.9</td>
+ * </tr>
+ * </table>
+ * 
+ * </p>
+ * 
+ * <h3>Version Translations:</h3>
+ * 
+ * <p>
+ * <i>Version translation</i> refers to the conversion between different
+ * releases of the XML and XLSX Avails specifications. Version translation is
+ * only supported from an older version to a newer version (e.g., v2.3 to v2.4).
+ * Translation is also supported to the peer-encoding of a future version (e.g.,
+ * v2.3 to v1.8).
+ * </p>
+ * 
  * @author L. Levin, Critical Architectures LLC
  *
  */
@@ -88,82 +140,101 @@ public class Translator {
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_2_2);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_3);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_4);
-		// for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7);
+		for_AVAILS_2_2.add(FILE_FMT.AVAILS_2_5);
+		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7_2);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_7_3);
 		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_8);
+		for_AVAILS_2_2.add(FILE_FMT.AVAILS_1_9);
 		supported.put(FILE_FMT.AVAILS_2_2, for_AVAILS_2_2);
 
-		List<FILE_FMT> for_AVAILS_2_2_1 = new ArrayList<FILE_FMT>();
-		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_2_2);
-		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_2_2_2);
-		// for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7);
-		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7_2);
-		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7_3);
-		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_8);
-		supported.put(FILE_FMT.AVAILS_2_2_1, for_AVAILS_2_2_1);
-
-		List<FILE_FMT> for_AVAILS_2_2_2 = new ArrayList<FILE_FMT>();
-		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_2_1);
-		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_3);
-		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_4);
-		// for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7);
-		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7_2);
-		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7_3);
-		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_8);
-		supported.put(FILE_FMT.AVAILS_2_2_2, for_AVAILS_2_2_2);
-
-		List<FILE_FMT> for_AVAILS_2_3 = new ArrayList<FILE_FMT>();
-		// formats that a v2.3 file may xlated TO...
-		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2_2);
-		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2_1);
-		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2);
-		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_4);
-		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_7_2);
-		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_7_3);
-		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_8);
-		supported.put(FILE_FMT.AVAILS_2_3, for_AVAILS_2_3);
-
-		List<FILE_FMT> for_AVAILS_2_4 = new ArrayList<FILE_FMT>();
-		// formats that a v2.4 file may xlated TO...
-//		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2_2);
-//		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2_1);
-//		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_2);
-//		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_4);
-//		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_7_2);
-//		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_7_3);
-		for_AVAILS_2_4.add(FILE_FMT.AVAILS_1_8);
-		supported.put(FILE_FMT.AVAILS_2_4, for_AVAILS_2_4);
-
 		List<FILE_FMT> for_AVAILS_1_7 = new ArrayList<FILE_FMT>();
+		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_1);
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_2);
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_2_1);
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_2_2);
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_3);
+		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_4);
+		for_AVAILS_1_7.add(FILE_FMT.AVAILS_2_5);
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_1_7_2);
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_1_7_3);
 		for_AVAILS_1_7.add(FILE_FMT.AVAILS_1_8);
+		for_AVAILS_1_7.add(FILE_FMT.AVAILS_1_9);
 		supported.put(FILE_FMT.AVAILS_1_7, for_AVAILS_1_7);
 
+		// ........................................................
+
+		List<FILE_FMT> for_AVAILS_2_2_1 = new ArrayList<FILE_FMT>();
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_2_2_2);
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_2_3);
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_2_4);
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_2_5);
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7_2);
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_7_3);
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_8);
+		for_AVAILS_2_2_1.add(FILE_FMT.AVAILS_1_9);
+		supported.put(FILE_FMT.AVAILS_2_2_1, for_AVAILS_2_2_1);
+
+		// ........................................................
+
+		List<FILE_FMT> for_AVAILS_2_2_2 = new ArrayList<FILE_FMT>();
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_3);
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_4);
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_2_5);
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7_2);
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_7_3);
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_8);
+		for_AVAILS_2_2_2.add(FILE_FMT.AVAILS_1_9);
+		supported.put(FILE_FMT.AVAILS_2_2_2, for_AVAILS_2_2_2);
+
 		List<FILE_FMT> for_AVAILS_1_7_2 = new ArrayList<FILE_FMT>();
-		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_2);
-		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_2_1);
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_2_2);
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_3);
-		// for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_7);
+		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_4);
+		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_2_5);
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_7_3);
 		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_8);
+		for_AVAILS_1_7_2.add(FILE_FMT.AVAILS_1_9);
 		supported.put(FILE_FMT.AVAILS_1_7_2, for_AVAILS_1_7_2);
 
+		// ........................................................
+
+		List<FILE_FMT> for_AVAILS_2_3 = new ArrayList<FILE_FMT>();
+		// formats that a v2.3 file may xlated TO...
+		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_4);
+		for_AVAILS_2_3.add(FILE_FMT.AVAILS_2_5);
+		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_8);
+		for_AVAILS_2_3.add(FILE_FMT.AVAILS_1_9);
+		supported.put(FILE_FMT.AVAILS_2_3, for_AVAILS_2_3);
+
+		List<FILE_FMT> for_AVAILS_1_7_3 = new ArrayList<FILE_FMT>(); 
+		for_AVAILS_1_7_3.add(FILE_FMT.AVAILS_2_3);
+		for_AVAILS_1_7_3.add(FILE_FMT.AVAILS_2_4);
+		for_AVAILS_1_7_3.add(FILE_FMT.AVAILS_2_5); 
+		for_AVAILS_1_7_3.add(FILE_FMT.AVAILS_1_8);
+		for_AVAILS_1_7_3.add(FILE_FMT.AVAILS_1_9);
+		supported.put(FILE_FMT.AVAILS_1_7_3, for_AVAILS_1_7_3);
+
+		// ........................................................
+
+		List<FILE_FMT> for_AVAILS_2_4 = new ArrayList<FILE_FMT>();
+		// formats that a v2.4 file may xlated TO...
+		for_AVAILS_2_4.add(FILE_FMT.AVAILS_2_5);
+		for_AVAILS_2_4.add(FILE_FMT.AVAILS_1_8);
+		for_AVAILS_2_4.add(FILE_FMT.AVAILS_1_9);
+		supported.put(FILE_FMT.AVAILS_2_4, for_AVAILS_2_4);
+
 		List<FILE_FMT> for_AVAILS_1_8 = new ArrayList<FILE_FMT>();
-		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_2);
-		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_2_1);
-		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_2_2);
-		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_3);
 		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_4);
-		for_AVAILS_1_8.add(FILE_FMT.AVAILS_1_7_2);
-		for_AVAILS_1_8.add(FILE_FMT.AVAILS_1_7_3);
+		for_AVAILS_1_8.add(FILE_FMT.AVAILS_2_5);
+		for_AVAILS_1_8.add(FILE_FMT.AVAILS_1_9);
 		supported.put(FILE_FMT.AVAILS_1_8, for_AVAILS_1_8);
+		// ........................................................
+
+		List<FILE_FMT> for_AVAILS_2_5 = new ArrayList<FILE_FMT>();
+		// formats that a v2.5 file may xlated TO...
+		for_AVAILS_2_5.add(FILE_FMT.AVAILS_1_9);
+		supported.put(FILE_FMT.AVAILS_2_5, for_AVAILS_2_5);
 	}
 
 	/**
@@ -229,7 +300,7 @@ public class Translator {
 						}
 						File exported = new File(dirPath, fileName);
 						try {
-							wrkBook.export( inputTarget,  exported.getPath());
+							wrkBook.export(inputTarget, exported.getPath());
 							logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE,
 									"Saved translated file as " + exported.getPath(), inputTarget, moduleId);
 						} catch (Exception e) {
@@ -344,18 +415,23 @@ public class Translator {
 				break;
 			case AVAILS_2_2:
 				switch (curVersion) {
-				case "2.1":
-					outputDoc = avail2_1_to_2_2(inputDoc, logMgr);
-					break;
-				case "2.2.1":
-					outputDoc = avail2_2_1_to_2_2(inputDoc, logMgr);
-					break;
-				case "2.3":
-					outputDoc = avail2_3_to_2_2_2(inputDoc, logMgr);
-					outputDoc = avail2_2_2_to_2_2_1(outputDoc, logMgr);
-					outputDoc = avail2_2_1_to_2_2(inputDoc, logMgr);
-					break;
-				case "2.2.2":
+				/*
+				 * v2.2 is currently the earliest supported version. Since we do not support
+				 * down-conversion, only v1.7 XLSX can be converted to v2.2. But any v1.7 file
+				 * is already ingested as v2.2. Therefore there is nothing to do here.
+				 */
+//				case "2.1":
+//					outputDoc = avail2_1_to_2_2(inputDoc, logMgr);
+//					break;
+//				case "2.2.1":
+//					outputDoc = avail2_2_1_to_2_2(inputDoc, logMgr);
+//					break;
+//				case "2.3":
+//					outputDoc = avail2_3_to_2_2_2(inputDoc, logMgr);
+//					outputDoc = avail2_2_2_to_2_2_1(outputDoc, logMgr);
+//					outputDoc = avail2_2_1_to_2_2(inputDoc, logMgr);
+//					break;
+//				case "2.2.2":
 				default:
 					// Unsupported request
 					break;
@@ -368,14 +444,7 @@ public class Translator {
 					return outputDoc;
 				case "2.2":
 					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
-					return outputDoc;
-				case "2.2.2":
-					outputDoc = avail2_2_2_to_2_2_1(inputDoc, logMgr);
-					return outputDoc;
-				case "2.3":
-					outputDoc = avail2_3_to_2_2_2(inputDoc, logMgr);
-					outputDoc = avail2_2_2_to_2_2_1(outputDoc, logMgr);
-					return outputDoc;
+					return outputDoc; 
 				default:
 					// Unsupported request
 					break;
@@ -389,9 +458,9 @@ public class Translator {
 				case "2.2":
 					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
 					break;
-				case "2.3":
-					outputDoc = avail2_3_to_2_2_2(inputDoc, logMgr);
-					break;
+				case "2.2.1":
+					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
+					return outputDoc;
 				default:
 					// Unsupported request
 					break;
@@ -403,8 +472,7 @@ public class Translator {
 					outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
 					break;
 				case "2.2":
-					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
-					break;
+				case "2.2.1":
 				case "2.2.2":
 					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
 					break;
@@ -419,8 +487,28 @@ public class Translator {
 					outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
 					break;
 				case "2.2":
+				case "2.2.1":
 				case "2.2.2":
 				case "2.2.3":
+				case "2.3":
+					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
+					break;
+				default:
+					// Unsupported request
+					break;
+				}
+			case AVAILS_2_5:
+				switch (curVersion) {
+				case "2.1":
+					outputDoc = avail2_1_to_2_2(inputDoc, logMgr);
+					outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
+					break;
+				case "2.2":
+				case "2.2.1":
+				case "2.2.2":
+				case "2.2.3":
+				case "2.3":
+				case "2.4":
 					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
 					break;
 				default:
@@ -492,17 +580,17 @@ public class Translator {
 	 */
 	private static TemplateWorkBook convertToExcel(MddfTarget inputTarget, FILE_FMT targetXlsxFormat, String dirPath,
 			String outFileName, boolean appendVersion, LogMgmt logMgr) throws UnsupportedOperationException {
-		Document xmlDoc = null;
+
 		Document xmlSrcDoc = inputTarget.getXmlDoc();
 		String curVersion = XmlIngester.identifyXsdVersion(xmlSrcDoc.getRootElement());
-		FILE_FMT curFmt = MddfContext.identifyMddfFormat("avails", curVersion);
+//		FILE_FMT curFmt = MddfContext.identifyMddfFormat("avails", curVersion);
 		Version excelVer = null;
 		String msg = "Translating to Excel v" + targetXlsxFormat.getVersion() + " from XML v" + curVersion;
 		logMgr.log(LogMgmt.LEV_INFO, LogMgmt.TAG_XLATE, msg, inputTarget, moduleId);
 		FILE_FMT targetXmlFmt = null;
 		switch (targetXlsxFormat) {
 		case AVAILS_1_6:
-			// not yet implemented. May never be.
+			// not supported
 			break;
 		case AVAILS_1_7:
 			/*
@@ -515,28 +603,6 @@ public class Translator {
 			 * A v1.7.2 spreadsheet should be generated from v2.2.2 XML.
 			 */
 			targetXmlFmt = FILE_FMT.AVAILS_2_2_2;
-			switch (curVersion) {
-			case "2.1":
-				xmlDoc = avail2_1_to_2_2(xmlSrcDoc, logMgr);
-				xmlDoc = simpleConversion(xmlDoc, curFmt, targetXmlFmt);
-				break;
-			case "2.2":
-				xmlDoc = simpleConversion(xmlSrcDoc, curFmt, targetXmlFmt);
-				break;
-			case "2.2.1":
-				xmlDoc = avail2_2_1_to_2_2(xmlSrcDoc, logMgr);
-				xmlDoc = simpleConversion(xmlDoc, curFmt, targetXmlFmt);
-				break;
-			case "2.2.2":
-				xmlDoc = xmlSrcDoc;
-				break;
-			case "2.3":
-				xmlDoc = avail2_3_to_2_2_2(xmlSrcDoc, logMgr);
-				break;
-			default:
-				// Unsupported request
-				break;
-			}
 			break;
 
 		case AVAILS_1_7_3:
@@ -545,45 +611,23 @@ public class Translator {
 			 * Both v1.7.3 and v1.8 spreadsheet should be generated from v2.3 XML.
 			 */
 			targetXmlFmt = FILE_FMT.AVAILS_2_3;
-			switch (curVersion) {
-			case "2.1":
-				xmlDoc = avail2_1_to_2_2(xmlSrcDoc, logMgr);
-				xmlDoc = simpleConversion(xmlDoc, curFmt, targetXmlFmt);
-				break;
-			case "2.2":
-				xmlDoc = simpleConversion(xmlSrcDoc, curFmt, targetXmlFmt);
-				break;
-			case "2.2.1":
-				xmlDoc = avail2_2_1_to_2_2(xmlSrcDoc, logMgr);
-				xmlDoc = simpleConversion(xmlDoc, curFmt, targetXmlFmt);
-				break;
-			case "2.2.2":
-				xmlDoc = avail2_2_2_to_2_2_1(xmlSrcDoc, logMgr);
-				xmlDoc = avail2_2_1_to_2_2(xmlDoc, logMgr);
-				xmlDoc = simpleConversion(xmlDoc, curFmt, targetXmlFmt);
-				break;
-			case "2.3":
-				xmlDoc = xmlSrcDoc;
-				break;
-			case "2.4":
-				// need to clone due to possible mods inserted during pre-processing
-				xmlDoc = xmlSrcDoc.clone();
-				break;
-			default:
-				// Unsupported request
-				break;
-			}
 			if (targetXlsxFormat == FILE_FMT.AVAILS_1_8) {
 				excelVer = Version.V1_8;
 			} else {
 				excelVer = Version.V1_7_3;
 			}
 			break;
+		case AVAILS_1_9:
+			excelVer = Version.V1_9;;
+			targetXmlFmt = FILE_FMT.AVAILS_2_5;
+			break;
+
 		}
-		if (xmlDoc == null) {
+		if (targetXmlFmt == null) {
 			throw new UnsupportedOperationException("Conversion to Avails xlsx " + targetXlsxFormat.name()
 					+ " from XML v" + curVersion + " not supported");
 		}
+		Document xmlDoc = convertToXml(inputTarget, targetXmlFmt, logMgr);
 		XlsxBuilder converter = null;
 		if (excelVer == Version.V1_8) {
 			converter = new XlsxBuilderV1_8(xmlDoc.getRootElement(), excelVer, logMgr);
@@ -719,7 +763,7 @@ public class Translator {
 			targetEl.detach();
 		}
 		if (!removalList.isEmpty()) {
-			String msg = "Removing " + removalList.size() + " GroupingEntity elements"; 
+			String msg = "Removing " + removalList.size() + " GroupingEntity elements";
 			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
 		}
 
@@ -730,7 +774,7 @@ public class Translator {
 			targetEl.detach();
 		}
 		if (!removalList.isEmpty()) {
-			String msg = "Removing " + removalList.size() + " Transaction/Duration elements"; 
+			String msg = "Removing " + removalList.size() + " Transaction/Duration elements";
 			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
 		}
 
@@ -763,55 +807,46 @@ public class Translator {
 		return xmlDocOut;
 	}
 
+	/**
+	 * Remove multiple instances of <tt><i>prefix</i>TitleDisplayUnlimited</tt>
+	 * leaving only the first instance.
+	 * <p>
+	 * v2.2.2 allows multiple instances of TitleInternalAlias for different regions
+	 * as well as multiple instances of TitleDisplayUnlimited for different
+	 * languages (also for Season and Series). If multiple instances are present,
+	 * all but 1st is removed and a WARNING is issued. This is also true for Season
+	 * and Series metadata
+	 * </p>
+	 * 
+	 * @param rootEl
+	 * @param prefix
+	 * @param logMgr
+	 */
 	private static void scrubTitles(Element rootEl, String prefix, LogMgmt logMgr) {
 		/*
-		 * v2.2.2 allows multiple instances of TitleInternalAlias for different regions
-		 * as well as multiple instances of TitleDisplayUnlimited for different
-		 * languages (also for Season and Series). If multiple instances are present,
-		 * all but 1st is removed and a WARNING is issued. This is also true for Season
-		 * and Series metadata
 		 */
 		Namespace availsNSpace = rootEl.getNamespace("avails");
 		XPathFactory xpfac = XPathFactory.instance();
+
 		String thing1 = prefix + "TitleInternalAlias";
-		String thing2 = prefix + "TitleDisplayUnlimited";
 		String targetPath = "/avails:AvailList/avails:Avail/avails:Asset//*[count(avails:" + thing1 + ") > 1 ]";
-		XPathExpression<Element> pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
-		List<Element> removalList = pathExp.evaluate(rootEl);
-		int removedCnt = 0;
-		for (Element targetEl : removalList) {
-			List<Element> extrasList = targetEl.getChildren(thing1, availsNSpace);
-			// keep the 1st but detach the rest
-			for (int i = 1; i < extrasList.size(); i++) {
-				Element extra = extrasList.get(i);
-				extra.detach();
-				removedCnt++;
-			}
-		}
+		int removedCnt = removeExtras(rootEl, targetPath, thing1);
 		if (removedCnt > 0) {
 			String msg = "Removing " + removedCnt + " " + thing1 + " elements (max allowed exceeded)";
-			String details = "Only 1 " + thing1 + " allowed per Asset"; 
+			String details = "Only 1 " + thing1 + " allowed per Asset";
 			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, null, moduleId, details, null);
 		}
 
 		removedCnt = 0;
+		String thing2 = prefix + "TitleDisplayUnlimited";
 		targetPath = "/avails:AvailList/avails:Avail/avails:Asset//*[count(avails:" + thing2 + ") > 1 ]";
-		pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
-		removalList = pathExp.evaluate(rootEl);
-		for (Element targetEl : removalList) {
-			List<Element> extrasList = targetEl.getChildren(thing2, availsNSpace);
-			// keep the 1st but detach the rest
-			for (int i = 1; i < extrasList.size(); i++) {
-				Element extra = extrasList.get(i);
-				extra.detach();
-				removedCnt++;
-			}
-		}
+		removedCnt = removeExtras(rootEl, targetPath, thing2);
 		if (removedCnt > 0) {
 			String msg = "Removing " + removedCnt + " " + thing2 + " elements (max allowed exceeded)";
-			String details = "Only 1 " + thing2 + " allowed per Asset"; 
+			String details = "Only 1 " + thing2 + " allowed per Asset";
 			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, null, moduleId, details, null);
 		}
+
 		// now remove @language and @region from any remaining
 		targetPath = "//avails:" + thing1 + "[@region]";
 		removeAttribute(targetPath, "region", rootEl, logMgr, thing1);
@@ -841,7 +876,7 @@ public class Translator {
 			targetEl.detach();
 		}
 		if (!removalList.isEmpty()) {
-			String msg = "Removing " + removalList.size() + " Licensee elements"; 
+			String msg = "Removing " + removalList.size() + " Licensee elements";
 			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, null, moduleId, null, null);
 		}
 
@@ -865,7 +900,7 @@ public class Translator {
 			targetEl.detach();
 		}
 		if (!removalList.isEmpty()) {
-			String msg = "Removing " + removalList.size() + " unsupported Terms"; 
+			String msg = "Removing " + removalList.size() + " unsupported Terms";
 			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, null, moduleId, null, null);
 		}
 		return xmlDocOut;
@@ -889,7 +924,7 @@ public class Translator {
 		for (String key : nsKeys) {
 			// 1st the actual xmlns declarations...
 			Namespace srcNSpace = srcNS.get(key);
-			Namespace targetNSpace = targetNS.get(key);			
+			Namespace targetNSpace = targetNS.get(key);
 			String t1 = inDoc.replaceFirst(srcNSpace.getURI(), targetNSpace.getURI());
 			// now handle a possible schemaLocation:
 			String prefix = srcNSpace.getPrefix();
@@ -947,10 +982,28 @@ public class Translator {
 				msg = "Removing " + attDesc + " from " + hitCnt + " elements.";
 			} else {
 				msg = "Removing " + attDesc + " from " + hitCnt + " " + targetDesc + " elements.";
-			} 
+			}
 			logMgr.log(LogMgmt.LEV_NOTICE, LogMgmt.TAG_XLATE, msg, curTarget, null, moduleId, null, null);
 		}
 		return hitCnt;
+	}
+
+	private static int removeExtras(Element rootEl, String targetPath, String targetNode) {
+		Namespace availsNSpace = rootEl.getNamespace("avails");
+		XPathFactory xpfac = XPathFactory.instance();
+		XPathExpression<Element> pathExp = xpfac.compile(targetPath, Filters.element(), null, availsNSpace);
+		List<Element> removalList = pathExp.evaluate(rootEl);
+		int removedCnt = 0;
+		for (Element targetEl : removalList) {
+			List<Element> extrasList = targetEl.getChildren(targetNode, availsNSpace);
+			// keep the 1st but detach the rest
+			for (int i = 1; i < extrasList.size(); i++) {
+				Element extra = extrasList.get(i);
+				extra.detach();
+				removedCnt++;
+			}
+		}
+		return removedCnt;
 	}
 
 	/**

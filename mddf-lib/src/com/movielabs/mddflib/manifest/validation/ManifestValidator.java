@@ -323,7 +323,7 @@ public class ManifestValidator extends CMValidator {
 		validateId("Metadata", "ContentID", true, true);
 
 		// added in v1.7:
-		validateId("ExternalManifest", "ManifestID", true, true); 
+		validateId("ExternalManifest", "ManifestID", true, true);
 
 		/*
 		 * Check ID for everything else...
@@ -390,8 +390,11 @@ public class ManifestValidator extends CMValidator {
 
 		validateXRef(".//manifest:ALIDExperienceMap/manifest:ExperienceID", "Experience");
 
-		// added in v1.7: 
+		// added in v1.7:
 		validateXRef(".//manifest:ExternalManifestID", "ExternalManifest");
+		
+		// added in v1.9
+		validateXRef("./manifest:Branching//manifest:BranchChoice/manifest:NextSequenceID", "PlayableSequence");
 
 		/*
 		 * SPECIAL CASE: For v1.7 and after.... When ExternalManifestID is present in a
@@ -472,22 +475,27 @@ public class ManifestValidator extends CMValidator {
 	}
 
 	/**
-	 * 
+	 * Validate elements in the Manifest namespace that have controlled vocabulary
+	 * defined in the CM specs.
 	 */
 	protected void validateCMVocab() {
 		validateBasicMetadata();
-
 		JSONArray expectedValues;
 		LogReference docRef;
+		JSONObject cmVocab = (JSONObject) getVocabResource("cm", CM_VER);
+		if (cmVocab == null) {
+			String msg = "Unable to validate controlled vocab: missing resource file";
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curTarget, logMsgSrcId);
+			curFileIsValid = false;
+			return;
+		}
 		switch (MAN_VER) {
+		case "1.9":
+			expectedValues = cmVocab.optJSONArray("ContainerType");
+			docRef = null;
+			validateVocab(manifestNSpace, "ContainerReference", manifestNSpace, "Type", expectedValues, docRef, true, true);
+			
 		case "1.8":
-			JSONObject cmVocab = (JSONObject) getVocabResource("cm", CM_VER);
-			if (cmVocab == null) {
-				String msg = "Unable to validate controlled vocab: missing resource file";
-				loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MANIFEST, msg, curTarget, logMsgSrcId);
-				curFileIsValid = false;
-				return;
-			}
 			expectedValues = cmVocab.optJSONArray("WorkType");
 			docRef = LogReference.getRef("CM", CM_VER, "cm002");
 			validateVocab(manifestNSpace, "Purpose", manifestNSpace, "WorkType", expectedValues, docRef, true, true);
@@ -572,6 +580,9 @@ public class ManifestValidator extends CMValidator {
 		case "1.8":
 		case "1.8.1":
 			structVer = "1.8";
+			break;
+		case "1.9":
+			structVer = "1.9";
 			break;
 		default:
 			// Not supported for the version

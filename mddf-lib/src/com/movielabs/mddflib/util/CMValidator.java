@@ -363,20 +363,32 @@ public abstract class CMValidator extends XmlIngester {
 		 */
 		String structVer = null;
 		switch (CM_VER) {
+		case "2.8":
+			// T.B.D.....
+			structVer = "2.7";
+			break;			
 		case "2.7":
 		case "2.6":
 		case "2.5":
+		case "2.4":
 			structVer = CM_VER;
 			break;
+		case "2.7.1":
+			// special case...
+			structVer = "2.7";
+			break;
 		default:
-			// Not supported for the version
-			return;
+			// Not supported for the version !!???
+			// LOG a FATAL problem.
+			String msg = "Unable to process; no defined structure definitions for Common Metadata v" + CM_VER;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MD, msg, curTarget, logMsgSrcId);
+			return;  
 		}
 
 		JSONObject structDefs = XmlIngester.getMddfResource("structure_cm", structVer);
 		if (structDefs == null) {
 			// LOG a FATAL problem.
-			String msg = "Unable to process; missing structure definitions for Common Metadata v" + CM_VER;
+			String msg = "Unable to process; missing structure definitions file for Common Metadata v" + CM_VER;
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MD, msg, curTarget, logMsgSrcId);
 			return;
 		}
@@ -1311,22 +1323,30 @@ public abstract class CMValidator extends XmlIngester {
 	}
 
 	protected void validateDigitalAssets() {
-		String structVer = null;
+		String vocabVer = null;
 		switch (CM_VER) {
+		case "2.8":
 		case "2.7":
 		case "2.6":
 		case "2.5":
 		case "2.4":
-			structVer = CM_VER;
+			vocabVer = CM_VER;
+			break;
+		case "2.7.1":
+			// special case...
+			vocabVer = "2.7";
 			break;
 		default:
 			// Not supported for the version
-			return;
+			// LOG a FATAL problem.
+			String msg = "Unable to process; no defined DigitalAssets vocab for CM v" + CM_VER;
+			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MD, msg, curTarget, logMsgSrcId);
+			return; 
 		}
-		JSONObject structDefs = XmlIngester.getMddfResource("vocab_digAsset", structVer);
+		JSONObject structDefs = XmlIngester.getMddfResource("vocab_digAsset", vocabVer);
 		if (structDefs == null) {
 			// LOG a FATAL problem.
-			String msg = "Unable to process; missing structure definitions for vocab_digAsset v" + structVer;
+			String msg = "Unable to process; missing definitions for vocab_digAsset v" + vocabVer;
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MD, msg, curTarget, logMsgSrcId);
 			return;
 		}

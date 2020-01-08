@@ -78,11 +78,11 @@ public class MddfContext {
 
 	static {
 		// --- Supported versions of standards (in order) ---
-		String[] CM_VER = { "2.7.1", "2.7", "2.6", "2.5", "2.4" };
-		String[] MANIFEST_VER = { "1.8.1", "1.8", "1.7", "1.6.1", "1.6", "1.5" };
-		String[] MEC_VER = { "2.7.1", "2.7", "2.6", "2.5", "2.4" };
-		String[] AVAILS_X_VER = { "2.4", "2.3", "2.2.2", "2.2.1", "2.2", "2.1" };
-		String[] AVAILS_E_VER = { "1.8", "1.7.3", "1.7.2", "1.7", "1.6" };
+		String[] CM_VER = {"2.8",  "2.7.1", "2.7", "2.6", "2.5", "2.4" };
+		String[] MANIFEST_VER = {"1.9",  "1.8.1", "1.8", "1.7", "1.6.1", "1.6", "1.5" };
+		String[] MEC_VER = { "2.8", "2.7.1", "2.7", "2.6", "2.5", "2.4" };
+		String[] AVAILS_X_VER = { "2.5", "2.4", "2.3", "2.2.2", "2.2.1", "2.2", "2.1" };
+		String[] AVAILS_E_VER = { "1.9",  "1.8", "1.7.3", "1.7.2", "1.7", "1.6" };
 		String[] MMM_BP = { "1.0" };
 
 		stdsVersions = new HashMap<String, String[]>();
@@ -99,20 +99,20 @@ public class MddfContext {
 	}
 
 	public enum MDDF_TYPE {
-		MEC, AVAILS, MANIFEST, UNK
+		MEC, AVAILS, MANIFEST, OSTATUS, UNK
 	};
 
 	public enum FILE_FMT {
 		AVAILS_1_6("Avails", "1.6", "xlsx"), AVAILS_1_7("Avails", "1.7", "xlsx"),
 		AVAILS_1_7_3("Avails", "1.7.3", "xlsx"), AVAILS_1_7_2("Avails", "1.7.2", "xlsx"),
-		AVAILS_1_8("Avails", "1.8", "xlsx"), AVAILS_2_1("Avails", "2.1", "xml"), AVAILS_2_2("Avails", "2.2", "xml"),
+		AVAILS_1_8("Avails", "1.8", "xlsx"), AVAILS_1_9("Avails", "1.9", "xlsx"), AVAILS_2_1("Avails", "2.1", "xml"), AVAILS_2_2("Avails", "2.2", "xml"),
 		AVAILS_2_2_1("Avails", "2.2.1", "xml"), AVAILS_2_2_2("Avails", "2.2.2", "xml"),
-		AVAILS_2_3("Avails", "2.3", "xml"), AVAILS_2_4("Avails", "2.4", "xml"), MANIFEST_1_4("Manifest", "1.4", "xml"),
+		AVAILS_2_3("Avails", "2.3", "xml"), AVAILS_2_4("Avails", "2.4", "xml"), AVAILS_2_5("Avails", "2.5", "xml"), MANIFEST_1_4("Manifest", "1.4", "xml"),
 		MANIFEST_1_5("Manifest", "1.5", "xml"), MANIFEST_1_6("Manifest", "1.6", "xml"),
 		MANIFEST_1_6_1("Manifest", "1.6.1", "xml"), MANIFEST_1_7("Manifest", "1.7", "xml"),
-		MANIFEST_1_8("Manifest", "1.8", "xml"), MANIFEST_1_8_1("Manifest", "1.8.1", "xml"),
+		MANIFEST_1_8("Manifest", "1.8", "xml"), MANIFEST_1_8_1("Manifest", "1.8.1", "xml"), MANIFEST_1_9("Manifest", "1.9", "xml"), 
 		MDMEC_2_4("MEC", "2.4", "xml"), MDMEC_2_5("MEC", "2.5", "xml"), MDMEC_2_6("MEC", "2.6", "xml"),
-		MDMEC_2_7("MEC", "2.7", "xml"), MDMEC_2_7_1("MEC", "2.7.1", "xml");
+		MDMEC_2_7("MEC", "2.7", "xml"), MDMEC_2_7_1("MEC", "2.7.1", "xml"), MDMEC_2_8("MEC", "2.8", "xml");
 
 		private String standard;
 		private String ver;
@@ -199,6 +199,8 @@ public class MddfContext {
 				return FILE_FMT.MANIFEST_1_8;
 			case "1.8.1":
 				return FILE_FMT.MANIFEST_1_8_1;
+			case "1.9":
+				return FILE_FMT.MANIFEST_1_9;
 			}
 			break;
 		case "avails":
@@ -213,6 +215,10 @@ public class MddfContext {
 				return FILE_FMT.AVAILS_1_7_3;
 			case "1.8":
 				return FILE_FMT.AVAILS_1_8;
+			case "1.9":
+				return FILE_FMT.AVAILS_1_9;
+			case "2.5":
+				return FILE_FMT.AVAILS_2_5;
 			case "2.4":
 				return FILE_FMT.AVAILS_2_4;
 			case "2.3":
@@ -239,6 +245,8 @@ public class MddfContext {
 				return FILE_FMT.MDMEC_2_7;
 			case "2.7.1":
 				return FILE_FMT.MDMEC_2_7_1;
+			case "2.8":
+				return FILE_FMT.MDMEC_2_8;
 			}
 			break;
 		}
@@ -280,6 +288,10 @@ public class MddfContext {
 	public static Map<String, String> getReferencedXsdVersions(FILE_FMT standard) {
 		Map<String, String> uses = new HashMap<String, String>();
 		switch (standard) {
+		case AVAILS_2_5:
+			uses.put("MD", "2.8");
+			uses.put("MDMEC", "2.8");
+			break;
 		case AVAILS_2_4:
 			uses.put("MD", "2.7");
 			uses.put("MDMEC", "2.7");
@@ -302,7 +314,7 @@ public class MddfContext {
 			uses.put("MD", "2.3");
 			uses.put("MDMEC", "2.3");
 			break;
-		// ===========================
+		// =========================== 
 		case AVAILS_1_8:
 			uses.put("MD", "2.3");
 			uses.put("MDMEC", "2.3");
@@ -329,6 +341,12 @@ public class MddfContext {
 		case MANIFEST_1_8_1:
 			uses.put("MD", "2.7.1");
 			break;
+		case MANIFEST_1_9:
+			uses.put("MD", "2.8");
+			break;
+		case MDMEC_2_8:
+			uses.put("MD", "2.8");
+			break;
 		case MDMEC_2_7_1:
 			uses.put("MD", "2.7.1");
 			break;
@@ -345,6 +363,7 @@ public class MddfContext {
 			uses.put("MD", "2.4");
 			break;
 		default:
+			System.out.println("Bugger!!! Who is "+ standard.label+"?");
 			break;
 		}
 		uses.put(standard.standard.toUpperCase(), standard.ver);
@@ -375,6 +394,12 @@ public class MddfContext {
 	public static Map<String, Namespace> getRequiredNamespaces(FILE_FMT standard) {
 		Map<String, Namespace> uses = new HashMap<String, Namespace>();
 		switch (standard) {
+		case AVAILS_1_9:
+		case AVAILS_2_5:
+			uses.put("AVAILS", Namespace.getNamespace("avails", "http://www.movielabs.com/schema/avails/v2.5/avails"));
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.8"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.8/md"));
+			break;
 		case AVAILS_1_8:
 		case AVAILS_2_4:
 			uses.put("AVAILS", Namespace.getNamespace("avails", "http://www.movielabs.com/schema/avails/v2.4/avails"));
@@ -393,6 +418,7 @@ public class MddfContext {
 					Namespace.getNamespace("avails", "http://www.movielabs.com/schema/avails/v2.2.2/avails"));
 			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.5"));
 			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.5/md"));
+			break;
 		case AVAILS_2_2_1:
 			uses.put("AVAILS", Namespace.getNamespace("avails", "http://www.movielabs.com/schema/avails/v2.2/avails"));
 			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.5"));
@@ -444,6 +470,15 @@ public class MddfContext {
 			uses.put("MANIFEST", Namespace.getNamespace("manifest",
 					MddfContext.NSPACE_MANIFEST_PREFIX + "1.8.1" + MddfContext.NSPACE_MANIFEST_SUFFIX));
 			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.7.1/md"));
+			break;
+		case MANIFEST_1_9:
+			uses.put("MANIFEST", Namespace.getNamespace("manifest",
+					MddfContext.NSPACE_MANIFEST_PREFIX + "1.9" + MddfContext.NSPACE_MANIFEST_SUFFIX));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.8/md"));
+			break;
+		case MDMEC_2_8:
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.8"));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.8/md"));
 			break;
 		case MDMEC_2_7_1:
 			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.7.1"));
