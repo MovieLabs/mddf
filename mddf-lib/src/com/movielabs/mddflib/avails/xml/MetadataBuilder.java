@@ -252,6 +252,7 @@ public class MetadataBuilder {
 		case "Episode":
 			mapping4type = mapping4Version.getJSONObject("Episode");
 			break;
+		case "Supplemental":
 		case "Collection":
 		case "Movie":
 		case "Short":

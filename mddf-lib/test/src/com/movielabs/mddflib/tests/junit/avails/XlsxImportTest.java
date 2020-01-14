@@ -35,8 +35,10 @@ import java.util.Map;
 
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
+import com.movielabs.mddflib.avails.xml.streaming.StreamingXmlBuilder;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.testsupport.InstrumentedLogger;
+import com.movielabs.mddflib.util.xml.MddfTarget;
 import com.movielabs.mddflib.util.xml.XmlIngester;
 
 /**
@@ -195,6 +197,82 @@ public class XlsxImportTest {
 			dumpLog();
 			throw e;
 		}
+	}
+	
+
+	@Test
+	public void testIngest_MovieV1_9() {
+		Version version = Version.V1_9;
+		String testFileName = "Movies_v1.9.xlsx";
+		String srcFilePath = rsrcPath + testFileName;
+		File srcFile = new File(srcFilePath);
+
+		iLog.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
+
+//		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(srcFile, version, null, iLog);
+		MddfTarget target = new MddfTarget(srcFile, iLog); 
+		StreamingXmlBuilder bldr1 = new StreamingXmlBuilder(iLog, version);
+		Map<String, Object>  results = bldr1.convert(target, null, 0, "JUnit test");
+		try {
+			assertNotNull(results);
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			dumpXml((Document) results.get("xml"), testFileName);
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		} 
+	}
+	
+
+	@Test
+	public void testIngest_Bonus_V1_9() {
+		Version version = Version.V1_9;
+		String testFileName = "Bonus_v1.9.xlsx";
+		String srcFilePath = rsrcPath + testFileName;
+		File srcFile = new File(srcFilePath);
+		iLog.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
+//		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(srcFile, version, null, iLog);
+
+		MddfTarget target = new MddfTarget(srcFile, iLog); 
+		StreamingXmlBuilder bldr1 = new StreamingXmlBuilder(iLog, version);
+		Map<String, Object>  results = bldr1.convert(target, null, 0, "JUnit test");
+		
+		try {
+			assertNotNull(results);
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			dumpXml((Document) results.get("xml"), testFileName);
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		} 
+	}
+	
+
+
+	@Test
+	public void testIngest_TV_V1_9() {
+		Version version = Version.V1_9;
+		String testFileName = "TV_v1.9.xlsx";
+		String srcFilePath = rsrcPath + testFileName;
+		File srcFile = new File(srcFilePath);
+
+		iLog.log(LogMgmt.LEV_INFO, LogMgmt.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
+
+//		Map<String, Object> results = AvailsWrkBook.convertSpreadsheet(srcFile, version, null, iLog);
+		MddfTarget target = new MddfTarget(srcFile, iLog); 
+		StreamingXmlBuilder bldr1 = new StreamingXmlBuilder(iLog, version);
+		Map<String, Object>  results = bldr1.convert(target, null, 0, "JUnit test");
+		try {
+			assertNotNull(results);
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			dumpXml((Document) results.get("xml"), testFileName);
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		} 
 	}
 	/**
 	 * @param string
