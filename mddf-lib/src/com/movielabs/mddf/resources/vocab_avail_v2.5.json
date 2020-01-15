@@ -149,7 +149,8 @@
 			"BrandingRightsAttributes",
 			"TitleStatus",		
 			"NA",
-			"TPRType"
+			"TPRType",
+			"CampaignID"
 		],
 		"@termName='TitleStatus'":
 		[

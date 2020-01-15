@@ -78,8 +78,12 @@ public abstract class StreamingRowIngester implements RowDataSrc {
 		createSharedEntitlements();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#getPedigreedData(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#getPedigreedData(java.
+	 * lang.String)
 	 */
 	@Override
 	public Pedigree getPedigreedData(String colKey) {
@@ -97,8 +101,11 @@ public abstract class StreamingRowIngester implements RowDataSrc {
 		return ped;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#getData(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#getData(java.lang.
+	 * String)
 	 */
 	@Override
 	public String getData(String colKey) {
@@ -114,8 +121,11 @@ public abstract class StreamingRowIngester implements RowDataSrc {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#process(org.jdom2.Element, java.lang.String, org.jdom2.Namespace, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#process(org.jdom2.
+	 * Element, java.lang.String, org.jdom2.Namespace, java.lang.String)
 	 */
 	@Override
 	public Element process(Element parentEl, String childName, Namespace ns, String cellKey) {
@@ -127,8 +137,12 @@ public abstract class StreamingRowIngester implements RowDataSrc {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#process(org.jdom2.Element, java.lang.String, org.jdom2.Namespace, java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#process(org.jdom2.
+	 * Element, java.lang.String, org.jdom2.Namespace, java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
 	public Element[] process(Element parentEl, String childName, Namespace ns, String cellKey, String separator) {
@@ -171,7 +185,9 @@ public abstract class StreamingRowIngester implements RowDataSrc {
 	 */
 	abstract protected Element mPublisher(String elName, String colKey);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.movielabs.mddflib.avails.xml.streaming.RowDataSrc#getRowNumber()
 	 */
 	@Override
@@ -299,7 +315,8 @@ public abstract class StreamingRowIngester implements RowDataSrc {
 			default:
 				String errMsg = "Unrecognized PriceType '" + tName + "'";
 				Cell target = (Cell) pg.getSource();
-				logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, target, errMsg, null, null, DefaultXmlBuilder.moduleId);
+				logger.logIssue(LogMgmt.TAG_XLSX, LogMgmt.LEV_ERR, target, errMsg, null, null,
+						DefaultXmlBuilder.moduleId);
 				return;
 
 			}
@@ -311,13 +328,26 @@ public abstract class StreamingRowIngester implements RowDataSrc {
 		/*
 		 * Now look for Terms specified via other columns....
 		 */
-		Element termEl = addTerm(transactionEl, prefix + "SuppressionLiftDate", "SuppressionLiftDate", "Event");
-		termEl = addTerm(transactionEl, prefix + "AnnounceDate", "AnnounceDate", "Event");
-		termEl = addTerm(transactionEl, prefix + "SpecialPreOrderFulfillDate", "PreOrderFulfillDate", "Event");
-		termEl = addTerm(transactionEl, prefix + "SRP", "SRP", "Money");
-		termEl = addTerm(transactionEl, prefix + "RentalDuration", "RentalDuration", "Duration");
-		termEl = addTerm(transactionEl, prefix + "WatchDuration", "WatchDuration", "Duration");
-		termEl = addTerm(transactionEl, prefix + "FixedEndDate", "FixedEndDate", "Event");
+		/* add Terms that are for v1.7 */
+		addTerm(transactionEl, prefix + "SuppressionLiftDate", "SuppressionLiftDate", "Event");
+		addTerm(transactionEl, prefix + "AnnounceDate", "AnnounceDate", "Event");
+		addTerm(transactionEl, prefix + "SpecialPreOrderFulfillDate", "PreOrderFulfillDate", "Event");
+		addTerm(transactionEl, prefix + "SRP", "SRP", "Money");
+		addTerm(transactionEl, prefix + "RentalDuration", "RentalDuration", "Duration");
+		addTerm(transactionEl, prefix + "WatchDuration", "WatchDuration", "Duration");
+		addTerm(transactionEl, prefix + "FixedEndDate", "FixedEndDate", "Event");
+		/* Now add Terms that are new for v1.7.3 */
+		addTerm(transactionEl, prefix + "Download", "Download", "Text");
+		addTerm(transactionEl, prefix + "Exclusive", "Exclusive", "Boolean");
+		addTerm(transactionEl, prefix + "ExclusiveAttributes", "ExclusiveAttributes", "Text");
+		addTerm(transactionEl, prefix + "BrandingRights", "BrandingRights", "Boolean");
+		addTerm(transactionEl, prefix + "BrandingRightsAttributes", "BrandingRightsAttributes", "Text");
+		addTerm(transactionEl, prefix + "TitleStatus", "TitleStatus", "Text");
+		/* Now add Terms that are new for v1.8 */
+		addTerm(transactionEl, "AvailTrans/Bonus", "Bonus", "Text");
+		addTerm(transactionEl, "AvailAsset/PackageLabel", "PackageLabel", "Text");
+		/* Now add Terms that are new for v1.9 */
+		addTerm(transactionEl, "AvailTrans/CampaignID", "CampaignID", "ID");
 	}
 
 	/**
@@ -413,8 +443,6 @@ public abstract class StreamingRowIngester implements RowDataSrc {
 			}
 		}
 	}
-	
-
 
 	/**
 	 * Process start or end conditions for a Transaction. The <tt>cellKey</tt> is

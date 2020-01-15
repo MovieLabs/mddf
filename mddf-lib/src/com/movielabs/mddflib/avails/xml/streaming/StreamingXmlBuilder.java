@@ -62,7 +62,6 @@ import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.avails.xml.RowDataSrc;
-import com.movielabs.mddflib.avails.xml.XlsxIngestException;
 import com.movielabs.mddflib.avails.xml.AbstractXmlBuilder;
 import com.movielabs.mddflib.avails.xml.MetadataBuilder;
 import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
@@ -388,6 +387,9 @@ public class StreamingXmlBuilder extends AbstractXmlBuilder {
 		Map<String, Object> results = new HashMap<String, Object>();
 		FILE_FMT srcMddfFmt = null;
 		switch (templateVersion) {
+		case V1_9:
+			srcMddfFmt = FILE_FMT.AVAILS_1_9;
+			break;
 		case V1_8:
 			srcMddfFmt = FILE_FMT.AVAILS_1_8;
 			break;
