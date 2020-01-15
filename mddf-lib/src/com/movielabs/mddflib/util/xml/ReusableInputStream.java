@@ -34,12 +34,32 @@ public class ReusableInputStream extends BufferedInputStream {
 
 	public ReusableInputStream(InputStream in) {
 		super(in);
-		super.mark(Integer.MAX_VALUE);
+		mark(Integer.MAX_VALUE);
 	}
+
+	/**
+	 * Over-ride parent class implementation to always set the <tt>readlimit</tt> t
+	 * <tt>Integer.MAX_VALUE</tt>. This insures the mark position will not be
+	 * invalidated.
+	 * <p>
+	 * <b>Note:</b>: This fixes a bug relating to the behavior of the
+	 * <tt>OPCPackage</tt> when it opens the stream.</o>
+	 * 
+	 * @see java.io.BufferedInputStream#mark(int)
+	 */
+	public void mark(int readlimit) {
+//		System.out.println(" [MARK]" + this.toString() + ", limit=" + readlimit);
+		super.mark(Integer.MAX_VALUE);
+
+	}
+
+//	public void reset() throws IOException {
+//		System.out.println(" [RESET]" + this.toString());
+//		super.reset();
+//	}
 
 	@Override
 	public void close() throws IOException {
-		super.reset();
+		reset();
 	}
-
 }
