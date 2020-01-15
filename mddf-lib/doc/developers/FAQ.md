@@ -44,8 +44,14 @@ Step 3: add any required code to `AvailsSheet.identifyVersion()`
 
 Step 4: the code in `AvailsWrkBook.convertSpreadsheet()` determines which XML version is matched with an XLSX version when validating. This will also need to be updated.
 
-Step 5: `XmlBuilder.makeXmlAsJDom()` must be updated to match the XLSX version to the correct
-class of `AbstractRowHelper`. It may also be necessary to create a new subclass of `AbstractRowHelper`.
+Step 5: There are two different packages for building XML from XLSX:
+  - `com.movielabs.mddflib.avails.xml.streaming`: This is the newer package which is focused on memory optimization. To update:
+    - `StreamingXmlBuilder` constructor and `convert()` must be updated to map to the new version.
+    - `StreamingRowIngester` may also require changes, especially the `addAllTerms()` method
+    .
+  - `com.movielabs.mddflib.avails.xml`: This is the original package which is still maintained for backwards compatibility. To update:
+    - `XmlBuilder.makeXmlAsJDom()` must be updated to match the XLSX version to the correct class of `AbstractRowHelper`. 
+    - It may also be necessary to create a new subclass of `AbstractRowHelper`.
 
 
 ### 3. How do you add support for converting an Avails file to/from a new version of Avails?
