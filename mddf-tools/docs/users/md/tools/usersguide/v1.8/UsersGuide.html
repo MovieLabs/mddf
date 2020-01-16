@@ -1,0 +1,602 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!-- InstanceBegin template="/Templates/MovieLab_template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="Shortcut Icon" href="/images/ml_icon.ico" />
+      <!-- InstanceBeginEditable name="doctitle" -->
+      <title>MDDF Tools User's Guide</title> <!-- InstanceEndEditable -->
+      <!-- InstanceBeginEditable name="head" -->
+      <!-- InstanceEndEditable -->
+      <style type="text/css">
+<!--
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+-->
+</style>
+      <!-- InstanceBeginEditable name="script" -->
+      <!-- fill in scripts here  -->
+      <!-- InstanceEndEditable -->
+      <script src="https://use.typekit.net/rjt6miv.js"></script>
+      <script>
+							try {
+								Typekit.load({
+									async : false
+								});
+							} catch (e) {
+							}
+						</script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <style type="text/css">
+<!--
+.linkwhite {
+	color: #FFFFFF
+}
+
+.linkgray {
+	color: #333333
+}
+--> 
+</style>
+      <link href="/style/movielab-2017.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+   <div class="site-header">
+      <div class="site-header-main">
+         <div class="page-center">
+            <div class="site-branding">
+               <p class="site-title">
+                  <a href="http://movielabs.com" rel="home">Movie Labs</a>
+               </p>
+            </div>
+            <button id="menu-toggle" class="menu-toggle">Menu</button>
+            <div id="site-header-menu" class="site-header-menu">
+               <nav id="site-navigation" class="main-nav" role="navigation" aria-label="Primary Menu">
+               <div class="menu-main-container">
+                  <ul id="menu-main" class="primary-menu">
+                     <li id="menu-item-24"
+                        class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-24"
+                        aria-haspopup="true"><a href="/who-we-are/">Who We Are</a>
+                        <button class="dropdown-toggle" aria-expanded="false">
+                           <span class="screen-reader-text">expand child menu</span>
+                        </button>
+                        <ul class="sub-menu">
+                           <li id="menu-item-26"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-26"><a
+                              href="/who-we-are/team/">Team</a></li>
+                           <li id="menu-item-212"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-212"><a
+                              href="/who-we-are/how-we-run">How We Run</a></li>
+                           <li id="menu-item-211"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-211"><a
+                              href="/who-we-are/partners/">Partners</a></li>
+                           <li id="menu-item-27"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-27"><a
+                              href="/who-we-are/careers/">Careers</a></li>
+                        </ul></li>
+                     <li id="menu-item-28" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-28"><a
+                        href="/what-we-do/">What We Do</a></li>
+                     <li id="menu-item-271"
+                        class="menu-item menu-item-type-post_type menu-item-object-page current-page-ancestor current-menu-ancestor current-menu-parent current-page-parent current_page_parent current_page_ancestor menu-item-has-children menu-item-271"
+                        aria-haspopup="true"><a href="/solutions-specifications/">Solutions &amp;
+                           Specifications</a>
+                        <button class="dropdown-toggle" aria-expanded="false">
+                           <span class="screen-reader-text">expand child menu</span>
+                        </button>
+                        <ul class="sub-menu">
+                           <li id="menu-item-223"
+                              class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-141 current_page_item menu-item-223"><a
+                              href="/md/">MovieLabs Digital Distribution Framework (MDDF)</a></li>
+                           <li id="menu-item-229"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-229"><a
+                              href="/solutions-specifications/ultra-hd-and-hdr/">Ultra HD and HDR</a></li>
+                           <li id="menu-item-232"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-232"><a
+                              href="/solutions-specifications/enhanced-content-protection-ecp/">Enhanced Content
+                                 Protection (ECP)</a></li>
+                           <li id="menu-item-235"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-235"><a
+                              href="/cpe/">Digital extras</a></li>
+                           <li id="menu-item-241"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-241"><a
+                              href="/md/md/">Common Metadata</a></li>
+                           <li id="menu-item-244"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-244"><a
+                              href="/md/avails/">EMA Avails</a></li>
+                           <li id="menu-item-247"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-247"><a
+                              href="/md/manifest/">Media Manifest</a></li>
+                           <li id="menu-item-251"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-251"><a
+                              href="/md/mmc/">Media Manifest Core</a></li>
+                           <li id="menu-item-254"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-254"><a
+                              href="/md/mec/">Media Entertainment Core Metadata</a></li>
+                           <li id="menu-item-257"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-257"><a
+                              href="/md/ratings/">Ratings</a></li>
+                           <li id="menu-item-260"
+                              class="menu-item menu-item-type-post_type menu-item-object-page menu-item-260"><a
+                              href="http://acns.net">Automated Content Notification System</a></li>
+                        </ul></li>
+                     <li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30"><a
+                        href="/outreach/">Outreach</a></li>
+                     <li id="menu-item-31" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-31"><a
+                        href="/news/">News</a></li>
+                     <li id="menu-item-32" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-32"><a
+                        href="/contact-us/">Contact Us</a></li>
+                  </ul>
+               </div>
+               </nav>
+               <!-- .main-navigation -->
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="hero"
+      style="background: url(http://movielabs.com/images/interior-hero-bg.jpg); background-size: cover; background-position: center center;">
+      <div class="page-center">
+         <!-- InstanceBeginEditable name="Title" -->
+         <h1>MDDF Tools User's Guide (v1.8)</h1>
+         <!-- InstanceEndEditable -->
+      </div>
+   </div>
+   <table class="main-content" width="800" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+         <td valign="top">
+            <!-- InstanceBeginEditable name="Body" -->&nbsp;
+            <table width="100%" border="0" cellspacing="0" cellpadding="10">
+               <tr>
+                  <td width="75%" valign="top">
+                     <h1 style="margin-bottom: 10px;" class="title">User's Guide: Tool Suite</h1> <tt>Release 1.8</tt>
+                     <hr />
+                     <h2 class="title">Contents:</h2> <tt>
+                        <ol>
+                           <a href="#OV"><li>Overview</li></a>
+                           <a href="#Usage"><li>Usage</li></a>
+                           <a href="#Install"><li>Installing & Launching</li></a>
+                           <ol>
+                              <a href="#Run-GUI"><li>Interactive Mode</li></a>
+                              <a href="#Run-CLI"><li>CLI Mode</li></a>
+                              <a href="#Run-Script"><li>Scripted Mode</li></a>
+                              <ol>
+                                 <a href="#SCRIPT_write"><li>Writing Command Scripts</li></a>
+                                 <a href="#SCRIPT_ex"><li>Examples</li></a>
+                              </ol>
+                           </ol>
+                        </ol>
+                     </tt>
+                     <hr /> <!-- ################################################################ -->
+                     <h2 id="OV" class="title">1) Overview</h2>
+                     <p>
+                        To facilitate industry-wide adoption and usage of the MovieLabs Digital Distribution Framework,
+                        MovieLabs has made available to the industry a suite of free and open-source software that
+                        provides several key services:
+                        <ul>
+                           <li><b>Validation</b>: check the validity of a Avails,Media Manifest, Media Manifest
+                              Core, Common Metadata, or Media Entertainment Core (MEC) file.</li>
+                           <li><b>Conversion</b>: converts a Avails file from one format to another</li>
+                        </ul>
+                     </p>
+                     <p>
+                        The MDDF Tools are executable packages that are downloadable and provide interactive
+                        environments for accessing the various MDDF services. The tools are available as an executable
+                        Java jar. This provides access to all implemented MDDF services. The latest version of the
+                        mddf-tool jar is available on the MovieLabs <a
+                           href="https://github.com/MovieLabs/mddf/tree/master/binaries">mddf GitHub repository</a>.
+                     </p> <!-- ################################################################ -->
+                     <h2 id="Usage" class="title">2) Usage</h2>
+                     <p>
+                        The tool suite provides three modes of operation:
+                        <ul>
+                           <li><b>Interactive</b>: provides a GUI to check the validity of one or more MDDF files,
+                              correct errors, and/or convert files to other formats.</li>
+                           <li><b>CLI</b>: run from the Command Line Interface (CLI) using arguments</li>
+                           <li><b>Scripted</b>: execution is controlled by a <i>script file</i>. The scripted mode
+                              may be used either from a terminal window via command line interface (CLI) or in
+                              conjunction with scheduled jobs (e.g., via <tt>crontab</tt>).</li>
+                        </ul>
+                     </p> <!-- ################################################################ -->
+                     <h2 id="Install" class="title">3) Installing & Launching</h2>
+                     <p>
+                        The tools are available as an executable Java jar. The latest version of the mddf-tool jar is
+                        available on the MovieLabs <a href="https://github.com/MovieLabs/mddf/tree/master/binaries">mddf
+                           GitHub repository</a>. The mddf-tool jar may be used on any machine that supports Java 1.8 or a
+                        more recent jvm. Once the jar file has been downloaded, it may be run using the standard Java
+                        command:
+                        <pre>java -jar ./{path-to-directory}/mddf-tool-v{version}.jar {args}</pre>
+                     </p> <!-- ################################################################ -->
+                     <h3 id="Run-GUI" class="title">3.1) Interactive Mode</h3>
+                     <p>
+                        To access the tool suite via the interactive GUI, the jar should be run using the
+                        <tt> -i</tt>
+                        argument:
+                        <pre>java -jar ./{path-to-directory}/mddf-tool-v{version}.jar -i</pre>
+                        which will result in the Launcher Panel being displayed:
+                     </p>
+                     <p>
+                        <img src="./images/Launcher.jpg" />
+                     </p>
+                     <p>On start-up the software will periodically check to see if newer releases are available. If
+                        so, a notice will be displayed providing information on how to obtain the latest release.
+                        Checking for updates takes place at periodic intervals (i.e., approximately twice per month).</p>
+                     <p>
+                        The Tool Launcher may be used to select either the Avails Validator/Translator tool or the
+                        Manifest Validator tool. [Note: the Manifest Validator is also used to process MMC and MEC
+                        files] For detailed instructions on using a specific tool, consult the appropriate tool-specific
+                        documentation:
+                        <ul>
+                           <li><a href="./avails/UsersGuide.html">Avails
+                                 Validator/Translator User's Guide</a></li>
+                           <li><a href="./manifest/UsersGuide.html">Manifest/MMC/MEC
+                                 Validator User's Guide</a></li>
+                        </ul>
+                     </p> <!-- ################################################################ -->
+                     <h3 id="Run-CLI" class="title">3.2) CLI Mode</h3>
+                     <p>
+                        The CLI mode may be used to validate one or more MDDF file. Command line options are, therefore,
+                        focused mainly on specifying which MDDF file(s) to process and controlling logging output. The
+                        following arguments are available:
+                        <pre>
+ -d,--dir &lt;arg&gt;             Process all MDDF files in a directory.
+ -f,--file &lt;arg&gt;            Process a single MDDF file.
+ -h,--help                  Display this HELP file, then exit
+ -i,--interactive           Launch in interactive mode with full UI. When
+                           used, this argument will result in all other
+                           arguments being ignored.
+ -l,--logFile &lt;arg&gt;        Output file for logging.
+ -logLevel &lt;arg&gt;           Filter for logging; valid values are:
+                           'verbose'
+                           'warn' (DEFAULT)
+                           'error'
+                           'info'
+ -r,--recursive &lt;arg&gt;      [T/F] processing of a directory will be
+                           recursive (Default is 'T').
+ -s,--script &lt;arg&gt;         Run a script file.
+ -v,--verbose              Display log-file entries in terminal window
+                           during execution.
+ -V,--version              Display software version and build date.
+ -X,--exportAll            export valid files in all applicable formats.
+ -x &lt;arg&gt;                  export valid files in specified format(s).
+                           Multiple formats may be specified separated by
+                           commas and requests to export in a format
+                           matching the source format are ignored. The
+                           formats available are dependent on the type of
+                           MDDF file.
+                           For AVAILS the following formats may be
+                           specified:
+                           -- AVAILS_1_7: Excel using v1.7 template.
+                           -- AVAILS_1_7_2: Excel using v1.7.2 template.
+                           -- AVAILS_2_2: XML using v2.2 schema.
+ -xDir,--exportDir &lt;arg&gt;   Directory for exported files (Default is '.') 
+</pre>
+                     </p>
+                     <h4>Example Usage:</h4>
+                     <p>
+                        <pre>java -jar mddf-tool.jar -f ../sample/MyManifest.xml -v</pre>
+                        Validates a single file, prints the log entries to the console, and does not save the log output
+                        in a CVS file. Log filtering is not specified so the default level of WARNING or higher is used.
+                     </p>
+                     <p>
+                        <pre>java -jar mddf-tool.jar -d ../sample  logLevel error -l myLogFile</pre>
+                        Validates all MDDF files in a directory and filters the log entries to only include those with
+                        severity ERROR or higher. processing will include all subdirectories since the '-r' argument is
+                        not specified and defaults to 'T'. When completed, the log output will be saved to
+                        "./myLogFile.csv".
+                     </p>
+                     <p>
+                        <pre>java -jar mddf-tool-f ./Avail_v1.7.xlsx -xDir ./out -x AVAILS_2_2</pre>
+                        Validates a single Avails specified as an Excel spreadsheet using the v1.7 template. If the file
+                        is valid it will be converted to an XML file using the v2.2 schema and then saved in the './out'
+                        subdirectory.
+                     </p>
+                     <h3 id="Run-Script" class="title">3.3) Scripted Mode</h3>
+                     <p>Validation of multiple MDDF files may be performed using scripts that can specify any of
+                        options and settings available thru the CLI. A script may easily be used to process a set of
+                        files with specified sub-sets being handled using different options.</p>
+                     <h4 id="SCRIPT_write" class="title">3.3.1) Writing Command Scripts</h4>
+                     <p>
+                        A script file is written using the <a href="http://www.json.org/" target="_blank">JSON</a>
+                        syntax. The structure for a <i>validation</i> script is as follows:
+                     </p>
+                     <ul>
+                        <li><p>
+                              Command: should be specified as
+                              <tt>validate</tt>
+                              . The validation command has three OPTIONAL sub-elements followed by a list of Manifests
+                              to process.
+                           </p>
+                           <ul>
+                              <li>Options in the following sub-elements will apply to all Manifest files that will
+                                 be processed. These are:
+                                 <ul>
+                                    <li><p>
+                                          <tt>pathPrefix</tt>
+                                          : [OPTIONAL] a root folder for locating all Manifest files. The path may be
+                                          absolute or relative. If relative, the location of the script file is the
+                                          starting point for resolving the full path to each Manifest file or folder.
+                                       </p></li>
+                                    <li><p>
+                                          <tt>checks</tt>
+                                          : [OPTIONAL]
+                                          <tt>boolean</tt>
+                                          values indicating which validation tests will be performed.
+                                          <tt>Schema</tt>
+                                          validation is MANDATORY and can not be changed.
+                                          <tt>Constraint</tt>
+                                          validation and
+                                          <tt>Best Practice</tt>
+                                          validation are both optional.
+                                          <tt>Best Practice</tt>
+                                          validation may only be performed when
+                                          <tt>Constraint</tt>
+                                          validation is also enabled.
+                                          <tt>Constraint</tt>
+                                          validation is also required when <i>profile-based</i> validation tests are to
+                                          be performed. Defaults for both options when not explicitly set are 'Y'. This
+                                          property value is case-sensitive and must be specified as either
+                                          <tt>Y</tt>
+                                          or
+                                          <tt>N</tt>
+                                       </p></li>
+                                    <li><p>
+                                          <tt>logging</tt>
+                                          :
+                                          <ul>
+                                             <li><p>
+                                                   <tt>level</tt>
+                                                   : [OPTIONAL] the minimum level of messages to be included in the
+                                                   output log. Allowed values are:<br />
+                                                   <tt>{ "Verbose", "Warning", "Error", "Info"}</tt>
+                                                   <br />The default when not specified is
+                                                   <tt>Warning</tt>
+                                                   .
+                                                </p></li>
+                                             <li><p>
+                                                   <tt>output</tt>
+                                                   : [OPTIONAL] file to write the log to. If not specified, the log is
+                                                   not saved. The path may be absolute or relative. If relative, the
+                                                   location of the script file is the starting point for resolving the
+                                                   full path.
+                                                </p></li>
+                                          </ul>
+                                 </ul>
+                                 <li><p>A set of Manifest files to be processed. These are specified as a JSON
+                                       Array. Properties are:</p>
+                                    <ul>
+                                       <li><p>
+                                             <tt>file</tt>
+                                             : [REQUIRED] Path to a either a manifest file or a directory containing one
+                                             or more manifest files. If relative, the starting point for resolving the
+                                             full path is the
+                                             <tt>pathPrefix</tt>
+                                             .
+                                          </p></li>
+                                       <li><p>
+                                             <tt>profile</tt>
+                                             : [OPTIONAL] Defaults to
+                                             <tt>none</tt>
+                                             . This property is ignored when constraint validation has been disabled.
+                                          </p></li>
+                                    </ul></li>
+                           </ul></li>
+                     </ul>
+                     <h4 id="SCRIPT_ex" class="title">3.3.2) Examples</h4>
+                     <p>The following is an example of script that validates two Manifest files plus any Manifests
+                        found in a specific folder and then saves the message log in an output file:</p> <pre>
+   {  
+  "validate":{  
+    "pathPrefix":"./MediaManifests/",
+    "checks":{  
+      "contraints":"Y",
+      "bestPrac":"N"
+    },
+    "logging":{  
+      "level":"Warning",
+      "output":"./scriptLog01.xml"
+    },
+    "manifests":[  
+      {  
+        "file":"si_tests/CMM_BBB_v0.1.xml", 
+        "profile":"DemVal"
+      },
+      {  
+        "file":"si_tests/CMM_Sita_v0.1.xml", 
+        "profile":"none"
+      },
+      {  
+        "file":"studio",
+         "profile":"IP-1"
+      }
+    ]
+  }
+}
+   </pre>
+                     <p>
+                        The next two examples illustrate the use, or non-use, of the
+                        <tt>pathPrefix</tt>
+                        . In the first example, all relative paths are resolved using the present working directory as
+                        the base. Both
+                        <tt>foo1.xml</tt>
+                        and
+                        <tt>foo2.xml</tt>
+                        should therefore be in the
+                        <tt>pwd</tt>
+                        .
+                     </p> <pre>
+{  
+  "validate":{   
+    "pathPrefix":"./Demos/",
+    "manifests":[
+      {  
+        "file":"foo1.xml" 
+      },
+      {  
+        "file":"./foo2.xml" 
+      },
+      {  
+        "file":"/foo3.xml" 
+      }
+    ]
+  }
+}
+   </pre>
+                     <p>
+                        In the next example,
+                        <tt>foo1.xml</tt>
+                        and
+                        <tt>foo2.xml</tt>
+                        are still co-located but are now in in a sub-directory of the directory containing the script
+                        file.
+                        <tt>foo3.xml</tt>
+                        should still be in the same location as the previous examples since it is specified using an
+                        absolute path.
+                     </p> <pre>
+{  
+  "validate":{   
+    "manifests":[
+      {  
+        "file":"foo1.xml" 
+      },
+      {  
+        "file":"./foo2.xml" 
+      },
+      {  
+        "file":"/foo3.xml" 
+      }
+    ]
+  }
+}
+   </pre> <!-- ################################################################ --> <footer id="colophon"
+                        class="site-footer bg-blue ta-center" role="contentinfo">
+                     <div class="page-center">
+                        <span class="footer-logo"><a href="/" rel="home">Movie Labs</a></span>
+                        <nav class="footer-nav" role="navigation" aria-label="Footer Menu">
+                        <div class="menu-footer-container">
+                           <ul id="menu-footer" class="footer-menu">
+                              <li id="menu-item-33"
+                                 class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33"><a
+                                 href="/who-we-are/">Who We Are</a></li>
+                              <li id="menu-item-34"
+                                 class="menu-item menu-item-type-post_type menu-item-object-page menu-item-34"><a
+                                 href="/what-we-do/">What We Do</a></li>
+                              <li id="menu-item-35"
+                                 class="menu-item menu-item-type-post_type menu-item-object-page current-page-ancestor menu-item-35"><a
+                                 href="/solutions-specifications/">Solutions &amp; Specifications</a></li>
+                              <li id="menu-item-36"
+                                 class="menu-item menu-item-type-post_type menu-item-object-page menu-item-36"><a
+                                 href="/outreach/">Outreach</a></li>
+                              <li id="menu-item-37"
+                                 class="menu-item menu-item-type-post_type menu-item-object-page menu-item-37"><a
+                                 href="/news/">News</a></li>
+                              <li id="menu-item-38"
+                                 class="menu-item menu-item-type-post_type menu-item-object-page menu-item-38"><a
+                                 href="/contact-us/">Contact Us</a></li>
+                           </ul>
+                        </div>
+                        </nav>
+                        <!-- .footer-nav -->
+                        <aside id="footer-2" class="footer-widget widget-area" role="complementary"> <section
+                           id="text-2" class="widget widget_text">
+                        <div class="textwidget">
+                           <p class="copyrights">© 2019 Motion Picture Laboratories, Inc. All rights reserved.</p>
+                        </div>
+                        </section> <section id="nav_menu-2" class="widget widget_nav_menu">
+                        <div class="menu-terms-policy-container">
+                           <ul id="menu-terms-policy" class="menu">
+                              <li id="menu-item-43"
+                                 class="menu-item menu-item-type-post_type menu-item-object-page menu-item-43"><a
+                                 href="/terms-of-use/">Terms of Use</a></li>
+                              <li id="menu-item-44"
+                                 class="menu-item menu-item-type-post_type menu-item-object-page menu-item-44"><a
+                                 href="/privacy-policy/">Privacy Policy</a></li>
+                           </ul>
+                        </div>
+                        </section> </aside>
+                        <!-- .footer-widget .widget-area -->
+                     </div>
+                     </footer> <script>
+																						$(
+																								document)
+																								.ready(
+																										function() {
+																											//$('.hero h1').text( $(document).find("title").text().split('-')[0] );
+
+																											$(
+																													'#menu-toggle')
+																													.click(
+																															function() {
+																																if ($(
+																																		'.site-header')
+																																		.hasClass(
+																																				'toggled-on')) {
+																																	$(
+																																			'.site-header')
+																																			.removeClass(
+																																					'toggled-on');
+																																	$(
+																																			'.site-header-menu')
+																																			.removeClass(
+																																					'toggled-on');
+																																	$(
+																																			'.primary-menu')
+																																			.removeClass(
+																																					'toggled-on');
+																																} else {
+																																	$(
+																																			'.site-header')
+																																			.addClass(
+																																					'toggled-on');
+																																	$(
+																																			'.site-header-menu')
+																																			.addClass(
+																																					'toggled-on');
+																																	$(
+																																			'.primary-menu')
+																																			.addClass(
+																																					'toggled-on');
+																																}
+																															});
+
+																											$(
+																													'.dropdown-toggle')
+																													.click(
+																															function() {
+																																if ($(
+																																		this)
+																																		.hasClass(
+																																				'toggled-on')) {
+																																	$(
+																																			this)
+																																			.removeClass(
+																																					'toggled-on');
+																																	$(
+																																			this)
+																																			.siblings(
+																																					'.sub-menu')
+																																			.removeClass(
+																																					'toggled-on');
+																																} else {
+																																	$(
+																																			this)
+																																			.addClass(
+																																					'toggled-on');
+																																	$(
+																																			this)
+																																			.siblings(
+																																					'.sub-menu')
+																																			.addClass(
+																																					'toggled-on');
+																																}
+																															});
+
+																										});
+																					</script>
+</body>
+<!-- InstanceEnd -->
+</html>
