@@ -629,10 +629,14 @@ public class Translator {
 		}
 		Document xmlDoc = convertToXml(inputTarget, targetXmlFmt, logMgr);
 		XlsxBuilder converter = null;
-		if (excelVer == Version.V1_8) {
-			converter = new XlsxBuilderV1_8(xmlDoc.getRootElement(), excelVer, logMgr);
-		} else {
+		switch (excelVer) {  
+		case V1_7_3:
+		case V1_7_2:
 			converter = new XlsxBuilder(xmlDoc.getRootElement(), excelVer, logMgr);
+			break;
+		case V1_8:
+		case V1_9:
+			converter = new XlsxBuilderV1_8(xmlDoc.getRootElement(), excelVer, logMgr);
 		}
 		TemplateWorkBook wrkBook = converter.getWorkbook();
 		return wrkBook;
