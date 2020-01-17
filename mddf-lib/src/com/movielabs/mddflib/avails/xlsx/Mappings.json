@@ -1777,6 +1777,7 @@
 			"AvailTrans:AssetLanguage": "*{avail}AssetLanguage",
 			"AvailTrans:BrandingRights": "{avail}Term/{avail}Boolean[../@termName='BrandingRights']",
 			"AvailTrans:BrandingRightsAttributes": "{avail}Term/{avail}Text[../@termName='BrandingRightsAttributes']",
+			"AvailTrans:CampaignID": "{avail}Term/{avail}ID[../@termName='CampaignID']",
 			"AvailTrans:ContractID": "{avail}ContractID",
 			"AvailTrans:Description": "{avail}Description",
 			"AvailTrans:Download": "{avail}Term/{avail}Text[../@termName='Download']",
@@ -1832,6 +1833,7 @@
 			],
 
 			"AvailTrans:TitleStatus": "{avail}Term/{avail}Text[../@termName='TitleStatus']",
+			"AvailTrans:TPRType": "{avail}Term/{avail}Text[../@termName='TPRType']",
 			"AvailTrans:WatchDuration": "{avail}Term/{avail}Duration[../@termName='WatchDuration']",
 			"AvailTrans:WCG": "{avail}FormatProfile/@WCG",
 			"AvailTrans:WindowDuration": "{avail}WindowDuration"

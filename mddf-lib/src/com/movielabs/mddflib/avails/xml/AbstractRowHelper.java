@@ -54,6 +54,7 @@ public abstract class AbstractRowHelper  implements RowDataSrc{
 //		Version ver = aSheet.getVersion();
 		switch (ver) {
 		case V1_9:
+			return new RowToXmlHelperV1_9(aSheet, row, logger);
 		case V1_8:
 			return new RowToXmlHelperV1_8(aSheet, row, logger);
 		case V1_7_3:

@@ -49,6 +49,7 @@ public class RowToXmlHelperV1_9 extends RowToXmlHelperV1_8 {
 
 		/* Now add Terms that are new for v1.9 */
 		addTerm(transactionEl, "AvailTrans/CampaignID", "CampaignID", "ID"); 
+		addTerm(transactionEl, "AvailTrans/TPRType", "TPRType", "Text");
 	}
 
 
