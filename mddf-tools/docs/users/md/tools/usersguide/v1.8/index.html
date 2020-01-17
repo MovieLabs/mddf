@@ -205,33 +205,25 @@ body {
                               mddf GitHub repository </a> and is under an open source license. If you would like more
                            information, please contact us.
                         </p>
-                        <span style="background-color: #ff4444;">
                         <h4>
                            <strong>Change Log</strong>
                         </h4>
+                        <p>The main focus of this release has been on adding
+                           support for the latest versions of the MDDF specifications (i.e., Manifest v1.9, Avails
+                           v2.5/v1.9, MDMEC v2.8, and CM v2.8). Also new in this release is support for validating
+                           OfferStatus files.</p>
                         <p>
-                           The main focus of this release has been on corrections to how MEC files are handled when
-                           referenced by a Manifest. Prior to this release, Manifest/MMC structure validation was
-                           incomplete when MEC files were used to provide metadata. MEC files present a special case in
-                           that they may be validated in one of two contexts:
-                           <ol>
-                              <li>as a stand-alone entity, or</li>
-                              <li>as part of a Manifest that references the MEC file as a source of metadata.</li>
-                           </ol>
-                           What constitutes an error will, therefore, depended on the validation context. Prior to this
-                           release, the validation process did not correctly factor in the context.
+                           Additional changes are:
+                           <ul>
+                              <li>Bug Fix: Ingest of XLSX Avails incorrectly identified AvailType when
+                                 <tt>WorkType==Collection</tt></li>
+                              <li>Bug Fix: Ingest of XLSX Avails failed due of typo in code identifying file type</li>
+                              <li>Bug Fix: Setting LOG-LEVEL to 'Debug' threw NullPtrException during
+                                 initialization [NOTE: bug introduced in v1.7]</li>
+                              <li>Bug Fix: Ingest of Avails in XLSX dropped any term added from Avail v1.7.3 on
+                                 (e.g. 'Download, Bonus) [NOTE: bug introduced in v1.6]</li>
+                           </ul>
                         </p>
-                        <p>Additional changes are:
-                        <ul>
-                           <li>Enhancement: absence of TitleSort or Summary190 in MEC v2.6 or later results in
-                              NOTICE re backward compatibility.</li>
-                           <li>Bug Fix: fixed incorrect validation of ExternalManifestID uniqueness and xrefs</li>
-                           <li>Bug Fix: Avails XLSX ingest was being aborted by sheets not in conformance with
-                              template (e.g., data in extraneous columns)</li>
-                           <li>Bug Fix: Correct use of Audio/SubType not verified when present in a MEC file..</li>
-                           <li>UI: Edit button removed from Validator tool bar.</li>
-                        </ul>
-                        </p></span>
                         <h4>
                            <strong>Known Bugs</strong>
                         </h4>
