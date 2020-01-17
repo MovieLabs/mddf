@@ -348,6 +348,7 @@ public abstract class StreamingRowIngester implements RowDataSrc {
 		addTerm(transactionEl, "AvailAsset/PackageLabel", "PackageLabel", "Text");
 		/* Now add Terms that are new for v1.9 */
 		addTerm(transactionEl, "AvailTrans/CampaignID", "CampaignID", "ID");
+		addTerm(transactionEl, "AvailTrans/TPRType", "TPRType", "Text");
 	}
 
 	/**
