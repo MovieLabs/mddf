@@ -163,6 +163,8 @@ public class DefaultXmlBuilder extends AbstractXmlBuilder {
 	public Document makeXmlAsJDom(AvailsSheet aSheet, String shortDesc, MddfTarget target) throws IllegalStateException {
 		this.shortDesc = shortDesc; 
 		this.curTarget = target;
+		FILE_FMT fmt =  target.getLogFolder().getMddfFormat();
+		Version xlsxVer = AvailsSheet.map2Version(fmt);
 		if (xsdVersion == null) {
 			String msg = "Unable to generate XML from XLSX: XSD version was not set or is unsupported.";
 			logger.log(LogMgmt.LEV_ERR, LogMgmt.TAG_XLATE, msg, null, moduleId);
@@ -200,11 +202,11 @@ public class DefaultXmlBuilder extends AbstractXmlBuilder {
 			rowLoop: for (Row row : aSheet.getRows()) {
 				msg = "Converting row " + row.getRowNum();
 				logger.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_XLATE, msg, curTarget, moduleId);
-				AbstractRowHelper rowHelper = AbstractRowHelper.createHelper(aSheet, row, logger);
+				AbstractRowHelper rowHelper = AbstractRowHelper.createHelper(xlsxVer, aSheet, row, logger);
 				if (rowHelper != null) {
 					rowHelper.makeAvail(this);
 				} else {
-					logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLATE, "Unsupported XLSX version", curTarget, moduleId);
+					logger.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_XLATE, "Unsupported XLSX version "+xlsxVer, curTarget, moduleId);
 					break rowLoop;
 				}
 			}
@@ -372,10 +374,16 @@ public class DefaultXmlBuilder extends AbstractXmlBuilder {
 		case "Short":
 			availType = "single";
 			break;
+		case "Collection":
+			availType = "bundle";
+			break;
+		case "Supplemental":
+			availType = "suplement";
+			break;
 		case "Volume":
+		case "Series":
 		case "Season":
 		case "Episode":
-		case "Collection":
 		default:
 			availType = workTypeSS.toLowerCase();
 		}
