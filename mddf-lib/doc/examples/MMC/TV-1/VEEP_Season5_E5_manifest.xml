@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest:MediaManifest
-	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.8/manifest"
-	xmlns:md="http://www.movielabs.com/schema/md/v2.7/md"
+	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.9/manifest"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.8/md"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.8/manifest manifest-v1.8.xsd"
+	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.9/manifest manifest-v1.9.xsd"
 	ManifestID="md:manifestid:org:number.hbo.com:78732">
+	<!-- MANIFEST FOR SEASON 5, EPISODE 5, "THANKSGIVING" -->	
 	<manifest:Compatibility>
-		<manifest:SpecVersion>1.8</manifest:SpecVersion>
+		<manifest:SpecVersion>1.9</manifest:SpecVersion>
 		<manifest:Profile>MMC-1</manifest:Profile>
 	</manifest:Compatibility>
 	<manifest:Inventory>
 		<manifest:Audio
-			AudioTrackID="md:audtrackid:org:number.hbo.com:787232:main.audio.de">
+			AudioTrackID="md:audtrackid:eidr-x:5783-D070-78E6-3AC5-E892-W:main.audio.de">
 			<md:Type>primary</md:Type>
 			<md:Language dubbed="true">de</md:Language>
 			<manifest:ContainerReference>
@@ -20,7 +21,7 @@
 			</manifest:ContainerReference>
 		</manifest:Audio>
 		<manifest:Audio
-			AudioTrackID="md:audtrackid:org:number.hbo.com:787232:main.audio.en">
+			AudioTrackID="md:audtrackid:eidr-x:5783-D070-78E6-3AC5-E892-W:main.audio.en">
 			<md:Type>primary</md:Type>
 			<md:Language dubbed="true">en</md:Language>
 			<manifest:ContainerReference>
@@ -29,7 +30,7 @@
 			</manifest:ContainerReference>
 		</manifest:Audio>
 		<manifest:Video
-			VideoTrackID="md:vidtrackid:org:number.hbo.com:787232:main.video">
+			VideoTrackID="md:vidtrackid:eidr-x:5783-D070-78E6-3AC5-E892-W:main.video">
 			<md:Type>primary</md:Type>
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>resources/VEEP__043_787232_858219_nonsubtitled.mov
@@ -37,7 +38,7 @@
 			</manifest:ContainerReference>
 		</manifest:Video>
 		<manifest:Subtitle
-			SubtitleTrackID="md:subtrackid:org:number.hbo.com:787232:main.subtitle.de">
+			SubtitleTrackID="md:subtrackid:eidr-x:5783-D070-78E6-3AC5-E892-W:main.subtitle.de">
 			<!-- case-sensitive field (i.e., 'Text' is OK but 'text' is not) -->
 			<md:Format>Text</md:Format>
 			<!-- case-sensitive field (i.e., 'normal' is OK but 'Normal' is not) -->
@@ -70,7 +71,7 @@
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Image>
-		<manifest:Metadata ContentID="md:cid:org:number.hbo.com:787232.1">
+		<manifest:Metadata ContentID="md:cid:eidr-x:5783-D070-78E6-3AC5-E892-W:1">
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>./VEEP_Season5_E5_mec.xml
 				</manifest:ContainerLocation>
@@ -95,23 +96,23 @@
 	</manifest:Inventory>
 	<manifest:Presentations>
 		<manifest:Presentation
-			PresentationID="md:presentationid:org:number.hbo.com:787232:main.us">
+			PresentationID="md:presentationid:eidr-x:5783-D070-78E6-3AC5-E892-W:main.us">
 			<manifest:TrackMetadata>
 				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
 				<manifest:VideoTrackReference>
-					<manifest:VideoTrackID>md:vidtrackid:org:number.hbo.com:787232:main.video
+					<manifest:VideoTrackID>md:vidtrackid:eidr-x:5783-D070-78E6-3AC5-E892-W:main.video
 					</manifest:VideoTrackID>
 				</manifest:VideoTrackReference>
 				<manifest:AudioTrackReference>
-					<manifest:AudioTrackID>md:audtrackid:org:number.hbo.com:787232:main.audio.de
+					<manifest:AudioTrackID>md:audtrackid:eidr-x:5783-D070-78E6-3AC5-E892-W:main.audio.de
 					</manifest:AudioTrackID>
 				</manifest:AudioTrackReference>
 				<manifest:AudioTrackReference>
-					<manifest:AudioTrackID>md:audtrackid:org:number.hbo.com:787232:main.audio.en
+					<manifest:AudioTrackID>md:audtrackid:eidr-x:5783-D070-78E6-3AC5-E892-W:main.audio.en
 					</manifest:AudioTrackID>
 				</manifest:AudioTrackReference>
 				<manifest:SubtitleTrackReference>
-					<manifest:SubtitleTrackID>md:subtrackid:org:number.hbo.com:787232:main.subtitle.de
+					<manifest:SubtitleTrackID>md:subtrackid:eidr-x:5783-D070-78E6-3AC5-E892-W:main.subtitle.de
 					</manifest:SubtitleTrackID>
 				</manifest:SubtitleTrackReference>
 			</manifest:TrackMetadata>
@@ -129,32 +130,32 @@
 	</manifest:PictureGroups>
 	<manifest:Experiences>
 		<manifest:Experience
-			ExperienceID="md:experienceid:org:number.hbo.com:787232.1" version="1.0">
+			ExperienceID="md:experienceid:eidr-x:5783-D070-78E6-3AC5-E892-W:1" version="1.0">
 			<manifest:Language>de</manifest:Language>
-			<manifest:ContentID>md:cid:org:number.hbo.com:787232.1 </manifest:ContentID>
+			<manifest:ContentID>md:cid:eidr-x:5783-D070-78E6-3AC5-E892-W:1 </manifest:ContentID>
 			<manifest:Audiovisual
-				ContentID="md:cid:org:number.hbo.com:787232.1">
+				ContentID="md:cid:eidr-x:5783-D070-78E6-3AC5-E892-W:1">
 				<manifest:Type>Main</manifest:Type>
-				<manifest:PresentationID>md:presentationid:org:number.hbo.com:787232:main.us</manifest:PresentationID>
+				<manifest:PresentationID>md:presentationid:eidr-x:5783-D070-78E6-3AC5-E892-W:main.us</manifest:PresentationID>
 			</manifest:Audiovisual>
 			<manifest:PictureGroupID>md:picturegroupid:eidr-x:2D99-3C1C-9F31-3E10-3411-1:Season5_E5</manifest:PictureGroupID>
 		</manifest:Experience>
 	</manifest:Experiences>
 	<manifest:ALIDExperienceMaps>
 		<manifest:ALIDExperienceMap>
-			<manifest:ALID>md:alid:org:number.hbo.com:787232</manifest:ALID>
-			<manifest:ExperienceID>md:experienceid:org:number.hbo.com:787232.1
+			<manifest:ALID>md:alid:eidr-x:5783-D070-78E6-3AC5-E892-W</manifest:ALID>
+			<manifest:ExperienceID>md:experienceid:eidr-x:5783-D070-78E6-3AC5-E892-W:1
 			</manifest:ExperienceID>
 			<!-- relationship to the SERIES is 'isdescendentof' -->
 			<manifest:RelatedExperienceID>
 				<manifest:Relationship>isdescendentof</manifest:Relationship>
-				<manifest:ExperienceID>md:experienceid:org:number.hbo.com:787232.1</manifest:ExperienceID>
+				<manifest:ExperienceID>md:experienceid:eidr-x:5783-D070-78E6-3AC5-E892-W:1</manifest:ExperienceID>
 				<manifest:ExternalManifestID>md:manifestid:eidr-s:CF5A-AB7E-A4DB-35FA-BAC5-M</manifest:ExternalManifestID> 
 			</manifest:RelatedExperienceID>
 			<!-- relationship to the SEASON is 'isepisodeof' -->
 			<manifest:RelatedExperienceID>
 				<manifest:Relationship>isepisodeof</manifest:Relationship>
-				<manifest:ExperienceID>md:experienceid:org:number.hbo.com:787232.1</manifest:ExperienceID>
+				<manifest:ExperienceID>md:experienceid:eidr-x:5783-D070-78E6-3AC5-E892-W:1</manifest:ExperienceID>
 				<manifest:ExternalManifestID>md:manifestid:eidr-s:2D99-3C1C-9F31-3E10-3411-1</manifest:ExternalManifestID> 
 			</manifest:RelatedExperienceID>
 		</manifest:ALIDExperienceMap>

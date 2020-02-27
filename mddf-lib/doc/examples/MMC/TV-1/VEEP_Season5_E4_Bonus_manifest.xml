@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest:MediaManifest
-	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.8/manifest"
-	xmlns:md="http://www.movielabs.com/schema/md/v2.7/md"
+	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.9/manifest"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.8/md"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.8/manifest manifest-v1.8.xsd"
+	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.9/manifest manifest-v1.9.xsd"
 	ManifestID="md:manifestid:eidr-s:FBEB-FA47-487D-420A-8E31-I">
 	<manifest:Compatibility>
-		<manifest:SpecVersion>1.8</manifest:SpecVersion>
+		<manifest:SpecVersion>1.9</manifest:SpecVersion>
 		<manifest:Profile>MMC-1</manifest:Profile>
 	</manifest:Compatibility>
 	<manifest:Inventory>

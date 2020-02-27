@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mdmec:CoreMetadata 
-  xmlns="http://www.movielabs.com/schema/md/v2.7/md" 
+  xmlns="http://www.movielabs.com/schema/md/v2.8/md" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" 
-  xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
-  xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.xsd">
-	<mdmec:Basic ContentID="md:cid:org:number.hbo.com:787232">
+  xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.8" 
+  xmlns:md="http://www.movielabs.com/schema/md/v2.8/md" 
+  xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.8 mdmec-v2.8.xsd">
+	<mdmec:Basic ContentID="md:cid:eidr-x:5783-D070-78E6-3AC5-E892-W:1">
 		<md:LocalizedInfo language="de">
 			<md:TitleDisplay60>Thanksgiving</md:TitleDisplay60>
 			<md:TitleDisplayUnlimited>Thanksgiving</md:TitleDisplayUnlimited>

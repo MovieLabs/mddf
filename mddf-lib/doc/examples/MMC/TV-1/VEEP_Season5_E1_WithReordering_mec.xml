@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mdmec:CoreMetadata 
-    xmlns:md="http://www.movielabs.com/schema/md/v2.8/md" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.8" 
-    xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.8 mdmec-v2.8.xsd">
-	<mdmec:Basic ContentID="md:cid:eidr-s:CF5A-AB7E-A4DB-35FA-BAC5-M">
+<!-- What is notable in this file is the Parent information at the bottom.  This shows that this episode is episode 2 in Germany, and episode 1 elswhere -->
+<!-- This information is not necessarily required. The Media Manifest also handles episode reordering. -->
+<mdmec:CoreMetadata xmlns="http://www.movielabs.com/schema/md/v2.8/md" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.8" xmlns:md="http://www.movielabs.com/schema/md/v2.8/md" xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.8 mdmec-v2.8.xsd">
+	<mdmec:Basic ContentID="md:cid:eidr-x:5783-D070-78E6-3AC5-E892-W:1">
 		<md:LocalizedInfo language="de">
-			<md:TitleDisplay60>Veep</md:TitleDisplay60>
-			<md:TitleDisplayUnlimited>Veep</md:TitleDisplayUnlimited>
-			<md:TitleSort>Veep</md:TitleSort>
-			<md:ArtReference resolution="800x800">md:imageid:eidr-x:CF5A-AB7E-A4DB-35FA-BAC5-M:series-photo.de</md:ArtReference>
-			<md:Summary190 cast="false">Julia Louis-Dreyfus ist der Vizepräsident der Vereinigten Staaten in dieser HBO Komödie-Reihe, die ihrer stürmischen täglichen Existenz folgt, wie sie politische Feuer ausstellt, öffentliche und private Anforderungen jongliert und die Interessen des leitenden Angestellten verteidigt.</md:Summary190>
-			<md:Summary4000 cast="false">Senatorin Selina Meyer ist gerade Vizepräsidentin der Vereinigten Staaten geworden... und entdeckte, dass der Job nichts ist, wie sie erwartet hatte - aber alles, wovor sie gewarnt wurde.  Julia Louis-Dreyfus spielt die Hauptrolle in dieser HBO-Comedy-Serie, die dem wirbelnden Alltag von Vizepräsident Meyer folgt, während sie politische Feuer entfacht, öffentliche und private Forderungen jongliert und die Interessen des Geschäftsführers verteidigt - mit dem sie eine einzigartig dysfunktionale Beziehung. Die Besetzung des Ensembles umfasst Tony Hale als Selinas rechte Hand; Anna Chlumsky als ihre Stabschefin; Matt Walsh als ihr verwitterter Sprecher;
- Reid Scott als ehrgeiziger politischer Berater; Timothy C. Simons als ahnungslose Verbindungsperson des Weißen Hauses; und Sufe Bradshaw als allgegenwärtige Assistentin von Selina.</md:Summary4000>
+			<md:TitleDisplay60>Morning After</md:TitleDisplay60>
+			<md:TitleDisplayUnlimited>Morning After</md:TitleDisplayUnlimited>
+			<md:TitleSort>Morning After</md:TitleSort>
+			<md:ArtReference resolution="800x800">md:imageid:eidr-x:2D99-3C1C-9F31-3E10-3411-1:season5-photo.de</md:ArtReference>
+			<!-- apologies for the Google Translate translation -->
+			<md:Summary400 cast="false">In der Nacht nach der Wahl entdeckt Selina einen möglichen Weg zum Sieg; Amy muss eine Entscheidung treffen; Catherine beginnt ein Dokumentarfilmprojekt; Mike gibt bekannt, dass er und Wendy ein Baby adoptieren; Dan denkt über eine neue Karriere nach.</md:Summary400>
+			<md:Summary4000 cast="false">In der Nacht nach der Wahl entdeckt Selina einen möglichen Weg zum Sieg; Amy muss eine Entscheidung treffen; Catherine beginnt ein Dokumentarfilmprojekt; Mike gibt bekannt, dass er und Wendy ein Baby adoptieren; Dan denkt über eine neue Karriere nach.</md:Summary4000>
 			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Comedy</md:Genre>
-			<md:Genre level="1" source="http://www.loc.gov/rr/mopic/miggen.html">Political</md:Genre>			
-			<md:OriginalTitle>Veep</md:OriginalTitle>
+			<md:Genre level="1" source="http://www.loc.gov/rr/mopic/miggen.html">Political</md:Genre>
+			<md:OriginalTitle>Thanksgiving</md:OriginalTitle>
 			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
 		</md:LocalizedInfo>
-		<!-- Must have exactly 1 default LocalizedInfo matching the language of the original production" -->
 		<md:LocalizedInfo language="en" default="true">
-			<md:TitleDisplay60>Veep</md:TitleDisplay60>
-			<md:TitleDisplayUnlimited>Veep</md:TitleDisplayUnlimited>
-			<md:TitleSort>Veep</md:TitleSort>
-			<md:ArtReference resolution="800x800">md:imageid:eidr-x:CF5A-AB7E-A4DB-35FA-BAC5-M:series-photo.en</md:ArtReference>
-			<md:Summary190 cast="false">Julia Louis-Dreyfus is the Vice President of the United States in this HBO comedy series that follows her whirlwind day-to-day existence as she puts out political fires, juggles public and private demands and defends the interests of the chief executive.</md:Summary190>
-			<md:Summary4000 cast="false">Senator Selina Meyer has just become the Vice President of the United States...and discovered that the job is nothing like she expected--but everything she was warned about. Julia Louis-Dreyfus stars in this HBO comedy series that follows the whirlwind day-to-day existence of Vice President Meyer as she puts out political fires, juggles public and private demands and defends the interests of the chief executive--with whom she shares a uniquely dysfunctional relationship. The ensemble cast includes Tony Hale as Selina's right-hand man; Anna Chlumsky as her chief of staff; Matt Walsh as her weathered spokesperson; Reid Scott as an ambitious political aide; Timothy C. Simons as a clueless White House liaison; and Sufe Bradshaw as Selina's seen-it-all assistant.</md:Summary4000>
+			<md:TitleDisplay60>Thanksgiving</md:TitleDisplay60>
+			<md:TitleDisplayUnlimited>Morning After</md:TitleDisplayUnlimited>
+			<md:TitleSort>Morning After</md:TitleSort>
+			<md:ArtReference resolution="800x800">md:imageid:eidr-x:2D99-3C1C-9F31-3E10-3411-1:season5-photo.en</md:ArtReference>
+			<md:Summary400 cast="false">On the night after the election, Selina discovers a possible road to victory; Amy must make a decision; Catherine begins a documentary project; Mike announces that he and Wendy are adopting a baby; Dan considers a new career.</md:Summary400>
+			<md:Summary4000 cast="false">On the night after the election, Selina discovers a possible road to victory; Amy must make a decision; Catherine begins a documentary project; Mike announces that he and Wendy are adopting a baby; Dan considers a new career.</md:Summary4000>
 			<md:Genre level="0" source="http://www.movielabs.com/md/mec/mec_primary_genre.html">Comedy</md:Genre>
-			<md:Genre level="1" source="http://www.loc.gov/rr/mopic/miggen.html">Political</md:Genre>			
-			<md:OriginalTitle>Veep</md:OriginalTitle>
+			<md:Genre level="1" source="http://www.loc.gov/rr/mopic/miggen.html">Political</md:Genre>
+			<md:OriginalTitle>Morning After</md:OriginalTitle>
 			<md:CopyrightLine>2016 Home Box Office, Inc.</md:CopyrightLine>
 		</md:LocalizedInfo>
-		<md:ReleaseYear>2012</md:ReleaseYear>
-		<md:ReleaseDate>2012-04-22</md:ReleaseDate>
+		<md:ReleaseYear>2016</md:ReleaseYear>
+		<md:ReleaseDate>2016-04-24</md:ReleaseDate>
 		<md:ReleaseHistory>
 			<md:ReleaseType>original</md:ReleaseType>
 			<md:DistrTerritory>
 				<md:country>DE</md:country>
 			</md:DistrTerritory>
-			<md:Date>2016-05-22</md:Date>
+			<md:Date>2016-04-24</md:Date>
 		</md:ReleaseHistory>
-		<md:WorkType>Series</md:WorkType>
+		<md:WorkType>Episode</md:WorkType>
+		<md:AltIdentifier>
+			<md:Namespace>MPM</md:Namespace>
+			<md:Identifier>md:cid:org:microsoft-x:787228_WW:VEEP_39_MORNINGAFTER</md:Identifier>
+		</md:AltIdentifier>
 		<md:RatingSet>
 			<md:Rating>
 				<md:Region>
@@ -49,7 +50,6 @@
 				<md:System>FSK</md:System>
 				<md:Value>16</md:Value>
 			</md:Rating>
-			<md:AdultContent>false</md:AdultContent>
 		</md:RatingSet>
 		<md:People>
 			<md:Job>
@@ -72,7 +72,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Sam Richardson</md:DisplayName>
-				<md:SortName>Richardson,Richardson</md:SortName>
+				<md:SortName>Richardson,Sam</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -84,7 +84,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Tony Hale</md:DisplayName>
-				<md:SortName>Hale,Hale</md:SortName>
+				<md:SortName>Hale,Tony</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -96,7 +96,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Anna Chlumsky</md:DisplayName>
-				<md:SortName>Chlumsky,Chlumsky</md:SortName>
+				<md:SortName>Chlumsky,Anna</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -108,7 +108,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Reid Scott</md:DisplayName>
-				<md:SortName>Scott,Scott</md:SortName>
+				<md:SortName>Scott,Reid</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -120,7 +120,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Matt Walsh</md:DisplayName>
-				<md:SortName>Walsh,Walsh</md:SortName>
+				<md:SortName>Walsh,Matt</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -132,7 +132,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Timothy C. Simons</md:DisplayName>
-				<md:SortName>Simons,Simons</md:SortName>
+				<md:SortName>Simons,Timothy C.</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -144,7 +144,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Sufe Bradshaw</md:DisplayName>
-				<md:SortName>Bradshaw,Bradshaw</md:SortName>
+				<md:SortName>Bradshaw,Sufe</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -156,7 +156,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Kevin Dunn</md:DisplayName>
-				<md:SortName>Dunn,Dunn</md:SortName>
+				<md:SortName>Dunn,Kevin</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -168,7 +168,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Gary Cole</md:DisplayName>
-				<md:SortName>Cole,Cole</md:SortName>
+				<md:SortName>Cole,Gary</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -178,7 +178,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Chris Addison</md:DisplayName>
-				<md:SortName>Addison,Addison</md:SortName>
+				<md:SortName>Addison,Chris</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -188,7 +188,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Julia Louis-Dreyfus</md:DisplayName>
-				<md:SortName>Louis-Dreyfus,Louis-Dreyfus</md:SortName>
+				<md:SortName>Louis-Dreyfus,Julia</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -198,7 +198,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Georgia Pritchett</md:DisplayName>
-				<md:SortName>Pritchett,Pritchett</md:SortName>
+				<md:SortName>Pritchett,Georgia</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -208,7 +208,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Morgan Sackett</md:DisplayName>
-				<md:SortName>Sackett,Sackett</md:SortName>
+				<md:SortName>Sackett,Morgan</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -218,7 +218,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Will Smith</md:DisplayName>
-				<md:SortName>Smith,Smith</md:SortName>
+				<md:SortName>Smith,Will</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -228,7 +228,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Christopher Godsick</md:DisplayName>
-				<md:SortName>Godsick,Godsick</md:SortName>
+				<md:SortName>Godsick,Christopher</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -238,7 +238,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Dave Mandel</md:DisplayName>
-				<md:SortName>Mandel,Mandel</md:SortName>
+				<md:SortName>Mandel,Dave</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -248,7 +248,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Lew Morton</md:DisplayName>
-				<md:SortName>Morton,Morton</md:SortName>
+				<md:SortName>Morton,Lew</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -258,7 +258,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Frank Rich</md:DisplayName>
-				<md:SortName>Rich,Rich</md:SortName>
+				<md:SortName>Rich,Frank</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -268,7 +268,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Peter Huyck</md:DisplayName>
-				<md:SortName>Huyck,Huyck</md:SortName>
+				<md:SortName>Huyck,Peter</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -278,7 +278,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Alex Gregory</md:DisplayName>
-				<md:SortName>Gregory,Gregory</md:SortName>
+				<md:SortName>Gregory,Alex</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -288,7 +288,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Sean Grey</md:DisplayName>
-				<md:SortName>Grey,Grey</md:SortName>
+				<md:SortName>Grey,Sean</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -298,7 +298,7 @@
 			</md:Job>
 			<md:Name>
 				<md:DisplayName>Jim Margolis</md:DisplayName>
-				<md:SortName>Margolis,Margolis</md:SortName>
+				<md:SortName>Margolis,Jim</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:People>
@@ -307,37 +307,41 @@
 				<md:JobDisplay>Writer</md:JobDisplay>
 			</md:Job>
 			<md:Name>
-				<md:DisplayName>Sean Gray</md:DisplayName>
-				<md:SortName>Gray,Gray</md:SortName>
-			</md:Name>
-		</md:People>
-		<md:People>
-			<md:Job>
-				<md:JobFunction>Writer</md:JobFunction>
-				<md:JobDisplay>Writer</md:JobDisplay>
-			</md:Job>
-			<md:Name>
-				<md:DisplayName>Georgia Pritchett</md:DisplayName>
-				<md:SortName>Pritchett,Pritchett</md:SortName>
-			</md:Name>
-		</md:People>
-		<md:People>
-			<md:Job>
-				<md:JobFunction>Writer</md:JobFunction>
-				<md:JobDisplay>Writer</md:JobDisplay>
-			</md:Job>
-			<md:Name>
-				<md:DisplayName>Will Smith</md:DisplayName>
-				<md:SortName>Smith,Smith</md:SortName>
+				<md:DisplayName>Mandel, David</md:DisplayName>
+				<md:SortName>Mandel, David</md:SortName>
 			</md:Name>
 		</md:People>
 		<md:CountryOfOrigin>
 			<md:country>US</md:country>
 		</md:CountryOfOrigin>
 		<md:PrimarySpokenLanguage>en</md:PrimarySpokenLanguage>
-		<md:OriginalLanguage>en</md:OriginalLanguage>
 		<md:AssociatedOrg role="distributor">
 			<md:DisplayName>HBO</md:DisplayName>
 		</md:AssociatedOrg>
+		<md:SequenceInfo>
+			<md:Number>5</md:Number>
+			<md:HouseSequence>43</md:HouseSequence>
+		</md:SequenceInfo>
+		<!-- The sequence is determine by the SequenceInfo/Number associated with the Parent in the right Region -->
+		<!-- in everywhere except German (DE), the sequence is 1, meaning it's the first episode -->
+		<md:Parent relationshipType="isepisodeof">
+			<md:ParentContentID>md:cid:eidr-s:2D99-3C1C-9F31-3E10-3411-1</md:ParentContentID>
+			<SequenceInfo>
+				<Number>1</Number>
+			</SequenceInfo>
+			<ExcludedRegion>
+				<country>DE</country>
+			</ExcludedRegion>
+		</md:Parent>
+		<!-- in Germany (DE), the sequence is 2, meaning it's the second episode -->
+		<md:Parent relationshipType="isepisodeof">
+			<md:ParentContentID>md:cid:eidr-s:2D99-3C1C-9F31-3E10-3411-1</md:ParentContentID>
+			<SequenceInfo>
+				<Number>2</Number>
+			</SequenceInfo>
+			<Region>
+				<country>DE</country>
+			</Region>
+		</md:Parent>
 	</mdmec:Basic>
 </mdmec:CoreMetadata>

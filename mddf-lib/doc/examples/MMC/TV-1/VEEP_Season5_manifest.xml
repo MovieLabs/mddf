@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <manifest:MediaManifest
-	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.8/manifest"
-	xmlns:md="http://www.movielabs.com/schema/md/v2.7/md"
+	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.9/manifest"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.8/md"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.8/manifest manifest-v1.8.xsd"
+	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.9/manifest manifest-v1.9.xsd"
 	ManifestID="md:manifestid:eidr-s:2D99-3C1C-9F31-3E10-3411-1">
 	<manifest:Compatibility>
-		<manifest:SpecVersion>1.8</manifest:SpecVersion>
+		<manifest:SpecVersion>1.9</manifest:SpecVersion>
 		<manifest:Profile>MMC-1</manifest:Profile>
 	</manifest:Compatibility>
 	<manifest:Inventory>
@@ -38,40 +38,41 @@
 			</manifest:ContainerReference>
 		</manifest:Metadata>
 		<manifest:ExternalManifest
-			ManifestID="md:manifestid:org:number.hbo.com:78728">
+			ManifestID="md:manifestid:eidr-s:1FE0-A6AE-7203-A60A-02B9-8">
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>./VEEP_Season5_E1_manifest.xml
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:ExternalManifest>
 		<manifest:ExternalManifest
-			ManifestID="md:manifestid:org:number.hbo.com:78729">
+			ManifestID="md:manifestid:eidr-s:9560-1ADE-B3F7-48FE-6CCA-S">
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>./VEEP_Season5_E2_manifest.xml
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:ExternalManifest>
 		<manifest:ExternalManifest
-			ManifestID="md:manifestid:org:number.hbo.com:78730">
+			ManifestID="md:manifestid:eidr-s:2FB4-3FCC-9B41-D2BB-28F9-G">
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>./VEEP_Season5_E3_manifest.xml
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:ExternalManifest>
 		<manifest:ExternalManifest
-			ManifestID="md:manifestid:org:number.hbo.com:78731">
+			ManifestID="md:manifestid:eidr-s:FBEB-FA47-487D-420A-8E31-I">
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>./VEEP_Season5_E4_manifest.xml
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:ExternalManifest>
 		<manifest:ExternalManifest
-			ManifestID="md:manifestid:org:number.hbo.com:78732">
+			ManifestID="md:manifestid:eidr-s:5783-D070-78E6-3AC5-E892-W">
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>./VEEP_Season5_E5_manifest.xml
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:ExternalManifest>
+		<!-- epiosdes 6-10 excluded for brevity -->
 		<!-- SERIES manifest -->
 		<manifest:ExternalManifest
 			ManifestID="md:manifestid:eidr-s:CF5A-AB7E-A4DB-35FA-BAC5-M">
@@ -107,9 +108,9 @@
 				<manifest:SequenceInfo>
 					<md:Number>1</md:Number>
 				</manifest:SequenceInfo>
-				<manifest:ExperienceID>md:experienceid:org:number.hbo.com:78728
+				<manifest:ExperienceID>md:experienceid:eidr-s:1FE0-A6AE-7203-A60A-02B9-8
 				</manifest:ExperienceID>
-				<manifest:ExternalManifestID>md:manifestid:org:number.hbo.com:78728
+				<manifest:ExternalManifestID>md:manifestid:eidr-s:1FE0-A6AE-7203-A60A-02B9-8
 				</manifest:ExternalManifestID>
 			</manifest:ExperienceChild>
 			<!-- Episode 2 -->
@@ -118,9 +119,9 @@
 				<manifest:SequenceInfo>
 					<md:Number>2</md:Number>
 				</manifest:SequenceInfo>
-				<manifest:ExperienceID>md:experienceid:org:number.hbo.com:78729
+				<manifest:ExperienceID>md:experienceid:eidr-s:9560-1ADE-B3F7-48FE-6CCA-S
 				</manifest:ExperienceID>
-				<manifest:ExternalManifestID>md:manifestid:org:number.hbo.com:78729
+				<manifest:ExternalManifestID>md:manifestid:eidr-s:9560-1ADE-B3F7-48FE-6CCA-S
 				</manifest:ExternalManifestID>
 			</manifest:ExperienceChild>
 			<!-- Episode 3 -->
@@ -129,9 +130,9 @@
 				<manifest:SequenceInfo>
 					<md:Number>3</md:Number>
 				</manifest:SequenceInfo>
-				<manifest:ExperienceID>md:experienceid:org:number.hbo.com:78730
+				<manifest:ExperienceID>md:experienceid:eidr-s:2FB4-3FCC-9B41-D2BB-28F9-G
 				</manifest:ExperienceID>
-				<manifest:ExternalManifestID>md:manifestid:org:number.hbo.com:78730
+				<manifest:ExternalManifestID>md:manifestid:eidr-s:2FB4-3FCC-9B41-D2BB-28F9-G
 				</manifest:ExternalManifestID>
 			</manifest:ExperienceChild>
 			<!-- Episode 4 -->
@@ -140,9 +141,9 @@
 				<manifest:SequenceInfo>
 					<md:Number>4</md:Number>
 				</manifest:SequenceInfo>
-				<manifest:ExperienceID>md:experienceid:org:number.hbo.com:78731
+				<manifest:ExperienceID>md:experienceid:eidr-s:FBEB-FA47-487D-420A-8E31-I
 				</manifest:ExperienceID>
-				<manifest:ExternalManifestID>md:manifestid:org:number.hbo.com:78731
+				<manifest:ExternalManifestID>md:manifestid:eidr-s:FBEB-FA47-487D-420A-8E31-I
 				</manifest:ExternalManifestID>
 			</manifest:ExperienceChild>
 			<!-- Episode 5 -->
@@ -151,11 +152,12 @@
 				<manifest:SequenceInfo>
 					<md:Number>5</md:Number>
 				</manifest:SequenceInfo>
-				<manifest:ExperienceID>md:experienceid:org:number.hbo.com:78732
+				<manifest:ExperienceID>md:experienceid:eidr-s:5783-D070-78E6-3AC5-E892-W
 				</manifest:ExperienceID>
-				<manifest:ExternalManifestID>md:manifestid:org:number.hbo.com:78732
+				<manifest:ExternalManifestID>md:manifestid:eidr-s:5783-D070-78E6-3AC5-E892-W
 				</manifest:ExternalManifestID>
 			</manifest:ExperienceChild>
+			<!-- child elements for episodes 6-10 excluded for brevity -->
 		</manifest:Experience>
 	</manifest:Experiences>
 	<manifest:ALIDExperienceMaps>

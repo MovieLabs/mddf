@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mdmec:CoreMetadata 
-    xmlns:md="http://www.movielabs.com/schema/md/v2.7/md" 
+    xmlns:md="http://www.movielabs.com/schema/md/v2.8/md" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7" 
-    xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.1.xsd">
+    xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.8" 
+    xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.8 mdmec-v2.8.xsd">
   <mdmec:Basic ContentID="md:cid:eidr-s:2D99-3C1C-9F31-3E10-3411-1">
 		<md:LocalizedInfo language="de">
 			<md:TitleDisplay60>Veep: Staffel 5</md:TitleDisplay60> 
