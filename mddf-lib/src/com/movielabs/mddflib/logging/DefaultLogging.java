@@ -66,6 +66,7 @@ public class DefaultLogging implements LogMgmt {
 			LogEntryFolder levelTNode = new LogEntryFolder(LogMgmt.logLevels[i], i);
 			curDefaultFolder.add(levelTNode);
 		}
+		curLoggingFolder= curDefaultFolder;
 		clearLog();
 	}
 
