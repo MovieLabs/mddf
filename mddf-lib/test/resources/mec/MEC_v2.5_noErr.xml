@@ -83,6 +83,14 @@
 				<md:Reason>H</md:Reason>
 				<md:Reason>N</md:Reason>
 			</md:Rating>
+			<md:Rating>
+                <!-- added in v2.4 Ratings DB -->
+				<md:Region>
+					<md:country>AE</md:country>
+				</md:Region>
+				<md:System>MOI-G</md:System>
+				<md:Value>7</md:Value>
+			</md:Rating>
 		</md:RatingSet>
 		<md:People>
 			<md:Job>
