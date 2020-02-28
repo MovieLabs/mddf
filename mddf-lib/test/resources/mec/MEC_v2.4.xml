@@ -60,7 +60,7 @@
 	  <md:VBR>2-pass VBR</md:VBR>
 	  <md:SampleRate>140000</md:SampleRate>
 	  <md:SampleBitDepth>64</md:SampleBitDepth>
-	  <md:ChannelMapping>Mono</md:ChannelMapping>
+	  <md:ChannelMapping>Center</md:ChannelMapping>
 	</md:Encoding>
 	<md:Language>en</md:Language>
 	<md:Channels>1</md:Channels>
