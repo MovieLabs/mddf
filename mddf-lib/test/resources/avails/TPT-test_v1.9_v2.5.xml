@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<avails:AvailList xmlns:avails="http://www.movielabs.com/schema/avails/v2.5/avails" xmlns:md="http://www.movielabs.com/schema/md/v2.8/md" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <avails:Avail>
+    <avails:ALID>02485</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>NBCUniveral</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>single</avails:AvailType>
+    <avails:ShortDescription>Converted using STREAMING XML builder</avails:ShortDescription>
+    <avails:Asset contentID="02485">
+      <avails:WorkType>Movie</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleInternalAlias>CATS</avails:TitleInternalAlias>
+        <avails:CompanyDisplayCredit>
+          <md:DisplayString />
+        </avails:CompanyDisplayCredit>
+      </avails:Metadata>
+    </avails:Asset>
+    <avails:Transaction>
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2019-10-25T00:00:00</avails:Start>
+      <avails:End>2019-10-31T23:59:59</avails:End>
+      <avails:FormatProfile>UHD</avails:FormatProfile>
+      <avails:Term termName="TPR-WSP">
+        <avails:Money currency="USD">2.99</avails:Money>
+      </avails:Term>
+      <avails:Term termName="CampaignID">
+        <avails:ID>12345</avails:ID>
+      </avails:Term>
+      <avails:Term termName="TPRType">
+        <avails:Text>Conditional</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction>
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2019-10-25T00:00:00</avails:Start>
+      <avails:End>2019-10-31T23:59:59</avails:End>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="TPR-WSP">
+        <avails:Money currency="USD">1.99</avails:Money>
+      </avails:Term>
+      <avails:Term termName="CampaignID">
+        <avails:ID>12346</avails:ID>
+      </avails:Term>
+      <avails:Term termName="TPRType">
+        <avails:Text>Conditional</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+    <avails:Transaction>
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2019-10-25T00:00:00</avails:Start>
+      <avails:End>2019-10-31T23:59:59</avails:End>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:Term termName="TPR-WSP">
+        <avails:Money currency="USD">0.99</avails:Money>
+      </avails:Term>
+      <avails:Term termName="CampaignID">
+        <avails:ID>12347</avails:ID>
+      </avails:Term>
+      <avails:Term termName="TPRType">
+        <avails:Text>Conditional</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+</avails:AvailList>
