@@ -27,6 +27,7 @@
 
 ---
 ## <a name="h_News">1) What's New</a>
+* 2020-Feb-28: v1.8 released
 * 2019-Nov-06: v1.7 released
 * 2019-Aug-27: v1.6 released
 * 2019-June-24: v1.5.3 released
@@ -190,6 +191,10 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">7) Release History:</a>
+* **2020-Feb-28**: mddf-tool v1.8 released.
+
+* **2019-Nov-06**: mddf-tool v1.7 released.
+
 * **2019-Aug-27**: mddf-tool v1.6 released.
 
 * **2019-June-24**: mddf-tool v1.5.3 released.

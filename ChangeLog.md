@@ -5,6 +5,17 @@
 
 ## Versioning
 
+### mddf-lib 1.8
+
+* Enhancement: added support for Manifest v1.9, Avails v2.5/v1.9, MDMEC v2.8, and CM v2.8
+* Enhancement: added support for validating Offer Status files.
+* Enhancement: updated Ratings DB to v2.4
+* User Interface: Avails VersionChooser dialog now displays file name
+* Bug Fix: Ingest of XLSX Avails incorrectly identified AvailType when WorkType=Collection
+* Bug Fix: Ingest of XLSX Avails failed due of typo in code identifying file type
+* Bug Fix: Setting LOG-LEVEL to 'Debug' threw NullPtrException during initialization [NOTE: bug introduced in v1.7]
+* Bug Fix: Ingest of Avails in XLSX dropped any term added from Avail v1.7.3 on (e.g. 'Download, Bonus) [NOTE: bug introduced in v1.6]
+
 ### mddf-lib 1.7 
 
 * Enhancement: structure check may specify a XPath constraint to be applied to a supporting MEC file.
