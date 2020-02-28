@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<avails:OfferStatusList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:md="http://www.movielabs.com/schema/md/v2.8/md" 
+    xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.8" 
+    xmlns:avails="http://www.movielabs.com/schema/avails/v2.5/avails">
+    <avails:OfferStatus>
+	    <avails:ALID>md:alid:eidr-s:AD07-310C-C59D-6785-C63A-G/</avails:ALID>
+	    <avails:LicenseType>SVOD</avails:LicenseType> <!-- One LicenseType for all transactions -->
+	    <avails:Transaction> <!-- One instance per transaction.  Exclude Region for Worldwide -->
+		    <avails:FeatureStatus>
+			    <avails:ProgressCode>Live</avails:ProgressCode>
+			    <avails:Start>2019-08-19T07:00:00Z</avails:Start> <!--Exclude End if Open-->
+		    </avails:FeatureStatus>
+	    </avails:Transaction>
+    </avails:OfferStatus>
+    <avails:OfferStatus>
+	<avails:ALID>md:alid:eidr-s:AD07-310C-C59D-6785-C63A-G/</avails:ALID>
+	<avails:LicenseType>EST</avails:LicenseType>
+	<!-- One LicenseType for all transactions -->
+	<avails:Transaction> <!-- One instance per transaction.  Exclude Region for Worldwide -->
+		<avails:Territory>
+			<md:country>US</md:country>
+		</avails:Territory>		
+		<avails:FeatureStatus>
+			<avails:ProgressCode>Live</avails:ProgressCode>
+			<avails:Start>2019-08-19T07:00:00Z</avails:Start> <!--Exclude End if Open-->
+		</avails:FeatureStatus>
+	</avails:Transaction>
+	<avails:Transaction> 
+		<avails:Territory>
+			<md:country>CA</md:country>
+		</avails:Territory>
+		<avails:FeatureStatus>
+			<avails:ProgressCode>Ready</avails:ProgressCode>
+			<avails:Start>2019-09-01T07:00:00Z</avails:Start> 
+		</avails:FeatureStatus>
+	</avails:Transaction>
+    </avails:OfferStatus>
+    <avails:OfferStatus>
+	<avails:ALID>md:alid:eidr-s:AD07-310C-C59D-6785-C63A-G</avails:ALID>
+	<avails:LicenseType>SVOD</avails:LicenseType>
+	<avails:Transaction> 
+		<avails:Territory>
+			<md:country>US</md:country>
+		</avails:Territory>	
+		<avails:FormatProfile>SD</avails:FormatProfile>	<!--SD and HD are Ready-->
+		<avails:FormatProfile>HD</avails:FormatProfile>		
+		<avails:FeatureStatus>
+			<avails:ProgressCode>Ready</avails:ProgressCode>
+			<avails:Start>2019-09-01T07:00:00Z</avails:Start> 
+		</avails:FeatureStatus>
+	</avails:Transaction>
+	<avails:Transaction> <avails:Territory>
+			<md:country>US</md:country>
+		</avails:Territory>		
+		<avails:FormatProfile>UHD</avails:FormatProfile> <!--UHD is Blocked-->	
+		<avails:FeatureStatus>
+			<avails:ProgressCode>Issue</avails:ProgressCode>
+			<avails:Start>2019-09-01T07:00:00Z</avails:Start> 
+		</avails:FeatureStatus>
+		<avails:Comments>Missing UHD Video File.  Need it right away!</avails:Comments>
+	</avails:Transaction>
+	<avails:Transaction> 
+		<avails:Territory>
+			<md:country>CA</md:country>
+		</avails:Territory>	
+		<avails:FormatProfile>SD</avails:FormatProfile>	<!--SD and HD are Ready-->
+		<avails:FormatProfile>HD</avails:FormatProfile>		
+		<avails:FeatureStatus>
+			<avails:ProgressCode>Ready</avails:ProgressCode>
+			<avails:Start>2019-11-01T07:00:00Z</avails:Start> 
+		</avails:FeatureStatus>
+	</avails:Transaction>
+	<avails:Transaction> 
+		<avails:Territory>
+			<md:country>CA</md:country>
+		</avails:Territory>		
+		<avails:FormatProfile>UHD</avails:FormatProfile> <!--UHD is not yet late-->	
+		<avails:FeatureStatus>
+			<avails:ProgressCode>In-Process</avails:ProgressCode>
+			<avails:Start>2019-11-01T07:00:00Z</avails:Start> 
+		</avails:FeatureStatus>
+		<avails:Comments>Missing UHD Video File.</avails:Comments>
+	</avails:Transaction>
+</avails:OfferStatus>
+</avails:OfferStatusList>
