@@ -1,7 +1,7 @@
 {
-  "build.timestamp": "2019-Nov-06 10:35:42 UTC",
-  "mddf.lib.version": "1.7",
-  "mddf.tool.build": "B",
-  "mddf.tool.version": "1.7",
-  "userMsg": "Multiple bug fixes.<br>Enhance support for MEC usage by a Manifest.<br>See ChangeLog for deatils."
+  "build.timestamp": "2020-Feb-27 22:19:31 UTC",
+  "mddf.lib.version": "1.8",
+  "mddf.tool.build": "C",
+  "mddf.tool.version": "1.8",
+  "userMsg": "Upgraded to support latest versions of MDDF schemas and Ratings DB.<br>See ChangeLog for details."
 }
