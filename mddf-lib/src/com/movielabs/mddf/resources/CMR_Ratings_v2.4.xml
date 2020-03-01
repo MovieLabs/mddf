@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mdcr:RatingSystemSet xmlns:mdcr="http://www.movielabs.com/schema/mdcr/v1.1" xmlns:md="http://www.movielabs.com/schema/md/v2.1/md" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.movielabs.com/schema/mdcr/v1.1 http://www.movielabs.com/schema/mdcr/v1.1/mdcr-v1.1.xsd">
-  <!--Saved 2020-02-25 18:32:19 as version 2.4-->
+  <!--Saved 2020-02-28 20:48:29 as version 2.4-->
   <mdcr:RatingSystem lastSave="2020-01-09T17:22:35" version="0">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
@@ -1925,7 +1925,7 @@ email: nfc@nfc.bg</mdcr:ContactString>
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastSave="2020-01-09T17:42:06" version="0">
+  <mdcr:RatingSystem lastSave="2020-02-28T20:42:04" version="0">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -1942,26 +1942,14 @@ email: nfc@nfc.bg</mdcr:ContactString>
         <mdcr:Environment>Theater</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
-    <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0</mdcr:URI>
+    <mdcr:URI>http://www.movielabs.com/md/ratings/BH/MIA/0</mdcr:URI>
     <mdcr:RatingsOrg organizationID="MIA">
       <md:DisplayName>MIA</md:DisplayName>
       <mdcr:OrgType>Trade</mdcr:OrgType>
     </mdcr:RatingsOrg>
-    <mdcr:Rating ratingID="G">
-      <mdcr:Ordinal>0</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/G</mdcr:URI>
-      <mdcr:MinRecAge>0</mdcr:MinRecAge>
-      <mdcr:MinAge>0</mdcr:MinAge>
-      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
-      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="EN">
-        <mdcr:Label>G</mdcr:Label>
-        <mdcr:Definition>General audiences</mdcr:Definition>
-      </mdcr:Descriptor>
-    </mdcr:Rating>
     <mdcr:Rating ratingID="PG">
       <mdcr:Ordinal>0</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/PG</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BH/MIA/0/PG</mdcr:URI>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -1971,9 +1959,21 @@ email: nfc@nfc.bg</mdcr:ContactString>
         <mdcr:Definition>Parental Guidance is suggested.</mdcr:Definition>
       </mdcr:Descriptor>
     </mdcr:Rating>
+    <mdcr:Rating ratingID="G">
+      <mdcr:Ordinal>0</mdcr:Ordinal>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BH/MIA/0/G</mdcr:URI>
+      <mdcr:MinRecAge>0</mdcr:MinRecAge>
+      <mdcr:MinAge>0</mdcr:MinAge>
+      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
+      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
+      <mdcr:Descriptor language="EN">
+        <mdcr:Label>G</mdcr:Label>
+        <mdcr:Definition>General audiences</mdcr:Definition>
+      </mdcr:Descriptor>
+    </mdcr:Rating>
     <mdcr:Rating ratingID="PG-13">
       <mdcr:Ordinal>3</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/PG-13</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BH/MIA/0/PG-13</mdcr:URI>
       <mdcr:MinRecAge>13</mdcr:MinRecAge>
       <mdcr:MinAge>13</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -1985,7 +1985,7 @@ email: nfc@nfc.bg</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="PG-15">
       <mdcr:Ordinal>6</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/PG-15</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BH/MIA/0/PG-15</mdcr:URI>
       <mdcr:MinRecAge>15</mdcr:MinRecAge>
       <mdcr:MinAge>15</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -1997,7 +1997,7 @@ email: nfc@nfc.bg</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="15+">
       <mdcr:Ordinal>9</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/15+</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BH/MIA/0/15+</mdcr:URI>
       <mdcr:MinRecAge>15</mdcr:MinRecAge>
       <mdcr:MinAge>15</mdcr:MinAge>
       <mdcr:MinAgeSupervised>15</mdcr:MinAgeSupervised>
@@ -2009,7 +2009,7 @@ email: nfc@nfc.bg</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="18+">
       <mdcr:Ordinal>80</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/18+</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BH/MIA/0/18+</mdcr:URI>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -2020,7 +2020,7 @@ email: nfc@nfc.bg</mdcr:ContactString>
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastSave="2019-12-18T21:43:57" version="0">
+  <mdcr:RatingSystem lastSave="2020-02-28T20:42:45" version="0">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -2038,14 +2038,14 @@ email: nfc@nfc.bg</mdcr:ContactString>
         <mdcr:Environment>Theater</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
-    <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0</mdcr:URI>
+    <mdcr:URI>http://www.movielabs.com/md/ratings/BN/Film/0</mdcr:URI>
     <mdcr:RatingsOrg>
       <md:DisplayName />
       <mdcr:OrgType>not specified</mdcr:OrgType>
     </mdcr:RatingsOrg>
     <mdcr:Rating ratingID="U">
       <mdcr:Ordinal>0</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/U</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BN/Film/0/U</mdcr:URI>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -2057,7 +2057,7 @@ email: nfc@nfc.bg</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="A/PG">
       <mdcr:Ordinal>3</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/A_PG</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BN/Film/0/A_PG</mdcr:URI>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>16</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -2069,7 +2069,7 @@ email: nfc@nfc.bg</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="X">
       <mdcr:Ordinal>6</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/X</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BN/Film/0/X</mdcr:URI>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>16</mdcr:MinAge>
       <mdcr:MinAgeSupervised>16</mdcr:MinAgeSupervised>
@@ -2080,7 +2080,7 @@ email: nfc@nfc.bg</mdcr:ContactString>
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastSave="2020-01-09T18:00:29" version="0">
+  <mdcr:RatingSystem lastSave="2020-02-28T20:43:05" version="0">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -2097,14 +2097,14 @@ email: nfc@nfc.bg</mdcr:ContactString>
         <mdcr:Environment>Theater</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
-    <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0</mdcr:URI>
+    <mdcr:URI>http://www.movielabs.com/md/ratings/BO/Film/0</mdcr:URI>
     <mdcr:RatingsOrg>
       <md:DisplayName />
       <mdcr:OrgType>Trade</mdcr:OrgType>
     </mdcr:RatingsOrg>
     <mdcr:Rating ratingID="TP">
       <mdcr:Ordinal>0</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/TP</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BO/Film/0/TP</mdcr:URI>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -2116,7 +2116,7 @@ email: nfc@nfc.bg</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="14">
       <mdcr:Ordinal>3</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/14</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BO/Film/0/14</mdcr:URI>
       <mdcr:MinRecAge>14</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -2128,7 +2128,7 @@ email: nfc@nfc.bg</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="16">
       <mdcr:Ordinal>6</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/16</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BO/Film/0/16</mdcr:URI>
       <mdcr:MinRecAge>16</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -2140,7 +2140,7 @@ email: nfc@nfc.bg</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="18">
       <mdcr:Ordinal>80</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/18</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/BO/Film/0/18</mdcr:URI>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -5640,7 +5640,7 @@ under 4 år let overvældet og skræmt af filmens lys – og lydeffekter.</div>]
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastSave="2019-11-13T23:37:49" version="0">
+  <mdcr:RatingSystem lastSave="2020-02-28T20:48:20" version="0">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -5657,15 +5657,27 @@ under 4 år let overvældet og skræmt af filmens lys – og lydeffekter.</div>]
         <mdcr:Environment>Broadcast</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
-    <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0</mdcr:URI>
+    <mdcr:URI>http://www.movielabs.com/md/ratings/EC/TV/0</mdcr:URI>
     <mdcr:RatingsOrg organizationID="Ecuador National Assembly">
-      <md:DisplayName>-t.b.d.-</md:DisplayName>
+      <md:DisplayName>Ecuador National Assembly</md:DisplayName>
       <mdcr:URL>https://www.asambleanacional.gob.ec/es/system/files/ley_organica_comunicacion.pdf</mdcr:URL>
       <mdcr:OrgType>Gov</mdcr:OrgType>
     </mdcr:RatingsOrg>
+    <mdcr:Rating ratingID="C">
+      <mdcr:Ordinal>0</mdcr:Ordinal>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/EC/TV/0/C</mdcr:URI>
+      <mdcr:MinRecAge>18</mdcr:MinRecAge>
+      <mdcr:MinAge>0</mdcr:MinAge>
+      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
+      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
+      <mdcr:Descriptor language="ES">
+        <mdcr:Label>C</mdcr:Label>
+        <mdcr:Definition>Compuesta por personas mayores a 18 años.</mdcr:Definition>
+      </mdcr:Descriptor>
+    </mdcr:Rating>
     <mdcr:Rating ratingID="A">
       <mdcr:Ordinal>0</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/A</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/EC/TV/0/A</mdcr:URI>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -5677,7 +5689,7 @@ under 4 år let overvældet og skræmt af filmens lys – og lydeffekter.</div>]
     </mdcr:Rating>
     <mdcr:Rating ratingID="B">
       <mdcr:Ordinal>0</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/B</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/EC/TV/0/B</mdcr:URI>
       <mdcr:MinRecAge>12</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>12</mdcr:MinAgeSupervised>
@@ -5687,20 +5699,8 @@ under 4 år let overvældet og skræmt af filmens lys – og lydeffekter.</div>]
         <mdcr:Definition>La componen personas de 12 a 18 años, con supervisión de personas adultas</mdcr:Definition>
       </mdcr:Descriptor>
     </mdcr:Rating>
-    <mdcr:Rating ratingID="C">
-      <mdcr:Ordinal>0</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/C</mdcr:URI>
-      <mdcr:MinRecAge>18</mdcr:MinRecAge>
-      <mdcr:MinAge>0</mdcr:MinAge>
-      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
-      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="ES">
-        <mdcr:Label>C</mdcr:Label>
-        <mdcr:Definition>Compuesta por personas mayores a 18 años.</mdcr:Definition>
-      </mdcr:Descriptor>
-    </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastSave="2020-01-17T00:26:16" version="1">
+  <mdcr:RatingSystem lastSave="2020-02-28T20:44:09" version="1">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -5720,8 +5720,8 @@ under 4 år let overvældet og skræmt af filmens lys – og lydeffekter.</div>]
     </mdcr:AdoptiveRegion>
     <mdcr:LastChecked>2020-01-17</mdcr:LastChecked>
     <mdcr:URI>http://www.movielabs.com/md/ratings/EE/Film/1</mdcr:URI>
-    <mdcr:RatingsOrg organizationID="-t.b.d.-">
-      <md:DisplayName>-t.b.d.-</md:DisplayName>
+    <mdcr:RatingsOrg>
+      <md:DisplayName />
       <mdcr:OrgType>not specified</mdcr:OrgType>
     </mdcr:RatingsOrg>
     <mdcr:Rating ratingID="Pere">
@@ -5855,7 +5855,7 @@ under 4 år let overvældet og skræmt af filmens lys – og lydeffekter.</div>]
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastValidated="2013-10-02T16:20:09" lastSave="2020-01-17T00:23:57" version="2">
+  <mdcr:RatingSystem lastValidated="2013-10-02T23:20:09" lastSave="2020-02-28T20:44:31" version="2">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -5875,22 +5875,10 @@ under 4 år let overvældet og skræmt af filmens lys – og lydeffekter.</div>]
     </mdcr:AdoptiveRegion>
     <mdcr:LastChecked>2020-01-17</mdcr:LastChecked>
     <mdcr:URI>http://www.movielabs.com/md/ratings/EG/Film/2</mdcr:URI>
-    <mdcr:RatingsOrg organizationID="-t.b.d.-">
-      <md:DisplayName>-t.b.d.-</md:DisplayName>
+    <mdcr:RatingsOrg>
+      <md:DisplayName />
       <mdcr:OrgType>Gov</mdcr:OrgType>
     </mdcr:RatingsOrg>
-    <mdcr:Rating ratingID="12+">
-      <mdcr:Ordinal>0</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/EG/Film/2/12+</mdcr:URI>
-      <mdcr:MinRecAge>0</mdcr:MinRecAge>
-      <mdcr:MinAge>0</mdcr:MinAge>
-      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
-      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="AR">
-        <mdcr:Label>12+</mdcr:Label>
-        <mdcr:Definition>ﻳﺤﺘﻮﻱ ﻋﻠﻰ ﻣﻮاﺩ ﻏﻴﺮ ﻣﻨﺎﺳﺒﺔ ﻟﻷﻃﻔﺎﻝ</mdcr:Definition>
-      </mdcr:Descriptor>
-    </mdcr:Rating>
     <mdcr:Rating ratingID="16">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/EG/Film/2/16</mdcr:URI>
@@ -5921,6 +5909,18 @@ under 4 år let overvældet og skræmt af filmens lys – og lydeffekter.</div>]
       <mdcr:Descriptor language="AR">
         <mdcr:Label>GN</mdcr:Label>
         <mdcr:Definition>مناسب للجمهور العام</mdcr:Definition>
+      </mdcr:Descriptor>
+    </mdcr:Rating>
+    <mdcr:Rating ratingID="12+">
+      <mdcr:Ordinal>0</mdcr:Ordinal>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/EG/Film/2/12+</mdcr:URI>
+      <mdcr:MinRecAge>0</mdcr:MinRecAge>
+      <mdcr:MinAge>0</mdcr:MinAge>
+      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
+      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
+      <mdcr:Descriptor language="AR">
+        <mdcr:Label>12+</mdcr:Label>
+        <mdcr:Definition>ﻳﺤﺘﻮﻱ ﻋﻠﻰ ﻣﻮاﺩ ﻏﻴﺮ ﻣﻨﺎﺳﺒﺔ ﻟﻷﻃﻔﺎﻝ</mdcr:Definition>
       </mdcr:Descriptor>
     </mdcr:Rating>
     <mdcr:Rating ratingID="18">
@@ -9286,7 +9286,7 @@ Fax: 2251258</mdcr:ContactString>
       </mdcr:Descriptor>
     </mdcr:Rating>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastSave="2020-01-10T21:20:13" version="0">
+  <mdcr:RatingSystem lastSave="2020-02-28T20:44:59" version="0">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -9303,14 +9303,14 @@ Fax: 2251258</mdcr:ContactString>
         <mdcr:Environment>Theater</mdcr:Environment>
       </mdcr:Usage>
     </mdcr:AdoptiveRegion>
-    <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0</mdcr:URI>
+    <mdcr:URI>http://www.movielabs.com/md/ratings/KH/MCFA-KH/0</mdcr:URI>
     <mdcr:RatingsOrg organizationID="MCFA-KH">
       <md:DisplayName>MCFA-KH</md:DisplayName>
       <mdcr:OrgType>Trade</mdcr:OrgType>
     </mdcr:RatingsOrg>
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/G</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/KH/MCFA-KH/0/G</mdcr:URI>
       <mdcr:MinRecAge>0</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9322,7 +9322,7 @@ Fax: 2251258</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="PG-13">
       <mdcr:Ordinal>3</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/PG-13</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/KH/MCFA-KH/0/PG-13</mdcr:URI>
       <mdcr:MinRecAge>13</mdcr:MinRecAge>
       <mdcr:MinAge>0</mdcr:MinAge>
       <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
@@ -9334,7 +9334,7 @@ Fax: 2251258</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="NC-15">
       <mdcr:Ordinal>6</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/NC-15</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/KH/MCFA-KH/0/NC-15</mdcr:URI>
       <mdcr:MinRecAge>15</mdcr:MinRecAge>
       <mdcr:MinAge>15</mdcr:MinAge>
       <mdcr:MinAgeSupervised>15</mdcr:MinAgeSupervised>
@@ -9346,7 +9346,7 @@ Fax: 2251258</mdcr:ContactString>
     </mdcr:Rating>
     <mdcr:Rating ratingID="R-18">
       <mdcr:Ordinal>80</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0/R-18</mdcr:URI>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/KH/MCFA-KH/0/R-18</mdcr:URI>
       <mdcr:MinRecAge>18</mdcr:MinRecAge>
       <mdcr:MinAge>18</mdcr:MinAge>
       <mdcr:MinAgeSupervised>18</mdcr:MinAgeSupervised>
@@ -13199,7 +13199,7 @@ are protected.</div>]]></mdcr:Explanation>
       </mdcr:GeneralDescriptor>
     </mdcr:Reason>
   </mdcr:RatingSystem>
-  <mdcr:RatingSystem lastSave="2020-01-17T21:56:55" version="1">
+  <mdcr:RatingSystem lastSave="2020-02-28T20:45:52" version="1">
     <!--DISCLAIMER: Although care has been taken to ensure the accuracy, completeness and reliability of the information provided, we are not responsible if information that we make available on this site is not accurate, complete or current. The material on this site is provided for general information only, and any reliance upon the material on this site will be at your own risk. We reserve the right to modify the contents of the site at any time, but we have no obligation to update any information on this site. You agree that it is your 	responsibility to monitor changes to the site.-->
     <mdcr:RatingSystemID>
       <mdcr:Region>
@@ -13219,22 +13219,10 @@ are protected.</div>]]></mdcr:Explanation>
     </mdcr:AdoptiveRegion>
     <mdcr:LastChecked>2020-01-17</mdcr:LastChecked>
     <mdcr:URI>http://www.movielabs.com/md/ratings/SK/Film/1</mdcr:URI>
-    <mdcr:RatingsOrg organizationID="-t.b.d.-">
-      <md:DisplayName>-t.b.d.-</md:DisplayName>
+    <mdcr:RatingsOrg>
+      <md:DisplayName />
       <mdcr:OrgType>Trade</mdcr:OrgType>
     </mdcr:RatingsOrg>
-    <mdcr:Rating ratingID="7">
-      <mdcr:Ordinal>0</mdcr:Ordinal>
-      <mdcr:URI>http://www.movielabs.com/md/ratings/SK/Film/1/7</mdcr:URI>
-      <mdcr:MinRecAge>0</mdcr:MinRecAge>
-      <mdcr:MinAge>0</mdcr:MinAge>
-      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
-      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
-      <mdcr:Descriptor language="SK">
-        <mdcr:Label>7</mdcr:Label>
-        <mdcr:Definition>Nevhodné pre vekovu skupinu maloletych do 7</mdcr:Definition>
-      </mdcr:Descriptor>
-    </mdcr:Rating>
     <mdcr:Rating ratingID="G">
       <mdcr:Ordinal>0</mdcr:Ordinal>
       <mdcr:URI>http://www.movielabs.com/md/ratings/SK/Film/1/G</mdcr:URI>
@@ -13249,6 +13237,18 @@ are protected.</div>]]></mdcr:Explanation>
       <mdcr:Descriptor language="SK">
         <mdcr:Label>U</mdcr:Label>
         <mdcr:Definition>Vhodný pre všetky skupiny maloletých</mdcr:Definition>
+      </mdcr:Descriptor>
+    </mdcr:Rating>
+    <mdcr:Rating ratingID="7">
+      <mdcr:Ordinal>0</mdcr:Ordinal>
+      <mdcr:URI>http://www.movielabs.com/md/ratings/SK/Film/1/7</mdcr:URI>
+      <mdcr:MinRecAge>0</mdcr:MinRecAge>
+      <mdcr:MinAge>0</mdcr:MinAge>
+      <mdcr:MinAgeSupervised>0</mdcr:MinAgeSupervised>
+      <mdcr:HPCApplicable>true</mdcr:HPCApplicable>
+      <mdcr:Descriptor language="SK">
+        <mdcr:Label>7</mdcr:Label>
+        <mdcr:Definition>Nevhodné pre vekovu skupinu maloletych do 7</mdcr:Definition>
       </mdcr:Descriptor>
     </mdcr:Rating>
     <mdcr:Rating ratingID="P2">
