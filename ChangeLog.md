@@ -5,6 +5,10 @@
 
 ## Versioning
 
+### mddf-lib 1.8.0.1
+
+* Bug Fix: Ratings DB updated to fix to broken links in newly added Rating Systems.
+
 ### mddf-lib 1.8
 
 * Enhancement: added support for Manifest v1.9, Avails v2.5/v1.9, MDMEC v2.8, and CM v2.8

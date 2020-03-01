@@ -1,7 +1,7 @@
 {
-  "build.timestamp": "2020-Feb-27 22:19:31 UTC",
-  "mddf.lib.version": "1.8",
-  "mddf.tool.build": "C",
-  "mddf.tool.version": "1.8",
+  "build.timestamp": "2020-Mar-01 17:15:17 UTC",
+  "mddf.lib.version": "1.8.0.1",
+  "mddf.tool.build": "A",
+  "mddf.tool.version": "1.8.0.1",
   "userMsg": "Upgraded to support latest versions of MDDF schemas and Ratings DB.<br>See ChangeLog for details."
 }

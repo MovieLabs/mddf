@@ -27,20 +27,24 @@
 
 ---
 ## <a name="h_News">1) What's New</a>
-* 2020-Feb-28: v1.8 released
+* 2020-Mar-01: v1.8.0.1 released [See Note-3]
+* 2020-Feb-28: v1.8 released [See Note-3]
 * 2019-Nov-06: v1.7 released
 * 2019-Aug-27: v1.6 released
 * 2019-June-24: v1.5.3 released
 * 2019-May-24: v1.5.2 released
 * 2019-May-09: v1.5.2_rc1 released for testing and evaluation.
-* 2019-Mar-15: v1.5.1 released
+* 2019-Mar-15: v1.5.1 released [See Notes 1 & 2]
 
-__NOTE:__ Starting with v1.5.1, releases of mddf-lib are available via the Maven Central Repository. Refer to
+__NOTE-1:__ Starting with v1.5.1, releases of mddf-lib are available via the Maven Central Repository. Refer to
 the [mddf-lib README](./mddf-lib/README.md) for information on adding dependancy information to pom files.
 
-__NOTE:__ Beginning with Release 1.5, pre-built executables for Windows, OS-X, and Linux will no longer
+__NOTE-2:__ Beginning with Release 1.5, pre-built executables for Windows, OS-X, and Linux will no longer
 be supported. The executable Java jar will still be supported. See ["__Installing and Running__"](#h_Install)
 for details.
+
+__NOTE-3:__ Release v1.8 contains an update to the Ratings DB with several broken URI. Release v1.8.0.1 
+was issued 2 days latter to correct this problem and should be used instead of v1.8.
 
 ## <a name="h_Overview">2) Overview:</a>
 
@@ -191,6 +195,8 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">7) Release History:</a>
+* **2020-Mar-01**: mddf-tool v1.8.0.1 released.
+
 * **2020-Feb-28**: mddf-tool v1.8 released.
 
 * **2019-Nov-06**: mddf-tool v1.7 released.
