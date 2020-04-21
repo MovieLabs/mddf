@@ -27,9 +27,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -60,12 +58,7 @@ public class DefaultLogging implements LogMgmt {
 	/**
 	 * 
 	 */
-	public DefaultLogging() {
-		// add the folders for each log-level...
-//		for (int i = 0; i < LogMgmt.logLevels.length; i++) {
-//			LogEntryFolder levelTNode = new LogEntryFolder(LogMgmt.logLevels[i], i);
-//			curDefaultFolder.add(levelTNode);
-//		}
+	public DefaultLogging() { 
 		initializeChildLevels(curDefaultFolder);
 		curLoggingFolder = curDefaultFolder;
 		clearLog();
