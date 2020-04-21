@@ -5,6 +5,10 @@
 
 ## Versioning
 
+### mddf-lib 1.8.0.2
+
+* Bug Fix: runing in non-interactive mode resulted in a NullPointerException in the logger.
+
 ### mddf-lib 1.8.0.1
 
 * Bug Fix: Ratings DB updated to fix to broken links in newly added Rating Systems.

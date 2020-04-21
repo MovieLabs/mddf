@@ -27,6 +27,7 @@
 
 ---
 ## <a name="h_News">1) What's New</a>
+* 2020-Apr-21: v1.8.0.2 released [See Note-4]
 * 2020-Mar-01: v1.8.0.1 released [See Note-3]
 * 2020-Feb-28: v1.8 released [See Note-3]
 * 2019-Nov-06: v1.7 released
@@ -45,6 +46,8 @@ for details.
 
 __NOTE-3:__ Release v1.8 contains an update to the Ratings DB with several broken URI. Release v1.8.0.1 
 was issued 2 days latter to correct this problem and should be used instead of v1.8.
+
+__NOTE-4:__ This fixes a bug that only occurs when running in the non-interactive mode. 
 
 ## <a name="h_Overview">2) Overview:</a>
 
@@ -195,6 +198,8 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">7) Release History:</a>
+* **2020-Apr-21**: mddf-tool v1.8.0.2 released.
+
 * **2020-Mar-01**: mddf-tool v1.8.0.1 released.
 
 * **2020-Feb-28**: mddf-tool v1.8 released.
