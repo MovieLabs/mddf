@@ -48,26 +48,35 @@ public class DefaultLogging implements LogMgmt {
 
 	private LogEntryFolder rootLogNode = new LogEntryFolder("", -1);
 	private int masterSeqNum;
-	private List<LogEntryNode> entryList; 
+	private List<LogEntryNode> entryList;
 	private Stack<String> contextStack = new Stack<String>();
 	private String previousContext = null;
 	protected int minLevel = LogMgmt.LEV_WARN;
 	protected boolean printToConsole = false;
-	protected boolean infoIncluded; 
-	private LogEntryFolder curLoggingFolder; 
-	private LogEntryFolder curDefaultFolder  = new LogEntryFolder("DefaultFolder", -1, "fooBar"); 
+	protected boolean infoIncluded;
+	private LogEntryFolder curLoggingFolder;
+	private LogEntryFolder curDefaultFolder = new LogEntryFolder("DefaultFolder", -1, "fooBar");
 
 	/**
 	 * 
 	 */
-	public DefaultLogging() { 
-		// add the folders for each TAG type...
+	public DefaultLogging() {
+		// add the folders for each log-level...
+//		for (int i = 0; i < LogMgmt.logLevels.length; i++) {
+//			LogEntryFolder levelTNode = new LogEntryFolder(LogMgmt.logLevels[i], i);
+//			curDefaultFolder.add(levelTNode);
+//		}
+		initializeChildLevels(curDefaultFolder);
+		curLoggingFolder = curDefaultFolder;
+		clearLog();
+	}
+
+	private void initializeChildLevels(LogEntryFolder folder) {
+		// add the folders for each log-level...
 		for (int i = 0; i < LogMgmt.logLevels.length; i++) {
 			LogEntryFolder levelTNode = new LogEntryFolder(LogMgmt.logLevels[i], i);
-			curDefaultFolder.add(levelTNode);
+			folder.add(levelTNode);
 		}
-		curLoggingFolder= curDefaultFolder;
-		clearLog();
 	}
 
 	/*
@@ -146,7 +155,7 @@ public class DefaultLogging implements LogMgmt {
 		LogEntryFolder logFolder = null;
 		if (target == null) {
 			/* default is whatever is at the top of the stack */
-			logFolder = rootLogNode;
+			logFolder = curDefaultFolder; //rootLogNode;
 		} else {
 			logFolder = target.getLogFolder();
 		}
@@ -158,7 +167,7 @@ public class DefaultLogging implements LogMgmt {
 		if (level < minLevel) {
 			return;
 		}
-		if(fileFolder == null) {
+		if (fileFolder == null) {
 			fileFolder = curDefaultFolder;
 		}
 		String tagAsText = LogMgmt.logTags[tag];
@@ -167,8 +176,14 @@ public class DefaultLogging implements LogMgmt {
 		if (tagNode == null) {
 			tagNode = createTagNode(tag, level, byLevel);
 		}
-		LogEntryNode entryNode = new LogEntryNode(level, tagNode, msg, fileFolder, line, moduleID, masterSeqNum++,
-				details, srcRef);
+		LogEntryNode entryNode;
+		try {
+			entryNode = new LogEntryNode(level, tagNode, msg, fileFolder, line, moduleID, masterSeqNum++,
+					details, srcRef);
+		} catch (Exception e) { 
+			System.out.println(msg);
+			return;
+		}
 		tagNode.addMsg(entryNode);
 		/*
 		 * add to the flat (i.e., sequential but non-hierarchical) list too...
@@ -214,16 +229,19 @@ public class DefaultLogging implements LogMgmt {
 		}
 		throw new IllegalArgumentException("Unsupported tag '" + tagAsText + "'");
 	}
- 
 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.logging.LogMgmt#assignFileFolder(com.movielabs.mddflib.util.xml.MddfTarget)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.logging.LogMgmt#assignFileFolder(com.movielabs.mddflib.
+	 * util.xml.MddfTarget)
 	 */
 	@Override
-	public LogEntryFolder assignFileFolder(MddfTarget target) { 
+	public LogEntryFolder assignFileFolder(MddfTarget target) {
 		curDefaultFolder.setFile(target);
 		return curDefaultFolder;
-		
+
 	}
 
 	/*
@@ -250,8 +268,8 @@ public class DefaultLogging implements LogMgmt {
 		if ((!contextStack.isEmpty()) && (target.getKey() == contextStack.peek())) {
 			return curDefaultFolder;
 		}
-		curDefaultFolder = target.getLogFolder(); 
-		contextStack.push(target.getKey()); 
+		curDefaultFolder = target.getLogFolder();
+		contextStack.push(target.getKey());
 		return curDefaultFolder;
 	}
 
@@ -267,13 +285,13 @@ public class DefaultLogging implements LogMgmt {
 			return;
 		}
 		String curContextKey = contextStack.peek();
-		String assumedKey = assumedTopTarget.getKey(); 
+		String assumedKey = assumedTopTarget.getKey();
 		if (!assumedKey.equals(curContextKey)) {
 			/*
 			 * check for redundant 'pop'. These get ignored same way we ignore redundant
 			 * push.
 			 */
-			if (previousContext != null) { 
+			if (previousContext != null) {
 				if (previousContext.equals(assumedKey)) {
 					return;
 				}
@@ -297,14 +315,19 @@ public class DefaultLogging implements LogMgmt {
 		masterSeqNum = 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.movielabs.mddflib.logging.LogMgmt#clearLog(com.movielabs.mddflib.util.xml.MddfTarget)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.movielabs.mddflib.logging.LogMgmt#clearLog(com.movielabs.mddflib.util.xml
+	 * .MddfTarget)
 	 */
 	@Override
-	public void clearLog(MddfTarget target) { 
+	public void clearLog(MddfTarget target) {
 		curLoggingFolder.removeAllChildren();
+		initializeChildLevels(curLoggingFolder);
 	}
-	
+
 	/**
 	 * Save the log messages in the desired location and format.
 	 * 
@@ -398,6 +421,5 @@ public class DefaultLogging implements LogMgmt {
 	public void setInfoIncluded(boolean infoIncluded) {
 		this.infoIncluded = infoIncluded;
 	}
-
 
 }
