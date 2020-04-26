@@ -56,7 +56,8 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 public class XlsxExportTest {
 
 	private static String rsrcPath = "./test/resources/avails/";
-	private static File tmpDir = new File("./test/tmp/");
+	private static File tmpDirPath = new File("./test/tmp/");
+	private File tempDir;
 	private InstrumentedLogger iLog;
 
 	public XlsxExportTest() {
@@ -77,6 +78,11 @@ public class XlsxExportTest {
 	public void setUp() throws Exception {
 		iLog.clearLog();
 		iLog.setPrintToConsole(false);
+		tempDir = new File("tempDirPath");
+		if (tempDir.exists()) {
+			deleteDirectory(tempDir);
+		} 
+		tempDir.mkdirs();
 	}
 
 	@Test
@@ -87,14 +93,14 @@ public class XlsxExportTest {
 		FILE_FMT excelFmt = FILE_FMT.AVAILS_1_7_3;
 		Version excelVer = Version.V1_7_3;
 		String tmpFileName = testFileName + "_v" + excelFmt.getVersion() + ".xlsx";
-		File tmpFile = new File(tmpDir, tmpFileName);
+		File tmpFile = new File(tempDir, tmpFileName);
 
 		EnumSet<FILE_FMT> selections = EnumSet.noneOf(FILE_FMT.class);
 		selections.add(excelFmt);
 
 		iLog.log(iLog.LEV_INFO, iLog.TAG_N_A, "*** Testing with file " + srcFilePath, null, "JUnit");
 		MddfTarget target = new MddfTarget(srcFile, iLog);
-		int cnt = Translator.translateAvails(target, selections, tmpDir, testFileName, true, iLog);
+		int cnt = Translator.translateAvails(target, selections, tempDir, testFileName, true, iLog);
 		try {
 			assertEquals(1, cnt);
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
@@ -115,7 +121,7 @@ public class XlsxExportTest {
 	 * @param object
 	 */
 	private void dumpXml(Document xmlDoc, String fileName) {
-		File dumpFile = new File(tmpDir.getAbsolutePath(), fileName + ".xml");
+		File dumpFile = new File(tempDir , fileName + ".xml");
 		XmlIngester.writeXml(dumpFile, xmlDoc);
 	}
 
@@ -124,5 +130,15 @@ public class XlsxExportTest {
 		iLog.printLog();
 		System.out.println(" === End log dump for FAILED TEST ===");
 
+	}
+	
+	boolean deleteDirectory(File directoryToBeDeleted) {
+	    File[] allContents = directoryToBeDeleted.listFiles();
+	    if (allContents != null) {
+	        for (File file : allContents) {
+	            deleteDirectory(file);
+	        }
+	    }
+	    return directoryToBeDeleted.delete();
 	}
 }

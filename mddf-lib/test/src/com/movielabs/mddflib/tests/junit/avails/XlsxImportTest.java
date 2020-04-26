@@ -48,7 +48,8 @@ import com.movielabs.mddflib.util.xml.XmlIngester;
 public class XlsxImportTest {
 
 	private static String rsrcPath = "./test/resources/avails/xlsx/";
-	private static String tempDir = "./test/tmp/";
+	private static String tempDirPath = "./test/tmp/";
+	private File tempDir;
 	private InstrumentedLogger iLog;
 
 	public XlsxImportTest() {
@@ -69,6 +70,11 @@ public class XlsxImportTest {
 	public void setUp() throws Exception {
 		iLog.clearLog();
 		iLog.setPrintToConsole(false);
+		tempDir = new File("tempDirPath");
+		if (tempDir.exists()) {
+			deleteDirectory(tempDir);
+		} 
+		tempDir.mkdirs();
 	}
 
 	@Test
@@ -288,5 +294,15 @@ public class XlsxImportTest {
 		iLog.printLog();
 		System.out.println(" === End log dump for FAILED TEST ===");
 
+	}
+	
+	boolean deleteDirectory(File directoryToBeDeleted) {
+	    File[] allContents = directoryToBeDeleted.listFiles();
+	    if (allContents != null) {
+	        for (File file : allContents) {
+	            deleteDirectory(file);
+	        }
+	    }
+	    return directoryToBeDeleted.delete();
 	}
 }
