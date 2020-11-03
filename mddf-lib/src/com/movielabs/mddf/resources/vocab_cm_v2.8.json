@@ -29,6 +29,8 @@
 			"Visual Art",
 			"Performing Art",
 			"Book",
+			"Book-series",
+			"Monographic-series",
 			"Serial",
 			"Comic Book",
 			"Comic Strip",
@@ -146,8 +148,22 @@
 
 		"Relationship/Type": 
 		[
+			"isrelatedto",
 			"isbasedon",
-			"iswithin"
+			"iswithin",
+			"performedat",
+			"createdat",
+			"takesplaceat",
+			"takesplaceduring",
+			"isremakeof"
+		],
+
+		"Relationship/SubType":
+		[
+			"Legend",
+			"Era",
+			"Timeframe",
+			"Date"
 		],
 
 		"EntryClass": 
