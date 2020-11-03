@@ -1,13 +1,10 @@
 {
 	"COMMENT": "refer to Javadoc for com.movielabs.mddflib.util.CMValidator.validateDigitalAsset() before editing",
-	"Audio": 
-	{
-		"Type": 
-		{
+	"Audio": {
+		"Type": {
 			"targetPath": "./md:Type",
 			"ref": "Sec. 5.2.2.1",
-			"values": 
-			[
+			"values": [
 				"primary",
 				"narration",
 				"dialogcentric",
@@ -17,29 +14,24 @@
 				"other"
 			]
 		},
-
-		"SubType": 
-		{
+		"SubType": {
 			"targetPath": "./md:SubType",
 			"ref": "Sec 5.2.2.2",
-			"values": 
-			[
+			"values": [
 				"MandE",
 				"Music",
 				"Effects",
 				"Dialog-only",
+				"Voice-over",
 				"Director",
 				"ActorDirector",
 				"Actor"
 			]
 		},
-
-		"Codec": 
-		{
+		"Codec": {
 			"targetPath": "./md:Encoding/md:Codec",
 			"ref": "Sec. 5.2.3.1",
-			"values": 
-			[
+			"values": [
 				"AAC",
 				"AAC-LC",
 				"AAC-LC+MPS",
@@ -81,37 +73,28 @@
 				"WM9-lossless"
 			]
 		},
-
-		"VBR": 
-		{
+		"VBR": {
 			"targetPath": "./md:Encoding/md:VBR",
 			"ref": "Sec. 5.2.3.3",
-			"values": 
-			[
+			"values": [
 				"VBR",
 				"Constrained VBR",
 				"2-pass VBR"
 			]
 		},
-
-		"Ambisonic/Type": 
-		{
+		"Ambisonic/Type": {
 			"targetPath": "./md:Encoding/md:Ambisonic/md:Type",
 			"ref": "Sec. 5.2.3.5",
-			"values": 
-			[
+			"values": [
 				"Periphonic",
 				"Pantophonic",
 				"Mixed-order"
 			]
 		},
-
-		"Ambisonic/Normalization": 
-		{
+		"Ambisonic/Normalization": {
 			"targetPath": "./md:Encoding/md:Ambisonic/md:Normalization",
 			"ref": "Sec. 5.2.3.5",
-			"values": 
-			[
+			"values": [
 				"SN3D",
 				"SN2D",
 				"maxN",
@@ -120,15 +103,11 @@
 			]
 		}
 	},
-
-	"Video": 
-	{
-		"CaptureMethod": 
-		{
+	"Video": {
+		"CaptureMethod": {
 			"targetPath": "./md:CaptureMethod",
 			"ref": "Sec. 5.2.4",
-			"values": 
-			[
+			"values": [
 				"LiveAction",
 				"MotionCapture",
 				"Rotoscope",
@@ -137,13 +116,10 @@
 				"Animation"
 			]
 		},
-
-		"Type": 
-		{
+		"Type": {
 			"targetPath": "./md:Type",
 			"ref": "Sec. 5.2.4.1",
-			"values": 
-			[
+			"values": [
 				"primary",
 				"overlay",
 				"angle",
@@ -151,13 +127,10 @@
 				"other"
 			]
 		},
-
-		"Encoding/Codec": 
-		{
+		"Encoding/Codec": {
 			"targetPath": "./md:Encoding/md:Codec",
 			"ref": "Sec. 5.2.5.1",
-			"values": 
-			[
+			"values": [
 				"AVI Uncompressed",
 				"CineForm HD",
 				"DIVX",
@@ -198,31 +171,23 @@
 				"OTHER"
 			]
 		},
-
-		"Picture": 
-		{
+		"Picture": {
 			"targetPath": "./md:Picture",
-			"children": 
-			{
-				"PixelAspect": 
-				{
+			"children": {
+				"PixelAspect": {
 					"targetPath": "./md:PixelAspect",
 					"ref": "Sec. 5.2.6",
-					"values": 
-					[
+					"values": [
 						"square",
 						"NTSC",
 						"PAL",
 						"other"
 					]
 				},
-
-				"Type3D": 
-				{
+				"Type3D": {
 					"targetPath": "./md:Type3D",
 					"ref": "Sec. 5.2.6",
-					"values": 
-					[
+					"values": [
 						"left-only",
 						"right-only",
 						"left-right",
@@ -241,69 +206,52 @@
 						"Anaglyph-super"
 					]
 				},
-
-				"FrameRate@timecode": 
-				{
+				"FrameRate@timecode": {
 					"targetPath": "./md:FrameRate/@timecode",
 					"ref": "Sec. 5.2.6.1",
-					"values": 
-					[
+					"values": [
 						"Drop",
 						"EBU",
 						"Other"
 					]
 				},
-				
-				"Progressive@scanOrder": 
-				{
+				"Progressive@scanOrder": {
 					"targetPath": "./md:Progressive/@scanOrder",
 					"ref": "Sec. 5.2.6.2",
-					"values": 
-					[
+					"values": [
 						"TFF",
 						"BFF",
 						"PPF"
 					]
 				},
-
-				"ColorSubsampling": 
-				{
+				"ColorSubsampling": {
 					"targetPath": "./md:ColorSubsampling",
 					"ref": "Sec. 5.2.6.3",
-					"values": 
-					[
+					"values": [
 						"4:1:1",
 						"4:2:0",
 						"4:2:2",
 						"4:4:4"
 					]
 				},
-
-				"Colorimetry": 
-				{
+				"Colorimetry": {
 					"targetPath": "./md:Colorimetry",
 					"ref": "Sec. 5.2.6.4",
-					"values": 
-					[
+					"values": [
 						"601",
 						"709",
 						"2020",
 						"P3",
-						"xyYCC709"
+						"xvYCC709"
 					]
 				},
-
-				"ColorEncoding": 
-				{
+				"ColorEncoding": {
 					"targetPath": "./md:ColorEncoding",
-					"children": 
-					{
-						"Primaries": 
-						{
+					"children": {
+						"Primaries": {
 							"targetPath": "./md:Primaries",
 							"ref": "Sec. 5.2.6.6.1",
-							"values": 
-							[
+							"values": [
 								"BT601",
 								"BT709",
 								"BT2020",
@@ -312,91 +260,70 @@
 								"ACES"
 							]
 						},
-
-						"TransferFunc": 
-						{
+						"TransferFunc": {
 							"targetPath": "./md:TransferFunc",
 							"ref": "Sec. 5.2.6.6.2",
-							"values": 
-							[
+							"values": [
 								"BT1886",
 								"ST428-1",
 								"ST2084",
 								"BT2100HLG"
 							]
 						},
-
-						"ColorDiff": 
-						{
+						"ColorDiff": {
 							"targetPath": "./md:ColorDifferencing",
 							"ref": "Sec. 5.2.6.6.3",
-							"values": 
-							[
+							"values": [
 								"BT601",
 								"BT709",
 								"BT2020",
 								"BT2020CL",
 								"BT2100CI",
 								"ST2085",
-								"xyYCC709",
+								"xvYCC709",
 								"none"
 							]
 						}
 					}
 				},
-
-				"CMax@interpretation": 
-				{
+				"CMax@interpretation": {
 					"targetPath": "./md:LightLevel/md:ContentMax/@interpretation",
 					"ref": "Sec. 5.2.6.8",
-					"values": 
-					[
-						"MaxFall",
+					"values": [
+						"MaxFALL",
 						"MaxCLL"
 					]
 				},
-
-				"SDRDownconversion": 
-				{
+				"SDRDownconversion": {
 					"targetPath": "./md:HDRPlaybackInfo/md:SDRDownconversion",
 					"ref": "Sec. 5.2.6.9",
-					"values": 
-					[
+					"values": [
 						"Prohibited",
 						"ProhibitedAlways"
 					]
 				},
-
-				"360Projection": 
-				{
+				"360Projection": {
 					"targetPath": "./md:ThreeSixty/md:Projection",
 					"ref": "Sec. 5.2.6.10",
-					"values": 
-					[
+					"values": [
 						"equirectangular",
 						"cube32",
 						"cube43"
 					]
 				},
-
-				"360Rendering": 
-				{
+				"360Rendering": {
 					"targetPath": "./md:ThreeSixty/md:Rendering",
 					"ref": "Sec. 5.2.6.10",
-					"values": 
-					[
+					"values": [
 						"sphere",
 						"cylinder",
 						"cube"
 					]
 				},
-
-				"ColorVolXForm": 
-				{
+				"ColorVolXForm": {
 					"targetPath": "./md:ColorTransformMetadata/md:ColorVolumeTransform",
 					"ref": "Sec. 5.2.6.13",
-					"values": 
-					[
+					"values": [
 						"DolbyVision",
 						"SL-HDR",
 						"HDR10PLUS"
@@ -405,15 +332,11 @@
 			}
 		}
 	},
-
-	"Subtitle": 
-	{
-		"Type": 
-		{
+	"Subtitle": {
+		"Type": {
 			"targetPath": "./md:Type",
 			"ref": "Sec. 5.2.7.1",
-			"values": 
-			[
+			"values": [
 				"normal",
 				"SDH",
 				"large",
@@ -425,25 +348,19 @@
 				"other"
 			]
 		},
-
-		"Format": 
-		{
+		"Format": {
 			"targetPath": "./md:Format",
 			"ref": "Sec. 5.2.7.2",
-			"values": 
-			[
+			"values": [
 				"Text",
 				"Image",
 				"Combined"
 			]
 		},
-
-		"FormatType": 
-		{
+		"FormatType": {
 			"targetPath": "./md:FormatType",
 			"ref": "Sec. 5.2.7.3",
-			"values": 
-			[
+			"values": [
 				"3GPP",
 				"Blu-Ray",
 				"CAP",
@@ -463,35 +380,105 @@
 			]
 		}
 	},
-
-	"Image": 
-	{
-		"DynamicRangeProfile": 
-		{
+	"Image": {
+		"DynamicRangeProfile": {
 			"targetPath": "./md:DynamicRangeProfile",
 			"ref": "Sec. 5.2.8",
-			"values": 
-			[
+			"values": [
 				"SDR",
 				"HDR"
 			]
 		},
-
-		"Picture": 
-		{
+		"Picture": {
 			"targetPath": "./md:Picture",
 			"link": "Video>Picture"
+		},
+		"Encoding": {
+			"targetPath": "./md:Encoding",
+			"ref": "Sec. 3.14",
+			"values": [
+				"image/aces",
+				"image/avci",
+				"image/avcs",
+				"image/bmp",
+				"image/cgm",
+				"image/dicom-rle",
+				"image/emf",
+				"image/example",
+				"image/fits",
+				"image/g3fax",
+				"image/gif",
+				"image/heic",
+				"image/heic-sequence",
+				"image/heif",
+				"image/heif-sequence",
+				"image/hej2k",
+				"image/hsj2",
+				"image/ief",
+				"image/jls",
+				"image/jp2",
+				"image/jpeg",
+				"image/jph",
+				"image/jphc",
+				"image/jpm",
+				"image/jpx",
+				"image/jxr",
+				"image/jxrA",
+				"image/jxrS",
+				"image/jxs",
+				"image/jxsc",
+				"image/jxsi",
+				"image/jxss",
+				"image/ktx",
+				"image/ktx2",
+				"image/naplps",
+				"image/png",
+				"image/prs.btif",
+				"image/prs.pti",
+				"image/pwg-raster",
+				"image/svg+xml",
+				"image/t38",
+				"image/tiff",
+				"image/tiff-fx",
+				"image/vnd.adobe.photoshop",
+				"image/vnd.airzip.accelerator.azv",
+				"image/vnd.cns.inf2",
+				"image/vnd.dece.graphic",
+				"image/vnd.djvu",
+				"image/vnd.dwg",
+				"image/vnd.dxf",
+				"image/vnd.dvb.subtitle",
+				"image/vnd.fastbidsheet",
+				"image/vnd.fpx",
+				"image/vnd.fst",
+				"image/vnd.fujixerox.edmics-mmr",
+				"image/vnd.fujixerox.edmics-rlc",
+				"image/vnd.globalgraphics.pgb",
+				"image/vnd.microsoft.icon",
+				"image/vnd.mix",
+				"image/vnd.ms-modi",
+				"image/vnd.mozilla.apng",
+				"image/vnd.net-fpx",
+				"image/vnd.pco.b16",
+				"image/vnd.radiance",
+				"image/vnd.sealed.png",
+				"image/vnd.sealedmedia.softseal.gif",
+				"image/vnd.sealedmedia.softseal.jpg",
+				"image/vnd.svf",
+				"image/vnd.tencent.tap",
+				"image/vnd.valve.source.texture",
+				"image/vnd.wap.wbmp",
+				"image/vnd.xiff",
+				"image/vnd.zbrush.pcx",
+				"image/wmf"
+			]
 		}
 	},
-
-	"Interactive": 
-	{
-		"Type": 
-		{
+	"Interactive": {
+		"Type": {
 			"targetPath": "./md:Type",
 			"ref": "Sec. 5.2.9.1",
-			"values": 
-			[
+			"values": [
 				"Menu",
 				"Mixed-Media",
 				"Standalone Game",
@@ -510,25 +497,19 @@
 				"Other"
 			]
 		},
-
-		"FormatType": 
-		{
+		"FormatType": {
 			"targetPath": "./md:FormatType",
 			"ref": "Sec. 5.2.9.2",
-			"values": 
-			[
+			"values": [
 				"Text",
 				"Executable",
 				"Metadata"
 			]
 		},
-
-		"RuntimeEnvironment": 
-		{
+		"RuntimeEnvironment": {
 			"targetPath": "./md:RuntimeEnvironment",
 			"ref": "Sec. 5.2.9.3",
-			"values": 
-			[
+			"values": [
 				"Flash",
 				"BD-J",
 				"MHEG",
@@ -545,15 +526,11 @@
 			]
 		}
 	},
-
-	"CardsetList": 
-	{
-		"Type": 
-		{
+	"CardsetList": {
+		"Type": {
 			"targetPath": "./md:Type",
 			"ref": "Sec. 5.2.11.1",
-			"values": 
-			[
+			"values": [
 				"Theatrical",
 				"Broadcast",
 				"Hospitality",
@@ -561,18 +538,13 @@
 				"EST"
 			]
 		},
-
-		"Cardset": 
-		{
+		"Cardset": {
 			"targetPath": "./md:Cardset",
-			"children": 
-			{
-				"Type": 
-				{
+			"children": {
+				"Type": {
 					"targetPath": "./md:Type",
-					"ref": "Sec. 5.2.11.1",
-					"values": 
-					[
+					"ref": "Sec. 5.2.11.2",
+					"values": [
 						"AntiPiracy",
 						"DistributionLogo",
 						"Rating",
@@ -586,15 +558,11 @@
 			}
 		}
 	},
-
-	"Ancillary": 
-	{
-		"Type": 
-		{
+	"Ancillary": {
+		"Type": {
 			"targetPath": "./md:Type",
 			"ref": "Sec. 5.2.12.2",
-			"values": 
-			[
+			"values": [
 				"enhancement",
 				"metadata",
 				"variation",
