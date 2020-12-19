@@ -395,16 +395,17 @@ public class ToolLauncher {
 
 	/**
 	 * Initialize the contents of the frame.
+	 *  @wbp.parser.entryPoint
 	 */
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 162);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 46, 0, 0, 0, 0, 0, 0, 0, 0 };
-		gridBagLayout.rowHeights = new int[] { 34, 34, 0, 0, 0 };
+		gridBagLayout.columnWidths = new int[] {46, 0, 30, 30, 0, 30, 30, 0, 30, 30, 0};
+		gridBagLayout.rowHeights = new int[] { 34, 34, 0, 0, 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		frame.getContentPane().setLayout(gridBagLayout);
 
 		JLabel lblNewLabel = new JLabel("MDDF tool launcher");
@@ -414,75 +415,101 @@ public class ToolLauncher {
 		gbc_lblNewLabel.gridx = 1;
 		gbc_lblNewLabel.gridy = 1;
 		frame.getContentPane().add(lblNewLabel, gbc_lblNewLabel);
+				
+						JButton btnAvails = new JButton("Avails");
+						btnAvails.addMouseListener(new MouseAdapter() {
 
-		JButton btnAvails = new JButton("Avails");
-		btnAvails.addMouseListener(new MouseAdapter() {
+							@Override
+							public void mouseClicked(MouseEvent e) {
+								frame.setVisible(false);
+								EventQueue.invokeLater(new Runnable() {
+									public void run() {
+										try {
+											ValidatorTool.tool = new AvailsTool();
+											ValidatorTool.tool.frame.pack();
+											ValidatorTool.tool.frame.setLocationRelativeTo(frame);
+											ValidatorTool.tool.frame.setVisible(true);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+									}
+								});
 
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				frame.setVisible(false);
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							ValidatorTool.tool = new AvailsTool();
-							ValidatorTool.tool.frame.pack();
-							ValidatorTool.tool.frame.setLocationRelativeTo(frame);
-							ValidatorTool.tool.frame.setVisible(true);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+							}
+						});
+						
+								btnAvails.setToolTipText("launch Avail Validator");
+								GridBagConstraints gbc_btnAvails = new GridBagConstraints();
+								gbc_btnAvails.fill = GridBagConstraints.BOTH;
+								gbc_btnAvails.insets = new Insets(0, 0, 5, 5);
+								gbc_btnAvails.gridx = 1;
+								gbc_btnAvails.gridy = 3;
+								frame.getContentPane().add(btnAvails, gbc_btnAvails);
+		
+				JButton btnManifest = new JButton("Manifest");
+				btnManifest.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						frame.setVisible(false);
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									ValidatorTool.tool = new ManifestTool();
+									ValidatorTool.tool.frame.pack();
+									ValidatorTool.tool.frame.setLocationRelativeTo(frame);
+									ValidatorTool.tool.frame.setVisible(true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
 					}
 				});
-
-			}
-		});
-
-		btnAvails.setToolTipText("launch Avail Validator");
-		GridBagConstraints gbc_btnAvails = new GridBagConstraints();
-		gbc_btnAvails.fill = GridBagConstraints.BOTH;
-		gbc_btnAvails.insets = new Insets(0, 0, 0, 5);
-		gbc_btnAvails.gridx = 1;
-		gbc_btnAvails.gridy = 3;
-		frame.getContentPane().add(btnAvails, gbc_btnAvails);
-
-		JButton btnManifest = new JButton("Manifest");
-		btnManifest.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				frame.setVisible(false);
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							ValidatorTool.tool = new ManifestTool();
-							ValidatorTool.tool.frame.pack();
-							ValidatorTool.tool.frame.setLocationRelativeTo(frame);
-							ValidatorTool.tool.frame.setVisible(true);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+				GridBagConstraints gbc_btnManifest = new GridBagConstraints();
+				gbc_btnManifest.insets = new Insets(0, 0, 5, 5);
+				gbc_btnManifest.fill = GridBagConstraints.BOTH;
+				gbc_btnManifest.gridx = 3;
+				gbc_btnManifest.gridy = 3;
+				frame.getContentPane().add(btnManifest, gbc_btnManifest);
+				
+				JButton btnDelivery = new JButton("Delivery");
+				btnDelivery.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						frame.setVisible(false);
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									ValidatorTool.tool = new AssetDeliveryTool();
+									ValidatorTool.tool.frame.pack();
+									ValidatorTool.tool.frame.setLocationRelativeTo(frame);
+									ValidatorTool.tool.frame.setVisible(true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
 					}
 				});
-			}
-		});
-		GridBagConstraints gbc_btnManifest = new GridBagConstraints();
-		gbc_btnManifest.insets = new Insets(0, 0, 0, 5);
-		gbc_btnManifest.fill = GridBagConstraints.BOTH;
-		gbc_btnManifest.gridx = 4;
-		gbc_btnManifest.gridy = 3;
-		frame.getContentPane().add(btnManifest, gbc_btnManifest);
-
-		JButton btnCancel = new JButton("Cancel");
-		btnCancel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				saveState();
-				System.exit(0);
-			}
-		});
-		GridBagConstraints gbc_btnCancel = new GridBagConstraints();
-		gbc_btnCancel.gridx = 7;
-		gbc_btnCancel.gridy = 3;
-		frame.getContentPane().add(btnCancel, gbc_btnCancel);
+				GridBagConstraints gbc_btnDelivery = new GridBagConstraints();
+				gbc_btnDelivery.insets = new Insets(0, 0, 5, 5);
+				gbc_btnDelivery.gridx = 5;
+				gbc_btnDelivery.gridy = 3;
+				frame.getContentPane().add(btnDelivery, gbc_btnDelivery);
+		
+				JButton btnCancel = new JButton("Cancel");
+				btnCancel.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						saveState();
+						System.exit(0);
+					}
+				});
+				GridBagConstraints gbc_btnCancel = new GridBagConstraints();
+				gbc_btnCancel.insets = new Insets(0, 0, 5, 0);
+				gbc_btnCancel.gridx = 7;
+				gbc_btnCancel.gridy = 3;
+				frame.getContentPane().add(btnCancel, gbc_btnCancel);
 	}
 
 	public Component getFrame() { 

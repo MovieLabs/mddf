@@ -112,7 +112,7 @@ import javax.swing.UIManager;
 public abstract class ValidatorTool extends GenericTool implements TreeSelectionListener {
 
 	public static enum Context {
-		MANIFEST, AVAILS
+		MANIFEST, AVAILS, AOD
 	}
 
 	public boolean running = false;
@@ -379,11 +379,10 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 		this.context = context;
 		switch (context) {
 		case MANIFEST:
-			contextId = context.toString();
-			break;
 		case AVAILS:
+		case AOD:
 			contextId = context.toString();
-			break;
+			break; 
 		default:
 			contextId = "";
 		}

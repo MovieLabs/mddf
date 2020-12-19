@@ -49,6 +49,7 @@ import com.movielabs.mddflib.avails.xml.AvailsSheet.Version;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook;
 import com.movielabs.mddflib.avails.xml.AvailsWrkBook.RESULT_STATUS;
 import com.movielabs.mddflib.avails.xml.streaming.StreamingXmlBuilder;
+import com.movielabs.mddflib.delivery.AodValidator;
 import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.manifest.validation.CpeValidator;
@@ -457,6 +458,9 @@ public class ValidationController {
 			File outputLoc = new File(tempDir, "TRACE_" +newName);
 			XmlIngester.writeXml(outputLoc, xmlDoc);
 			break;
+		case AOD:
+			validateAOD(target);
+			break;
 		}
 	}
 
@@ -639,7 +643,12 @@ public class ValidationController {
 	private void validateStatus(MddfTarget target) {
 		OfferStatusValidator tool1 = new OfferStatusValidator(validateC, logMgr);
 		boolean isValid = tool1.process(target);
-		
+	}
+	
+
+	private void validateAOD(MddfTarget target) {
+		AodValidator tool1 = new AodValidator(validateC, logMgr);
+		boolean isValid = tool1.process(target);
 	}
 
 	protected boolean validateMEC(MddfTarget target) throws IOException, JDOMException {

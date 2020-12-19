@@ -228,15 +228,21 @@
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
-		<Ref id="avail04" desc="SeasonStatus vocab">
+		<Ref id="avail04a" desc="SeasonStatus vocab">
 			<Version id="2.1">
 				<Label>Section 2.2.2.4</Label>
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
-		<Ref id="avail05" desc="SeriesStatus vocab">
+		<Ref id="avail04b" desc="SeriesStatus vocab">
 			<Version id="2.1">
 				<Label>Section 2.2.2.5</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref> 
+		<Ref id="avail04c" desc="VolumeStatus vocab">
+			<Version id="2.5">
+				<Label>Section 2.2.2.7</Label>
 				<RelURL></RelURL>
 			</Version>
 		</Ref> 
@@ -276,6 +282,44 @@
 		<Ref id="MData01">
 			<Version id="1.0">
 				<Label>Section 5.1.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+	</Specification>
+    <Specification id="AOD" label="TR-META-AOD" versions="1.0"> 
+		<Ref id="AOD01" desc="Progress codes">
+			<Version id="1.0">
+				<Label>Section 2.3.6</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="AOD02" desc="AssetDisposition status codes">
+			<Version id="1.0">
+				<Label>Section 3.1.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="AOD03" desc="AssetOrder/RequestCode">
+			<Version id="1.0">
+				<Label>Section 4.1.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="AOD04" desc="ProductStatus/Category">
+			<Version id="1.0">
+				<Label>Section 5.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="AOD05" desc="Progress@component">
+			<Version id="1.0">
+				<Label>Section 5.2.1</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
+		<Ref id="AOD06" desc="QC ErrorDescription">
+			<Version id="1.0">
+				<Label>Section 5.4.1</Label>
 				<RelURL></RelURL>
 			</Version>
 		</Ref>
