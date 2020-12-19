@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<avails:AvailList xmlns:avails="http://www.movielabs.com/schema/avails/v2.5/avails" 
+		  xmlns:md="http://www.movielabs.com/schema/md/v2.8/md" 
+		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <!-- ===== Translation History::
+           from Avails v1.8 (xlsx) to Avails v2.4 (xml)
+           mddf-lib version=1.5.2.rc1-SNAPSHOT[3]
+-->
+  <avails:Avail>
+    <avails:ALID>md:alid:sofaspud.com:krfs-s1-e06</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Sofa Spud Films</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>episode</avails:AvailType>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e06">
+      <avails:WorkType>Episode</avails:WorkType>
+      <avails:EpisodeMetadata>
+        <avails:TitleInternalAlias>.. and Your Father Smelled of Elderberries</avails:TitleInternalAlias>
+        <avails:ReleaseDate>2010</avails:ReleaseDate>
+        <avails:People>
+          <md:Job>
+            <md:JobFunction>Director</md:JobFunction>
+          </md:Job>
+          <md:Name>
+            <md:DisplayName>Bozo Malfuchi</md:DisplayName>
+          </md:Name>
+        </avails:People>
+        <avails:EpisodeNumber>
+          <md:Number>6</md:Number>
+        </avails:EpisodeNumber>
+        <avails:SeasonMetadata>
+          <avails:SeasonContentID>md:cid:sofaspud.com:krfs-s01</avails:SeasonContentID>
+          <avails:SeasonNumber />
+          <avails:ReleaseDate>2010</avails:ReleaseDate>
+          <avails:NumberOfEpisodes>7</avails:NumberOfEpisodes>
+          <avails:SeriesMetadata>
+            <avails:SeriesContentID>md:cid:sofaspud.com:krfs</avails:SeriesContentID>
+            <avails:SeriesTitleInternalAlias>Killer Rabbits from Space</avails:SeriesTitleInternalAlias>
+            <avails:ReleaseDate>2010</avails:ReleaseDate>
+            <avails:CompanyDisplayCredit>
+              <md:DisplayString>Sofa Spud Films</md:DisplayString>
+            </avails:CompanyDisplayCredit>
+          </avails:SeriesMetadata>
+        </avails:SeasonMetadata>
+      </avails:EpisodeMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="ssc-krfs-s01-e06">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="SRP">
+        <avails:Money>4.99</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>md:alid:sofaspud.com:krfs-s1-e07</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Sofa Spud Films</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>episode</avails:AvailType>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e07">
+      <avails:WorkType>Episode</avails:WorkType>
+      <avails:EpisodeMetadata>
+        <avails:TitleInternalAlias>Run Away! Run Away!</avails:TitleInternalAlias>
+        <avails:ReleaseDate>2010</avails:ReleaseDate>
+        <avails:People>
+          <md:Job>
+            <md:JobFunction>Director</md:JobFunction>
+          </md:Job>
+          <md:Name>
+            <md:DisplayName>Bozo Malfuchi</md:DisplayName>
+          </md:Name>
+        </avails:People>
+        <avails:EpisodeNumber>
+          <md:Number>7</md:Number>
+        </avails:EpisodeNumber>
+        <avails:SeasonMetadata>
+          <avails:SeasonContentID>md:cid:sofaspud.com:krfs-s01</avails:SeasonContentID>
+          <avails:SeasonNumber />
+          <avails:ReleaseDate>2010</avails:ReleaseDate>
+          <avails:NumberOfEpisodes>7</avails:NumberOfEpisodes>
+          <avails:SeriesMetadata>
+            <avails:SeriesContentID>md:cid:sofaspud.com:krfs</avails:SeriesContentID>
+            <avails:SeriesTitleInternalAlias>Killer Rabbits from Space</avails:SeriesTitleInternalAlias>
+            <avails:ReleaseDate>2010</avails:ReleaseDate>
+            <avails:CompanyDisplayCredit>
+              <md:DisplayString>Sofa Spud Films</md:DisplayString>
+            </avails:CompanyDisplayCredit>
+          </avails:SeriesMetadata>
+        </avails:SeasonMetadata>
+      </avails:EpisodeMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="ssc-krfs-s01-e07">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="SRP">
+        <avails:Money>4.99</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>md:alid:sofaspud.com:krfs-s1-e04</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Sofa Spud Films</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>episode</avails:AvailType>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e04">
+      <avails:WorkType>Episode</avails:WorkType>
+      <avails:EpisodeMetadata>
+        <avails:TitleInternalAlias>I'ld Kill for a Carrot</avails:TitleInternalAlias>
+        <avails:ReleaseDate>2010</avails:ReleaseDate>
+        <avails:People>
+          <md:Job>
+            <md:JobFunction>Director</md:JobFunction>
+          </md:Job>
+          <md:Name>
+            <md:DisplayName>Bozo Malfuchi</md:DisplayName>
+          </md:Name>
+        </avails:People>
+        <avails:EpisodeNumber>
+          <md:Number>4</md:Number>
+        </avails:EpisodeNumber>
+        <avails:SeasonMetadata>
+          <avails:SeasonContentID>md:cid:sofaspud.com:krfs-s01</avails:SeasonContentID>
+          <avails:SeasonNumber />
+          <avails:ReleaseDate>2010</avails:ReleaseDate>
+          <avails:NumberOfEpisodes>7</avails:NumberOfEpisodes>
+          <avails:SeriesMetadata>
+            <avails:SeriesContentID>md:cid:sofaspud.com:krfs</avails:SeriesContentID>
+            <avails:SeriesTitleInternalAlias>Killer Rabbits from Space</avails:SeriesTitleInternalAlias>
+            <avails:ReleaseDate>2010</avails:ReleaseDate>
+            <avails:CompanyDisplayCredit>
+              <md:DisplayString>Sofa Spud Films</md:DisplayString>
+            </avails:CompanyDisplayCredit>
+          </avails:SeriesMetadata>
+        </avails:SeasonMetadata>
+      </avails:EpisodeMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="ssc-krfs-s01-e04">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="SRP">
+        <avails:Money>4.99</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>md:alid:sofaspud.com:krfs-s1-e05</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Sofa Spud Films</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>episode</avails:AvailType>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e05">
+      <avails:WorkType>Episode</avails:WorkType>
+      <avails:EpisodeMetadata>
+        <avails:TitleInternalAlias>Your Mother was a Hamster...</avails:TitleInternalAlias>
+        <avails:ReleaseDate>2010</avails:ReleaseDate>
+        <avails:People>
+          <md:Job>
+            <md:JobFunction>Director</md:JobFunction>
+          </md:Job>
+          <md:Name>
+            <md:DisplayName>Bozo Malfuchi</md:DisplayName>
+          </md:Name>
+        </avails:People>
+        <avails:EpisodeNumber>
+          <md:Number>5</md:Number>
+        </avails:EpisodeNumber>
+        <avails:SeasonMetadata>
+          <avails:SeasonContentID>md:cid:sofaspud.com:krfs-s01</avails:SeasonContentID>
+          <avails:SeasonNumber />
+          <avails:ReleaseDate>2010</avails:ReleaseDate>
+          <avails:NumberOfEpisodes>7</avails:NumberOfEpisodes>
+          <avails:SeriesMetadata>
+            <avails:SeriesContentID>md:cid:sofaspud.com:krfs</avails:SeriesContentID>
+            <avails:SeriesTitleInternalAlias>Killer Rabbits from Space</avails:SeriesTitleInternalAlias>
+            <avails:ReleaseDate>2010</avails:ReleaseDate>
+            <avails:CompanyDisplayCredit>
+              <md:DisplayString>Sofa Spud Films</md:DisplayString>
+            </avails:CompanyDisplayCredit>
+          </avails:SeriesMetadata>
+        </avails:SeasonMetadata>
+      </avails:EpisodeMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="ssc-krfs-s01-e05">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="SRP">
+        <avails:Money>4.99</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>md:alid:sofaspud.com:krfs-s1-v2</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Sofa Spud Films</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>volume</avails:AvailType>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01.2">
+      <avails:WorkType>Volume</avails:WorkType>
+      <avails:VolumeMetadata>
+        <avails:VolumeContentID>md:cid:sofaspud.com:krfs-s01.2</avails:VolumeContentID>
+        <avails:VolumeEIDR-URN>urn:eidr:10.5240:0000-0000-0000-0000-0000-2</avails:VolumeEIDR-URN>
+        <avails:VolumeTitleDisplayUnlimited>Killer Rabbits from Space: Season 1,  Vol II</avails:VolumeTitleDisplayUnlimited>
+        <avails:VolumeTitleInternalAlias>Killer Rabbits from Space: VS1_V2</avails:VolumeTitleInternalAlias>
+        <avails:VolumeNumber>
+          <md:Number>2</md:Number>
+        </avails:VolumeNumber>
+        <avails:ReleaseDate>2010</avails:ReleaseDate>
+        <avails:VolumeFirstEpisodeNumber>3</avails:VolumeFirstEpisodeNumber>
+        <avails:VolumeNumberOfEpisodes>2</avails:VolumeNumberOfEpisodes>
+        <!-- ERROR: should be 'Partial' -->
+        <avails:Status>InComplete</avails:Status>
+        <avails:SeasonMetadata>
+          <avails:SeasonContentID>md:cid:sofaspud.com:krfs-s01</avails:SeasonContentID>
+          <avails:SeasonNumber>
+            <md:Number>1</md:Number>
+          </avails:SeasonNumber>
+          <avails:ReleaseDate>2010</avails:ReleaseDate>
+          <avails:NumberOfEpisodes>7</avails:NumberOfEpisodes>
+          <avails:SeriesMetadata>
+            <avails:SeriesContentID>md:cid:sofaspud.com:krfs</avails:SeriesContentID>
+            <avails:SeriesTitleDisplayUnlimited>Killer Rabbits from Space</avails:SeriesTitleDisplayUnlimited>
+            <avails:SeriesTitleInternalAlias>Killer Rabbits from Space</avails:SeriesTitleInternalAlias>
+            <avails:ReleaseDate>2010</avails:ReleaseDate>
+            <avails:SeriesAltIdentifier>
+              <md:Namespace>org:mddf</md:Namespace>
+              <md:Identifier>SeriesAltID:krfs</md:Identifier>
+            </avails:SeriesAltIdentifier>
+            <avails:SeriesAltIdentifier>
+              <md:Namespace>org:mddf</md:Namespace>
+              <md:Identifier>RetailerSeriesID:KRFS</md:Identifier>
+            </avails:SeriesAltIdentifier>
+            <avails:CompanyDisplayCredit>
+              <md:DisplayString>Sofa Spud Films</md:DisplayString>
+            </avails:CompanyDisplayCredit>
+          </avails:SeriesMetadata>
+        </avails:SeasonMetadata>
+      </avails:VolumeMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="ssc-krfs-s01-v02">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="SRP">
+        <avails:Money>19.99</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>md:alid:sofaspud.com:krfs-s1-e02</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Sofa Spud Films</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>episode</avails:AvailType>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e02">
+      <avails:WorkType>Episode</avails:WorkType>
+      <avails:EpisodeMetadata>
+        <avails:TitleInternalAlias>This Ain't no Ordinary Easter Rabbit</avails:TitleInternalAlias>
+        <avails:ReleaseDate>2010</avails:ReleaseDate>
+        <avails:People>
+          <md:Job>
+            <md:JobFunction>Director</md:JobFunction>
+          </md:Job>
+          <md:Name>
+            <md:DisplayName>Bozo Malfuchi</md:DisplayName>
+          </md:Name>
+        </avails:People>
+        <avails:EpisodeNumber>
+          <md:Number>2</md:Number>
+        </avails:EpisodeNumber>
+        <avails:SeasonMetadata>
+          <avails:SeasonContentID>md:cid:sofaspud.com:krfs-s01</avails:SeasonContentID>
+          <avails:SeasonNumber />
+          <avails:ReleaseDate>2010</avails:ReleaseDate>
+          <avails:NumberOfEpisodes>7</avails:NumberOfEpisodes>
+          <avails:SeriesMetadata>
+            <avails:SeriesContentID>md:cid:sofaspud.com:krfs</avails:SeriesContentID>
+            <avails:SeriesTitleInternalAlias>Killer Rabbits from Space</avails:SeriesTitleInternalAlias>
+            <avails:ReleaseDate>2010</avails:ReleaseDate>
+            <avails:CompanyDisplayCredit>
+              <md:DisplayString>Sofa Spud Films</md:DisplayString>
+            </avails:CompanyDisplayCredit>
+          </avails:SeriesMetadata>
+        </avails:SeasonMetadata>
+      </avails:EpisodeMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="ssc-krfs-s01-e02">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="SRP">
+        <avails:Money>4.99</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>md:alid:sofaspud.com:krfs-s1-v1</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Sofa Spud Films</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>volume</avails:AvailType>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01.1">
+      <avails:WorkType>Volume</avails:WorkType>
+      <!-- ERROR: Volume contains Episode already in another Volume -->
+      <avails:VolumeMetadata>
+        <avails:VolumeContentID>md:cid:sofaspud.com:krfs-s01.1</avails:VolumeContentID>
+        <avails:VolumeEIDR-URN>urn:eidr:10.5240:0000-0000-0000-0000-0000-1</avails:VolumeEIDR-URN>
+        <avails:VolumeTitleDisplayUnlimited>Killer Rabbits from Space: Season 1,  Vol I</avails:VolumeTitleDisplayUnlimited>
+        <avails:VolumeTitleInternalAlias>Killer Rabbits from Space: VS1_V1</avails:VolumeTitleInternalAlias>
+        <avails:VolumeNumber>
+          <md:Number>1</md:Number>
+        </avails:VolumeNumber>
+        <avails:ReleaseDate>2010</avails:ReleaseDate>
+        <avails:VolumeFirstEpisodeNumber>1</avails:VolumeFirstEpisodeNumber>
+        <avails:VolumeNumberOfEpisodes>4</avails:VolumeNumberOfEpisodes>
+        <avails:SeasonMetadata>
+          <avails:SeasonContentID>md:cid:sofaspud.com:krfs-s01</avails:SeasonContentID>
+          <avails:SeasonNumber>
+            <md:Number>1</md:Number>
+          </avails:SeasonNumber>
+          <avails:ReleaseDate>2010</avails:ReleaseDate>
+          <avails:NumberOfEpisodes>7</avails:NumberOfEpisodes>
+          <avails:SeriesMetadata>
+            <avails:SeriesContentID>md:cid:sofaspud.com:krfs</avails:SeriesContentID>
+            <avails:SeriesTitleDisplayUnlimited>Killer Rabbits from Space</avails:SeriesTitleDisplayUnlimited>
+            <avails:SeriesTitleInternalAlias>Killer Rabbits from Space</avails:SeriesTitleInternalAlias>
+            <avails:ReleaseDate>2010</avails:ReleaseDate>
+            <avails:SeriesAltIdentifier>
+              <md:Namespace>org:mddf</md:Namespace>
+              <md:Identifier>SeriesAltID:krfs</md:Identifier>
+            </avails:SeriesAltIdentifier>
+            <avails:SeriesAltIdentifier>
+              <md:Namespace>org:mddf</md:Namespace>
+              <md:Identifier>RetailerSeriesID:KRFS</md:Identifier>
+            </avails:SeriesAltIdentifier>
+            <avails:CompanyDisplayCredit>
+              <md:DisplayString>Sofa Spud Films</md:DisplayString>
+            </avails:CompanyDisplayCredit>
+          </avails:SeriesMetadata>
+        </avails:SeasonMetadata>
+      </avails:VolumeMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="ssc-krfs-s01-v01">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:AssetLanguage>en</avails:AssetLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="SRP">
+        <avails:Money>19.99</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>md:alid:sofaspud.com:krfs-s1-e03</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Sofa Spud Films</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>episode</avails:AvailType>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e03">
+      <avails:WorkType>Episode</avails:WorkType>
+      <avails:EpisodeMetadata>
+        <avails:TitleInternalAlias>This Bunny Bugs Me</avails:TitleInternalAlias>
+        <avails:ReleaseDate>2010</avails:ReleaseDate>
+        <avails:People>
+          <md:Job>
+            <md:JobFunction>Director</md:JobFunction>
+          </md:Job>
+          <md:Name>
+            <md:DisplayName>Bozo Malfuchi</md:DisplayName>
+          </md:Name>
+        </avails:People>
+        <avails:EpisodeNumber>
+          <md:Number>3</md:Number>
+        </avails:EpisodeNumber>
+        <avails:SeasonMetadata>
+          <avails:SeasonContentID>md:cid:sofaspud.com:krfs-s01</avails:SeasonContentID>
+          <avails:SeasonNumber />
+          <avails:ReleaseDate>2010</avails:ReleaseDate>
+          <avails:NumberOfEpisodes>7</avails:NumberOfEpisodes>
+          <avails:SeriesMetadata>
+            <avails:SeriesContentID>md:cid:sofaspud.com:krfs</avails:SeriesContentID>
+            <avails:SeriesTitleInternalAlias>Killer Rabbits from Space</avails:SeriesTitleInternalAlias>
+            <avails:ReleaseDate>2010</avails:ReleaseDate>
+            <avails:CompanyDisplayCredit>
+              <md:DisplayString>Sofa Spud Films</md:DisplayString>
+            </avails:CompanyDisplayCredit>
+          </avails:SeriesMetadata>
+        </avails:SeasonMetadata>
+      </avails:EpisodeMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="ssc-krfs-s01-e03">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="SRP">
+        <avails:Money>4.99</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>md:alid:sofaspud.com:krfs-s1-e01</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Full Extract</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Sofa Spud Films</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>episode</avails:AvailType>
+    <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01-e01">
+      <avails:WorkType>Episode</avails:WorkType>
+      <avails:EpisodeMetadata>
+        <avails:TitleInternalAlias>They Breed like Rabbits</avails:TitleInternalAlias>
+        <avails:ReleaseDate>2010</avails:ReleaseDate>
+        <avails:People>
+          <md:Job>
+            <md:JobFunction>Director</md:JobFunction>
+          </md:Job>
+          <md:Name>
+            <md:DisplayName>Bozo Malfuchi</md:DisplayName>
+          </md:Name>
+        </avails:People>
+        <avails:EpisodeNumber>
+          <md:Number>1</md:Number>
+        </avails:EpisodeNumber>
+        <avails:SeasonMetadata>
+          <avails:SeasonContentID>md:cid:sofaspud.com:krfs-s01</avails:SeasonContentID>
+          <avails:SeasonNumber />
+          <avails:ReleaseDate>2010</avails:ReleaseDate>
+          <avails:NumberOfEpisodes>7</avails:NumberOfEpisodes>
+          <avails:SeriesMetadata>
+            <avails:SeriesContentID>md:cid:sofaspud.com:krfs</avails:SeriesContentID>
+            <avails:SeriesTitleInternalAlias>Killer Rabbits from Space</avails:SeriesTitleInternalAlias>
+            <avails:ReleaseDate>2010</avails:ReleaseDate>
+            <avails:CompanyDisplayCredit>
+              <md:DisplayString>Sofa Spud Films</md:DisplayString>
+            </avails:CompanyDisplayCredit>
+          </avails:SeriesMetadata>
+        </avails:SeasonMetadata>
+      </avails:EpisodeMetadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="ssc-krfs-s01-e01">
+      <avails:LicenseType>EST</avails:LicenseType>
+      <avails:Territory>
+        <md:country>US</md:country>
+      </avails:Territory>
+      <avails:Start>2017-05-05T00:00:00</avails:Start>
+      <avails:End>2017-12-11T23:59:59</avails:End>
+      <avails:AllowedLanguage>en</avails:AllowedLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="SuppressionLiftDate">
+        <avails:Event>2015-04-06</avails:Event>
+      </avails:Term>
+      <avails:Term termName="SRP">
+        <avails:Money>4.99</avails:Money>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+</avails:AvailList>
