@@ -97,7 +97,7 @@ public class StatusValidatorTest extends OfferStatusValidator {
 
 	@Test
 	public void test_basic() throws IOException, JDOMException {
-		MddfTarget target = initialize("OStatus_simple.xml");
+		MddfTarget target = initialize("OStatus-v2.5_simple.xml");
 		execute(target);
 		try {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
