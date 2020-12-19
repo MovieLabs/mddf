@@ -388,6 +388,7 @@
     <avails:ShortDescription>generated XML from Avails_Volume_v1.8.xlsx:Sheet_0 on 2019.04.21.17.36.57</avails:ShortDescription>
     <avails:Asset contentID="md:cid:sofaspud.com:krfs-s01.1">
       <avails:WorkType>Volume</avails:WorkType>
+      <!-- ERROR: Volume contains Episode already in another Volume -->
       <avails:VolumeMetadata>
         <avails:VolumeContentID>md:cid:sofaspud.com:krfs-s01.1</avails:VolumeContentID>
         <avails:VolumeEIDR-URN>urn:eidr:10.5240:0000-0000-0000-0000-0000-1</avails:VolumeEIDR-URN>
