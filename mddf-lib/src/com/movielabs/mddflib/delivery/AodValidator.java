@@ -78,7 +78,7 @@ public class AodValidator extends CMValidator implements IssueLogger {
 	 * .MddfTarget)
 	 */
 	@Override
-	public boolean process(MddfTarget target) throws IOException, JDOMException {
+	public boolean process(MddfTarget target) {
 		curTarget = target;
 		curFile = target.getSrcFile();
 		curLoggingFolder = loggingMgr.pushFileContext(target);
