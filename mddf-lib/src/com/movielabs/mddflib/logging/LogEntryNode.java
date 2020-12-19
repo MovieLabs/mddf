@@ -26,6 +26,8 @@ import java.util.Map;
 
 import org.jdom2.Element;
 
+import com.movielabs.mddflib.util.StringUtils;
+
 /**
  * @author L. Levin, Critical Architectures LLC
  *
@@ -41,7 +43,7 @@ public class LogEntryNode extends LogEntry {
 	/**
 	 * Column separator to use when generating CSV file
 	 */
-	public static String colSep = "\t";
+	public static String colSep = ","; 
 	private static int cCnt;
 
 	static {
@@ -189,7 +191,8 @@ public class LogEntryNode extends LogEntry {
 				trimmedRow = trimmedRow + getTagAsText() + colSep;
 				break;
 			case "Summary":
-				trimmedRow = trimmedRow + summary + colSep;
+				String text = StringUtils.escapeCommas(summary);
+				trimmedRow = trimmedRow + text + colSep; 
 				break;
 			case "File":
 				trimmedRow = trimmedRow + locFile + colSep;
@@ -206,7 +209,7 @@ public class LogEntryNode extends LogEntry {
 				// trimmedRow = trimmedRow + moduleID + colSep;
 				break;
 			case "Reference":
-				trimmedRow = trimmedRow + getReference() + colSep;
+				trimmedRow = trimmedRow + StringUtils.escapeCommas(getReference()) + colSep;
 				break;
 			default:
 				trimmedRow = trimmedRow + " N.A. " + colSep;

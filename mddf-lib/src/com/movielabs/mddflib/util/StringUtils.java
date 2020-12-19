@@ -101,4 +101,18 @@ public class StringUtils {
 		}
 		return extension.toLowerCase();
 	}
+
+	public static String escapeCommas(String text) {
+		// check if the delimeter (i.e., a comma) needs to be dealt with.
+		if (text.contains(",")) {
+			/*
+			 * depending on how data was ingested, the string may or may not have already
+			 * been escaped with double-quotes..
+			 */
+			if (!text.startsWith("\"")) {
+				text = "\"" + text + "\"";
+			}
+		}
+		return text;
+	}
 }
