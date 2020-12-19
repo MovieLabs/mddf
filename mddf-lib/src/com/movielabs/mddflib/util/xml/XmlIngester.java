@@ -63,6 +63,7 @@ public abstract class XmlIngester implements IssueLogger {
 	public String MDMEC_VER = "2.4";
 	public String MAN_VER = "1.5";
 	public String AVAIL_VER = "2.1";
+	public String AOD_VER = "1.1";
 	public Namespace xsiNSpace = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 
 	public Namespace mdNSpace = Namespace.getNamespace("md",
@@ -74,6 +75,9 @@ public abstract class XmlIngester implements IssueLogger {
 			MddfContext.NSPACE_MANIFEST_PREFIX + MAN_VER + MddfContext.NSPACE_MANIFEST_SUFFIX);
 	public Namespace availsNSpace = Namespace.getNamespace("avails",
 			MddfContext.NSPACE_AVAILS_PREFIX + AVAIL_VER + MddfContext.NSPACE_AVAILS_SUFFIX);
+
+	public Namespace deliveryNSpace = Namespace.getNamespace("delivery",
+			MddfContext.NSPACE_AOD_PREFIX + AOD_VER + MddfContext.NSPACE_AOD_SUFFIX);
 
 	protected static XPathFactory xpfac = XPathFactory.instance();
 
@@ -318,6 +322,8 @@ public abstract class XmlIngester implements IssueLogger {
 	 * @return
 	 */
 	public static String identifyXsdVersion(Element docRootEl) {
+		// TODO: refactor: code is same as in 1st part of
+		// MddfContext.identifyMddfFormat()
 		String nSpaceUri = docRootEl.getNamespaceURI();
 		String schemaType = null;
 		if (nSpaceUri.contains("manifest")) {
@@ -326,12 +332,13 @@ public abstract class XmlIngester implements IssueLogger {
 			schemaType = "avails";
 		} else if (nSpaceUri.contains("mdmec")) {
 			schemaType = "mdmec";
+		} else if (nSpaceUri.contains("delivery")) {
+			schemaType = "delivery";
 		} else {
 			return null;
 		}
-		String schemaPrefix = MddfContext.SCHEMA_PREFIX + schemaType + "/v";
-		String schemaVer = nSpaceUri.replace(schemaPrefix, "");
-		schemaVer = schemaVer.replace("/" + schemaType, "");
+		String[] parts = nSpaceUri.split(schemaType + "/v");
+		String schemaVer = parts[1].replace("/" + schemaType, "");
 		return schemaVer;
 	}
 
@@ -377,6 +384,10 @@ public abstract class XmlIngester implements IssueLogger {
 			mdmecNSpace = Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER);
 			mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
 			break;
+		case "AOD":
+			CM_VER = uses.get("MD");
+			MAN_VER = uses.get("MANIFEST");
+			AOD_VER = uses.get("AOD");
 		}
 	}
 

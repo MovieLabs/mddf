@@ -112,7 +112,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		curFile = target.getSrcFile();
 		curLoggingFolder = loggingMgr.pushFileContext(target);
 		String msg = "Begining validation of Avails...";
-		
+
 		loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, msg, curTarget, logMsgSrcId);
 
 		availSchemaVer = identifyXsdVersion(target);
@@ -251,17 +251,24 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateVocab(primaryNS, "EpisodeMetadata", primaryNS, "LocalizationOffering", allowed, docRef, true, true);
 
 		allowed = availVocab.optJSONArray("SeasonStatus");
-		docRef = LogReference.getRef(doc, "avail04");
+		docRef = LogReference.getRef(doc, "avail04a");
 		validateVocab(primaryNS, "SeasonMetadata", primaryNS, "SeasonStatus", allowed, docRef, true, true);
 
 		allowed = availVocab.optJSONArray("SeriesStatus");
-		docRef = LogReference.getRef(doc, "avail05");
+		docRef = LogReference.getRef(doc, "avail04b");
 		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "SeriesStatus", allowed, docRef, true, true);
-		
+
 		allowed = availVocab.optJSONArray("VolumeStatus");
-		// ---------- W.I.P: bug fix due to change for v2.4 and later
-//		docRef = LogReference.getRef(doc, "avail05");
-//		validateVocab(primaryNS, "SeriesMetadata", primaryNS, "SeriesStatus", allowed, docRef, true, true);
+		docRef = LogReference.getRef(doc, "avail04c");
+		/*
+		 * In v2.4 the child element was 'VolumeStatus". From v2.5 on it was renamed
+		 * "Status"
+		 */
+		String childEl = "Status";
+		if(availSchemaVer.equals("2.4")) { 
+			 childEl = "VolumeStatus";
+		}
+		validateVocab(primaryNS, "VolumeMetadata", primaryNS, childEl, allowed, docRef, true, true);
 
 		allowed = availVocab.optJSONArray("DateTimeCondition");
 		docRef = LogReference.getRef(doc, "avail06");
@@ -326,8 +333,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		// added v2.5
 		allowed = availVocab.optJSONArray("@termName='TPRType'");
 		docRef = null;
-		validateVocab(nSpaces, "//avails:Term/avails:Text[../@termName='TPRType']", false, allowed, docRef, false,
-				true, tag4log, "@termName='TPRType'");
+		validateVocab(nSpaces, "//avails:Term/avails:Text[../@termName='TPRType']", false, allowed, docRef, false, true,
+				tag4log, "@termName='TPRType'");
 	}
 
 	/**
@@ -417,7 +424,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 			if (rqmtSpec.has("targetPath")) {
 				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_AVAIL, "Structure check; key= " + key, curTarget,
 						logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null) && curFileIsValid;
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null)
+						&& curFileIsValid;
 			}
 		}
 		return;
@@ -529,8 +537,8 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 	 * (non-Javadoc)
 	 * 
 	 * @see com.movielabs.mddflib.logging.IssueLogger#logIssue(int, int,
-	 * java.lang.Object, java.io.File, java.lang.String, java.lang.String,
-	 * com.movielabs.mddflib.logging.LogReference, java.lang.String)
+	 *      java.lang.Object, java.io.File, java.lang.String, java.lang.String,
+	 *      com.movielabs.mddflib.logging.LogReference, java.lang.String)
 	 */
 	@Override
 	public void logIssue(int tag, int level, Object xmlElement, LogEntryFolder srcFile, String msg, String explanation,

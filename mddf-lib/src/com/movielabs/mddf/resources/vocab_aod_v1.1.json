@@ -1,0 +1,71 @@
+{
+	"aod": 
+	{
+		"ProgressCodes": 
+		[
+			"Ready",
+			"In-Process",
+			"Missing",
+			"Error",
+            "Issue"
+		],
+
+		"AssetAvailability/StatusCode": 
+		[
+			"available",
+			"offered",
+			"processing",
+			"delivered",
+			"rework",
+			"rejected",
+			"recalled",
+			"ingested",
+			"validated",
+			"abandoned",
+			"superseded",
+			"deleted",
+			"on-hold",
+			"orphaned"
+		],
+		"AssetOrder/RequestCode":
+		[
+			"deliver",
+			"redeliver",
+			"cancel",
+			"request"
+		],
+		"ProductStatus/Category":
+		[
+            "feature",
+            "supplemental",
+            "promotional",
+            "image"
+		],
+		"Progress@component":
+		[
+            "media",
+            "artwork",
+            "other",
+            "video",
+            "audio",
+            "timed text",
+            "descriptive",
+            "metadata"
+		],
+		"FullOrPartialQC" : 
+		[
+            "Full",
+            "Partial"
+		],
+		"ErrorDescription/Severity" :
+		[
+            "critical",
+            "high",
+            "medium",
+            "low",
+            "resolved"
+        ]
+		
+ 
+	}
+}
