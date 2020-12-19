@@ -276,6 +276,9 @@ public class MddfTarget extends DefaultMutableTreeNode {
 		} else if (nSpaceUri.contains("mdmec")) {
 			logTag = LogMgmt.TAG_MEC;
 			mddfType = MDDF_TYPE.MEC;
+		} else if (nSpaceUri.contains("delivery")) {
+			logTag = LogMgmt.TAG_AOD;
+			mddfType = MDDF_TYPE.AOD;
 		} else {
 			mddfType = MDDF_TYPE.UNK;
 		}
