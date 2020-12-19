@@ -27,6 +27,8 @@
 
 ---
 ## <a name="h_News">1) What's New</a>
+* 2020-Dec-21: v1.9 released 
+* 2020-Apr-21: v1.8.1 released [See Note-4]
 * 2020-Apr-21: v1.8.0.2 released [See Note-4]
 * 2020-Mar-01: v1.8.0.1 released [See Note-3]
 * 2020-Feb-28: v1.8 released [See Note-3]
@@ -57,6 +59,7 @@ This repository contains Java software supporting the creation and usage of MDDF
 * Common Media Manifest (CMM)
 * Media Manifest Core (MMC)
 * Media Entertainment Core (MEC)
+* Asset Order and Delivery (AOD)
 
 Information on the MovieLabs Digital Distribution Framework and the various MDDF standards is available at <http://www.movielabs.com/md/>
 
@@ -75,15 +78,16 @@ There are two projects within this repository: __mddf-lib__ and __mddf-tools__.
 ### <a name="h_mddf-lib">4.1) mddf-lib</a>
 mddf-lib implements all core (i.e., *non-UI*) functionality that can be used to generate, validate, or transform MDDF files. 
 ### <a name="h_mddf-tools">4.2) mddf-tools</a>
-This project implements standalone applications for performing MDDF-related tasks.
-
-The applications in mddf-tools are implemented on top of mddf-lib and any developers intending to develop their 
+This project implements a standalone application for performing MDDF-related tasks. The application, called the
+Tool Launcher,  is implemented on top of mddf-lib and any developers intending to develop their 
 own mddf support applications are encouraged to do the same.
 
-The mddf-tools software currently implements two applications:
+The Tool Launcher may be used in either an interactive or batch (i.e., scripted) mode.
+Using the tool Launcher provides access to the following MDDF tools:
 
    - **Avails Validator Tool**: may be used to
       - validate an Avails file specified as either XML or XLSX
+      - validate an O	ffer Status file
       - translate an XLSX-formatted Avails to the equivalent XML
       - translate an XML-formatted Avails to the equivalent XLSX
    
@@ -92,9 +96,12 @@ The mddf-tools software currently implements two applications:
      - recommended 'Best Practices'
      - a specific *profile*
 
-
-Releases of the mddf-tools are available as an executable Java jar which supports the processing of either Avails or 
-Manifest files. In addition to an interactive mode, the jar provides a command line interface (CLI) that may be used 
+   - **AOD Validator**: validates that a Asset Availability, Asset Order, or Product Status file conforms with:
+     - the CMM schema
+     - recommended 'Best Practices'
+     
+Releases of the mddf-tools are available as an executable Java jar which supports the processing of all MDDF
+ files. In addition to an interactive mode, the jar provides a command line interface (CLI) that may be used 
 either from a terminal window or in conjunction with scheduled jobs (e.g., via crontab).
 [NOTE: Releases prior to v1.1.3 did not include pre-built executable jars.]
 
@@ -159,7 +166,7 @@ wish to use (e.g., the Avails Validator). To see all supported arguments, use `-
 
 ### <a name="h_Install_native">6.2)  Native Executables (DEPRECATED):</a>
 
-Prior to v1.5 native executables for OS-X, Windows, and Linux were also provided. While these are still available for download, usage
+Prior to v1.5 native executables for OS-X, Windows, and Linux were also provided. While these older executables are still available for download, usage
 is not recommended as they will lack support for the latest MDDF formats and standards. Also note that the executable  Java jar provides support
 for both the Avails and Manifest Validators, in contrast to the OS-specific executables in which there is a separate 
 executable for each validation tool
@@ -198,6 +205,8 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">7) Release History:</a>
+* **2020-Dec-21**: mddf-tool v1.9 released.
+
 * **2020-Apr-21**: mddf-tool v1.8.0.2 released.
 
 * **2020-Mar-01**: mddf-tool v1.8.0.1 released.
