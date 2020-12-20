@@ -5,15 +5,16 @@
 
 ## Versioning
 
-
 ### mddf-lib 1.9
 
 * Enhancement: Ratings DB updated. Now using v2.4.3
-* Enhancement: Added support for processing of Asset Order and Delivery files
+* Enhancement: Added support for processing of Asset Order and Delivery (AOD) files
+* Enhancement: Added support for processing of Order Status files
 * Enhancement: Upgraded to support
-** Manifest v1.10
-** Asset Order and Delivery V1.1
-** Common Metadata v
+  - Manifest v1.10
+  - Media Ent. Core v2.9
+  - Asset Order and Delivery V1.1
+  - Common Metadata v2.9
 
 ### mddf-lib 1.8.1
 
