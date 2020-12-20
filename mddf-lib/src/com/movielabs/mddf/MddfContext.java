@@ -82,7 +82,7 @@ public class MddfContext {
 	static {
 		// --- Supported versions of standards (in order) ---
 		String[] CM_VER = { "2.8", "2.7.1", "2.7", "2.6", "2.5", "2.4" };
-		String[] MANIFEST_VER = {"1.10", "1.9", "1.8.1", "1.8", "1.7", "1.6.1", "1.6", "1.5" };
+		String[] MANIFEST_VER = { "1.10", "1.9", "1.8.1", "1.8", "1.7", "1.6.1", "1.6", "1.5" };
 		String[] MEC_VER = { "2.8", "2.7.1", "2.7", "2.6", "2.5", "2.4" };
 		String[] AVAILS_X_VER = { "2.5", "2.4", "2.3", "2.2.2", "2.2.1", "2.2", "2.1" };
 		String[] AVAILS_E_VER = { "1.9", "1.8", "1.7.3", "1.7.2", "1.7", "1.6" };
@@ -119,8 +119,8 @@ public class MddfContext {
 		MANIFEST_1_8("Manifest", "1.8", "xml"), MANIFEST_1_8_1("Manifest", "1.8.1", "xml"),
 		MANIFEST_1_9("Manifest", "1.9", "xml"), MANIFEST_1_10("Manifest", "1.10", "xml"),
 		MDMEC_2_4("MEC", "2.4", "xml"), MDMEC_2_5("MEC", "2.5", "xml"), MDMEC_2_6("MEC", "2.6", "xml"),
-		MDMEC_2_7("MEC", "2.7", "xml"), MDMEC_2_7_1("MEC", "2.7.1", "xml"), MDMEC_2_8("MEC", "2.8", "xml"),
-		AOD_1_0("AOD", "1.0", "xml"), AOD_1_1("AOD", "1.1", "xml");
+		MDMEC_2_7("MEC", "2.7", "xml"), MDMEC_2_7_1("MEC", "2.7.1", "xml"), MDMEC_2_9("MEC", "2.9", "xml"),
+		MDMEC_2_8("MEC", "2.8", "xml"), AOD_1_0("AOD", "1.0", "xml"), AOD_1_1("AOD", "1.1", "xml");
 
 		private String standard;
 		private String ver;
@@ -181,7 +181,7 @@ public class MddfContext {
 		} else {
 			return null;
 		}
-		String[] parts = nSpaceUri.split(schemaType+"/v");
+		String[] parts = nSpaceUri.split(schemaType + "/v");
 		String schemaVer = parts[1].replace("/" + schemaType, "");
 		return identifyMddfFormat(schemaType, schemaVer);
 	}
@@ -258,6 +258,8 @@ public class MddfContext {
 				return FILE_FMT.MDMEC_2_7_1;
 			case "2.8":
 				return FILE_FMT.MDMEC_2_8;
+			case "2.9":
+				return FILE_FMT.MDMEC_2_9;
 			}
 			break;
 		case "delivery":
@@ -365,6 +367,9 @@ public class MddfContext {
 			uses.put("MD", "2.8");
 			break;
 		case MANIFEST_1_10:
+			uses.put("MD", "2.9");
+			break;
+		case MDMEC_2_9:
 			uses.put("MD", "2.9");
 			break;
 		case MDMEC_2_8:
@@ -511,6 +516,10 @@ public class MddfContext {
 		case MANIFEST_1_10:
 			uses.put("MANIFEST", Namespace.getNamespace("manifest",
 					MddfContext.NSPACE_MANIFEST_PREFIX + "1.10" + MddfContext.NSPACE_MANIFEST_SUFFIX));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.9/md"));
+			break;
+		case MDMEC_2_9:
+			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.9"));
 			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.9/md"));
 			break;
 		case MDMEC_2_8:
