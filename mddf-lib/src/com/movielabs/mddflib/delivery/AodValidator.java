@@ -22,13 +22,13 @@
  */
 package com.movielabs.mddflib.delivery;
 
-import java.io.IOException;
+import java.util.Map;
 
-import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 
 import com.movielabs.mddf.MddfContext;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
+import com.movielabs.mddflib.avails.xml.Pedigree;
 import com.movielabs.mddflib.logging.IssueLogger;
 import com.movielabs.mddflib.logging.LogMgmt;
 import com.movielabs.mddflib.logging.LogReference;
@@ -58,6 +58,7 @@ public class AodValidator extends CMValidator implements IssueLogger {
 	public static final String LOGMSG_ID = "AODValidator";
 	private String deliverySchemaVer;
 	private String aod_type;
+	private Map<Object, Pedigree> pedigreeMap;
 
 	/**
 	 * @param validateC
@@ -79,6 +80,10 @@ public class AodValidator extends CMValidator implements IssueLogger {
 	 */
 	@Override
 	public boolean process(MddfTarget target) {
+		return process(target, null);
+	}
+	
+	public boolean process(MddfTarget target, Map<Object, Pedigree> pedigreeMap) {
 		curTarget = target;
 		curFile = target.getSrcFile();
 		curLoggingFolder = loggingMgr.pushFileContext(target);
@@ -101,7 +106,7 @@ public class AodValidator extends CMValidator implements IssueLogger {
 		curRootEl = null;
 		curFileName = curFile.getName();
 		curFileIsValid = true;
-//		this.pedigreeMap = pedigreeMap;
+		this.pedigreeMap = pedigreeMap;
 
 		validateXml(target);
 		// ==========================
@@ -142,7 +147,7 @@ public class AodValidator extends CMValidator implements IssueLogger {
 			}
 		}
 		// clean up and go home
-//		this.pedigreeMap = null;
+		this.pedigreeMap = null;
 		loggingMgr.popFileContext(target);
 		return curFileIsValid;
 	}
