@@ -27,7 +27,7 @@
 
 ---
 ## <a name="h_News">1) What's New</a>
-* 2020-Dec-21: v1.9 released 
+* 2020-Dec-21: v1.9 and 1.9.0.1 released  [See Note-5]
 * 2020-Apr-21: v1.8.1 released [See Note-4]
 * 2020-Apr-21: v1.8.0.2 released [See Note-4]
 * 2020-Mar-01: v1.8.0.1 released [See Note-3]
@@ -50,6 +50,8 @@ __NOTE-3:__ Release v1.8 contains an update to the Ratings DB with several broke
 was issued 2 days latter to correct this problem and should be used instead of v1.8.
 
 __NOTE-4:__ This fixes a bug that only occurs when running in the non-interactive mode. 
+
+__NOTE-5:__ The v1.9.0.1 release is a patch providing support for Avails 2.5.2
 
 ## <a name="h_Overview">2) Overview:</a>
 

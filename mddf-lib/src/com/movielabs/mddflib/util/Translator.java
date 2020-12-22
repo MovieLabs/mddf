@@ -235,6 +235,12 @@ public class Translator {
 		// formats that a v2.5 file may xlated TO...
 		for_AVAILS_2_5.add(FILE_FMT.AVAILS_1_9);
 		supported.put(FILE_FMT.AVAILS_2_5, for_AVAILS_2_5);
+		
+
+		List<FILE_FMT> for_AVAILS_2_5_2 = new ArrayList<FILE_FMT>();
+		// formats that a v2.5 file may xlated TO...
+		for_AVAILS_2_5_2.add(FILE_FMT.AVAILS_1_9);
+		supported.put(FILE_FMT.AVAILS_2_5_2, for_AVAILS_2_5_2);
 	}
 
 	/**
@@ -509,12 +515,32 @@ public class Translator {
 				case "2.2.3":
 				case "2.3":
 				case "2.4":
+				case "2.5.2":
 					outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
 					break;
 				default:
 					// Unsupported request
 					break;
 				}
+				case AVAILS_2_5_2:
+					switch (curVersion) {
+					case "2.1":
+						outputDoc = avail2_1_to_2_2(inputDoc, logMgr);
+						outputDoc = simpleConversion(outputDoc, curFmt, targetFmt);
+						break;
+					case "2.2":
+					case "2.2.1":
+					case "2.2.2":
+					case "2.2.3":
+					case "2.3":
+					case "2.4":
+					case "2.5":
+						outputDoc = simpleConversion(inputDoc, curFmt, targetFmt);
+						break;
+					default:
+						// Unsupported request
+						break;
+					}
 			}
 			if (outputDoc != null) {
 				addXlateHistory(outputDoc, curFmt, targetFmt);

@@ -5,6 +5,10 @@
 
 ## Versioning
 
+### mddf-lib 1.9.01
+
+* Bug Fix: Avails 2.5.2 schema was missing
+
 ### mddf-lib 1.9
 
 * Enhancement: Ratings DB updated. Now using v2.4.3
