@@ -1,7 +1,7 @@
 {
-  "build.timestamp": "2020-Dec-20 21:19:03 UTC",
-  "mddf.lib.version": "1.9",
+  "build.timestamp": "2020-Dec-22 10:19:03 UTC",
+  "mddf.lib.version": "1.9.0.1",
   "mddf.tool.build": "A",
-  "mddf.tool.version": "1.9",
+  "mddf.tool.version": "1.9.0.1",
   "userMsg": "Added AOD support and upgraded to latest versions of MDDF<br>schemas and Ratings DB. See ChangeLog for details."
 }
