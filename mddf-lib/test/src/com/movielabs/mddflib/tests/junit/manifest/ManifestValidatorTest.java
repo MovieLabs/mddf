@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -22,9 +22,7 @@
  */
 package com.movielabs.mddflib.tests.junit.manifest;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -99,9 +97,18 @@ public class ManifestValidatorTest extends ManifestValidator {
 	}
 
 	/**
+	 * @param string
+	 */
+	protected MddfTarget initializeXML(String xml) {
+		File srcFile = new File("DummyFilename");
+		InputStream targetStream = new ByteArrayInputStream(xml.getBytes());
+		MddfTarget target = new MddfTarget(srcFile, targetStream, iLog, true);
+		return target;
+	}
+	/**
 	 * @throws JDOMException
 	 * @throws IOException
-	 * 
+	 *
 	 */
 	@Test
 	public void testV16noErrors() throws IOException, JDOMException {
@@ -121,7 +128,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 	/**
 	 * @throws JDOMException
 	 * @throws IOException
-	 * 
+	 *
 	 */
 	@Test
 	public void testV16withErrors() throws IOException, JDOMException {
@@ -141,7 +148,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 	/**
 	 * @throws JDOMException
 	 * @throws IOException
-	 * 
+	 *
 	 */
 	@Test
 	public void testV17noErrors() throws IOException, JDOMException {
@@ -161,7 +168,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 	/**
 	 * @throws JDOMException
 	 * @throws IOException
-	 * 
+	 *
 	 */
 	@Test
 	public void testV17withErrors() throws IOException, JDOMException {
@@ -275,7 +282,9 @@ public class ManifestValidatorTest extends ManifestValidator {
 
 	@Test
 	public void testBadNameSpace() throws IOException, JDOMException {
-		MddfTarget target = initialize("bad_namespace.xml");
+		String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+				+ "<manifest:MediaManifest xmlns:manifest=\"foo\"  xmlns:md=\"bar\"/>";
+		MddfTarget target = initializeXML(xmlString);
 		execute(target);
 		try {
 			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
