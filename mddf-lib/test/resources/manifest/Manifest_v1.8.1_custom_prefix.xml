@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TEST ARTIFACT: This file is intended to be a 'complete' Manifest in 
+	that it contains many optional elements. No errors are included. Various 
+	values may not make sense in a production environment but they are technically 
+	valid. -->
+<ns1:MediaManifest
+	xmlns:ns1="http://www.movielabs.com/schema/manifest/v1.8/manifest"
+	xmlns:ns2="http://www.movielabs.com/schema/md/v2.7/md"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.8/manifest manifest-v1.8.1.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	ManifestID="ns2:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V"
+	updateNum="1" versionDescription="Error-free test artifact">
+	<ns1:Compatibility>
+		<ns1:SpecVersion>1.8.1</ns1:SpecVersion>
+		<ns1:System>HTML5</ns1:System>
+		<ns1:System>Roku</ns1:System>
+		<ns1:Profile>none</ns1:Profile>
+	</ns1:Compatibility>
+	<!-- ns1:Source was added for v1.7 but does not have any unique validation 
+		requirements (e.g., controlled vocab) so has not been added to test artifact. -->
+	<ns1:Inventory>
+		<ns1:Audio
+			AudioTrackID="ns2:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<ns2:Description language="en">Background music
+			</ns2:Description>
+			<ns2:Type>primary</ns2:Type>
+			<ns2:SubType>Music</ns2:SubType>
+			<ns2:Encoding>
+				<ns2:Codec>AAC-LC</ns2:Codec>
+				<ns2:CodecType>IANA:audio/mp4</ns2:CodecType>
+				<ns2:BitrateMax>65536</ns2:BitrateMax>
+				<ns2:BitrateAverage>65536</ns2:BitrateAverage>
+				<!-- VBR not supported by Codec (?) so not specified -->
+				<ns2:SampleRate>48000</ns2:SampleRate>
+				<ns2:ChannelMapping>L,R</ns2:ChannelMapping>
+				<ns2:ActualLength>PT10M00.0S</ns2:ActualLength>
+			</ns2:Encoding>
+			<ns2:Language>en</ns2:Language>
+			<ns2:Channels>2</ns2:Channels>
+			<ns1:ContainerReference>
+				<ns1:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</ns1:ContainerLocation>
+			</ns1:ContainerReference>
+		</ns1:Audio>
+		<ns1:Audio
+			AudioTrackID="ns2:audtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer">
+			<ns2:Description language="en">Background music
+			</ns2:Description>
+			<ns2:Type>primary</ns2:Type>
+			<ns2:SubType>Music</ns2:SubType>
+			<ns2:Encoding>
+				<ns2:Codec>AAC-LC</ns2:Codec>
+				<ns2:CodecType>IANA:audio/mp4</ns2:CodecType>
+				<ns2:BitrateMax>65536</ns2:BitrateMax>
+				<ns2:BitrateAverage>65536</ns2:BitrateAverage>
+				<!-- VBR not supported by Codec (?) so not specified -->
+				<ns2:SampleRate>48000</ns2:SampleRate>
+				<ns2:ChannelMapping>L,R</ns2:ChannelMapping>
+				<ns2:ActualLength>PT10M00.0S</ns2:ActualLength>
+			</ns2:Encoding>
+			<ns2:Language>en</ns2:Language>
+			<ns2:Channels>2</ns2:Channels>
+		</ns1:Audio>
+		<ns1:Video
+			VideoTrackID="ns2:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<ns2:Description language="en">Meaningless test Case
+			</ns2:Description>
+			<ns2:Type>primary</ns2:Type>
+			<ns2:Encoding>
+				<ns2:Codec>H.264</ns2:Codec>
+				<ns2:CodecType>IANA:video/H264</ns2:CodecType>
+				<ns2:MPEGProfile>MP</ns2:MPEGProfile>
+				<ns2:MPEGLevel>4.2</ns2:MPEGLevel>
+				<ns2:BitRateAverage>4818000</ns2:BitRateAverage>
+				<ns2:ActualLength>PT63610M</ns2:ActualLength>
+			</ns2:Encoding>
+			<ns2:Picture>
+				<ns2:AspectRatio>16:9</ns2:AspectRatio>
+				<ns2:WidthPixels>1920</ns2:WidthPixels>
+				<ns2:HeightPixels>1080</ns2:HeightPixels>
+				<ns2:ActiveWidthPixels>1920</ns2:ActiveWidthPixels>
+				<ns2:ActiveHeightPixels>1080</ns2:ActiveHeightPixels>
+				<ns2:FrameRate multiplier="1000/1001" timecode="Drop">24
+				</ns2:FrameRate>
+				<ns2:Progressive scanOrder="BFF">false</ns2:Progressive>
+				<ns2:ColorSubsampling>4:2:0</ns2:ColorSubsampling>
+				<ns2:Colorimetry>601</ns2:Colorimetry>
+				<ns2:Type3D>Anaglyph-rg</ns2:Type3D>
+				<!-- MasteredColorVolume: need input from expert -->
+				<ns2:ColorEncoding>
+					<ns2:Primaries>BT709</ns2:Primaries>
+					<ns2:TransferFunction>BT1886</ns2:TransferFunction>
+					<ns2:ColorDifferencing>BT709</ns2:ColorDifferencing>
+				</ns2:ColorEncoding>
+				<!-- LightLevel: need input from expert -->
+				<ns2:HDRPlaybackInfo>
+					<ns2:SDRDownconversion>Prohibited</ns2:SDRDownconversion>
+				</ns2:HDRPlaybackInfo>
+				<ns2:ThreeSixty>
+					<ns2:Projection>cube32</ns2:Projection>
+					<ns2:Rendering>cube</ns2:Rendering>
+				</ns2:ThreeSixty>
+			</ns2:Picture>
+			<ns2:CaptureMethod>Animation</ns2:CaptureMethod>
+			<ns1:ContainerReference>
+				<ns1:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</ns1:ContainerLocation>
+			</ns1:ContainerReference>
+		</ns1:Video>
+		<ns1:Video
+			VideoTrackID="ns2:vidtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer">
+			<ns2:Description language="en">Trailer with teaser for
+				sequel
+			</ns2:Description>
+			<ns2:Type>primary</ns2:Type>
+			<ns2:CaptureMethod>Animation</ns2:CaptureMethod>
+		</ns1:Video>
+		<ns1:Subtitle
+			SubtitleTrackID="ns2:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0001-S">
+			<!-- attribute only allowed if Format isn't 'Text' -->
+			<ns2:Format SDImage="true">Image</ns2:Format>
+			<ns2:Description>Hieroglyphic commentary</ns2:Description>
+			<ns2:Type>commentary</ns2:Type>
+			<ns2:Language>egy-egyp</ns2:Language>
+		</ns1:Subtitle>
+		<ns1:Subtitle
+			SubtitleTrackID="ns2:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0002-S">
+			<!-- attributes only allowed if Format isn't 'Text' -->
+			<ns2:Format>Text</ns2:Format>
+			<ns2:Description>English commentary, with British spellings
+			</ns2:Description>
+			<ns2:Type>commentary</ns2:Type>
+			<ns2:Language>en-br</ns2:Language>
+		</ns1:Subtitle>
+		<ns1:Subtitle
+			SubtitleTrackID="ns2:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0003-S">
+			<!-- attributes only allowed if Format isn't 'Text' -->
+			<ns2:Format>Text</ns2:Format>
+			<ns2:Description>Intro message</ns2:Description>
+			<ns2:Type>forced</ns2:Type>
+			<ns2:Language>en</ns2:Language>
+		</ns1:Subtitle>
+		<!-- ########## Images used in PictureGroups ################# -->
+		<ns1:Image
+			ImageID="ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1">
+			<ns2:Width>1920</ns2:Width>
+			<ns2:Height>1080</ns2:Height>
+			<ns2:Encoding>image/jpeg</ns2:Encoding>
+			<ns1:ContainerReference>
+				<ns1:ContainerLocation>http://www.sofaspud.com/Galleries/BBB_Set_01.jpg
+				</ns1:ContainerLocation>
+			</ns1:ContainerReference>
+		</ns1:Image>
+		<ns1:Image
+			ImageID="ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.1">
+			<ns2:Width>352</ns2:Width>
+			<ns2:Height>198</ns2:Height>
+			<ns2:Encoding>image/jpeg</ns2:Encoding>
+			<ns1:ContainerReference>
+				<ns1:ContainerLocation>http://www.sofaspud.com/Galleries/thumbnails/BBB_Set_01.jpg
+				</ns1:ContainerLocation>
+			</ns1:ContainerReference>
+		</ns1:Image>
+		<ns1:Image
+			ImageID="ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.2">
+			<ns2:Width>1920</ns2:Width>
+			<ns2:Height>1080</ns2:Height>
+			<ns2:Encoding>image/jpeg</ns2:Encoding>
+			<ns1:ContainerReference>
+				<ns1:ContainerLocation>http://www.sofaspud.com/Galleries/BBB_Set_02.jpg
+				</ns1:ContainerLocation>
+			</ns1:ContainerReference>
+		</ns1:Image>
+		<ns1:Image
+			ImageID="ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.2">
+			<ns2:Width>352</ns2:Width>
+			<ns2:Height>198</ns2:Height>
+			<ns2:Encoding>image/jpeg</ns2:Encoding>
+			<ns1:ContainerReference>
+				<ns1:ContainerLocation>http://www.sofaspud.com/Galleries/thumbnails/BBB_Set_02.jpg
+				</ns1:ContainerLocation>
+			</ns1:ContainerReference>
+		</ns1:Image>
+		<ns1:Image
+			ImageID="ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.3">
+			<ns2:Width>1920</ns2:Width>
+			<ns2:Height>1080</ns2:Height>
+			<ns2:Encoding>image/jpeg</ns2:Encoding>
+			<ns1:ContainerReference>
+				<ns1:ContainerLocation>http://www.sofaspud.com/Galleries/BBB_Set_03.jpg
+				</ns1:ContainerLocation>
+			</ns1:ContainerReference>
+		</ns1:Image>
+		<ns1:Image
+			ImageID="ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.3">
+			<ns2:Width>352</ns2:Width>
+			<ns2:Height>198</ns2:Height>
+			<ns2:Encoding>image/jpeg</ns2:Encoding>
+			<ns1:ContainerReference>
+				<ns1:ContainerLocation>http://www.sofaspud.com/Galleries/thumbnails/BBB_Set_03.jpg
+				</ns1:ContainerLocation>
+			</ns1:ContainerReference>
+		</ns1:Image>
+		<!-- ########## ~~~~~~~~~~~~~~~~~~~~ ################# -->
+		<ns1:Metadata
+			ContentID="ns2:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+			<ns1:BasicMetadata
+				ContentID="ns2:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+				<ns2:LocalizedInfo language="en" default="true">
+					<ns2:TitleDisplay60>Big Buck Bunny</ns2:TitleDisplay60>
+					<ns2:TitleDisplayUnlimited>Big Buck Bunny</ns2:TitleDisplayUnlimited>
+					<ns2:TitleSort>Big Buck Bunny</ns2:TitleSort>
+					<ns2:Summary190>A large but peaceful bunny is harassed by three
+						trouble-making rodents
+					</ns2:Summary190>
+					<ns2:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</ns2:Summary400>
+					<ns2:DisplayIndicators>Test</ns2:DisplayIndicators>
+					<ns2:Genre>Animation</ns2:Genre>
+					<ns2:Genre>Short</ns2:Genre>
+					<ns2:Genre>Comedy</ns2:Genre>
+				</ns2:LocalizedInfo>
+				<ns2:RunLength>PT10M00.0S</ns2:RunLength>
+				<ns2:ReleaseYear>2008</ns2:ReleaseYear>
+				<ns2:ReleaseHistory>
+					<ns2:ReleaseType>original</ns2:ReleaseType>
+					<ns2:DistrTerritory>
+						<ns2:country>DE</ns2:country>
+					</ns2:DistrTerritory>
+					<ns2:Date>2016-05-22</ns2:Date>
+				</ns2:ReleaseHistory>
+				<ns2:ReleaseHistory>
+					<ns2:ReleaseType>original</ns2:ReleaseType>
+					<ns2:DistrTerritory>
+						<ns2:country>US</ns2:country>
+					</ns2:DistrTerritory>
+					<ns2:Date>2016-09-24</ns2:Date>
+				</ns2:ReleaseHistory>
+				<ns2:WorkType>Movie</ns2:WorkType>
+				<ns2:RatingSet>
+					<ns2:Rating>
+						<ns2:Region>
+							<ns2:country>DE</ns2:country>
+						</ns2:Region>
+						<ns2:System>FSK</ns2:System>
+						<ns2:Value>16</ns2:Value>
+					</ns2:Rating>
+					<ns2:Rating>
+						<ns2:Region>
+							<ns2:country>US</ns2:country>
+						</ns2:Region>
+						<ns2:System>MPAA</ns2:System>
+						<ns2:Value>G</ns2:Value>
+					</ns2:Rating>
+					<ns2:Rating>
+						<ns2:Region>
+							<ns2:country>DE</ns2:country>
+						</ns2:Region>
+						<ns2:System>FSK</ns2:System>
+						<ns2:Value>16</ns2:Value>
+					</ns2:Rating>
+					<ns2:Rating>
+						<ns2:Region>
+							<ns2:country>ZA</ns2:country>
+						</ns2:Region>
+						<ns2:System>FPB</ns2:System>
+						<ns2:Value>16</ns2:Value>
+						<ns2:Reason>D</ns2:Reason>
+						<ns2:Reason>H</ns2:Reason>
+						<ns2:Reason>N</ns2:Reason>
+					</ns2:Rating>
+				</ns2:RatingSet>
+				<ns2:People>
+					<ns2:Job>
+						<ns2:JobFunction>Director</ns2:JobFunction>
+						<ns2:JobDisplay>Director</ns2:JobDisplay>
+						<ns2:BillingBlockOrder>1</ns2:BillingBlockOrder>
+					</ns2:Job>
+					<ns2:Job>
+						<ns2:JobFunction>Writer</ns2:JobFunction>
+						<ns2:JobDisplay>Writer</ns2:JobDisplay>
+						<ns2:BillingBlockOrder>1</ns2:BillingBlockOrder>
+					</ns2:Job>
+					<ns2:Name>
+						<ns2:DisplayName>Sacha Goedegebure</ns2:DisplayName>
+					</ns2:Name>
+				</ns2:People>
+				<ns2:People>
+					<ns2:Job>
+						<ns2:JobFunction>Producer</ns2:JobFunction>
+						<ns2:JobDisplay>Producer</ns2:JobDisplay>
+						<ns2:BillingBlockOrder>1</ns2:BillingBlockOrder>
+					</ns2:Job>
+					<ns2:Name>
+						<ns2:DisplayName>Ton Roosendaal</ns2:DisplayName>
+					</ns2:Name>
+				</ns2:People>
+				<ns2:PrimarySpokenLanguage>de-DE</ns2:PrimarySpokenLanguage>
+				<ns2:PrimarySpokenLanguage>en-DE</ns2:PrimarySpokenLanguage>
+				<ns2:PrimarySpokenLanguage>en</ns2:PrimarySpokenLanguage>
+				<ns2:PrimarySpokenLanguage>en-1694acad</ns2:PrimarySpokenLanguage>
+				<ns2:PrimarySpokenLanguage>yee-HK</ns2:PrimarySpokenLanguage>
+				<ns2:PrimarySpokenLanguage>cmn-Hans-CN</ns2:PrimarySpokenLanguage>
+				<ns2:PrimarySpokenLanguage>sr-Latn-RS</ns2:PrimarySpokenLanguage>
+			</ns1:BasicMetadata>
+			<ns1:Alias
+				ContentID="ns2:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+				<ns1:LocalizedPair>
+					<ns1:LanguageIncluded>en</ns1:LanguageIncluded>
+				</ns1:LocalizedPair>
+			</ns1:Alias>
+		</ns1:Metadata>
+		<ns1:TextObject
+			TextObjectID="ns2:textobjid:eidr-s:E6CA-AB58-E298-7BA0-E574-A"
+			language="egy-egyp">
+			<ns1:SubtitleID>ns2:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0001-S
+			</ns1:SubtitleID>
+		</ns1:TextObject>
+		<ns1:TextObject
+			TextObjectID="ns2:textobjid:eidr-s:E6CA-AB58-E298-7BA0-E574-B">
+			<ns1:SubtitleID>ns2:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0002-S
+			</ns1:SubtitleID>
+		</ns1:TextObject>
+		<ns1:TextObject
+			TextObjectID="ns2:textobjid:eidr-s:E6CA-AB58-E298-7BA0-E574-C"
+			language="en">
+			<ns1:SubtitleID>ns2:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0003-S
+			</ns1:SubtitleID>
+		</ns1:TextObject>
+		<ns1:TextObject
+			TextObjectID="ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-EN"
+			language="en">
+			<ns1:TextString index="1">The rabbit's sister
+				Jessica became a big movie star
+			</ns1:TextString>
+			<ns1:TextString index="2"> She married Roger
+				Rabbit
+			</ns1:TextString>
+		</ns1:TextObject>
+		<ns1:TextObject
+			TextObjectID="ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-SP"
+			language="es">
+			<ns1:TextString>La hermana Jessica del conejo es una grande
+				estrella de cine
+			</ns1:TextString>
+		</ns1:TextObject>
+		<ns1:TextObject
+			TextObjectID="ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-EN"
+			language="en">
+			<ns1:TextString>Squirrels are members of the family Sciuridae, a
+				family that includes small or medium-size rodents.
+			</ns1:TextString>
+		</ns1:TextObject>
+		<ns1:TextObject
+			TextObjectID="ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-SP"
+			language="es">
+			<ns1:TextString>Las ardillas son miembros de la familia
+				Sciuridae, una familia que incluye pequeño o roedores de tamaño
+				medio.
+			</ns1:TextString>
+		</ns1:TextObject>
+		<ns1:TextObject
+			TextObjectID="ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-EN"
+			language="en">
+			<ns1:TextString>Squirrels are not really vicious animals and can
+				be very nice to others.
+			</ns1:TextString>
+		</ns1:TextObject>
+		<ns1:TextObject
+			TextObjectID="ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-SP"
+			language="es">
+			<ns1:TextString>Las ardillas no son animales realmente viciosos
+				y pueden ser muy agradables a otros.
+			</ns1:TextString>
+		</ns1:TextObject>
+		<!-- Externalns1: added v1.7. No validation issues at this time however 
+			in future may check that the ExternalManifest@ManifestID matches the MediaManifest@ManifestID 
+			in the referenced Container -->
+	</ns1:Inventory>
+	<ns1:Presentations>
+		<!-- the movie -->
+		<ns1:Presentation
+			PresentationID="ns2:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<ns1:TrackMetadata>
+				<ns1:TrackSelectionNumber>0</ns1:TrackSelectionNumber>
+				<ns1:VideoTrackReference>
+					<!-- the vidtrackid must match the one used in the inventory. -->
+					<ns1:VideoTrackID>ns2:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</ns1:VideoTrackID>
+				</ns1:VideoTrackReference>
+				<ns1:AudioTrackReference>
+					<ns1:AudioTrackID>ns2:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</ns1:AudioTrackID>
+				</ns1:AudioTrackReference>
+				<ns1:Purpose>
+					<ns1:WorkType>Movie</ns1:WorkType>
+					<ns1:WorkTypeDetail>feature</ns1:WorkTypeDetail>
+				</ns1:Purpose>
+			</ns1:TrackMetadata>
+			<!-- TODO: add Chapters -->
+			<!-- TODO: add markers -->
+			<!-- TODO: add IMF Ref -->
+		</ns1:Presentation>
+		<!-- the trailer -->
+		<ns1:Presentation
+			PresentationID="ns2:presentationid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer">
+			<ns1:TrackMetadata>
+				<ns1:TrackSelectionNumber>0</ns1:TrackSelectionNumber>
+				<ns1:VideoTrackReference>
+					<!-- the vidtrackid must match the one used in the inventory. -->
+					<ns1:VideoTrackID>ns2:vidtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
+					</ns1:VideoTrackID>
+				</ns1:VideoTrackReference>
+				<ns1:AudioTrackReference>
+					<ns1:AudioTrackID>ns2:audtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
+					</ns1:AudioTrackID>
+				</ns1:AudioTrackReference>
+			</ns1:TrackMetadata>
+		</ns1:Presentation>
+	</ns1:Presentations>
+	<!-- ###############==============================################# -->
+	<ns1:PlayableSequences>
+		<ns1:PlayableSequence>
+			<ns1:Clip sequence="0">
+				<ns1:PresentationID>ns2:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				</ns1:PresentationID>
+			</ns1:Clip>
+			<!-- for versions prior to v1.7 sequence must be continuous and sequential -->
+			<ns1:Clip sequence="0">
+				<ns1:PresentationID>ns2:presentationid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
+				</ns1:PresentationID>
+				<ns1:EntryPointTimecode
+					dropframe='true'>1.25</ns1:EntryPointTimecode>
+			</ns1:Clip>
+		</ns1:PlayableSequence>
+	</ns1:PlayableSequences>
+	<!-- ###############==============================################# -->
+	<ns1:PictureGroups>
+		<ns1:PictureGroup
+			PictureGroupID="ns2:picturegroupid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1">
+			<ns1:Picture>
+				<ns1:PictureID>ns2:pictureid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1
+				</ns1:PictureID>
+				<ns1:ImageID resolution="800x1200">ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1
+				</ns1:ImageID>
+				<ns1:ThumbnailImageID>ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.1
+				</ns1:ThumbnailImageID>
+				<ns1:Caption language="en">A very scary rabbit
+				</ns1:Caption>
+				<ns1:Caption language="es">Un conejo muy aterrador
+				</ns1:Caption>
+			</ns1:Picture>
+			<ns1:Picture>
+				<ns1:PictureID>ns2:pictureid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.2
+				</ns1:PictureID>
+				<ns1:ImageID>ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.2
+				</ns1:ImageID>
+				<ns1:ThumbnailImageID>ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.2
+				</ns1:ThumbnailImageID>
+				<ns1:Caption />
+			</ns1:Picture>
+			<ns1:Picture>
+				<ns1:PictureID>ns2:pictureid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.3
+				</ns1:PictureID>
+				<ns1:ImageID>ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.3
+				</ns1:ImageID>
+				<ns1:ThumbnailImageID>ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.3
+				</ns1:ThumbnailImageID>
+				<ns1:Caption />
+			</ns1:Picture>
+		</ns1:PictureGroup>
+	</ns1:PictureGroups>
+	<!-- ###############==============================################# -->
+	<ns1:TextGroups>
+		<ns1:TextGroup
+			TextGroupID="ns2:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1">
+			<ns1:TextObjectID>ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-EN
+			</ns1:TextObjectID>
+			<ns1:TextObjectID>ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-SP
+			</ns1:TextObjectID>
+		</ns1:TextGroup>
+		<ns1:TextGroup
+			TextGroupID="ns2:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2">
+			<ns1:TextObjectID>ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-EN
+			</ns1:TextObjectID>
+			<ns1:TextObjectID>ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-SP
+			</ns1:TextObjectID>
+		</ns1:TextGroup>
+		<ns1:TextGroup
+			TextGroupID="ns2:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3">
+			<ns1:TextObjectID>ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-EN
+			</ns1:TextObjectID>
+			<ns1:TextObjectID>ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-SP
+			</ns1:TextObjectID>
+		</ns1:TextGroup>
+	</ns1:TextGroups>
+	<!-- ###############==============================################# -->
+	<ns1:Experiences>
+		<ns1:Experience version="0.1"
+			ExperienceID="ns2:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha">
+			<ns1:ContentID>ns2:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
+			</ns1:ContentID>
+			<ns1:Audiovisual
+				ContentID="ns2:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+				<!-- feature movie -->
+				<ns1:Type>Main</ns1:Type>
+				<ns1:SubType>Feature</ns1:SubType>
+				<ns1:PresentationID>ns2:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				</ns1:PresentationID>
+			</ns1:Audiovisual>
+		</ns1:Experience>
+	</ns1:Experiences>
+	<!-- ###############==============================################# -->
+	<!-- ###############==============================################# -->
+	<ns1:TimedEventSequences>
+		<ns1:TimedEventSequence
+			TimedSequenceID="ns2:timedsequenceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:related">
+			<ns1:PresentationID>ns2:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+			</ns1:PresentationID>
+			<ns1:TimedEvent>
+				<ns1:StartTimecode>30.000000</ns1:StartTimecode>
+				<ns1:EndTimecode>37.000000</ns1:EndTimecode>
+				<ns1:Type>Synchronous</ns1:Type>
+				<ns1:TextGroupID index="1">ns2:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1
+				</ns1:TextGroupID>
+			</ns1:TimedEvent>
+			<ns1:TimedEvent>
+				<ns1:StartTimecode>60.000000</ns1:StartTimecode>
+				<ns1:EndTimecode>67.000000</ns1:EndTimecode>
+				<ns1:Type>Synchronous</ns1:Type>
+				<ns1:TextGroupID index="2">ns2:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2
+				</ns1:TextGroupID>
+			</ns1:TimedEvent>
+			<ns1:TimedEvent>
+				<ns1:StartTimecode>182.000000</ns1:StartTimecode>
+				<ns1:EndTimecode>187.000000</ns1:EndTimecode>
+				<ns1:Type>Synchronous</ns1:Type>
+				<ns1:TextGroupID index="5">ns2:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3
+				</ns1:TextGroupID>
+			</ns1:TimedEvent>
+		</ns1:TimedEventSequence>
+	</ns1:TimedEventSequences>
+	<!-- ###############==============================################# -->
+	<!-- ###############==============================################# -->
+	<ns1:ALIDExperienceMaps>
+		<ns1:ALIDExperienceMap>
+			<ns1:ALID>ns2:alid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02
+			</ns1:ALID>
+			<ns1:ExperienceID condition="Acquired"
+				licenseType="EST">ns2:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha
+			</ns1:ExperienceID>
+		</ns1:ALIDExperienceMap>
+	</ns1:ALIDExperienceMaps>
+</ns1:MediaManifest>

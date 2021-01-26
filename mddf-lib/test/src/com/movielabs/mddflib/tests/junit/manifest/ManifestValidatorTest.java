@@ -281,6 +281,24 @@ public class ManifestValidatorTest extends ManifestValidator {
 	}
 
 	@Test
+	public void testCustomPrefix_v1_8_1() throws IOException, JDOMException {
+		MddfTarget target = initialize("Manifest_v1.8.1_custom_prefix.xml");
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			/*
+			 * WIP:
+			 */
+//		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+
+	@Test
 	public void testBadNameSpace() throws IOException, JDOMException {
 		String xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<manifest:MediaManifest xmlns:manifest=\"foo\"  xmlns:md=\"bar\"/>";

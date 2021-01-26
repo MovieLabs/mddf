@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<avails:AvailList xmlns:avails="http://www.movielabs.com/schema/avails/v2.5/avails" xmlns:md="http://www.movielabs.com/schema/md/v2.8/md" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <avails:Avail>
+    <avails:ALID>md:alid:eidr-x:1489-49A2-3956-4B2D-ZZ44-7:Bonus2</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Create</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Rockstar Films</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>suplement</avails:AvailType>
+    <avails:ShortDescription>JUnit test</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:eidr-x:1489-49A2-3956-4B2D-ZZ44-7:Bonus2">
+      <avails:WorkType>Supplemental</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleDisplayUnlimited>Outtakes</avails:TitleDisplayUnlimited>
+        <avails:TitleInternalAlias>View from a Mountain Bonus 2</avails:TitleInternalAlias>
+        <avails:AltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>AltID:md:alid:eidr-x:1489-49A2-3956-4B2D-ZZ44-7:Bonus2</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:ReleaseDate>2006</avails:ReleaseDate>
+        <avails:RunLength>PT0H02M34S</avails:RunLength>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>original</md:ReleaseType>
+          <md:Date>2006-01-30</md:Date>
+        </avails:ReleaseHistory>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>DVD</md:ReleaseType>
+          <md:Date>2006-05-20</md:Date>
+        </avails:ReleaseHistory>
+        <avails:CompanyDisplayCredit>
+          <md:DisplayString />
+        </avails:CompanyDisplayCredit>
+      </avails:Metadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="md:transactionid:eidr-x:1489-49A2-3956-4B2D-ZZ44-7:Bonus2">
+      <avails:LicenseType />
+      <avails:Territory>
+        <md:country>0</md:country>
+      </avails:Territory>
+      <avails:Start>2013-06-14T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AssetLanguage>EN</avails:AssetLanguage>
+      <avails:FormatProfile>SD</avails:FormatProfile>
+      <avails:Term termName="NA">
+        <avails:Text>NA</avails:Text>
+      </avails:Term>
+      <avails:Term termName="Download">
+        <avails:Text>Yes</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+  <avails:Avail>
+    <avails:ALID>md:alid:eidr-x:1489-49A2-3956-4B2D-ZZ44-7:Bonus1</avails:ALID>
+    <avails:Disposition>
+      <avails:EntryType>Create</avails:EntryType>
+    </avails:Disposition>
+    <avails:Licensor>
+      <md:DisplayName>Rockstar Films</md:DisplayName>
+    </avails:Licensor>
+    <avails:ServiceProvider />
+    <avails:AvailType>suplement</avails:AvailType>
+    <avails:ShortDescription>JUnit test</avails:ShortDescription>
+    <avails:Asset contentID="md:cid:eidr-x:1489-49A2-3956-4B2D-ZZ44-7:Bonus1">
+      <avails:WorkType>Supplemental</avails:WorkType>
+      <avails:Metadata>
+        <avails:TitleDisplayUnlimited>Making of The View from a Mountain</avails:TitleDisplayUnlimited>
+        <avails:TitleInternalAlias>View from a Mountain Bonus 1</avails:TitleInternalAlias>
+        <avails:AltIdentifier>
+          <md:Namespace>org:mddf</md:Namespace>
+          <md:Identifier>AltID:md:alid:eidr-x:1489-49A2-3956-4B2D-ZZ44-7:Bonus1</md:Identifier>
+        </avails:AltIdentifier>
+        <avails:ReleaseDate>2006</avails:ReleaseDate>
+        <avails:RunLength>PT0H09M25S</avails:RunLength>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>original</md:ReleaseType>
+          <md:Date>2006-01-30</md:Date>
+        </avails:ReleaseHistory>
+        <avails:ReleaseHistory>
+          <md:ReleaseType>DVD</md:ReleaseType>
+          <md:Date>2006-05-20</md:Date>
+        </avails:ReleaseHistory>
+        <avails:CompanyDisplayCredit>
+          <md:DisplayString />
+        </avails:CompanyDisplayCredit>
+      </avails:Metadata>
+    </avails:Asset>
+    <avails:Transaction TransactionID="md:transactionid:eidr-x:1489-49A2-3956-4B2D-ZZ44-7:Bonus1">
+      <avails:LicenseType />
+      <avails:Territory>
+        <md:country>0</md:country>
+      </avails:Territory>
+      <avails:Start>2013-06-14T00:00:00</avails:Start>
+      <avails:EndCondition>Open</avails:EndCondition>
+      <avails:AssetLanguage>EN</avails:AssetLanguage>
+      <avails:FormatProfile>HD</avails:FormatProfile>
+      <avails:Term termName="NA">
+        <avails:Text>NA</avails:Text>
+      </avails:Term>
+      <avails:Term termName="Download">
+        <avails:Text>Yes</avails:Text>
+      </avails:Term>
+    </avails:Transaction>
+  </avails:Avail>
+</avails:AvailList>
