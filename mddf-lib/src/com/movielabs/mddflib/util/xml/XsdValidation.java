@@ -178,8 +178,8 @@ public class XsdValidation {
 		String mddfType = nsList.get(0).getPrefix();
 		String xsdVer = XmlIngester.identifyXsdVersion(rootEl);
 		// get the version used in the URI with the 'md' prefix:
-		String mdUri = nsMap.get("md").getURI();
-		String mdVer = extractVersionFromUri(mdUri, "md");
+//		String mdUri = nsMap.get("md").getURI();
+//		String mdVer = extractVersionFromUri(mdUri, "md");
 		switch (mddfType) {
 		case "manifest":
 			switch (xsdVer) {

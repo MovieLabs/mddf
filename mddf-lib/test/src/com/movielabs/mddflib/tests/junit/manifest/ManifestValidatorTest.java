@@ -273,6 +273,21 @@ public class ManifestValidatorTest extends ManifestValidator {
 		}
 	}
 
+	@Test
+	public void testBadNameSpace() throws IOException, JDOMException {
+		MddfTarget target = initialize("bad_namespace.xml");
+		execute(target);
+		try {
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+
 	protected void execute(MddfTarget target) throws IOException, JDOMException {
 		iLog.setPrintToConsole(false);
 		iLog.setMinLevel(iLog.LEV_DEBUG);

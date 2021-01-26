@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TEST ARTIFACT: This file can be used to perform specific JUnit tests
+	relating to the Media Manifest specification. -->
+<manifest:MediaManifest
+        xmlns:manifest="foo"
+        xmlns:md="bar">
+</manifest:MediaManifest>

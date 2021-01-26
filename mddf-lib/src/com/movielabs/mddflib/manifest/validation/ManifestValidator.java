@@ -102,6 +102,11 @@ public class ManifestValidator extends CMValidator {
 		curFile = target.getSrcFile();
 		loggingMgr.pushFileContext(target);
 		String schemaVer = identifyXsdVersion(target);
+		if (schemaVer == null) {
+			loggingMgr.log(LogMgmt.LEV_FATAL, logMsgDefaultTag, "No valid MDDF namespaces in target XML",
+					target, -1, "XsdValidation", null, null);
+			return false;
+		}
 		setManifestVersion(schemaVer);
 		rootNS = manifestNSpace;
 		curTarget = target;
