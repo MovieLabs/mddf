@@ -1,0 +1,83 @@
+{
+	"COMMENT": "refer to Javadoc for com.movielabs.mddflib.util.xml.StructureValidation before editing",
+	"StrucRqmts": 
+	{
+		"licenseType": 
+		{
+			"targetPath": ".//{manifest}ExperienceID[@licenseType]",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".[@condition='Acquired']",
+					"msg": "@licenseType is only valid when @condition is 'Acquired'"
+				}
+			]
+		},
+
+		"TrackSelectionNumber": 
+		{
+			"targetPath": ".//{manifest}Presentation",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{manifest}TrackMetadata[{manifest}TrackSelectionNumber='0']",
+					"msg": "Must have exactly 1 instance of TrackMetadata with TrackSelectionNumber='0' per Presentation"
+				}
+			]
+		},
+
+		"Metadata": 
+		{
+			"targetPath": "./{manifest}Inventory/{manifest}Metadata",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"xpath": 
+					[
+						"./{manifest}ContainerReference",
+						"./{manifest}BasicMetadata",
+						"./{manifest}Alias"
+					]
+				}
+			]
+		},
+
+		"ContainerRef": 
+		{
+			"targetPath": ".//{manifest}ContainerReference",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"xpath": 
+					[
+						"./{manifest}ContainerIdentifier",
+						"./{manifest}ContainerLocation",
+						"./{manifest}ParentContainer"
+					]
+				}
+			]
+		},
+		
+		"SubType_commentary": 
+		{
+			"targetPath": ".//{manifest}Audio/{md}SubType[. = 'Director' or . = 'Actor' or . = 'ActorDirector']",
+			"constraint": 
+			[
+				{					
+					"min": "1",
+					"severity": "Error",
+					"xpath": "../{md}Type[. = 'commentary']",
+					"msg": "Specified SubType is only valid when Type is 'commentary'"
+				}
+			]
+		}
+	}
+}
