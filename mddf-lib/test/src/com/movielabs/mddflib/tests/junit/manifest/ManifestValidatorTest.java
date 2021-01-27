@@ -285,7 +285,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 		MddfTarget target = initialize("Manifest_v1.8.1_custom_prefix.xml");
 		execute(target);
 		try {
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 			/*
 			 * WIP:

@@ -90,7 +90,7 @@ public class XsdValidation {
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		URL xsdUrl = assignXSD(target);
 		if (!validateHeader(target, xsdUrl)) {
-			//return false;
+			return false;
 		}
 		String genericTooltip = "XML does not conform to schema as defined in " + xsdLocation;
 		File srcFile = target.getSrcFile(); // used for logging
@@ -175,11 +175,10 @@ public class XsdValidation {
 			nsMap.put(nextNs.getPrefix(), nextNs);
 		}
 		// first ns in the list is the main one
-		String mddfType = nsList.get(0).getPrefix();
+		String mddfType = XmlIngester.identifySchemaType(rootEl);
 		String xsdVer = XmlIngester.identifyXsdVersion(rootEl);
 		// get the version used in the URI with the 'md' prefix:
-//		String mdUri = nsMap.get("md").getURI();
-//		String mdVer = extractVersionFromUri(mdUri, "md");
+
 		switch (mddfType) {
 		case "manifest":
 			switch (xsdVer) {

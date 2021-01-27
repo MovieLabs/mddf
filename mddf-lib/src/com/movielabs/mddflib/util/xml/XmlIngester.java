@@ -1,38 +1,35 @@
 /**
  * Created Jul 27, 2015
  * Copyright Motion Picture Laboratories, Inc. (2015)
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of 
- * this software and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation the rights to use, 
- * copy, modify, merge, publish, distribute, sublicense, and/or sell copies of 
- * the Software, and to permit persons to whom the Software is furnished to do so, 
+ * <p>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all 
+ * <p>
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS 
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+ * <p>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.movielabs.mddflib.util.xml;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import com.movielabs.mddf.MddfContext;
+import com.movielabs.mddf.MddfContext.FILE_FMT;
+import com.movielabs.mddflib.logging.IssueLogger;
+import com.movielabs.mddflib.logging.LogEntryFolder;
+import com.movielabs.mddflib.logging.LogMgmt;
+import com.movielabs.mddflib.logging.LogReference;
+import net.sf.json.JSON;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -44,251 +41,246 @@ import org.jdom2.output.XMLOutputter;
 import org.jdom2.xpath.XPathFactory;
 import org.xml.sax.SAXParseException;
 
-import com.movielabs.mddf.MddfContext;
-import com.movielabs.mddf.MddfContext.FILE_FMT;
-import com.movielabs.mddflib.logging.IssueLogger;
-import com.movielabs.mddflib.logging.LogEntryFolder;
-import com.movielabs.mddflib.logging.LogMgmt;
-import com.movielabs.mddflib.logging.LogReference;
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author L. Levin, Critical Architectures LLC
  *
  */
 public abstract class XmlIngester implements IssueLogger {
-	public String CM_VER = "2.3";
-	public String MDMEC_VER = "2.4";
-	public String MAN_VER = "1.5";
-	public String AVAIL_VER = "2.1";
-	public String AOD_VER = "1.1";
-	public Namespace xsiNSpace = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+    public String CM_VER = "2.3";
+    public String MDMEC_VER = "2.4";
+    public String MAN_VER = "1.5";
+    public String AVAIL_VER = "2.1";
+    public String AOD_VER = "1.1";
+    public Namespace xsiNSpace = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 
-	public Namespace mdNSpace = Namespace.getNamespace("md",
-			MddfContext.NSPACE_CMD_PREFIX + CM_VER + MddfContext.NSPACE_CMD_SUFFIX);
+    public Namespace mdNSpace = Namespace.getNamespace("md",
+            MddfContext.NSPACE_CMD_PREFIX + CM_VER + MddfContext.NSPACE_CMD_SUFFIX);
 
-	public Namespace mdmecNSpace = Namespace.getNamespace("mdmec", MddfContext.NSPACE_MDMEC_PREFIX + MDMEC_VER);
+    public Namespace mdmecNSpace = Namespace.getNamespace("mdmec", MddfContext.NSPACE_MDMEC_PREFIX + MDMEC_VER);
 
-	public Namespace manifestNSpace = Namespace.getNamespace("manifest",
-			MddfContext.NSPACE_MANIFEST_PREFIX + MAN_VER + MddfContext.NSPACE_MANIFEST_SUFFIX);
-	public Namespace availsNSpace = Namespace.getNamespace("avails",
-			MddfContext.NSPACE_AVAILS_PREFIX + AVAIL_VER + MddfContext.NSPACE_AVAILS_SUFFIX);
+    public Namespace manifestNSpace = Namespace.getNamespace("manifest",
+            MddfContext.NSPACE_MANIFEST_PREFIX + MAN_VER + MddfContext.NSPACE_MANIFEST_SUFFIX);
+    public Namespace availsNSpace = Namespace.getNamespace("avails",
+            MddfContext.NSPACE_AVAILS_PREFIX + AVAIL_VER + MddfContext.NSPACE_AVAILS_SUFFIX);
 
-	public Namespace deliveryNSpace = Namespace.getNamespace("delivery",
-			MddfContext.NSPACE_AOD_PREFIX + AOD_VER + MddfContext.NSPACE_AOD_SUFFIX);
+    public Namespace deliveryNSpace = Namespace.getNamespace("delivery",
+            MddfContext.NSPACE_AOD_PREFIX + AOD_VER + MddfContext.NSPACE_AOD_SUFFIX);
 
-	protected static XPathFactory xpfac = XPathFactory.instance();
+    protected static XPathFactory xpfac = XPathFactory.instance();
 
-	private static Map<String, JSONObject> rsrcCache = new HashMap<String, JSONObject>();
+    private static Map<String, JSONObject> rsrcCache = new HashMap<String, JSONObject>();
 
 //	protected File srcFile;
-	// protected static File sourceFolder;
+    // protected static File sourceFolder;
 
-	protected MddfTarget curTarget;
-	protected File curFile;
-	protected String curFileName;
-	protected LogEntryFolder curLoggingFolder;
+    protected MddfTarget curTarget;
+    protected File curFile;
+    protected String curFileName;
+    protected LogEntryFolder curLoggingFolder;
 
-	/*
-	 * should be changed by extending classes
-	 */
-	protected String logMsgSrcId = "Ingester";
-	protected int logMsgDefaultTag = LogMgmt.TAG_N_A;
-	protected LogMgmt loggingMgr;
+    /*
+     * should be changed by extending classes
+     */
+    protected String logMsgSrcId = "Ingester";
+    protected int logMsgDefaultTag = LogMgmt.TAG_N_A;
+    protected LogMgmt loggingMgr;
 
-	public XmlIngester(LogMgmt loggingMgr) {
-		this.loggingMgr = loggingMgr;
-	}
+    public XmlIngester(LogMgmt loggingMgr) {
+        this.loggingMgr = loggingMgr;
+    }
 
-	public static JSONObject getMddfResource(String rsrcId, String version) {
-		String rsrcKey = rsrcId + "_v" + version;
-		JSONObject jsonRsrc = getMddfResource(rsrcKey);
-		return jsonRsrc;
-	}
+    public static JSONObject getMddfResource(String rsrcId, String version) {
+        String rsrcKey = rsrcId + "_v" + version;
+        JSONObject jsonRsrc = getMddfResource(rsrcKey);
+        return jsonRsrc;
+    }
 
-	public static JSONObject getMddfResource(String rsrcId) {
-		String rsrcPath = MddfContext.RSRC_PATH + rsrcId + ".json";
-		JSONObject rsrc = rsrcCache.get(rsrcPath);
-		if (rsrc == null) {
-			try {
-				rsrc = loadJSON(rsrcPath);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-			rsrcCache.put(rsrcPath, rsrc);
-		}
-		return rsrc;
-	}
+    public static JSONObject getMddfResource(String rsrcId) {
+        String rsrcPath = MddfContext.RSRC_PATH + rsrcId + ".json";
+        JSONObject rsrc = rsrcCache.get(rsrcPath);
+        if (rsrc == null) {
+            try {
+                rsrc = loadJSON(rsrcPath);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return null;
+            }
+            rsrcCache.put(rsrcPath, rsrc);
+        }
+        return rsrc;
+    }
 
-	/**
-	 * Return resource defining a version-specific controlled vocabulary set.
-	 * 
-	 * @param rsrcId
-	 * @param rsrcVersion
-	 * @return a JSONObject or <tt>null</tt>. if the resource is not accessible or
-	 *         is not valid JSON
-	 */
-	protected static Object getVocabResource(String rsrcId, String rsrcVersion) {
-		String key = rsrcId + "_v" + rsrcVersion;
-		/*
-		 * Check to see if a version is compatible with earlier version
-		 */
-		switch (key) {
-		case "manifest_v1.8.1":
-			key = "manifest_v1.8";
-			break;
-		case "manifest_v1.6.1":
-			key = "manifest_v1.6";
-			break;
-		case "cm_v2.7.1":
-			key = "cm_v2.7";
-			break;
-		case "cm_v2.6":
-			key = "cm_v2.5";
-			break;
-		}
-		String rsrcPath = MddfContext.RSRC_PATH + "vocab_" + key + ".json";
-		JSONObject rsrc = (JSONObject) rsrcCache.get(rsrcPath);
-		if (rsrc == null) {
-			try {
-				rsrc = loadJSON(rsrcPath);
-			} catch (Exception e) {
-				System.out.println("Missing MDDF Resc " + rsrcPath);
-				e.printStackTrace();
-				return null;
-			}
-			rsrcCache.put(rsrcPath, rsrc);
-		}
-		Object jsonRsrc = rsrc.get(rsrcId);
-		return jsonRsrc;
-	}
+    /**
+     * Return resource defining a version-specific controlled vocabulary set.
+     *
+     * @param rsrcId
+     * @param rsrcVersion
+     * @return a JSONObject or <tt>null</tt>. if the resource is not accessible or
+     *         is not valid JSON
+     */
+    protected static Object getVocabResource(String rsrcId, String rsrcVersion) {
+        String key = rsrcId + "_v" + rsrcVersion;
+        /*
+         * Check to see if a version is compatible with earlier version
+         */
+        switch (key) {
+            case "manifest_v1.8.1":
+                key = "manifest_v1.8";
+                break;
+            case "manifest_v1.6.1":
+                key = "manifest_v1.6";
+                break;
+            case "cm_v2.7.1":
+                key = "cm_v2.7";
+                break;
+            case "cm_v2.6":
+                key = "cm_v2.5";
+                break;
+        }
+        String rsrcPath = MddfContext.RSRC_PATH + "vocab_" + key + ".json";
+        JSONObject rsrc = (JSONObject) rsrcCache.get(rsrcPath);
+        if (rsrc == null) {
+            try {
+                rsrc = loadJSON(rsrcPath);
+            } catch (Exception e) {
+                System.out.println("Missing MDDF Resc " + rsrcPath);
+                e.printStackTrace();
+                return null;
+            }
+            rsrcCache.put(rsrcPath, rsrc);
+        }
+        Object jsonRsrc = rsrc.get(rsrcId);
+        return jsonRsrc;
+    }
 
-	protected static JSONObject loadJSON(String rsrcPath) throws JDOMException, IOException {
-		InputStream inp = XmlIngester.class.getResourceAsStream(rsrcPath);
-		InputStreamReader isr = new InputStreamReader(inp, "UTF-8");
-		BufferedReader reader = new BufferedReader(isr);
-		StringBuilder builder = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			builder.append(line);
-		}
-		String input = builder.toString();
-		return JSONObject.fromObject(input);
-	}
+    protected static JSONObject loadJSON(String rsrcPath) throws JDOMException, IOException {
+        InputStream inp = XmlIngester.class.getResourceAsStream(rsrcPath);
+        InputStreamReader isr = new InputStreamReader(inp, "UTF-8");
+        BufferedReader reader = new BufferedReader(isr);
+        StringBuilder builder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            builder.append(line);
+        }
+        String input = builder.toString();
+        return JSONObject.fromObject(input);
+    }
 
-	protected static Properties loadProperties(String rsrcPath) {
-		Properties props = new Properties();
-		InputStream inStream = XmlIngester.class.getResourceAsStream(rsrcPath);
-		try {
-			props.load(inStream);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-		return props;
-	}
+    protected static Properties loadProperties(String rsrcPath) {
+        Properties props = new Properties();
+        InputStream inStream = XmlIngester.class.getResourceAsStream(rsrcPath);
+        try {
+            props.load(inStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return props;
+    }
 
-	protected static String readFile(String file) throws IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		String line = null;
-		StringBuilder stringBuilder = new StringBuilder();
-		String ls = System.getProperty("line.separator");
-		while ((line = reader.readLine()) != null) {
-			/* remove any tabs (\t) */
-			line = line.replaceAll("\\t", "");
-			/* replace linefeeds with single space */
-			line = line.replaceAll("\\n", " ");
-			stringBuilder.append(line);
-			stringBuilder.append(ls);
-		}
-		reader.close();
-		return stringBuilder.toString();
-	}
+    protected static String readFile(String file) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        String ls = System.getProperty("line.separator");
+        while ((line = reader.readLine()) != null) {
+            /* remove any tabs (\t) */
+            line = line.replaceAll("\\t", "");
+            /* replace linefeeds with single space */
+            line = line.replaceAll("\\n", " ");
+            stringBuilder.append(line);
+            stringBuilder.append(ls);
+        }
+        reader.close();
+        return stringBuilder.toString();
+    }
 
-	public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
-			String moduleId) {
-		loggingMgr.logIssue(tag, level, target, curLoggingFolder, msg, explanation, srcRef, moduleId);
-	}
+    public void logIssue(int tag, int level, Object target, String msg, String explanation, LogReference srcRef,
+                         String moduleId) {
+        loggingMgr.logIssue(tag, level, target, curLoggingFolder, msg, explanation, srcRef, moduleId);
+    }
 
-	public void logIssue(int tag, int level, Object target, LogEntryFolder folder, String msg, String explanation,
-			LogReference srcRef, String moduleId) {
-		loggingMgr.logIssue(tag, level, target, folder, msg, explanation, srcRef, moduleId);
-	}
+    public void logIssue(int tag, int level, Object target, LogEntryFolder folder, String msg, String explanation,
+                         LogReference srcRef, String moduleId) {
+        loggingMgr.logIssue(tag, level, target, folder, msg, explanation, srcRef, moduleId);
+    }
 
-	/**
-	 * Reads an XML-formatted file, converting it to a JDOM document that is
-	 * returned to the caller.
-	 * 
-	 * @param inputFile
-	 * @return
-	 * @throws SAXParseException if the XML is improperly formatted
-	 * @throws IOException       it the specified file can not be found or read.
-	 */
-	public static Document getAsXml(File inputFile) throws SAXParseException, IOException {
-		InputStreamReader isr;
-		isr = new InputStreamReader(new FileInputStream(inputFile), "UTF-8");
-		SAXBuilder builder = new SAXBuilder();
-		builder.setJDOMFactory(new LocatedJDOMFactory());
-		Document xmlDoc;
-		try {
-			xmlDoc = builder.build(isr);
-		} catch (JDOMException e) {
-			SAXParseException cause = (SAXParseException) e.getCause();
-			throw cause;
-		}
-		return xmlDoc;
-	}
+    /**
+     * Reads an XML-formatted file, converting it to a JDOM document that is
+     * returned to the caller.
+     *
+     * @param inputFile
+     * @return
+     * @throws SAXParseException if the XML is improperly formatted
+     * @throws IOException       it the specified file can not be found or read.
+     */
+    public static Document getAsXml(File inputFile) throws SAXParseException, IOException {
+        InputStreamReader isr;
+        isr = new InputStreamReader(new FileInputStream(inputFile), "UTF-8");
+        SAXBuilder builder = new SAXBuilder();
+        builder.setJDOMFactory(new LocatedJDOMFactory());
+        Document xmlDoc;
+        try {
+            xmlDoc = builder.build(isr);
+        } catch (JDOMException e) {
+            SAXParseException cause = (SAXParseException) e.getCause();
+            throw cause;
+        }
+        return xmlDoc;
+    }
 
-	/**
-	 * Reads XML-formatted data from an <tt>InputStream</tt>, converting it to a
-	 * JDOM document that is returned to the caller.
-	 * 
-	 * @param inStream
-	 * @return
-	 * @throws IOException
-	 * @throws SAXParseException
-	 */
-	public static Document getAsXml(InputStream inStream) throws IOException, SAXParseException {
-		InputStreamReader isr = new InputStreamReader(inStream, "UTF-8");
-		SAXBuilder builder = new SAXBuilder();
-		builder.setJDOMFactory(new LocatedJDOMFactory());
-		Document xmlDoc;
-		try {
-			xmlDoc = builder.build(isr);
-		} catch (JDOMException e) {
-			SAXParseException cause = (SAXParseException) e.getCause();
-			throw cause;
-		}
-		return xmlDoc;
-	}
+    /**
+     * Reads XML-formatted data from an <tt>InputStream</tt>, converting it to a
+     * JDOM document that is returned to the caller.
+     *
+     * @param inStream
+     * @return
+     * @throws IOException
+     * @throws SAXParseException
+     */
+    public static Document getAsXml(InputStream inStream) throws IOException, SAXParseException {
+        InputStreamReader isr = new InputStreamReader(inStream, "UTF-8");
+        SAXBuilder builder = new SAXBuilder();
+        builder.setJDOMFactory(new LocatedJDOMFactory());
+        Document xmlDoc;
+        try {
+            xmlDoc = builder.build(isr);
+        } catch (JDOMException e) {
+            SAXParseException cause = (SAXParseException) e.getCause();
+            throw cause;
+        }
+        return xmlDoc;
+    }
 
-	public static boolean writeXml(File outputLoc, Document xmlDoc) {
-		Format myFormat = Format.getPrettyFormat();
-		XMLOutputter outputter = new XMLOutputter(myFormat);
-		try {
-			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(outputLoc), "UTF-8");
-			outputter.output(xmlDoc, osw);
-			osw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return (outputLoc.exists());
-	}
+    public static boolean writeXml(File outputLoc, Document xmlDoc) {
+        Format myFormat = Format.getPrettyFormat();
+        XMLOutputter outputter = new XMLOutputter(myFormat);
+        try {
+            OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(outputLoc), "UTF-8");
+            outputter.output(xmlDoc, osw);
+            osw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return (outputLoc.exists());
+    }
 
-	public static JSONObject getAsJson(File inputFile) throws IOException {
-		String inString = readFile(inputFile.getAbsolutePath());
-		JSON jsonObj = JSONSerializer.toJSON(inString);
-		return (JSONObject) jsonObj;
-	}
+    public static JSONObject getAsJson(File inputFile) throws IOException {
+        String inString = readFile(inputFile.getAbsolutePath());
+        JSON jsonObj = JSONSerializer.toJSON(inString);
+        return (JSONObject) jsonObj;
+    }
 
-	/**
-	 * @param srcPath the srcPath to set
-	 */
+    /**
+     * @param srcPath the srcPath to set
+     */
 //	public void setSourceDirPath(String srcPath) {
 //		if (srcPath != null) {
 //			srcFile = new File(srcPath);
@@ -298,153 +290,163 @@ public abstract class XmlIngester implements IssueLogger {
 //
 //	}
 
-	/**
-	 * Identify the XSD version for the document's <i>primary</i> MDDF namespace
-	 * (i.e., Manifest, Avails, MDMec, etc.). Version is returned as a string that
-	 * <i>may</i> contain major and minor version identification (e.g. '2.1',
-	 * '1.7.3_rc1')
-	 * 
-	 * @param target
-	 * @return
-	 */
-	public static String identifyXsdVersion(MddfTarget target) {
-		Element docRootEl = target.getXmlDoc().getRootElement();
-		return identifyXsdVersion(docRootEl);
-	}
+    /**
+     * Identify the XSD version for the document's <i>primary</i> MDDF namespace
+     * (i.e., Manifest, Avails, MDMec, etc.). Version is returned as a string that
+     * <i>may</i> contain major and minor version identification (e.g. '2.1',
+     * '1.7.3_rc1')
+     *
+     * @param target
+     * @return
+     */
+    public static String identifyXsdVersion(MddfTarget target) {
+        Element docRootEl = target.getXmlDoc().getRootElement();
+        return identifyXsdVersion(docRootEl);
+    }
 
-	/**
-	 * Identify the XSD version for the document's <i>primary</i> MDDF namespace
-	 * (i.e., Manifest, Avails, MDMec, etc.). Version is returned as a string that
-	 * <i>may</i> contain major and minor version identification (e.g. '2.1',
-	 * '1.7.3_rc1')
-	 * 
-	 * @param docRootEl
-	 * @return
-	 */
-	public static String identifyXsdVersion(Element docRootEl) {
-		// TODO: refactor: code is same as in 1st part of
-		// MddfContext.identifyMddfFormat()
-		String nSpaceUri = docRootEl.getNamespaceURI();
-		String schemaType = null;
-		if (nSpaceUri.contains("manifest")) {
-			schemaType = "manifest";
-		} else if (nSpaceUri.contains("avails")) {
-			schemaType = "avails";
-		} else if (nSpaceUri.contains("mdmec")) {
-			schemaType = "mdmec";
-		} else if (nSpaceUri.contains("delivery")) {
-			schemaType = "delivery";
-		} else {
-			return null;
-		}
-		String[] parts = nSpaceUri.split(schemaType + "/v");
-		String schemaVer = parts[1].replace("/" + schemaType, "");
-		return schemaVer;
-	}
+    /**
+     * Identify the XSD version for the document's <i>primary</i> MDDF namespace
+     * (i.e., Manifest, Avails, MDMec, etc.). Version is returned as a string that
+     * <i>may</i> contain major and minor version identification (e.g. '2.1',
+     * '1.7.3_rc1')
+     *
+     * @param docRootEl
+     * @return
+     */
+    public static String identifyXsdVersion(Element docRootEl) {
+        // TODO: refactor: code is same as in 1st part of
+        // MddfContext.identifyMddfFormat()
+        String nSpaceUri = docRootEl.getNamespaceURI();
+        String schemaType = identifySchemaType(nSpaceUri);
+        if (schemaType == null) {
+            return null;
+        }
+        String[] parts = nSpaceUri.split(schemaType + "/v");
+        String schemaVer = parts[1].replace("/" + schemaType, "");
+        return schemaVer;
+    }
 
-	/**
-	 * Configure all XML-related functions to work with the specified MDDF format.
-	 * This includes setting the correct version of the Common Metadata (CM) XSD
-	 * that is used with the version indicated. For example, if the <tt>mddfFmt</tt>
-	 * indicates the format is "Manifest v1.6" then the CM version is set to v2.5.
-	 * At the same time, since Manifest XSD do not reference the MEC XSD, the MEX
-	 * version would be set to <tt>null</tt>.
-	 * 
-	 * @param mddfFmt
-	 */
-	public void setMddfVersions(FILE_FMT mddfFmt) {
-		Map<String, String> uses = MddfContext.getReferencedXsdVersions(mddfFmt);
-		switch (mddfFmt.getStandard()) {
-		case "Avails":
-			AVAIL_VER = mddfFmt.getVersion();
-			CM_VER = uses.get("MD");
-			MDMEC_VER = uses.get("MDMEC");
-			/* Since Manifest isn't used for Avails, set to NULL */
-			MAN_VER = null;
-			mdmecNSpace = Namespace.getNamespace("md",
-					"http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
-			mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
-			availsNSpace = Namespace.getNamespace("avails",
-					"http://www.movielabs.com/schema/avails/v" + AVAIL_VER + "/avails");
-			break;
-		case "Manifest":
-			MAN_VER = mddfFmt.getVersion();
-			CM_VER = uses.get("MD");
-			/* Since MDMEC isn't used for Manifest, set to NULL */
-			MDMEC_VER = null;
-			mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
-			manifestNSpace = Namespace.getNamespace("manifest",
-					MddfContext.NSPACE_MANIFEST_PREFIX + MAN_VER + MddfContext.NSPACE_MANIFEST_SUFFIX);
-			break;
-		case "MEC":
-			MDMEC_VER = mddfFmt.getVersion();
-			CM_VER = uses.get("MD");
-			/* Since Manifest isn't used for MEC, set to NULL */
-			MAN_VER = null;
-			mdmecNSpace = Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER);
-			mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
-			break;
-		case "AOD":
-			CM_VER = uses.get("MD");
-			MAN_VER = uses.get("MANIFEST");
-			AOD_VER = uses.get("AOD");
-		}
-	}
+    public static String identifySchemaType(Element docRootEl) {
+        // MddfContext.identifyMddfFormat()
+        String nSpaceUri = docRootEl.getNamespaceURI();
+        return identifySchemaType(nSpaceUri);
+    }
 
-	/**
-	 * Configure all XML-related functions to work with the specified version of the
-	 * Manifest XSD. This includes setting the correct version of the Common
-	 * Metadata XSD that is used with the specified Manifest version. If the
-	 * <tt>manifestSchemaVer</tt> is not supported by the current version of
-	 * <tt>mddf-lib</tt> an <tt>IllegalArgumentException</tt> will be thrown.
-	 * <p>
-	 * Use of this method is an alternative to use of
-	 * <tt>setMddfVersions(FILE_FMT mddfFmt)</tt>
-	 * </p>
-	 * 
-	 * @param manifestSchemaVer
-	 * @throws IllegalArgumentException
-	 */
-	public void setManifestVersion(String manifestSchemaVer) throws IllegalArgumentException {
-		FILE_FMT manifestFmt = MddfContext.identifyMddfFormat("manifest", manifestSchemaVer);
-		if (manifestFmt == null) {
-			throw new IllegalArgumentException("Unsupported Manifest Schema version " + manifestSchemaVer);
-		}
-		setMddfVersions(manifestFmt);
-	}
+    public static String identifySchemaType(String nSpaceUri) {
+        String schemaType = null;
+        if (nSpaceUri.contains("manifest")) {
+            schemaType = "manifest";
+        } else if (nSpaceUri.contains("avails")) {
+            schemaType = "avails";
+        } else if (nSpaceUri.contains("mdmec")) {
+            schemaType = "mdmec";
+        }
+        return schemaType;
+    }
 
-	/**
-	 * @param mecSchemaVer
-	 * @throws IllegalArgumentException
-	 */
-	public void setMdMecVersion(String mecSchemaVer) throws IllegalArgumentException {
-		FILE_FMT mecFmt = MddfContext.identifyMddfFormat("mdmec", mecSchemaVer);
-		if (mecFmt == null) {
-			throw new IllegalArgumentException("Unsupported MEC Schema version " + mecSchemaVer);
-		}
-		setMddfVersions(mecFmt);
-	}
+    /**
+     * Configure all XML-related functions to work with the specified MDDF format.
+     * This includes setting the correct version of the Common Metadata (CM) XSD
+     * that is used with the version indicated. For example, if the <tt>mddfFmt</tt>
+     * indicates the format is "Manifest v1.6" then the CM version is set to v2.5.
+     * At the same time, since Manifest XSD do not reference the MEC XSD, the MEX
+     * version would be set to <tt>null</tt>.
+     *
+     * @param mddfFmt
+     */
+    public void setMddfVersions(FILE_FMT mddfFmt) {
+        Map<String, String> uses = MddfContext.getReferencedXsdVersions(mddfFmt);
+        switch (mddfFmt.getStandard()) {
+            case "Avails":
+                AVAIL_VER = mddfFmt.getVersion();
+                CM_VER = uses.get("MD");
+                MDMEC_VER = uses.get("MDMEC");
+                /* Since Manifest isn't used for Avails, set to NULL */
+                MAN_VER = null;
+                mdmecNSpace = Namespace.getNamespace("md",
+                        "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER + "/mdmec");
+                mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
+                availsNSpace = Namespace.getNamespace("avails",
+                        "http://www.movielabs.com/schema/avails/v" + AVAIL_VER + "/avails");
+                break;
+            case "Manifest":
+                MAN_VER = mddfFmt.getVersion();
+                CM_VER = uses.get("MD");
+                /* Since MDMEC isn't used for Manifest, set to NULL */
+                MDMEC_VER = null;
+                mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
+                manifestNSpace = Namespace.getNamespace("manifest",
+                        MddfContext.NSPACE_MANIFEST_PREFIX + MAN_VER + MddfContext.NSPACE_MANIFEST_SUFFIX);
+                break;
+            case "MEC":
+                MDMEC_VER = mddfFmt.getVersion();
+                CM_VER = uses.get("MD");
+                /* Since Manifest isn't used for MEC, set to NULL */
+                MAN_VER = null;
+                mdmecNSpace = Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v" + MDMEC_VER);
+                mdNSpace = Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v" + CM_VER + "/md");
+                break;
+            case "AOD":
+                CM_VER = uses.get("MD");
+                MAN_VER = uses.get("MANIFEST");
+                AOD_VER = uses.get("AOD");
+        }
+    }
 
-	/**
-	 * Configure all XML-related functions to work with the specified version of the
-	 * Avails XSD. This includes setting the correct version of the Common Metadata
-	 * and MDMEC XSD that are used with the specified Avails version. If the
-	 * <tt>availSchemaVer</tt> is not supported by the current version of
-	 * <tt>mddf-lib</tt> an <tt>IllegalArgumentException</tt> will be thrown.
-	 * <p>
-	 * Use of this method is an alternative to use of
-	 * <tt>setMddfVersions(FILE_FMT mddfFmt)</tt>
-	 * </p>
-	 * 
-	 * @param availSchemaVer
-	 * @throws IllegalArgumentException
-	 */
-	public void setAvailVersion(String availSchemaVer) throws IllegalArgumentException {
-		FILE_FMT availsFmt = MddfContext.identifyMddfFormat("avails", availSchemaVer);
-		if (availsFmt == null) {
-			throw new IllegalArgumentException("Unsupported Avails Schema version " + availSchemaVer);
-		}
-		setMddfVersions(availsFmt);
-	}
+    /**
+     * Configure all XML-related functions to work with the specified version of the
+     * Manifest XSD. This includes setting the correct version of the Common
+     * Metadata XSD that is used with the specified Manifest version. If the
+     * <tt>manifestSchemaVer</tt> is not supported by the current version of
+     * <tt>mddf-lib</tt> an <tt>IllegalArgumentException</tt> will be thrown.
+     * <p>
+     * Use of this method is an alternative to use of
+     * <tt>setMddfVersions(FILE_FMT mddfFmt)</tt>
+     * </p>
+     *
+     * @param manifestSchemaVer
+     * @throws IllegalArgumentException
+     */
+    public void setManifestVersion(String manifestSchemaVer) throws IllegalArgumentException {
+        FILE_FMT manifestFmt = MddfContext.identifyMddfFormat("manifest", manifestSchemaVer);
+        if (manifestFmt == null) {
+            throw new IllegalArgumentException("Unsupported Manifest Schema version " + manifestSchemaVer);
+        }
+        setMddfVersions(manifestFmt);
+    }
+
+    /**
+     * @param mecSchemaVer
+     * @throws IllegalArgumentException
+     */
+    public void setMdMecVersion(String mecSchemaVer) throws IllegalArgumentException {
+        FILE_FMT mecFmt = MddfContext.identifyMddfFormat("mdmec", mecSchemaVer);
+        if (mecFmt == null) {
+            throw new IllegalArgumentException("Unsupported MEC Schema version " + mecSchemaVer);
+        }
+        setMddfVersions(mecFmt);
+    }
+
+    /**
+     * Configure all XML-related functions to work with the specified version of the
+     * Avails XSD. This includes setting the correct version of the Common Metadata
+     * and MDMEC XSD that are used with the specified Avails version. If the
+     * <tt>availSchemaVer</tt> is not supported by the current version of
+     * <tt>mddf-lib</tt> an <tt>IllegalArgumentException</tt> will be thrown.
+     * <p>
+     * Use of this method is an alternative to use of
+     * <tt>setMddfVersions(FILE_FMT mddfFmt)</tt>
+     * </p>
+     *
+     * @param availSchemaVer
+     * @throws IllegalArgumentException
+     */
+    public void setAvailVersion(String availSchemaVer) throws IllegalArgumentException {
+        FILE_FMT availsFmt = MddfContext.identifyMddfFormat("avails", availSchemaVer);
+        if (availsFmt == null) {
+            throw new IllegalArgumentException("Unsupported Avails Schema version " + availSchemaVer);
+        }
+        setMddfVersions(availsFmt);
+    }
 
 }

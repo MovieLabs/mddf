@@ -3,13 +3,12 @@
 	that it contains many optional elements. No errors are included. Various 
 	values may not make sense in a production environment but they are technically 
 	valid. -->
-<ns1:MediaManifest
+<ns1:MediaManifest xmlns:ns2="http://www.movielabs.com/schema/md/v2.7/md"
 	xmlns:ns1="http://www.movielabs.com/schema/manifest/v1.8/manifest"
-	xmlns:ns2="http://www.movielabs.com/schema/md/v2.7/md"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.8/manifest manifest-v1.8.1.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	ManifestID="ns2:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V"
+	ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V"
 	updateNum="1" versionDescription="Error-free test artifact">
 	<ns1:Compatibility>
 		<ns1:SpecVersion>1.8.1</ns1:SpecVersion>
@@ -21,7 +20,7 @@
 		requirements (e.g., controlled vocab) so has not been added to test artifact. -->
 	<ns1:Inventory>
 		<ns1:Audio
-			AudioTrackID="ns2:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<ns2:Description language="en">Background music
 			</ns2:Description>
 			<ns2:Type>primary</ns2:Type>
@@ -44,7 +43,7 @@
 			</ns1:ContainerReference>
 		</ns1:Audio>
 		<ns1:Audio
-			AudioTrackID="ns2:audtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer">
+			AudioTrackID="md:audtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer">
 			<ns2:Description language="en">Background music
 			</ns2:Description>
 			<ns2:Type>primary</ns2:Type>
@@ -63,7 +62,7 @@
 			<ns2:Channels>2</ns2:Channels>
 		</ns1:Audio>
 		<ns1:Video
-			VideoTrackID="ns2:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<ns2:Description language="en">Meaningless test Case
 			</ns2:Description>
 			<ns2:Type>primary</ns2:Type>
@@ -109,7 +108,7 @@
 			</ns1:ContainerReference>
 		</ns1:Video>
 		<ns1:Video
-			VideoTrackID="ns2:vidtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer">
+			VideoTrackID="md:vidtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer">
 			<ns2:Description language="en">Trailer with teaser for
 				sequel
 			</ns2:Description>
@@ -117,7 +116,7 @@
 			<ns2:CaptureMethod>Animation</ns2:CaptureMethod>
 		</ns1:Video>
 		<ns1:Subtitle
-			SubtitleTrackID="ns2:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0001-S">
+			SubtitleTrackID="md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0001-S">
 			<!-- attribute only allowed if Format isn't 'Text' -->
 			<ns2:Format SDImage="true">Image</ns2:Format>
 			<ns2:Description>Hieroglyphic commentary</ns2:Description>
@@ -125,7 +124,7 @@
 			<ns2:Language>egy-egyp</ns2:Language>
 		</ns1:Subtitle>
 		<ns1:Subtitle
-			SubtitleTrackID="ns2:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0002-S">
+			SubtitleTrackID="md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0002-S">
 			<!-- attributes only allowed if Format isn't 'Text' -->
 			<ns2:Format>Text</ns2:Format>
 			<ns2:Description>English commentary, with British spellings
@@ -134,7 +133,7 @@
 			<ns2:Language>en-br</ns2:Language>
 		</ns1:Subtitle>
 		<ns1:Subtitle
-			SubtitleTrackID="ns2:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0003-S">
+			SubtitleTrackID="md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0003-S">
 			<!-- attributes only allowed if Format isn't 'Text' -->
 			<ns2:Format>Text</ns2:Format>
 			<ns2:Description>Intro message</ns2:Description>
@@ -143,7 +142,7 @@
 		</ns1:Subtitle>
 		<!-- ########## Images used in PictureGroups ################# -->
 		<ns1:Image
-			ImageID="ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1">
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1">
 			<ns2:Width>1920</ns2:Width>
 			<ns2:Height>1080</ns2:Height>
 			<ns2:Encoding>image/jpeg</ns2:Encoding>
@@ -153,7 +152,7 @@
 			</ns1:ContainerReference>
 		</ns1:Image>
 		<ns1:Image
-			ImageID="ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.1">
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.1">
 			<ns2:Width>352</ns2:Width>
 			<ns2:Height>198</ns2:Height>
 			<ns2:Encoding>image/jpeg</ns2:Encoding>
@@ -163,7 +162,7 @@
 			</ns1:ContainerReference>
 		</ns1:Image>
 		<ns1:Image
-			ImageID="ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.2">
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.2">
 			<ns2:Width>1920</ns2:Width>
 			<ns2:Height>1080</ns2:Height>
 			<ns2:Encoding>image/jpeg</ns2:Encoding>
@@ -173,7 +172,7 @@
 			</ns1:ContainerReference>
 		</ns1:Image>
 		<ns1:Image
-			ImageID="ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.2">
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.2">
 			<ns2:Width>352</ns2:Width>
 			<ns2:Height>198</ns2:Height>
 			<ns2:Encoding>image/jpeg</ns2:Encoding>
@@ -183,7 +182,7 @@
 			</ns1:ContainerReference>
 		</ns1:Image>
 		<ns1:Image
-			ImageID="ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.3">
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.3">
 			<ns2:Width>1920</ns2:Width>
 			<ns2:Height>1080</ns2:Height>
 			<ns2:Encoding>image/jpeg</ns2:Encoding>
@@ -193,7 +192,7 @@
 			</ns1:ContainerReference>
 		</ns1:Image>
 		<ns1:Image
-			ImageID="ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.3">
+			ImageID="md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.3">
 			<ns2:Width>352</ns2:Width>
 			<ns2:Height>198</ns2:Height>
 			<ns2:Encoding>image/jpeg</ns2:Encoding>
@@ -204,9 +203,9 @@
 		</ns1:Image>
 		<!-- ########## ~~~~~~~~~~~~~~~~~~~~ ################# -->
 		<ns1:Metadata
-			ContentID="ns2:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+			ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 			<ns1:BasicMetadata
-				ContentID="ns2:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<ns2:LocalizedInfo language="en" default="true">
 					<ns2:TitleDisplay60>Big Buck Bunny</ns2:TitleDisplay60>
 					<ns2:TitleDisplayUnlimited>Big Buck Bunny</ns2:TitleDisplayUnlimited>
@@ -309,31 +308,31 @@
 				<ns2:PrimarySpokenLanguage>sr-Latn-RS</ns2:PrimarySpokenLanguage>
 			</ns1:BasicMetadata>
 			<ns1:Alias
-				ContentID="ns2:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<ns1:LocalizedPair>
 					<ns1:LanguageIncluded>en</ns1:LanguageIncluded>
 				</ns1:LocalizedPair>
 			</ns1:Alias>
 		</ns1:Metadata>
 		<ns1:TextObject
-			TextObjectID="ns2:textobjid:eidr-s:E6CA-AB58-E298-7BA0-E574-A"
+			TextObjectID="md:textobjid:eidr-s:E6CA-AB58-E298-7BA0-E574-A"
 			language="egy-egyp">
 			<ns1:SubtitleID>ns2:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0001-S
 			</ns1:SubtitleID>
 		</ns1:TextObject>
 		<ns1:TextObject
-			TextObjectID="ns2:textobjid:eidr-s:E6CA-AB58-E298-7BA0-E574-B">
+			TextObjectID="md:textobjid:eidr-s:E6CA-AB58-E298-7BA0-E574-B">
 			<ns1:SubtitleID>ns2:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0002-S
 			</ns1:SubtitleID>
 		</ns1:TextObject>
 		<ns1:TextObject
-			TextObjectID="ns2:textobjid:eidr-s:E6CA-AB58-E298-7BA0-E574-C"
+			TextObjectID="md:textobjid:eidr-s:E6CA-AB58-E298-7BA0-E574-C"
 			language="en">
 			<ns1:SubtitleID>ns2:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-0003-S
 			</ns1:SubtitleID>
 		</ns1:TextObject>
 		<ns1:TextObject
-			TextObjectID="ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-EN"
+			TextObjectID="md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-EN"
 			language="en">
 			<ns1:TextString index="1">The rabbit's sister
 				Jessica became a big movie star
@@ -343,21 +342,21 @@
 			</ns1:TextString>
 		</ns1:TextObject>
 		<ns1:TextObject
-			TextObjectID="ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-SP"
+			TextObjectID="md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-SP"
 			language="es">
 			<ns1:TextString>La hermana Jessica del conejo es una grande
 				estrella de cine
 			</ns1:TextString>
 		</ns1:TextObject>
 		<ns1:TextObject
-			TextObjectID="ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-EN"
+			TextObjectID="md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-EN"
 			language="en">
 			<ns1:TextString>Squirrels are members of the family Sciuridae, a
 				family that includes small or medium-size rodents.
 			</ns1:TextString>
 		</ns1:TextObject>
 		<ns1:TextObject
-			TextObjectID="ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-SP"
+			TextObjectID="md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-SP"
 			language="es">
 			<ns1:TextString>Las ardillas son miembros de la familia
 				Sciuridae, una familia que incluye pequeño o roedores de tamaño
@@ -365,14 +364,14 @@
 			</ns1:TextString>
 		</ns1:TextObject>
 		<ns1:TextObject
-			TextObjectID="ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-EN"
+			TextObjectID="md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-EN"
 			language="en">
 			<ns1:TextString>Squirrels are not really vicious animals and can
 				be very nice to others.
 			</ns1:TextString>
 		</ns1:TextObject>
 		<ns1:TextObject
-			TextObjectID="ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-SP"
+			TextObjectID="md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-SP"
 			language="es">
 			<ns1:TextString>Las ardillas no son animales realmente viciosos
 				y pueden ser muy agradables a otros.
@@ -385,16 +384,16 @@
 	<ns1:Presentations>
 		<!-- the movie -->
 		<ns1:Presentation
-			PresentationID="ns2:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			PresentationID="md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<ns1:TrackMetadata>
 				<ns1:TrackSelectionNumber>0</ns1:TrackSelectionNumber>
 				<ns1:VideoTrackReference>
 					<!-- the vidtrackid must match the one used in the inventory. -->
-					<ns1:VideoTrackID>ns2:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					<ns1:VideoTrackID>md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 					</ns1:VideoTrackID>
 				</ns1:VideoTrackReference>
 				<ns1:AudioTrackReference>
-					<ns1:AudioTrackID>ns2:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					<ns1:AudioTrackID>md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 					</ns1:AudioTrackID>
 				</ns1:AudioTrackReference>
 				<ns1:Purpose>
@@ -408,16 +407,16 @@
 		</ns1:Presentation>
 		<!-- the trailer -->
 		<ns1:Presentation
-			PresentationID="ns2:presentationid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer">
+			PresentationID="md:presentationid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer">
 			<ns1:TrackMetadata>
 				<ns1:TrackSelectionNumber>0</ns1:TrackSelectionNumber>
 				<ns1:VideoTrackReference>
 					<!-- the vidtrackid must match the one used in the inventory. -->
-					<ns1:VideoTrackID>ns2:vidtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
+					<ns1:VideoTrackID>md:vidtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
 					</ns1:VideoTrackID>
 				</ns1:VideoTrackReference>
 				<ns1:AudioTrackReference>
-					<ns1:AudioTrackID>ns2:audtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
+					<ns1:AudioTrackID>md:audtrackid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
 					</ns1:AudioTrackID>
 				</ns1:AudioTrackReference>
 			</ns1:TrackMetadata>
@@ -427,12 +426,12 @@
 	<ns1:PlayableSequences>
 		<ns1:PlayableSequence>
 			<ns1:Clip sequence="0">
-				<ns1:PresentationID>ns2:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				<ns1:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 				</ns1:PresentationID>
 			</ns1:Clip>
 			<!-- for versions prior to v1.7 sequence must be continuous and sequential -->
 			<ns1:Clip sequence="0">
-				<ns1:PresentationID>ns2:presentationid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
+				<ns1:PresentationID>md:presentationid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trailer
 				</ns1:PresentationID>
 				<ns1:EntryPointTimecode
 					dropframe='true'>1.25</ns1:EntryPointTimecode>
@@ -442,13 +441,13 @@
 	<!-- ###############==============================################# -->
 	<ns1:PictureGroups>
 		<ns1:PictureGroup
-			PictureGroupID="ns2:picturegroupid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1">
+			PictureGroupID="md:picturegroupid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1">
 			<ns1:Picture>
-				<ns1:PictureID>ns2:pictureid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1
+				<ns1:PictureID>md:pictureid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1
 				</ns1:PictureID>
-				<ns1:ImageID resolution="800x1200">ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1
+				<ns1:ImageID resolution="800x1200">md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.1
 				</ns1:ImageID>
-				<ns1:ThumbnailImageID>ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.1
+				<ns1:ThumbnailImageID>md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.1
 				</ns1:ThumbnailImageID>
 				<ns1:Caption language="en">A very scary rabbit
 				</ns1:Caption>
@@ -456,20 +455,20 @@
 				</ns1:Caption>
 			</ns1:Picture>
 			<ns1:Picture>
-				<ns1:PictureID>ns2:pictureid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.2
+				<ns1:PictureID>md:pictureid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.2
 				</ns1:PictureID>
-				<ns1:ImageID>ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.2
+				<ns1:ImageID>md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.2
 				</ns1:ImageID>
-				<ns1:ThumbnailImageID>ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.2
+				<ns1:ThumbnailImageID>md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.2
 				</ns1:ThumbnailImageID>
 				<ns1:Caption />
 			</ns1:Picture>
 			<ns1:Picture>
-				<ns1:PictureID>ns2:pictureid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.3
+				<ns1:PictureID>md:pictureid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.3
 				</ns1:PictureID>
-				<ns1:ImageID>ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.3
+				<ns1:ImageID>md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery.1.3
 				</ns1:ImageID>
-				<ns1:ThumbnailImageID>ns2:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.3
+				<ns1:ThumbnailImageID>md:imageid:eidr-x:4907-CD3D-2FDC-61CF-0694-E:galleries.gallery_thumb.1.3
 				</ns1:ThumbnailImageID>
 				<ns1:Caption />
 			</ns1:Picture>
@@ -478,39 +477,39 @@
 	<!-- ###############==============================################# -->
 	<ns1:TextGroups>
 		<ns1:TextGroup
-			TextGroupID="ns2:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1">
-			<ns1:TextObjectID>ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-EN
+			TextGroupID="md:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1">
+			<ns1:TextObjectID>md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-EN
 			</ns1:TextObjectID>
-			<ns1:TextObjectID>ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-SP
-			</ns1:TextObjectID>
-		</ns1:TextGroup>
-		<ns1:TextGroup
-			TextGroupID="ns2:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2">
-			<ns1:TextObjectID>ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-EN
-			</ns1:TextObjectID>
-			<ns1:TextObjectID>ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-SP
+			<ns1:TextObjectID>md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1-SP
 			</ns1:TextObjectID>
 		</ns1:TextGroup>
 		<ns1:TextGroup
-			TextGroupID="ns2:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3">
-			<ns1:TextObjectID>ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-EN
+			TextGroupID="md:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2">
+			<ns1:TextObjectID>md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-EN
 			</ns1:TextObjectID>
-			<ns1:TextObjectID>ns2:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-SP
+			<ns1:TextObjectID>md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2-SP
+			</ns1:TextObjectID>
+		</ns1:TextGroup>
+		<ns1:TextGroup
+			TextGroupID="md:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3">
+			<ns1:TextObjectID>md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-EN
+			</ns1:TextObjectID>
+			<ns1:TextObjectID>md:textobjectid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3-SP
 			</ns1:TextObjectID>
 		</ns1:TextGroup>
 	</ns1:TextGroups>
 	<!-- ###############==============================################# -->
 	<ns1:Experiences>
 		<ns1:Experience version="0.1"
-			ExperienceID="ns2:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha">
-			<ns1:ContentID>ns2:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
+			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha">
+			<ns1:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A
 			</ns1:ContentID>
 			<ns1:Audiovisual
-				ContentID="ns2:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
+				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-A">
 				<!-- feature movie -->
 				<ns1:Type>Main</ns1:Type>
 				<ns1:SubType>Feature</ns1:SubType>
-				<ns1:PresentationID>ns2:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				<ns1:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 				</ns1:PresentationID>
 			</ns1:Audiovisual>
 		</ns1:Experience>
@@ -519,28 +518,28 @@
 	<!-- ###############==============================################# -->
 	<ns1:TimedEventSequences>
 		<ns1:TimedEventSequence
-			TimedSequenceID="ns2:timedsequenceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:related">
-			<ns1:PresentationID>ns2:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+			TimedSequenceID="md:timedsequenceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:related">
+			<ns1:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 			</ns1:PresentationID>
 			<ns1:TimedEvent>
 				<ns1:StartTimecode>30.000000</ns1:StartTimecode>
 				<ns1:EndTimecode>37.000000</ns1:EndTimecode>
 				<ns1:Type>Synchronous</ns1:Type>
-				<ns1:TextGroupID index="1">ns2:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1
+				<ns1:TextGroupID index="1">md:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.1
 				</ns1:TextGroupID>
 			</ns1:TimedEvent>
 			<ns1:TimedEvent>
 				<ns1:StartTimecode>60.000000</ns1:StartTimecode>
 				<ns1:EndTimecode>67.000000</ns1:EndTimecode>
 				<ns1:Type>Synchronous</ns1:Type>
-				<ns1:TextGroupID index="2">ns2:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2
+				<ns1:TextGroupID index="2">md:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.2
 				</ns1:TextGroupID>
 			</ns1:TimedEvent>
 			<ns1:TimedEvent>
 				<ns1:StartTimecode>182.000000</ns1:StartTimecode>
 				<ns1:EndTimecode>187.000000</ns1:EndTimecode>
 				<ns1:Type>Synchronous</ns1:Type>
-				<ns1:TextGroupID index="5">ns2:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3
+				<ns1:TextGroupID index="5">md:textgroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:trivia.3
 				</ns1:TextGroupID>
 			</ns1:TimedEvent>
 		</ns1:TimedEventSequence>
@@ -549,10 +548,10 @@
 	<!-- ###############==============================################# -->
 	<ns1:ALIDExperienceMaps>
 		<ns1:ALIDExperienceMap>
-			<ns1:ALID>ns2:alid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02
+			<ns1:ALID>md:alid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02
 			</ns1:ALID>
 			<ns1:ExperienceID condition="Acquired"
-				licenseType="EST">ns2:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha
+				licenseType="EST">md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:alpha
 			</ns1:ExperienceID>
 		</ns1:ALIDExperienceMap>
 	</ns1:ALIDExperienceMaps>
