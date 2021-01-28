@@ -321,26 +321,36 @@ public abstract class XmlIngester implements IssueLogger {
 	 * @param docRootEl
 	 * @return
 	 */
-	public static String identifyXsdVersion(Element docRootEl) {
-		// TODO: refactor: code is same as in 1st part of
-		// MddfContext.identifyMddfFormat()
-		String nSpaceUri = docRootEl.getNamespaceURI();
-		String schemaType = null;
-		if (nSpaceUri.contains("manifest")) {
-			schemaType = "manifest";
-		} else if (nSpaceUri.contains("avails")) {
-			schemaType = "avails";
-		} else if (nSpaceUri.contains("mdmec")) {
-			schemaType = "mdmec";
-		} else if (nSpaceUri.contains("delivery")) {
-			schemaType = "delivery";
-		} else {
-			return null;
-		}
-		String[] parts = nSpaceUri.split(schemaType + "/v");
-		String schemaVer = parts[1].replace("/" + schemaType, "");
-		return schemaVer;
-	}
+    public static String identifyXsdVersion(Element docRootEl) {
+        // TODO: refactor: code is same as in 1st part of
+        // MddfContext.identifyMddfFormat()
+        String nSpaceUri = docRootEl.getNamespaceURI();
+        String schemaType = identifySchemaType(nSpaceUri);
+        if (schemaType == null) {
+            return null;
+        }
+        String[] parts = nSpaceUri.split(schemaType + "/v");
+        String schemaVer = parts[1].replace("/" + schemaType, "");
+        return schemaVer;
+    }
+
+    public static String identifySchemaType(Element docRootEl) {
+        // MddfContext.identifyMddfFormat()
+        String nSpaceUri = docRootEl.getNamespaceURI();
+        return identifySchemaType(nSpaceUri);
+    }
+
+    public static String identifySchemaType(String nSpaceUri) {
+        String schemaType = null;
+        if (nSpaceUri.contains("manifest")) {
+            schemaType = "manifest";
+        } else if (nSpaceUri.contains("avails")) {
+            schemaType = "avails";
+        } else if (nSpaceUri.contains("mdmec")) {
+            schemaType = "mdmec";
+        }
+        return schemaType;
+    }
 
 	/**
 	 * Configure all XML-related functions to work with the specified MDDF format.
