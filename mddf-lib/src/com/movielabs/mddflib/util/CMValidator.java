@@ -22,6 +22,7 @@
 package com.movielabs.mddflib.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -239,7 +240,7 @@ public abstract class CMValidator extends XmlIngester {
 	 * unique Metadata schema and therefore does not need to invoke this method.
 	 */
 	protected void validateConstraints() {
-		validateIdSet(); 
+		validateIdSet();
 		validateCountries();
 		validateLanguageCodes();
 		validateCurrencyCodes();
@@ -338,9 +339,9 @@ public abstract class CMValidator extends XmlIngester {
 	}
 
 	protected void validateIdSet() {
-	
+
 	}
-	
+
 	/**
 	 * Check for consistent usage. This typically means that an OPTIONAL element
 	 * will be either REQUIRED or INVALID for certain use-cases (e.g. BundledAsset
@@ -367,7 +368,7 @@ public abstract class CMValidator extends XmlIngester {
 		case "2.8":
 			// T.B.D.....
 			structVer = "2.7";
-			break;			
+			break;
 		case "2.7":
 		case "2.6":
 		case "2.5":
@@ -383,7 +384,7 @@ public abstract class CMValidator extends XmlIngester {
 			// LOG a FATAL problem.
 			String msg = "Unable to process; no defined structure definitions for Common Metadata v" + CM_VER;
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MD, msg, curTarget, logMsgSrcId);
-			return;  
+			return;
 		}
 
 		JSONObject structDefs = XmlIngester.getMddfResource("structure_cm", structVer);
@@ -401,8 +402,10 @@ public abstract class CMValidator extends XmlIngester {
 			JSONObject rqmtSpec = rqmtSet.getJSONObject(key);
 			// NOTE: This block of code requires a 'targetPath' be defined
 			if (rqmtSpec.has("targetPath")) {
-				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, "Structure check; key= " + key, curTarget, logMsgSrcId);
-				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null) && curFileIsValid;
+				loggingMgr.log(LogMgmt.LEV_DEBUG, LogMgmt.TAG_MD, "Structure check; key= " + key, curTarget,
+						logMsgSrcId);
+				curFileIsValid = structHelper.validateDocStructure(curRootEl, rqmtSpec, curTarget, null)
+						&& curFileIsValid;
 			}
 		}
 
@@ -464,16 +467,24 @@ public abstract class CMValidator extends XmlIngester {
 			if (childList.isEmpty()) {
 				continue;
 			}
-			SeqEntry[] indexValues = new SeqEntry[childList.size()];
-			Arrays.fill(indexValues, null);
 			int ivCnt = 0;
+			List<SeqEntry> seqList = new ArrayList<SeqEntry>();
 			for (int cPtr = 0; cPtr < childList.size(); cPtr++) {
 				Element nextChildEl = childList.get(cPtr);
 				/*
 				 * Each child Element must have @index attribute
 				 */
 				String indexAsString = nextChildEl.getAttributeValue(idxAttribute);
-				if (!isValidIndex(indexAsString, negOK)) {
+				if (indexAsString == null) {
+					/*
+					 * if the XSD allows the idxAttribute to be optional then we treat it as having
+					 * a value of ZERO.
+					 */
+					String msg = "Indexing attribute " + idxAttribute + " not specified. Default value of ZERO assumed";
+					logIssue(LogMgmt.TAG_MD, LogMgmt.LEV_WARN, nextChildEl, msg, null, null, logMsgSrcId);
+					SeqEntry next = new SeqEntry(0, nextChildEl);
+					seqList.add(next);
+				} else if (!isValidIndex(indexAsString, negOK)) {
 					String msg = "Invalid value for indexing attribute";
 					if (!negOK) {
 						msg = msg + " (non-negative integer required)";
@@ -483,10 +494,11 @@ public abstract class CMValidator extends XmlIngester {
 				} else {
 					int index = Integer.parseInt(indexAsString);
 					SeqEntry next = new SeqEntry(index, nextChildEl);
-					indexValues[ivCnt++] = next;
+					seqList.add(next);
 				}
 			}
 			// now make sure all constraints are met
+			SeqEntry[] indexValues = seqList.toArray(new SeqEntry[seqList.size()]);
 			Arrays.sort(indexValues);
 			boolean hasZero = false;
 			for (int ptr = 0; ptr < indexValues.length; ptr++) {
@@ -1343,7 +1355,7 @@ public abstract class CMValidator extends XmlIngester {
 			// LOG a FATAL problem.
 			String msg = "Unable to process; no defined DigitalAssets vocab for CM v" + CM_VER;
 			loggingMgr.log(LogMgmt.LEV_FATAL, LogMgmt.TAG_MD, msg, curTarget, logMsgSrcId);
-			return; 
+			return;
 		}
 		JSONObject structDefs = XmlIngester.getMddfResource("vocab_digAsset", vocabVer);
 		if (structDefs == null) {
