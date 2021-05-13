@@ -1,0 +1,302 @@
+{
+	"COMMENT": "refer to Javadoc for com.movielabs.mddflib.util.xml.StructureValidation before editing",
+	"StrucRqmts": 
+	{
+		"default LocalizedInfo": 
+		{
+			"targetPath": ".//{mdmec}Basic",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}LocalizedInfo[@default='true']",
+					"msg": "Must have exactly 1 default LocalizedInfo matching the language of the original production"
+				}
+			]
+		},
+
+		"TitleDisplayUnlimited": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}TitleDisplayUnlimited" 
+				}
+			]
+		},
+
+		"TitleSort": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Notice",
+					"xpath": "./{md}TitleSort",
+					"msg": "Use of TitleSort not required but strongly recommended for backward compatibility"
+				}
+			]
+		},
+		
+		"Summary190": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Notice",
+					"xpath": "./{md}Summary190",
+					"msg": "Use of Summary190 is not required but recommended for backward compatibility"
+				}
+			]
+		},
+		
+		"Summary400": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Notice",
+					"xpath": "./{md}Summary400",
+					"msg": "Use of Summary400 is not required but is recommended "
+				}
+			]
+		},
+
+		"Original Title": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}OriginalTitle"
+				}
+			]
+		},
+
+		"ArtRef": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"severity": "Error",
+					"xpath": "./{md}ArtReference"
+				}
+			]
+		},
+
+		"genre": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}Genre[@level='0' and @source='http://www.movielabs.com/md/mec/mec_primary_genre.html']",
+					"msg": "Must specify a primary ('level=0') Genre (see http://www.movielabs.com/md/mec/mec_primary_genre.html)"
+				},
+				{ 
+					"max": "0",
+					"severity": "Error",
+					"xpath": "./{md}Genre[@level='0' and @source !='http://www.movielabs.com/md/mec/mec_primary_genre.html']",
+					"msg": "Invalid PRIMARY Genre (see http://www.movielabs.com/md/mec/mec_primary_genre.html)"
+				}
+			]
+		},
+
+		"CopyrightLine": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}CopyrightLine" 
+				}
+			]
+		},
+
+		"SequenceInfo": 
+		{
+			"targetPath": "./{mdmec}Basic[./{md}WorkType[. = 'Season' or . = 'Episode' or . = 'Promotion' or . = 'Excerpt' or . = 'Supplemental']]",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}SequenceInfo/{md}Number",
+					"msg": "A SequenceInfo is REQUIRED by MEC for the specified WorkType"
+				}
+			]
+		},
+
+		"DigitalAsset Audio": 
+		{
+			"targetPath": "./{mdmec}DigitalAsset/{md}Audio",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Type" 
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Channels" 
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Encoding" 
+				}
+			],
+
+			"children": 
+			{
+				"Encoding": 
+				{
+					"targetPath": "./{md}Encoding",
+					"constraint": 
+					[
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}BitrateMax" 
+						},
+
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}SampleRate" 
+						},
+
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}SampleBitDepth" 
+						}
+					]
+				}
+			}
+		},
+
+		"DigitalAsset Video": 
+		{
+			"targetPath": "./{mdmec}DigitalAsset/{md}Video",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Type"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}ColorType"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Encoding"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": ".//{md}Picture"
+				}
+			],
+
+			"children": 
+			{
+				"Encoding": 
+				{
+					"targetPath": "./{md}Encoding",
+					"constraint": 
+					[
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}BitrateMax"
+						}
+					]
+				},
+
+				"Picture": 
+				{
+					"targetPath": "./{md}Picture",
+					"constraint": 
+					[
+						{
+							"min": "1",
+							"max": "1",
+							"severity": "Error",
+							"xpath": ".//{md}AspectRatio"
+						}
+					]
+				}
+			}
+		},
+
+		"DigitalAsset Subtitle": 
+		{
+			"targetPath": "./{mdmec}DigitalAsset/{md}Subtitle",
+			"constraint": 
+			[
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}Format"
+				},
+
+				{
+					"min": "1",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "./{md}FormatType"
+				}
+			]
+		}
+	}
+}

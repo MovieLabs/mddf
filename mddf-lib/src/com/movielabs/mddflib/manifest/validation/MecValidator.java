@@ -179,9 +179,9 @@ public class MecValidator extends CMValidator {
 			 */
 			structVer = "2.6";
 			break;
-		case "2.8":
-			//t.b.d.  Not yet sure about 2.8
-			structVer = "2.6";
+		case "2.8": 
+		case "2.9": 
+			structVer = "2.8";
 			break;
 		default:
 			// Not supported for the version
