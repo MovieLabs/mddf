@@ -71,7 +71,7 @@ public class MddfContext {
 
 	public static final String PROP_PATH = "/com/movielabs/mddflib/build.properties";
 
-	public static final String CUR_RATINGS_VER = "v2.4.3";
+	public static final String CUR_RATINGS_VER = "v2.4.5";
 
 	private static Map<String, String[]> stdsVersions;
 
@@ -81,7 +81,7 @@ public class MddfContext {
 
 	static {
 		// --- Supported versions of standards (in order) ---
-		String[] CM_VER = { "2.8", "2.7.1", "2.7", "2.6", "2.5", "2.4" };
+		String[] CM_VER = {"2.9",  "2.8", "2.7.1", "2.7", "2.6", "2.5", "2.4" };
 		String[] MANIFEST_VER = { "1.10", "1.9", "1.8.1", "1.8", "1.7", "1.6.1", "1.6", "1.5" };
 		String[] MEC_VER = { "2.9", "2.8", "2.7.1", "2.7", "2.6", "2.5", "2.4" };
 		String[] AVAILS_X_VER = {"2.5.2",  "2.5", "2.4", "2.3", "2.2.2", "2.2.1", "2.2", "2.1" };
