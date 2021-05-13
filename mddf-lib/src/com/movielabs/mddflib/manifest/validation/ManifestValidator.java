@@ -490,6 +490,7 @@ public class ManifestValidator extends CMValidator {
 			return;
 		}
 		switch (MAN_VER) {
+		case "1.10":
 		case "1.9":
 			expectedValues = cmVocab.optJSONArray("ContainerType");
 			docRef = null;
@@ -582,6 +583,7 @@ public class ManifestValidator extends CMValidator {
 			structVer = "1.8";
 			break;
 		case "1.9":
+		case "1.10":
 			structVer = "1.9";
 			break;
 		default:
