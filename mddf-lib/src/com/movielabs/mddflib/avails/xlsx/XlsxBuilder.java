@@ -26,6 +26,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
@@ -96,6 +99,7 @@ import net.sf.json.JSONObject;
  *
  */
 public class XlsxBuilder {
+	private static final Pattern AVAIL_ORDERED_PREFIX_PATTERN = Pattern.compile("^\\d+:");
 	private static final String CONTEXT_DELIM = "#";
 	private static final String FUNCTION_IDENTIFIER = "%FUNCTION";
 	protected static JSONObject mappings;
@@ -131,7 +135,8 @@ public class XlsxBuilder {
 		 * columns are populated from the XML
 		 */
 		try {
-			InputStream inp = XlsxBuilder.class.getResourceAsStream("Mappings.json");
+			String path = System.getProperty("mddf.mappings.path", "Mappings.json");
+			InputStream inp = XlsxBuilder.class.getResourceAsStream(path);
 			InputStreamReader isr = new InputStreamReader(inp, "UTF-8");
 			BufferedReader reader = new BufferedReader(isr);
 			StringBuilder builder = new StringBuilder();
@@ -208,9 +213,26 @@ public class XlsxBuilder {
 
 	protected void addAvails(String category, List<Element> availList) {
 		// get mappings that will be used for this specific sheet..
-		mappingDefs = mappingVersion.getJSONObject(category);
+		// Clone them for thread safety
+		JSONObject rawObject = mappingVersion.getJSONObject(category);
+		mappingDefs = JSONObject.fromObject(rawObject.toString());
 		ArrayList<String> colIdList = new ArrayList<String>();
 		colIdList.addAll(mappingDefs.keySet());
+		Collections.sort(colIdList);
+
+
+		// Remove the numerical sorting information, if any, from the mapping keys
+		for (int i = 0; i < colIdList.size(); i++) {
+			String colId = colIdList.get(i);
+			Matcher colMatcher = AVAIL_ORDERED_PREFIX_PATTERN.matcher(colId);
+			if (colMatcher.find()) {
+				String newColId = colMatcher.replaceFirst("");
+				colIdList.set(i, newColId);
+				Object mapping = mappingDefs.remove(colId);
+				mappingDefs.put(newColId, mapping);
+			}
+		}
+
 
 		XSSFSheet sheet = workbook.addSheet(category, colIdList);
 
@@ -838,7 +860,6 @@ public class XlsxBuilder {
 	 * <tt>mddf-lib</tt> an <tt>IllegalArgumentException</tt> will be thrown.
 	 * 
 	 * @param availSchemaVer
-	 * @param availNsPrefix
 	 * @throws IllegalArgumentException
 	 */
 	private void setXmlVersion(String availSchemaVer) throws IllegalArgumentException {
