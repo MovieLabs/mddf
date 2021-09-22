@@ -53,6 +53,8 @@ __NOTE-4:__ This fixes a bug that only occurs when running in the non-interactiv
 
 __NOTE-5:__ The v1.9.0.1 release is a patch providing support for Avails 2.5.2
 
+__NOTE-6:__ The columns in an Excel output file are now ordered alphabetically.
+
 ## <a name="h_Overview">2) Overview:</a>
 
 This repository contains Java software supporting the creation and usage of MDDF files including
@@ -139,6 +141,8 @@ Prior to July 2017 and the release of v1.3 of the mddf-lib, the native executabl
 independent of the mddf-lib version. 
 
 ## <a name="h_building">5) Using mddf-lib:</a>
+### <a name="h_building_maven">5.1) Accessing via Maven</a>
+
 The mddf-tools described in the next section are implemented on top of mddf-lib. Starting with v1.5.1, releases of mddf-lib are 
 available via the [Maven Central Repository](https://search.maven.org/search?q=a:mddf-lib). Developers wishing to use mddf-lib in their own 
 software therefore have two options: building from the source or adding a dependency to their build scripts, e.g.:
@@ -148,6 +152,16 @@ software therefore have two options: building from the source or adding a depend
 			<artifactId>mddf-lib</artifactId>
 			<version>${mddf.lib.version}</version>
 		</dependency>
+
+### <a name="h_building_custom">5.2) Using custom column mappings (Excel only)</a>
+
+When converting from XML to Excel, it's possible to provide a custom mappings file by setting the `mddf.mappings.path` system property prior to execution.  The default file is located [here](mddf-lib/src/com/movielabs/mddflib/avails/xlsx/Mappings.json).
+
+Custom mappings can be used if you intend to use some of the free-form fields in the spec. You can also use them to provide an ordering for columns in the output file, by adding a numeric prefix to the column index.  For example, to ensure that the `Avail/DisplayName` column is always first in the output, you could use a mapping like the following:
+
+`"01:Avail:DisplayName": "{avail}Licensor/{md}DisplayName"`
+
+The default ordering, if no numeric prefix is provided, is alphabetical.
 
 
 ## <a name="h_Install">6) Installing and Running mddf-tools:</a>

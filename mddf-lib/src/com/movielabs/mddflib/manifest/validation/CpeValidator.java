@@ -34,6 +34,7 @@ import java.util.Set;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -90,8 +91,13 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		}
 
 		public List<ExperienceNode> getChildren() {
-			Enumeration<ExperienceNode> kinder = this.children();
-			return Collections.list(kinder);
+			Enumeration<TreeNode> kinder = this.children();
+			List<ExperienceNode> result = new ArrayList<ExperienceNode>();
+			while (kinder.hasMoreElements()) {
+				result.add((ExperienceNode) kinder.nextElement());
+			}
+
+			return result;
 		}
 
 		public List<ExperienceNode> getDescendents() {
@@ -329,8 +335,9 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 	 */
 	protected void validateModel(DefaultTreeModel infoModel) {
 		ExperienceNode modelRoot = (ExperienceNode) infoModel.getRoot();
-		Enumeration<ExperienceNode> kinder = modelRoot.children();
-		for (ExperienceNode topNode : Collections.list(kinder)) {
+		Enumeration<TreeNode> kinder = modelRoot.children();
+		while (kinder.hasMoreElements()) {
+			ExperienceNode topNode = (ExperienceNode) kinder.nextElement();
 			validateTopMetadata(topNode);
 			List<ExperienceNode> descendants = topNode.getDescendents();
 			for (ExperienceNode lowerNode : descendants) {
@@ -470,7 +477,7 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 	 * Expand hierarchical structure of Experience Elements by recursively
 	 * descending and adding all <tt>ExperienceChild</tt> elements found.
 	 * 
-	 * @param nextExpNode
+	 * @param curExpNode
 	 */
 	private void addChildExperiences(ExperienceNode curExpNode) {
 		Element curExpEl = curExpNode.getExpEl();

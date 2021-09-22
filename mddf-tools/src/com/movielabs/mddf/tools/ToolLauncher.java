@@ -185,7 +185,7 @@ public class ToolLauncher {
 			} else {
 				Set<String> allowed = new HashSet<String>();
 				allowed.addAll(Arrays.asList(MddfContext.getSupportedVersions("AVAIL")));
-				allowed.addAll(Arrays.asList(MddfContext.getSupportedVersions("AVAIL-E")));
+				allowed.addAll(Arrays.asList(MddfContext.getSupportedVersions("AVAIL_E")));
 				for (String fmt : xlatFmts) {
 					fmt = fmt.replaceAll(",", "");
 					if (allowed.contains(fmt)) {
