@@ -34,6 +34,7 @@ import java.util.Set;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -90,8 +91,12 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 		}
 
 		public List<ExperienceNode> getChildren() {
-			Enumeration<ExperienceNode> kinder = this.children();
-			return Collections.list(kinder);
+			Enumeration<TreeNode> kinder = this.children();
+			List<ExperienceNode> expList = new ArrayList<ExperienceNode>();
+			while(kinder.hasMoreElements()) {
+				expList.add((ExperienceNode) kinder.nextElement());
+			}
+			return expList;
 		}
 
 		public List<ExperienceNode> getDescendents() {
@@ -329,10 +334,10 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 	 */
 	protected void validateModel(DefaultTreeModel infoModel) {
 		ExperienceNode modelRoot = (ExperienceNode) infoModel.getRoot();
-		Enumeration<ExperienceNode> kinder = modelRoot.children();
-		for (ExperienceNode topNode : Collections.list(kinder)) {
-			validateTopMetadata(topNode);
-			List<ExperienceNode> descendants = topNode.getDescendents();
+		Enumeration<TreeNode> kinder = modelRoot.children();
+		for (TreeNode topNode : Collections.list(kinder)) {
+			validateTopMetadata((ExperienceNode) topNode);
+			List<ExperienceNode> descendants = ((ExperienceNode) topNode).getDescendents();
 			for (ExperienceNode lowerNode : descendants) {
 				validateLowerMetadata(lowerNode);
 			}

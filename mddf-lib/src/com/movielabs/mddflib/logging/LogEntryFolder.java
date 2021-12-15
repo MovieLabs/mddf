@@ -27,6 +27,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import org.jdom2.Document;
 import com.movielabs.mddf.MddfContext.FILE_FMT;
@@ -142,9 +143,9 @@ public class LogEntryFolder extends LogEntry {
 	}
 
 	public DefaultMutableTreeNode getChild(String id) {
-		Enumeration<LogEntry> kinder = this.children();
+		Enumeration<TreeNode> kinder = this.children();
 		while (kinder.hasMoreElements()) {
-			LogEntry nextNode = kinder.nextElement();
+			LogEntry nextNode = (LogEntry) kinder.nextElement();
 			if (nextNode.getTagAsText().equals(id)) {
 				return (nextNode);
 			}
@@ -157,7 +158,7 @@ public class LogEntryFolder extends LogEntry {
 	 */
 	public int getMsgCnt() {
 		int msgCnt = msgList.size();
-		Enumeration<LogEntry> kinder = this.children();
+		Enumeration<TreeNode> kinder = this.children();
 		while (kinder.hasMoreElements()) {
 			LogEntryFolder nextChild = (LogEntryFolder) kinder.nextElement();
 			msgCnt = msgCnt + nextChild.getMsgCnt();
@@ -172,7 +173,7 @@ public class LogEntryFolder extends LogEntry {
 	public List<LogEntryNode> getMsgList() {
 		List<LogEntryNode> fullList = new ArrayList<LogEntryNode>();
 		fullList.addAll(msgList);
-		Enumeration<LogEntry> kinder = this.children();
+		Enumeration<TreeNode> kinder = this.children();
 		while (kinder.hasMoreElements()) {
 			LogEntryFolder nextChild = (LogEntryFolder) kinder.nextElement();
 			fullList.addAll(nextChild.getMsgList());
@@ -189,7 +190,7 @@ public class LogEntryFolder extends LogEntry {
 	 */
 	public boolean hasErrorsMsgs(boolean forErrors) {
 		/* is this a 'leaf' folder or intermediate? */
-		Enumeration<LogEntry> kinder = this.children();
+		Enumeration<TreeNode> kinder = this.children();
 		if (kinder.hasMoreElements()) {
 			boolean isErrFolder = this.getTagAsText().equals(LogMgmt.logLevels[LogMgmt.LEV_ERR]);
 			while (kinder.hasMoreElements()) {
@@ -221,7 +222,7 @@ public class LogEntryFolder extends LogEntry {
 	public int getHighestLevel() {
 		int highest = -1;
 		/* is this a 'leaf' folder or intermediate? */
-		Enumeration<LogEntry> kinder = this.children();
+		Enumeration<TreeNode> kinder = this.children();
 		if (kinder.hasMoreElements()) {
 			LogEntryFolder infoFolder = null;
 			while (kinder.hasMoreElements()) {
@@ -248,7 +249,7 @@ public class LogEntryFolder extends LogEntry {
 	 */
 	public void deleteMsgs() {
 		msgList = new ArrayList<LogEntryNode>();
-		Enumeration<LogEntry> kinder = this.children();
+		Enumeration<TreeNode> kinder = this.children();
 		while (kinder.hasMoreElements()) {
 			LogEntryFolder nextChild = (LogEntryFolder) kinder.nextElement();
 			nextChild.deleteMsgs();
