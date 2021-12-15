@@ -6,3 +6,5 @@
 /mddf-lib-*.jar
 /target/
 /tmp/
+/tempDirPath/
+**/.DS_Storeß
