@@ -36,7 +36,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  */
 public class ManifestTool extends ValidatorTool { 
-	private static final String MANIFEST_DOC_VER = "v1.8";
+	private static final String MANIFEST_DOC_VER = "v1.9";
 
 
 	/**
