@@ -27,17 +27,7 @@
 
 ---
 ## <a name="h_News">1) What's New</a>
-* 2020-Dec-21: v1.9 and 1.9.0.1 released  [See Note-5]
-* 2020-Apr-21: v1.8.1 released [See Note-4]
-* 2020-Apr-21: v1.8.0.2 released [See Note-4]
-* 2020-Mar-01: v1.8.0.1 released [See Note-3]
-* 2020-Feb-28: v1.8 released [See Note-3]
-* 2019-Nov-06: v1.7 released
-* 2019-Aug-27: v1.6 released
-* 2019-June-24: v1.5.3 released
-* 2019-May-24: v1.5.2 released
-* 2019-May-09: v1.5.2_rc1 released for testing and evaluation.
-* 2019-Mar-15: v1.5.1 released [See Notes 1 & 2]
+* 2021-Dec-15: v2.0 released [See Note-6]
 
 __NOTE-1:__ Starting with v1.5.1, releases of mddf-lib are available via the Maven Central Repository. Refer to
 the [mddf-lib README](./mddf-lib/README.md) for information on adding dependancy information to pom files.
@@ -52,6 +42,8 @@ was issued 2 days latter to correct this problem and should be used instead of v
 __NOTE-4:__ This fixes a bug that only occurs when running in the non-interactive mode. 
 
 __NOTE-5:__ The v1.9.0.1 release is a patch providing support for Avails 2.5.2
+
+__NOTE-6:__ Release 2.0 addresses major security issues associated with the use of the Apache log4j library. USE OF EARLIER VERSIONS IS NOT RECOMMENDED.
 
 ## <a name="h_Overview">2) Overview:</a>
 
@@ -207,6 +199,8 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">7) Release History:</a>
+* **2021-Dec-21**: mddf-tool v2.0 released.
+
 * **2020-Dec-21**: mddf-tool v1.9 released.
 
 * **2020-Apr-21**: mddf-tool v1.8.0.2 released.
