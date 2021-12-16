@@ -5,6 +5,11 @@
 
 ## Versioning
 
+### mddd-lib 2.0
+
+* SECURITY: Removed vulnerabilities associated with use of Apache libraries LOG4J and XMLBEANS .
+* Enhancement: updated Ratings DB to v2.4.7
+
 ### mddf-lib 1.9.01
 
 * Bug Fix: Avails 2.5.2 schema was missing
