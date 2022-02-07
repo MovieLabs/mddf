@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
-			<version>1.9.2</version>
+			<version>1.9.4</version>
 		</dependency>
 		<!-- used in deployment tests... -->
 		<dependency>
@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.6</version>
+			<version>2.11.0</version>
 		</dependency>
 
 		<dependency>
@@ -80,12 +80,12 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>2.10.0</version>
+			<version>2.16.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.10.0</version>
+			<version>2.16.0</version>
 		</dependency>
 
 		<dependency>
@@ -107,7 +107,7 @@
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>
-			<version>2.6.0</version>
+			<version>3.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -162,6 +162,12 @@
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
+			<distributionManagement>
+				<repository>
+					<id>ossrh</id>
+					<url>https://oss.sonatype.org/content/repositories/releases</url>
+				</repository>
+			</distributionManagement>
 			<build>
 				<plugins>
 					<plugin>
@@ -180,7 +186,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.0.1</version>
+						<version>3.3.1</version>
 						<configuration>
 							<doclint>none</doclint>
 							<!-- THIS IS WHERE YOU CAN ADD A CUSTOM STYLESHEET -->
@@ -198,6 +204,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
+						<!-- <version>3.0.1</version> --> 
 						<version>1.6</version>
 						<executions>
 							<execution>
