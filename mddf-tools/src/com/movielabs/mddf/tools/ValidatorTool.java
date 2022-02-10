@@ -39,6 +39,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import javax.swing.JButton;
@@ -60,6 +61,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -188,7 +190,11 @@ public abstract class ValidatorTool extends GenericTool implements TreeSelection
 					List msgList = nextT.getLogFolder().getMsgList();
 					editor.showLogMarkers(msgList);
 				}
-				targetList.addAll(Collections.list(nextT.children()));
+				Enumeration<TreeNode> foo = nextT.children();
+				while(foo.hasMoreElements()) {
+					targetList.add((MddfTarget) foo.nextElement())
+;//					targetList.addAll(Collections.list(nextT.children()));					
+				}
 			}
 
 		}
