@@ -5,6 +5,10 @@
 
 ## Versioning
 
+### mddd-lib 2.0.2
+
+* Enhancement: updated Ratings DB to v2.4.8 
+
 ### mddd-lib 2.0
 
 * SECURITY: Removed vulnerabilities associated with use of Apache libraries LOG4J and XMLBEANS .
