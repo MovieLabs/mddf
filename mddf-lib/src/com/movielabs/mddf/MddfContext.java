@@ -71,7 +71,7 @@ public class MddfContext {
 
 	public static final String PROP_PATH = "/com/movielabs/mddflib/build.properties";
 
-	public static final String CUR_RATINGS_VER = "v2.4.7";
+	public static final String CUR_RATINGS_VER = "v2.4.8";
 
 	private static Map<String, String[]> stdsVersions;
 
