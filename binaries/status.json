@@ -1,7 +1,7 @@
 {
-  "build.timestamp": "2022-Feb-10 10:19:03 UTC",
-  "mddf.lib.version": "2.0.1",
+  "build.timestamp": "2022-Feb-15 21:19:03 UTC",
+  "mddf.lib.version": "2.0.2",
   "mddf.tool.build": "A",
-  "mddf.tool.version": "2.0.1",
+  "mddf.tool.version": "2.0.2",
   "userMsg": "Security update"
 }
