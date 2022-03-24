@@ -490,7 +490,6 @@ public class ManifestValidator extends CMValidator {
 			return;
 		}
 		switch (MAN_VER) {
-		case "1.12":
 		case "1.11":
 		case "1.10":
 		case "1.9":
@@ -589,9 +588,6 @@ public class ManifestValidator extends CMValidator {
 			structVer = "1.9";
 			break;
 		case "1.11":
-			structVer = "1.9";
-			break;
-		case "1.12":
 			structVer = "1.9";
 			break;
 		default:

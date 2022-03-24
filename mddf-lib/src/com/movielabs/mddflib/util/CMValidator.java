@@ -321,10 +321,16 @@ public abstract class CMValidator extends XmlIngester {
 		docRef = LogReference.getRef("CM", "cm_gType");
 		validateVocab(mdNSpace, "Relationship", mdNSpace, "Type", expectedValues, docRef, true, false);
 		
-		//Added by db to trigger filename embedding check
-		expectedValues = cmVocab.optJSONArray("FilenameEmbedding@location");
-		docRef = null; // LogReference.getRef("CM", CM_VER, "cm006");
-		validateVocab(mdNSpace, "FilenameEmbedding", null, "@location", expectedValues, docRef, true, true);
+		/**
+		 * TODO remove this note once no longer needed for reference.
+		 * 
+*		Added by db to trigger filename embedding check
+*		expectedValues = cmVocab.optJSONArray("FilenameEmbedding@location");
+*		docRef = null; // LogReference.getRef("CM", CM_VER, "cm006");
+*		validateVocab(mdNSpace, "FilenameEmbedding", null, "@location", expectedValues, docRef, true, true);
+ * 
+ * 
+ */
 	}
 
 	/**
@@ -368,7 +374,6 @@ public abstract class CMValidator extends XmlIngester {
 		 */
 		String structVer = null;
 		switch (CM_VER) {
-		case "2.11":
 		case "2.10":
 		case "2.9":
 		case "2.8":
@@ -1344,7 +1349,6 @@ public abstract class CMValidator extends XmlIngester {
 	protected void validateDigitalAssets() {
 		String vocabVer = null;
 		switch (CM_VER) {
-		case "2.11":
 		case "2.10":
 		case "2.9":
 		case "2.8":
