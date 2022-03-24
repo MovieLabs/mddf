@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.movielabs</groupId>
-	<artifactId>mddf-lib</artifactId>
-	<version>2.0.2</version>
+	<artifactId>mddf-lib-test</artifactId>
+	<version>2.0.4-SNAPSHOT</version>
 	<name>mddf library</name>
 	<description>implements all core (i.e., non-UI) functionality that can be used to generate, validate, or transform MovieLabs Digital Distribution Framework (MDDF) files.</description>
 	<url>https://github.com/MovieLabs/mddf</url>
@@ -137,7 +137,7 @@
 			<distributionManagement>
 				<snapshotRepository>
 					<id>ossrh</id>
-					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+					<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
 				</snapshotRepository>
 			</distributionManagement>
 			<build>
@@ -149,7 +149,33 @@
 						<extensions>true</extensions>
 						<configuration>
 							<serverId>ossrh</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<!-- <version>3.0.1</version> --> 
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.8</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>
 					</plugin>
@@ -165,7 +191,7 @@
 			<distributionManagement>
 				<repository>
 					<id>ossrh</id>
-					<url>https://oss.sonatype.org/content/repositories/releases</url>
+					<url>https://s01.oss.sonatype.org/content/repositories/releases</url>
 				</repository>
 			</distributionManagement>
 			<build>
@@ -223,7 +249,7 @@
 						<extensions>true</extensions>
 						<configuration>
 							<serverId>ossrh</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>
 					</plugin>
