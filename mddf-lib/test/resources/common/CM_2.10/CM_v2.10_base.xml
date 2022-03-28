@@ -2,23 +2,15 @@
 <!-- TEST ARTIFACT: This file defines an error-free base-case that can be 
 	used to create artifacts supporting specific JUnit tests relating to the 
 	Common Metadata specification. -->
-<manifest:MediaManifest
-	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.12/manifest"
-	xmlns:md="http://www.movielabs.com/schema/md/v2.11/md"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.12/manifest manifest-v1.12.xsd"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+<manifest:MediaManifest xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.11/manifest" xmlns:md="http://www.movielabs.com/schema/md/v2.10/md" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V" xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.11/manifest file:///C:/Users/damon/Documents/GitHub/mddf/mddf-lib/src/com/movielabs/mddf/resources/manifest-v1.11.xsd">
 	<manifest:Compatibility>
 		<manifest:SpecVersion>18</manifest:SpecVersion>
-		<manifest:System>HTML5</manifest:System
->
+		<manifest:System>HTML5</manifest:System>
 		<manifest:System>Roku</manifest:System>
 		<manifest:Profile>none</manifest:Profile>
 	</manifest:Compatibility>
 	<manifest:Inventory>
-		<manifest:Audio
-			AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		<manifest:Audio AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<md:Type>commentary</md:Type>
 			<md:SubType>Director</md:SubType>
 			<md:Encoding>
@@ -37,28 +29,24 @@
 				</manifest:ContainerLocation>
 				<manifest:SequenceParsing>
 					<md:StartsWith>0</md:StartsWith>
-					<md:EndsWith>0</md:EndsWith>
-					<md:FilenameEmbedding location="beginning">true</md:FilenameEmbedding>
+					<md:FilenameEmbedding>true</md:FilenameEmbedding>
 				</manifest:SequenceParsing>
 			</manifest:ContainerReference>
 		</manifest:Audio>
-		<manifest:Video
-			VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
-		  <md:Encoding>
-		    <md:Codec>H.264</md:Codec>
-		    <md:MPEGProfile>Hi444P</md:MPEGProfile>
-		    <md:MPEGLevel>3.1</md:MPEGLevel>
-		  </md:Encoding>
-			<md:Picture />
+		<manifest:Video VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Encoding>
+				<md:Codec>H.264</md:Codec>
+				<md:MPEGProfile>Hi444P</md:MPEGProfile>
+				<md:MPEGLevel>3.1</md:MPEGLevel>
+			</md:Encoding>
+			<md:Picture/>
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Video>
-		<manifest:Metadata
-			ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
-			<manifest:BasicMetadata
-				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:BasicMetadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 				<md:LocalizedInfo language="en" default="true">
 					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
 					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
@@ -75,6 +63,30 @@
 					<md:Genre>Animation</md:Genre>
 					<md:Genre>Short</md:Genre>
 					<md:Genre>Comedy</md:Genre>
+					<md:Region>
+						<md:country>US</md:country>
+					</md:Region>					
+				</md:LocalizedInfo>
+				<!-- Test: Multiple Localized Info allowed if region/@language/excludedregion/targetaudience unique combo.  Testing that it's true -->
+				<md:LocalizedInfo language="en" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>A large but peaceful bunny is harassed by three
+						trouble-making rodents
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+					<md:Region>
+						<md:country>CA</md:country>
+					</md:Region>
 				</md:LocalizedInfo>
 				<md:RunLength>PT10M00.0S</md:RunLength>
 				<md:ReleaseYear>2008</md:ReleaseYear>
@@ -163,8 +175,7 @@
 	</manifest:Inventory>
 	<manifest:Presentations>
 		<!-- the movie -->
-		<manifest:Presentation
-			PresentationID="md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+		<manifest:Presentation PresentationID="md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<manifest:TrackMetadata>
 				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
 				<manifest:VideoTrackReference>
@@ -180,12 +191,10 @@
 		</manifest:Presentation>
 	</manifest:Presentations>
 	<manifest:Experiences>
-		<manifest:Experience version="0.1"
-			ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq">
+		<manifest:Experience version="0.1" ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq">
 			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 			</manifest:ContentID>
-			<manifest:Audiovisual
-				ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 				<!-- feature movie -->
 				<manifest:Type>Main</manifest:Type>
 				<manifest:SubType>Feature</manifest:SubType>

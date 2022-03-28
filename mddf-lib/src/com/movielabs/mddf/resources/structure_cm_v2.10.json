@@ -380,6 +380,49 @@
 					"msg": "Specified SubType is only valid when Type is 'commentary'"
 				}
 			]
+		},
+
+		"LocalizedInfo_multiple": 
+		{
+			"targetPath": ".//{md}BasicMetadata/[ count(./{md}LocalizedInfo) > 1]",
+			"constraint": 
+			[
+				{					
+					"max": "1",
+					"severity": "Warning",
+					"xpath": "./{md}LocalizedInfo/@language",
+					"msg": "Multiple occurences of LocalizedInfo must have different combinations of @language"
+				}
+			]
+		},
+		
+		"LocalizedInfo_multiple": 
+		{
+			"targetPath": ".//{md}BasicMetadata",
+			"constraint": 
+			[
+				{					
+					"max": "1",
+					"severity": "Warning",
+					"xpath": "./{md}LocalizedInfo",
+					"msg": "Multiple occurences of LocalizedInfo must be disambiguated.",
+					"docref": "CM:cm_LocalInfo_mult"
+				}
+			]
+		},
+		
+		"SequenceParsing_warning": 
+		{
+			"targetPath": ".//{md}ContainerReference",
+			"constraint": 
+			[
+				{					
+					"max": "0",
+					"xpath": "./{md}SequenceParsing",
+					"severity": "Warning",
+					"msg": "SequenceParsing should not be used with CM 2.10. The Schema is not correct."
+				}
+			]
 		}
 	}
 }

@@ -588,8 +588,6 @@ public class ManifestValidator extends CMValidator {
 			structVer = "1.9";
 			break;
 		case "1.11":
-			structVer = "1.9";
-			break;
 		default:
 			// Not supported for the version
 			String msg = "Unable to process; missing structure definitions for Manifest v" + MAN_VER;

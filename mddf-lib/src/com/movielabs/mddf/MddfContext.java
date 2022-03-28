@@ -81,9 +81,7 @@ public class MddfContext {
 
 	static {
 		// --- Supported versions of standards (in order) ---
-		//fake version cm here
 		String[] CM_VER = {"2.10","2.9",  "2.8", "2.7.1", "2.7", "2.6", "2.5", "2.4" };
-		// fake version manifest here
 		String[] MANIFEST_VER = { "1.11","1.10", "1.9", "1.8.1", "1.8", "1.7", "1.6.1", "1.6", "1.5" };
 		String[] MEC_VER = { "2.10", "2.9", "2.8", "2.7.1", "2.7", "2.6", "2.5", "2.4" };
 		String[] AVAILS_X_VER = {"2.6", "2.5.2",  "2.5", "2.4", "2.3", "2.2.2", "2.2.1", "2.2", "2.1" };
@@ -219,6 +217,7 @@ public class MddfContext {
 				return FILE_FMT.MANIFEST_1_10;
 			case "1.11":
 				return FILE_FMT.MANIFEST_1_11;
+			}
 			break;
 		case "avails":
 			switch (schemaVer) {
