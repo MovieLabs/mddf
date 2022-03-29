@@ -250,6 +250,46 @@ public class ManifestValidatorTest extends ManifestValidator {
 		}
 	}
 
+	/**
+	 * @throws JDOMException
+	 * @throws IOException
+	 * 
+	 */
+	@Test
+	public void testV111noErrors() throws IOException, JDOMException {
+		MddfTarget target = initialize("Manifest_v1.11_base.xml");
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+
+	/**
+	 * @throws JDOMException
+	 * @throws IOException
+	 * 
+	 */
+	@Test
+	public void testV111withErrors() throws IOException, JDOMException {
+		MddfTarget target = initialize("Manifest_v1.11_errors.xml");
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(4, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+	
 	// @Test
 	public void testMEC_Usage() throws IOException, JDOMException {
 		MddfTarget target = initialize("Manifest_w_MEC_v1.6.xml");
@@ -272,6 +312,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 			throw e;
 		}
 	}
+	
 
 	protected void execute(MddfTarget target) throws IOException, JDOMException {
 		iLog.setPrintToConsole(false);

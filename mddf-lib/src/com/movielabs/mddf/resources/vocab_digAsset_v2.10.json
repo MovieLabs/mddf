@@ -11,6 +11,7 @@
 				"commentary",
 				"silent-omitted",
 				"silent",
+				"lecturing",
 				"other"
 			]
 		},
@@ -352,6 +353,9 @@
 				"commentary",
 				"easyreader",
 				"singalong",
+				"samelanguage",
+				"script",
+				"template",
 				"other"
 			]
 		},
@@ -384,7 +388,16 @@
 				"ITT",
 				"CFF-TT",
 				"IMSC1",
-				"WebVTT"
+				"WebVTT",
+				"LCAP",
+				"DLP",
+				"DLP1",
+				"DLP1.1",
+				"Excel",
+				"SBV",
+				"TTML1",
+				"TTML2",
+				"IMSC1.1"
 			]
 		}
 	},
@@ -394,7 +407,8 @@
 			"ref": "Sec. 5.2.8",
 			"values": [
 				"SDR",
-				"HDR"
+				"HDR",
+				"SDR-HDR"
 			]
 		},
 		"Picture": {

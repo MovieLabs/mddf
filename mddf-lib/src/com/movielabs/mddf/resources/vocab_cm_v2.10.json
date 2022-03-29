@@ -210,6 +210,12 @@
 			"beginning",
 			"middle",
 			"end"
+		],
+		"DigitalAssetAudioLanguage@disposition":
+		[
+			"verified",
+			"unverified",
+			"approximate" 
 		]
 	}
 }

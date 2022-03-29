@@ -80,6 +80,48 @@
 			]
 		},
 		
+		"LocalizedInfo_multiple": 
+		{
+			"targetPath": ".//{manifest}BasicMetadata/{md}LocalizedInfo",
+			"constraint": 
+			[
+				{					
+					"$LAN": "./@language",
+					"max": "1",
+					"severity": "Warning",
+					"xpath": "../{md}LocalizedInfo[@language={$LAN} and not(./{md}Region/{md}country) and not(./{md}Region/{md}countryRegion)] and not(./{md}ExcludedRegion/{md}country) and not(./{md}ExcludedRegion/{md}country)",
+					"msg": "Multiple occurences of LocalizedInfo must be disambiguated by @language",
+					"docref": "CM:cm_LocalInfo_mult"
+				},
+				{					
+					"$LAN": "./@language",
+					"$COUNTRY": "./{md}Region/*",
+					"max": "1",
+					"severity": "Warning",
+					"xpath": "../{md}LocalizedInfo[@language={$LAN} and ./{md}Region/*={$COUNTRY}]",
+					"msg": "Multiple occurences of LocalizedInfo must be disambiguated by @language and Region",
+					"docref": "CM:cm_LocalInfo_mult"
+				},
+				{					
+					"$LAN": "./@language",
+					"$EXCOUNTRY": "./{md}ExcludedRegion/*",
+					"max": "1",
+					"severity": "Warning",
+					"xpath": "../{md}LocalizedInfo[@language={$LAN} and ./{md}ExcludedRegion/*={$EXCOUNTRY}]",
+					"msg": "Multiple occurences of LocalizedInfo must be disambiguated by @language and Excluded Region",
+					"docref": "CM:cm_LocalInfo_mult"
+				},
+				{					
+					"max": "1",
+					"severity": "Warning",
+					"xpath": "../{md}LocalizedInfo/{md}TargetAudience",
+					"msg": "Multiple occurences of LocalizedInfo that include TargetAudience should be reviewed manually. They are not checked by the validator.",
+					"docref": "CM:cm_LocalInfo_mult"
+				}
+			]
+		},
+		
+		
 		"SequenceParsing_warning": 
 		{
 			"targetPath": ".//{manifest}ContainerReference",
@@ -87,9 +129,39 @@
 			[
 				{					
 					"max": "0",
-					"xpath": "./{manifest}SequenceParsing",
+					"xpath": ["./{manifest}SequenceParsing","./{md}SequenceParsing"],
 					"severity": "Warning",
 					"msg": "SequenceParsing should not be used with CM 2.10. The Schema is not correct."
+				}
+			]
+		},
+		
+		"BillingBlockOrder_regionUnique": 
+		{
+			"targetPath": ".//{md}Job/{md}BillingBlockOrder",
+			"constraint": 
+			[
+				{					
+					"$REGION": "./@region",
+					"max": "1",
+					"xpath": "../{md}BillingBlockOrder[@region = {$REGION}]",
+					"severity": "Error",
+					"msg": "Multiple BillingBlockOrder-type with same @region not allowed"
+				}
+			]
+		},
+		
+		"BillingBlockOrder_defaultRegion":
+		{
+			"targetPath": ".//{md}Job",
+			"constraint": 
+			[
+				{
+					"max": "1",
+					"xpath": "./{md}BillingBlockOrder[not(@region)]",
+					"severity": "Error",
+					"msg": "Multiple BillingBlockOrder-type without @region not allowed"
+				 
 				}
 			]
 		}

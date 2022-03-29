@@ -321,6 +321,12 @@ public abstract class CMValidator extends XmlIngester {
 		docRef = LogReference.getRef("CM", "cm_gType");
 		validateVocab(mdNSpace, "Relationship", mdNSpace, "Type", expectedValues, docRef, true, false);
 		
+		//added by db to control disposition vocab
+		expectedValues = cmVocab.optJSONArray("DigitalAssetAudioLanguage@disposition");
+		docRef = null; // LogReference.getRef("CM", CM_VER, "cm006");
+		validateVocab(mdNSpace, "DigitalAssetAudioLanguage", null, "@disposition", expectedValues, docRef, true, true);
+
+		
 		/**
 		 * TODO remove this note once no longer needed for reference.
 		 * 

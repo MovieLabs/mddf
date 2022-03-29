@@ -11,14 +11,16 @@
 	</manifest:Compatibility>
 	<manifest:Inventory>
 		<manifest:Audio AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
-			<md:Type>commentary</md:Type>
+			<!-- Error: Lectoring is not in the controlled vocabulary -->
+			<md:Type>lectoring</md:Type>
 			<md:SubType>Director</md:SubType>
 			<md:Encoding>
 				<md:Codec>DOLBY-TRUEHD</md:Codec>
 				<md:VBR>2-pass VBR</md:VBR>
 				<md:ChannelMapping>Mono</md:ChannelMapping>
 			</md:Encoding>
-			<md:Language>en</md:Language>
+			<!-- ERROR: Disposition has controlled vocabulary -->
+			<md:Language disposition="Wrong">en</md:Language>
 			<md:Channels>1</md:Channels>
 			<md:Compliance>
 				<md:Category>EPS</md:Category>
@@ -27,12 +29,9 @@
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
 				</manifest:ContainerLocation>
+				<!-- ERROR: SequenceParsing should not be used in 2.10 -->
 				<manifest:SequenceParsing>
 					<md:StartsWith>0</md:StartsWith>
-					<!-- ERROR: EndsWith not in this schema -->
-					<md:EndsWith>0</md:EndsWith>
-					<!-- ERROR: Location must be integer in this schema. -->
-					<md:FilenameEmbedding location="ouroborus">true</md:FilenameEmbedding>
 				</manifest:SequenceParsing>
 			</manifest:ContainerReference>
 		</manifest:Audio>
@@ -145,16 +144,21 @@
 					<md:Job>
 						<md:JobFunction>Director</md:JobFunction>
 						<md:JobDisplay>Director</md:JobDisplay>
-						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+						<!-- ERROR: Test that multiple billing block with the same region don't work-->
+						<md:BillingBlockOrder region="US">1</md:BillingBlockOrder>
+						<md:BillingBlockOrder region="US">2</md:BillingBlockOrder>
 					</md:Job>
 					<md:Job>
 						<md:JobFunction>Writer</md:JobFunction>
 						<md:JobDisplay>Writer</md:JobDisplay>
+						<!-- ERROR: Cannot have multiple default orders --> 
 						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+						<md:BillingBlockOrder>4</md:BillingBlockOrder>
 					</md:Job>
 					<md:Name>
 						<md:DisplayName>Sacha Goedegebure</md:DisplayName>
 					</md:Name>
+					<md:Pronouns noProunouns="true"></md:Pronouns>
 				</md:People>
 				<md:People>
 					<md:Job>
@@ -165,6 +169,15 @@
 					<md:Name>
 						<md:DisplayName>Ton Roosendaal</md:DisplayName>
 					</md:Name>
+					<md:Pronouns>
+						<md:Subjective>she</md:Subjective>
+						<md:Objective>her</md:Objective>
+						<md:Adjective>her</md:Adjective>
+						<md:Possessive>hers</md:Possessive>
+						<md:Reflexive>herself</md:Reflexive>
+					</md:Pronouns>
+					<!-- Test: ImageReference works in People -->
+					<md:ImageReference purpose="promotional" resolution="9ooxThreeHundred">http://fake.movielabs.com/bunny.jpg</md:ImageReference>
 				</md:People>
 				<md:PrimarySpokenLanguage>de-DE</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>en-DE</md:PrimarySpokenLanguage>

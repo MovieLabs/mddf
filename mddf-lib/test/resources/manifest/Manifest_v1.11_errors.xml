@@ -11,17 +11,15 @@
 	</manifest:Compatibility>
 	<manifest:Inventory>
 		<manifest:Audio AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
-			<!-- Test: that lecturing is correctly added to encoding type -->
-			<md:Type>lecturing</md:Type>
-			<md:SubType>Director</md:SubType>
+			<!-- Error: Lectoring is not in the controlled vocabulary -->
+			<md:Type>lectoring</md:Type>
 			<md:Encoding>
 				<md:Codec>DOLBY-TRUEHD</md:Codec>
 				<md:VBR>2-pass VBR</md:VBR>
 				<md:ChannelMapping>Mono</md:ChannelMapping>
 			</md:Encoding>
-			<!-- Test: That disposition works -->
-			<md:Language disposition="verified">en</md:Language>
-			<md:Language>es</md:Language>
+			<!-- ERROR: Disposition has controlled vocabulary -->
+			<md:Language disposition="Wrong">en</md:Language>
 			<md:Channels>1</md:Channels>
 			<md:Compliance>
 				<md:Category>EPS</md:Category>
@@ -30,6 +28,10 @@
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
 				</manifest:ContainerLocation>
+				<!-- ERROR: SequenceParsing should not be used in 2.10 -->
+				<manifest:SequenceParsing>
+					<md:StartsWith>0</md:StartsWith>
+				</manifest:SequenceParsing>
 			</manifest:ContainerReference>
 		</manifest:Audio>
 		<manifest:Video VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
@@ -44,30 +46,6 @@
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Video>
-		<manifest:Subtitle SubtitleTrackID="">
-			<!-- Test: that samelanguage works -->
-			<md:Type>samelanguage</md:Type>
-			<md:Language>en</md:Language>
-			<!-- Test: that multiple languages can be added to subtitle track -->
-			<md:Language>es</md:Language>
-			<!-- Test: that properties works -->
-			<md:Properties>
-				<md:MaxCPS>4</md:MaxCPS>
-				<md:MaxLinesPerEvent>2</md:MaxLinesPerEvent>
-				<md:FormattingStripped>true</md:FormattingStripped>
-				<md:ContainsAnnotation>true</md:ContainsAnnotation>
-				<!-- Don't know if this makes sense. Added as Gibberish -->
-				<md:WritingFeatures termName="notControlled">
-					<md:Money>.2</md:Money>
-				</md:WritingFeatures>
-			</md:Properties>
-			<!-- Test: creation works -->
-			<md:Creation>
-				<md:AutoTTS full="true">true</md:AutoTTS>
-			</md:Creation>
-			<!-- Test: make sure timecode-type works and that format can be switched to have frames instead of microseconds -->
-			<md:AdditionalOffset format="hh:mm:ss:ff">01:22:33:23</md:AdditionalOffset>
-		</manifest:Subtitle>
 		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<manifest:BasicMetadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 				<md:LocalizedInfo language="en" default="true">
@@ -88,9 +66,9 @@
 					<md:Genre>Comedy</md:Genre>
 					<md:Region>
 						<md:country>US</md:country>
-					</md:Region>					
+					</md:Region>
 				</md:LocalizedInfo>
-				<!-- Test: Multiple Localized Info allowed if region/@language/excludedregion/targetaudience unique combo.  Testing that it's true -->
+				<!-- ERROR: Multiple Localized Info pointing at identical @language/region/excluded region/targetAudience not allowed. -->
 				<md:LocalizedInfo language="en" default="true">
 					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
 					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
@@ -108,8 +86,8 @@
 					<md:Genre>Short</md:Genre>
 					<md:Genre>Comedy</md:Genre>
 					<md:Region>
-						<md:country>CA</md:country>
-					</md:Region>
+						<md:country>US</md:country>
+					</md:Region>					
 				</md:LocalizedInfo>
 				<md:RunLength>PT10M00.0S</md:RunLength>
 				<md:ReleaseYear>2008</md:ReleaseYear>
@@ -119,8 +97,6 @@
 						<md:country>DE</md:country>
 					</md:DistrTerritory>
 					<md:Date>2016-05-22</md:Date>
-					<!-- Test: make sure roleCategory works -->
-					<md:ReleaseOrg roleCategory="independent"><md:DisplayName>ExampleOrg</md:DisplayName></md:ReleaseOrg>
 				</md:ReleaseHistory>
 				<md:ReleaseHistory>
 					<md:ReleaseType>original</md:ReleaseType>
@@ -167,19 +143,19 @@
 					<md:Job>
 						<md:JobFunction>Director</md:JobFunction>
 						<md:JobDisplay>Director</md:JobDisplay>
-						<!-- Test that multiple billing block orders work -->
+						<!-- Test that multiple billing block with the same region don't work-->
 						<md:BillingBlockOrder region="US">1</md:BillingBlockOrder>
-						<md:BillingBlockOrder region="CA">2</md:BillingBlockOrder>
+						<md:BillingBlockOrder region="US">2</md:BillingBlockOrder>
 					</md:Job>
 					<md:Job>
 						<md:JobFunction>Writer</md:JobFunction>
 						<md:JobDisplay>Writer</md:JobDisplay>
 						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+						<md:BillingBlockOrder>4</md:BillingBlockOrder>
 					</md:Job>
 					<md:Name>
 						<md:DisplayName>Sacha Goedegebure</md:DisplayName>
 					</md:Name>
-					<!-- Test: noPronouns works -->
 					<md:Pronouns noProunouns="true"></md:Pronouns>
 				</md:People>
 				<md:People>
@@ -191,7 +167,6 @@
 					<md:Name>
 						<md:DisplayName>Ton Roosendaal</md:DisplayName>
 					</md:Name>
-					<!-- Test: pronoun children work -->
 					<md:Pronouns>
 						<md:Subjective>she</md:Subjective>
 						<md:Objective>her</md:Objective>
@@ -200,23 +175,8 @@
 						<md:Reflexive>herself</md:Reflexive>
 					</md:Pronouns>
 					<!-- Test: ImageReference works in People -->
-					<md:ImageReference purpose="promotional" resolution="800x300">http://fake.movielabs.com/bunny.jpg</md:ImageReference>
-				</md:People><md:People>
-					<md:Job>
-						<md:JobFunction>Actor</md:JobFunction>
-						<md:CharacterInfo>
-							<md:CharacterName>Bunny</md:CharacterName>
-							<md:ImageReference purpose="promotional" resolution="800x300">http://fake.movielabs.com/bunny.jpg</md:ImageReference>
-						</md:CharacterInfo>
-					</md:Job>
-					<md:Name>
-						<md:DisplayName>Fake Actor</md:DisplayName>
-					</md:Name>
+					<md:ImageReference purpose="promotional" resolution="9ooxThreeHundred">http://fake.movielabs.com/bunny.jpg</md:ImageReference>
 				</md:People>
-				<!-- Test: Making sure CountryOfOrigin and intepretation work as expected -->
-				<md:CountryOfOrigin intepretation="creative">
-					<md:country>US</md:country>
-				</md:CountryOfOrigin>
 				<md:PrimarySpokenLanguage>de-DE</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>en-DE</md:PrimarySpokenLanguage>
 				<md:PrimarySpokenLanguage>en</md:PrimarySpokenLanguage>

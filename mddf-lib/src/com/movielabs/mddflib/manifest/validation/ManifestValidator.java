@@ -292,6 +292,9 @@ public class ManifestValidator extends CMValidator {
 		validateResolution("//{md}LocalizedInfo/{md}ArtReference/@resolution");
 		validateResolution("//{manifest}Picture/{manifest}ImageID/@resolution");
 		validateResolution("//{manifest}Picture/{manifest}ThumbnailImageID/@resolution");
+		
+		//Added by db to validate image reference resolution
+		validateResolution("//{md}ImageReference/@resolution");
 
 		// Now do any defined in Manifest spec..
 		validateManifestVocab();
@@ -588,6 +591,8 @@ public class ManifestValidator extends CMValidator {
 			structVer = "1.9";
 			break;
 		case "1.11":
+			structVer = "1.11";
+			break;
 		default:
 			// Not supported for the version
 			String msg = "Unable to process; missing structure definitions for Manifest v" + MAN_VER;
