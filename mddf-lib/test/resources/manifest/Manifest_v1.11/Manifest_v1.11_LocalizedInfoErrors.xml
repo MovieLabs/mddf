@@ -50,6 +50,44 @@
 		</manifest:Subtitle>
 		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<manifest:BasicMetadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+				<!-- Error: Multiple Localized Info only allowed if @language unique combo.-->
+				<md:LocalizedInfo language="en" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>A large but peaceful bunny is harassed by three
+						trouble-making rodents
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+					<md:TargetAudience><md:Who>Young Folks</md:Who></md:TargetAudience>
+				</md:LocalizedInfo>
+				<!-- Error: Multiple Localized Info only allowed if @language unique combo.-->
+				<md:LocalizedInfo language="en" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>A large but peaceful bunny is harassed by three
+						trouble-making rodents
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+				</md:LocalizedInfo>
+				<!-- Error: Multiple Localized Info only allowed if @language/region/country unique combo.-->
 				<md:LocalizedInfo language="en" default="true">
 					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
 					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
@@ -68,9 +106,11 @@
 					<md:Genre>Comedy</md:Genre>
 					<md:Region>
 						<md:country>US</md:country>
-					</md:Region>					
+					</md:Region>
+					<!-- Warning: TargetAudience should cause warning message to appear if used more then once. -->
+					<md:TargetAudience><md:Who>Young Folks</md:Who></md:TargetAudience>
 				</md:LocalizedInfo>
-				<!-- Test: Multiple Localized Info allowed if region/@language/excludedregion/targetaudience unique combo.  Testing that it's true -->
+				<!-- Error: Multiple Localized Info only allowed if @language/region/country unique combo.-->
 				<md:LocalizedInfo language="en" default="true">
 					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
 					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
@@ -88,8 +128,50 @@
 					<md:Genre>Short</md:Genre>
 					<md:Genre>Comedy</md:Genre>
 					<md:Region>
-						<md:country>CA</md:country>
+						<md:country>US</md:country>
 					</md:Region>
+				</md:LocalizedInfo>
+				<!-- Error: Multiple Localized Info allowed if @language/@excludedregion/countryRegion unique combo.-->
+				<md:LocalizedInfo language="es" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>Un binny pacífico de gran trasero es acosado por tres
+						Roedores problemáticos en Florida
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+					<md:ExcludedRegion>
+						<md:countryRegion>US-CA</md:countryRegion>
+					</md:ExcludedRegion>
+				</md:LocalizedInfo>
+				<!-- Test: Multiple Localized Info pnly allowed if region/@language/excludedregion/countryRegion unique combo.-->
+				<md:LocalizedInfo language="es" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>Un binny pacífico de gran trasero es acosado por tres
+						Roedores problemáticos en Florida
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+					<md:ExcludedRegion>
+						<md:countryRegion>US-CA</md:countryRegion>
+					</md:ExcludedRegion>
 				</md:LocalizedInfo>
 				<md:RunLength>PT10M00.0S</md:RunLength>
 				<md:ReleaseYear>2008</md:ReleaseYear>

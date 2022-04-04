@@ -111,7 +111,37 @@ public class StatusValidatorTest extends OfferStatusValidator {
 		}
 	}
  
-  
+	@Test
+	public void test_V28() throws IOException, JDOMException {
+		MddfTarget target = initialize("OStatus_simple.xml");
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			//  ERROR:	 line 17: ID ALID is not unique
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+	
+	@Test
+	public void test_V210() throws IOException, JDOMException {
+		MddfTarget target = initialize("OStatus_simple-v2.10.xml");
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			//  ERROR:	 line 17: ID ALID is not unique
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
 
 	protected void execute(MddfTarget target) throws IOException, JDOMException {
 		iLog.setMinLevel(LogMgmt.LEV_DEBUG);

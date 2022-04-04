@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2022 (x64) (http://www.altova.com) by Pixelogic Media (Pixelogic Media) -->
+<!-- edited with XMLSpy v2021 (x64) (http://www.altova.com) by MovieLabs (MovieLabs) -->
 <xs:schema xmlns:avails="http://www.movielabs.com/schema/avails/v2.6/avails" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:md="http://www.movielabs.com/schema/md/v2.10/md" xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.10" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://www.movielabs.com/schema/avails/v2.6/avails" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.6">
 	<xs:import namespace="http://www.movielabs.com/schema/md/v2.10/md" schemaLocation="md-v2.10.xsd"/>
 	<xs:import namespace="http://www.movielabs.com/schema/mdmec/v2.10" schemaLocation="mdmec-v2.10.xsd"/>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mdmec:CoreMetadata
-	xmlns="http://www.movielabs.com/schema/md/v2.4/md"
+	xmlns="http://www.movielabs.com/schema/md/v2.10/md"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.7"
-	xmlns:md="http://www.movielabs.com/schema/md/v2.7/md"
-	xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.7 mdmec-v2.7.xsd">
+	xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.10"
+	xmlns:md="http://www.movielabs.com/schema/md/v2.10/md"
+	xsi:schemaLocation="http://www.movielabs.com/schema/mdmec/v2.10 mdmec-v2.10.xsd">
 	<mdmec:Basic
 		ContentID="md:cid:eidr-s:CF5A-AB7E-A4DB-35FA-BAC5-M">
 		<md:LocalizedInfo language="de">

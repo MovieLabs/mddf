@@ -95,6 +95,8 @@ public class OfferStatusValidator extends CMValidator implements IssueLogger {
 		availSchemaVer = identifyXsdVersion(target);
 
 		switch (availSchemaVer) {
+		case "2.6":
+			break;
 		case "2.5":
 			break;
 		default:

@@ -13,7 +13,6 @@
 		<manifest:Audio AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<!-- Test: that lecturing is correctly added to encoding type -->
 			<md:Type>lecturing</md:Type>
-			<md:SubType>Director</md:SubType>
 			<md:Encoding>
 				<md:Codec>DOLBY-TRUEHD</md:Codec>
 				<md:VBR>2-pass VBR</md:VBR>
@@ -21,7 +20,6 @@
 			</md:Encoding>
 			<!-- Test: That disposition works -->
 			<md:Language disposition="verified">en</md:Language>
-			<md:Language>es</md:Language>
 			<md:Channels>1</md:Channels>
 			<md:Compliance>
 				<md:Category>EPS</md:Category>
@@ -44,27 +42,9 @@
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Video>
-		<manifest:Subtitle SubtitleTrackID="">
-			<!-- Test: that samelanguage works -->
-			<md:Type>samelanguage</md:Type>
+		<manifest:Subtitle SubtitleTrackID="md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Type>normal</md:Type>
 			<md:Language>en</md:Language>
-			<!-- Test: that multiple languages can be added to subtitle track -->
-			<md:Language>es</md:Language>
-			<!-- Test: that properties works -->
-			<md:Properties>
-				<md:MaxCPS>4</md:MaxCPS>
-				<md:MaxLinesPerEvent>2</md:MaxLinesPerEvent>
-				<md:FormattingStripped>true</md:FormattingStripped>
-				<md:ContainsAnnotation>true</md:ContainsAnnotation>
-				<!-- Don't know if this makes sense. Added as Gibberish -->
-				<md:WritingFeatures termName="notControlled">
-					<md:Money>.2</md:Money>
-				</md:WritingFeatures>
-			</md:Properties>
-			<!-- Test: creation works -->
-			<md:Creation>
-				<md:AutoTTS full="true">true</md:AutoTTS>
-			</md:Creation>
 			<!-- Test: make sure timecode-type works and that format can be switched to have frames instead of microseconds -->
 			<md:AdditionalOffset format="hh:mm:ss:ff">01:22:33:23</md:AdditionalOffset>
 		</manifest:Subtitle>
@@ -75,7 +55,7 @@
 					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
 					<md:TitleSort>Big Buck Bunny</md:TitleSort>
 					<md:Summary190>A large but peaceful bunny is harassed by three
-						trouble-making rodents
+						trouble-making rodents in Florida
 					</md:Summary190>
 					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
 						day and tries to enjoy nature, only to be pestered by three
@@ -90,13 +70,13 @@
 						<md:country>US</md:country>
 					</md:Region>					
 				</md:LocalizedInfo>
-				<!-- Test: Multiple Localized Info allowed if region/@language/excludedregion/targetaudience unique combo.  Testing that it's true -->
+				<!-- Test: Multiple Localized Info allowed if region/@language/excludedregion unique combo.  Testing that it's true -->
 				<md:LocalizedInfo language="en" default="true">
 					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
 					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
 					<md:TitleSort>Big Buck Bunny</md:TitleSort>
 					<md:Summary190>A large but peaceful bunny is harassed by three
-						trouble-making rodents
+						trouble-making rodents in Canada
 					</md:Summary190>
 					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
 						day and tries to enjoy nature, only to be pestered by three
@@ -110,6 +90,50 @@
 					<md:Region>
 						<md:country>CA</md:country>
 					</md:Region>
+					<!-- TargetAudience should not cause warning if used once -->
+					<md:TargetAudience><md:Who>Young Folks</md:Who></md:TargetAudience>
+				</md:LocalizedInfo>
+				<!-- Test: Multiple Localized Info allowed if region/@language/excludedregion unique combo.  Testing that it's true -->
+				<md:LocalizedInfo language="es" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>Un binny pacífico de gran trasero es acosado por tres
+						Roedores problemáticos en Florida 
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+					<md:Region>
+						<md:country>US</md:country>
+					</md:Region>
+				</md:LocalizedInfo>
+				<!-- Test: Multiple Localized Info allowed if region/@language/excludedregion unique combo.  Testing that it's true -->
+				<md:LocalizedInfo language="es" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>Un binny pacífico de gran trasero es acosado por tres
+						Roedores problemáticos en Florida 
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+					<md:ExcludedRegion>
+						<md:countryRegion>US-CA</md:countryRegion>
+					</md:ExcludedRegion>
 				</md:LocalizedInfo>
 				<md:RunLength>PT10M00.0S</md:RunLength>
 				<md:ReleaseYear>2008</md:ReleaseYear>
@@ -241,6 +265,10 @@
 					<manifest:AudioTrackID>md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 					</manifest:AudioTrackID>
 				</manifest:AudioTrackReference>
+				<manifest:SubtitleTrackReference>
+					<manifest:SubtitleTrackID>md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:SubtitleTrackID>
+				</manifest:SubtitleTrackReference>
 			</manifest:TrackMetadata>
 		</manifest:Presentation>
 	</manifest:Presentations>

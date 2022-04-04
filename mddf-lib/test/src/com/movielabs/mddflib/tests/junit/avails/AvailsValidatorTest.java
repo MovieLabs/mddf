@@ -181,10 +181,23 @@ public class AvailsValidatorTest extends AvailValidator {
 		}
 	}
 	
-
 	@Test
 	public void testVolumeErrors_v2_5() throws IOException, JDOMException {
 		MddfTarget target = initialize("Avails_Volume_error_v2.5.xml");
+		execute(target);
+		try {
+			assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+	
+	@Test
+	public void testVolumeErrors_v2_6() throws IOException, JDOMException {
+		MddfTarget target = initialize("Avails_Volume_error_v2.6.xml");
 		execute(target);
 		try {
 			assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_ERR));

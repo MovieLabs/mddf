@@ -234,9 +234,9 @@ public class MddfContext {
 			case "1.9":
 				return FILE_FMT.AVAILS_1_9;
 			case "2.6":
-				return FILE_FMT.AVAILS_2_1;
-			case "2.5.2":
 				return FILE_FMT.AVAILS_2_6;
+			case "2.5.2":
+				return FILE_FMT.AVAILS_2_5_2;
 			case "2.5":
 				return FILE_FMT.AVAILS_2_5;
 			case "2.4":

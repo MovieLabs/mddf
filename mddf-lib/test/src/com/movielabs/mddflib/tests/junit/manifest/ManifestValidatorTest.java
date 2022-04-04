@@ -257,7 +257,7 @@ public class ManifestValidatorTest extends ManifestValidator {
 	 */
 	@Test
 	public void testV111noErrors() throws IOException, JDOMException {
-		MddfTarget target = initialize("Manifest_v1.11_base.xml");
+		MddfTarget target = initialize("Manifest_v1.11/Manifest_v1.11_base.xml");
 		execute(target);
 		try {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
@@ -277,12 +277,32 @@ public class ManifestValidatorTest extends ManifestValidator {
 	 */
 	@Test
 	public void testV111withErrors() throws IOException, JDOMException {
-		MddfTarget target = initialize("Manifest_v1.11_errors.xml");
+		MddfTarget target = initialize("Manifest_v1.11/Manifest_v1.11_errors.xml");
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(5, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+	
+	/**
+	 * @throws JDOMException
+	 * @throws IOException
+	 * 
+	 */
+	@Test
+	public void testV111LocalInfoErrors() throws IOException, JDOMException {
+		MddfTarget target = initialize("Manifest_v1.11/Manifest_v1.11_LocalizedInfoErrors.xml");
 		execute(target);
 		try {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 			assertEquals(4, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(6, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
