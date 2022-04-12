@@ -281,8 +281,8 @@ public class ManifestValidatorTest extends ManifestValidator {
 		execute(target);
 		try {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
-			assertEquals(5, iLog.getCountForLevel(LogMgmt.LEV_ERR));
-			assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(13, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_WARN));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();

@@ -2,7 +2,7 @@
 <!-- TEST ARTIFACT: This file defines an error-free base-case that can be 
 	used to create artifacts supporting specific JUnit tests relating to the 
 	Common Metadata specification. -->
-<manifest:MediaManifest xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.11/manifest" xmlns:md="http://www.movielabs.com/schema/md/v2.10/md" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V" xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.11/manifest file:///C:/Users/damon/Documents/GitHub/mddf/mddf-lib/src/com/movielabs/mddf/resources/manifest-v1.11.xsd">
+<manifest:MediaManifest xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.11/manifest" xmlns:md="http://www.movielabs.com/schema/md/v2.10/md" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V" xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.11/manifest">
 	<manifest:Compatibility>
 		<manifest:SpecVersion>18</manifest:SpecVersion>
 		<manifest:System>HTML5</manifest:System>
@@ -44,10 +44,18 @@
 		</manifest:Video>
 		<manifest:Subtitle SubtitleTrackID="md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<md:Type>normal</md:Type>
-			<md:Language>en</md:Language>
+			<!-- Test: That disposition works -->
+			<md:Language disposition="verified">en</md:Language>
 			<!-- Test: make sure timecode-type works and that format can be switched to have frames instead of microseconds -->
 			<md:AdditionalOffset format="hh:mm:ss:ff">01:22:33:23</md:AdditionalOffset>
 		</manifest:Subtitle>
+		<manifest:Image ImageID="md:imageid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Width>200</md:Width>
+			<md:Height>500</md:Height>
+			<md:Encoding>image/jpeg</md:Encoding>
+			<!-- Test: That disposition works -->
+			<md:Language disposition="verified">en</md:Language>
+		</manifest:Image>
 		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<manifest:BasicMetadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 				<md:LocalizedInfo language="en" default="true">
@@ -270,6 +278,12 @@
 					</manifest:SubtitleTrackID>
 				</manifest:SubtitleTrackReference>
 			</manifest:TrackMetadata>
+			<manifest:Chapters>
+				<manifest:Chapter index="0">
+					<manifest:EntryTimecode>01:22:33:23</manifest:EntryTimecode>
+					<manifest:ImageID>md:imageid:eidr-s:E6CA-AB58-E298-7BA0-E574-V</manifest:ImageID>
+				</manifest:Chapter>
+			</manifest:Chapters>
 		</manifest:Presentation>
 	</manifest:Presentations>
 	<manifest:Experiences>

@@ -2,7 +2,7 @@
 <!-- TEST ARTIFACT: This file defines an error-free base-case that can be 
 	used to create artifacts supporting specific JUnit tests relating to the 
 	Common Metadata specification. -->
-<manifest:MediaManifest xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.11/manifest" xmlns:md="http://www.movielabs.com/schema/md/v2.10/md" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V" xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.11/manifest file:///C:/Users/damon/Documents/GitHub/mddf/mddf-lib/src/com/movielabs/mddf/resources/manifest-v1.11.xsd">
+<manifest:MediaManifest xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.11/manifest" xmlns:md="http://www.movielabs.com/schema/md/v2.10/md" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V" xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.11/manifest">
 	<manifest:Compatibility>
 		<manifest:SpecVersion>18</manifest:SpecVersion>
 		<manifest:System>HTML5</manifest:System>

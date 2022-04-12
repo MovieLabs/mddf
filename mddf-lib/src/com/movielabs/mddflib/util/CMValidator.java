@@ -322,9 +322,9 @@ public abstract class CMValidator extends XmlIngester {
 		validateVocab(mdNSpace, "Relationship", mdNSpace, "Type", expectedValues, docRef, true, false);
 		
 		//added by db to control disposition vocab
-		expectedValues = cmVocab.optJSONArray("DigitalAssetAudioLanguage@disposition");
+		expectedValues = cmVocab.optJSONArray("Language@disposition");
 		docRef = null; // LogReference.getRef("CM", CM_VER, "cm006");
-		validateVocab(mdNSpace, "DigitalAssetAudioLanguage", null, "@disposition", expectedValues, docRef, true, true);
+		validateVocab(mdNSpace, "*[substring(name(), string-length(name()) - string-length('anguage') +1) = 'anguage']", null, "@disposition", expectedValues, docRef, true, true);
 
 		
 		/**
@@ -381,6 +381,8 @@ public abstract class CMValidator extends XmlIngester {
 		String structVer = null;
 		switch (CM_VER) {
 		case "2.10":
+			structVer = "2.10";
+			break;
 		case "2.9":
 		case "2.8":
 			// T.B.D.....

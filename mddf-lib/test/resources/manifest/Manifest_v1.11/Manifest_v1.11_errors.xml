@@ -2,7 +2,7 @@
 <!-- TEST ARTIFACT: This file defines an error-free base-case that can be 
 	used to create artifacts supporting specific JUnit tests relating to the 
 	Common Metadata specification. -->
-<manifest:MediaManifest xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.11/manifest" xmlns:md="http://www.movielabs.com/schema/md/v2.10/md" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V" xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.11/manifest file:///C:/Users/damon/Documents/GitHub/mddf/mddf-lib/src/com/movielabs/mddf/resources/manifest-v1.11.xsd">
+<manifest:MediaManifest xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.11/manifest" xmlns:md="http://www.movielabs.com/schema/md/v2.10/md" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V" xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.11/manifest">
 	<manifest:Compatibility>
 		<manifest:SpecVersion>18</manifest:SpecVersion>
 		<manifest:System>HTML5</manifest:System>
@@ -41,11 +41,29 @@
 				<md:MPEGLevel>3.1</md:MPEGLevel>
 			</md:Encoding>
 			<md:Picture/>
+			<!-- ERROR: Disposition has controlled vocabulary -->
+			<md:Language disposition="Wrong">en</md:Language>
+			<md:SubtitleLanguage disposition="Right">en</md:SubtitleLanguage>
+			<md:SignedLanguage disposition="Right">en</md:SignedLanguage>
 			<manifest:ContainerReference>
 				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
 				</manifest:ContainerLocation>
 			</manifest:ContainerReference>
 		</manifest:Video>
+		<manifest:Subtitle SubtitleTrackID="md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Type>normal</md:Type>
+			<!-- ERROR: disposition has controlled vocabulary -->
+			<md:Language disposition="Wrong">en</md:Language>
+			<!-- Test: make sure timecode-type works and that format can be switched to have frames instead of microseconds -->
+			<md:AdditionalOffset format="hh:mm:ss:ff">01:22:33:23</md:AdditionalOffset>
+		</manifest:Subtitle>
+		<manifest:Image ImageID="md:imageid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Width>200</md:Width>
+			<md:Height>500</md:Height>
+			<md:Encoding>image/jpeg</md:Encoding>
+			<!-- ERROR: disposition has controlled vocabulary -->
+			<md:Language disposition="wrong">en</md:Language>
+		</manifest:Image>
 		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 			<manifest:BasicMetadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
 				<md:LocalizedInfo language="en" default="true">
@@ -200,8 +218,18 @@
 				<manifest:AudioTrackReference>
 					<manifest:AudioTrackID>md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
 					</manifest:AudioTrackID>
-				</manifest:AudioTrackReference>
+				</manifest:AudioTrackReference>				
+				<manifest:SubtitleTrackReference>
+					<manifest:SubtitleTrackID>md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:SubtitleTrackID>
+				</manifest:SubtitleTrackReference>
 			</manifest:TrackMetadata>
+			<manifest:Chapters>
+				<manifest:Chapter index="0">
+					<manifest:EntryTimecode>01:22:33:23</manifest:EntryTimecode>
+					<manifest:ImageID>md:imageid:eidr-s:E6CA-AB58-E298-7BA0-E574-V</manifest:ImageID>
+				</manifest:Chapter>
+			</manifest:Chapters>
 		</manifest:Presentation>
 	</manifest:Presentations>
 	<manifest:Experiences>

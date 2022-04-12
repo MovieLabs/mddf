@@ -5,6 +5,18 @@
 
 ## Versioning
 
+### mddf-lib 2.0.3
+
+* Enhancement: Upgraded to support
+  - Manifest v1.11
+  - Media Ent. Core v2.10
+  - Asset Order and Deliver v1.2
+  - Comon Metadata v2.10
+  - Avails v2.6
+* Warning: Does not support (but does flag)
+  - SequenceParsing-type
+  - Automated Review of Multiple TargetAudience-types in multiple LocalizedInfo types.
+
 ### mddd-lib 2.0.2
 
 * Enhancement: updated Ratings DB to v2.4.8 

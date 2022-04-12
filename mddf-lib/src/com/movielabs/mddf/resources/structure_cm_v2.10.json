@@ -380,6 +380,77 @@
 					"msg": "Specified SubType is only valid when Type is 'commentary'"
 				}
 			]
+		},
+		
+		"LocalizedInfo_multiple": 
+		{
+			"targetPath": ".//{md}LocalizedInfo",
+			"constraint": 
+			[
+				{					
+					"$LAN": "./@language",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "../{md}LocalizedInfo[@language={$LAN} and not(./{md}Region/{md}country) and not(./{md}Region/{md}countryRegion)] and not(./{md}ExcludedRegion/{md}country) and not(./{md}ExcludedRegion/{md}country)",
+					"msg": "Multiple occurences of non-region specific LocalizedInfo must be disambiguated by @language",
+					"docref": "CM:cm_LocalInfo_mult"
+				},
+				{					
+					"$LAN": "./@language",
+					"$COUNTRY": "./{md}Region/*",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "../{md}LocalizedInfo[@language={$LAN} and ./{md}Region/*={$COUNTRY}]",
+					"msg": "Multiple occurences of LocalizedInfo must be disambiguated by @language and Region",
+					"docref": "CM:cm_LocalInfo_mult"
+				},
+				{					
+					"$LAN": "./@language",
+					"$EXCOUNTRY": "./{md}ExcludedRegion/*",
+					"max": "1",
+					"severity": "Error",
+					"xpath": "../{md}LocalizedInfo[@language={$LAN} and ./{md}ExcludedRegion/*={$EXCOUNTRY}]",
+					"msg": "Multiple occurences of LocalizedInfo must be disambiguated by @language and Excluded Region",
+					"docref": "CM:cm_LocalInfo_mult"
+				},
+				{					
+					"max": "1",
+					"severity": "Warning",
+					"xpath": "../{md}LocalizedInfo/{md}TargetAudience",
+					"msg": "Multiple occurences of LocalizedInfo that include TargetAudience elements should be reviewed manually. The validator does not check TargetAudience nodes for duplication.",
+					"docref": "CM:cm_LocalInfo_mult"
+				}
+			]
+		},
+		
+		"BillingBlockOrder_regionUnique": 
+		{
+			"targetPath": ".//{md}Job/{md}BillingBlockOrder",
+			"constraint": 
+			[
+				{					
+					"$REGION": "./@region",
+					"max": "1",
+					"xpath": "../{md}BillingBlockOrder[@region = {$REGION}]",
+					"severity": "Error",
+					"msg": "Multiple BillingBlockOrder-type with same @region not allowed"
+				}
+			]
+		},
+		
+		"BillingBlockOrder_defaultRegion":
+		{
+			"targetPath": ".//{md}Job",
+			"constraint": 
+			[
+				{
+					"max": "1",
+					"xpath": "./{md}BillingBlockOrder[not(@region)]",
+					"severity": "Error",
+					"msg": "Multiple BillingBlockOrder-type without @region not allowed"
+				 
+				}
+			]
 		}
 	}
 }
