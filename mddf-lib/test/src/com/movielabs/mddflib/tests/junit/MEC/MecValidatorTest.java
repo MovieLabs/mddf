@@ -143,7 +143,7 @@ public class MecValidatorTest extends MecValidator {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+			assertEquals(2, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
 			throw e;
