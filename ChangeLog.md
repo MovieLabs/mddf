@@ -11,19 +11,23 @@
   - Manifest v1.11
   - Media Ent. Core v2.10
   - Asset Order and Deliver v1.2
-  - Comon Metadata v2.10
+  - Common Metadata v2.10
   - Avails v2.6
 * Warning: Does not support (but does flag)
   - SequenceParsing-type
   - Automated Review of Multiple TargetAudience-types in multiple LocalizedInfo types.
 
-### mddd-lib 2.0.2
+### mddf-lib 2.0.2
 
-* Enhancement: updated Ratings DB to v2.4.8 
+* Enhancement: updated Ratings DB to v2.4.8
 
-### mddd-lib 2.0
+### mddf-lib 2.0.1
 
-* SECURITY: Removed vulnerabilities associated with use of Apache libraries LOG4J and XMLBEANS .
+* SECURITY: Removed vulnerabilities associated with use of Apache libraries LOG4J.
+
+### mddf-lib 2.0
+
+* SECURITY: Removed vulnerabilities associated with use of Apache libraries LOG4J and XMLBEANS.
 * Enhancement: updated Ratings DB to v2.4.7
 
 ### mddf-lib 1.9.01
