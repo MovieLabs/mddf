@@ -11,8 +11,8 @@
 	</manifest:Compatibility>
 	<manifest:Inventory>
 		<manifest:Audio AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
-			<!-- Test: that lecturing is correctly added to encoding type -->
-			<md:Type>lecturing</md:Type>
+			<!-- Test: that lectoring is correctly added to encoding type -->
+			<md:Type>lectoring</md:Type>
 			<md:Encoding>
 				<md:Codec>DOLBY-TRUEHD</md:Codec>
 				<md:VBR>2-pass VBR</md:VBR>
