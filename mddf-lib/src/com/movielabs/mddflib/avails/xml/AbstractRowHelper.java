@@ -23,6 +23,7 @@
 package com.movielabs.mddflib.avails.xml;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.jdom2.Element;
@@ -212,7 +213,7 @@ public abstract class AbstractRowHelper  implements RowDataSrc{
 	 * @return
 	 */
 	protected boolean usesFormula(Cell sourceCell) {
-		if (sourceCell != null && (sourceCell.getCellType() == Cell.CELL_TYPE_FORMULA)) {
+		if (sourceCell != null && (sourceCell.getCellType() == CellType.FORMULA)) {
 			String addr = sourceCell.getAddress().formatAsString();
 			String errMsg = "Cell " + addr + "- Excel Formulas not supported";
 			String details = "Use of formulas may prevent the use of automated workflows for ingesting and processing the Avails.";
