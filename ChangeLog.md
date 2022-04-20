@@ -5,6 +5,9 @@
 
 ## Versioning
 
+### mddf-lib 2.0.3.1
+* SECURITY: Updated dependencies to remove flagged vulnerabilities in several plugins.
+
 ### mddf-lib 2.0.3
 
 * Enhancement: Upgraded to support

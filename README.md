@@ -1,5 +1,5 @@
 ![screenshot1](mddf-tools/docs/users/md/manifest/validator/v1.1/images/MLabs_header.jpg)
-# MovieLabs Digital Distribution Framework—MDDF
+# MovieLabs Digital Distribution Framework MDDF
 
 
 1 [What's New](#h_News)
@@ -27,7 +27,7 @@
 
 ---
 ## <a name="h_News">1) What's New</a>
-* 2022-Feb-07: v2.0.1 released [See Note-7] 
+* 2022-Feb-07: v2.0.3.1 released [See Note-7] 
 
 __NOTE-1:__ Starting with v1.5.1, releases of mddf-lib are available via the Maven Central Repository. Refer to
 the [mddf-lib README](./mddf-lib/README.md) for information on adding dependancy information to pom files.
@@ -83,7 +83,7 @@ Using the tool Launcher provides access to the following MDDF tools:
 
    - **Avails Validator Tool**: may be used to
       - validate an Avails file specified as either XML or XLSX
-      - validate an O	ffer Status file
+      - validate an Offer Status file
       - translate an XLSX-formatted Avails to the equivalent XML
       - translate an XML-formatted Avails to the equivalent XLSX
    
@@ -188,7 +188,7 @@ downloaded and installed for each MDDF tool.
   chmod -R a+x ./ManifestValidator.app
 ```
 
-The application may now be launched via the Finder. An error message that “the application can’t be opened” 
+The application may now be launched via the Finder. An error message that the application cant be opened 
 indicates Step #2 was not performed correctly.
 
 #### <a name="h_Install_MS">Windows:</a>
@@ -201,7 +201,7 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">7) Release History:</a>
-* **2022-Apr-12**: mddf-tool v2.0.3 released
+* **2022-Apr-20**: mddf-tool v2.0.3.1 released
 
 * **2022-Feb-07**: mddf-tool v2.0.1 released.
 

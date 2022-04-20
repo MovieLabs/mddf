@@ -8,7 +8,7 @@
 	<artifactId>mddf-tools</artifactId>
 	<version>2.0.3</version>
 
-	<name>mddf-tools-test</name>
+	<name>mddf-tools</name>
 	<description>Desk-top MDDF services</description>
 
 	<properties>
@@ -16,7 +16,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<mddf.lib.version>2.0.3</mddf.lib.version>
+		<mddf.lib.version>2.0.3.1</mddf.lib.version>
 		<mddf.tool.version>${project.version}</mddf.tool.version>
 		<mddf.tool.build>A</mddf.tool.build>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
@@ -48,12 +48,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.movielabs</groupId>
-			<artifactId>mddf-lib-test</artifactId>
+			<artifactId>mddf-lib</artifactId>
 			<version>${mddf.lib.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.movielabs</groupId>
-			<artifactId>mddf-lib-test</artifactId>
+			<artifactId>mddf-lib</artifactId>
 			<version>${mddf.lib.version}</version>
 			<classifier>tests</classifier>
 			<type>test-jar</type>
