@@ -27,7 +27,7 @@
 
 ---
 ## <a name="h_News">1) What's New</a>
-* 2022-Feb-07: v2.0.3.1 released [See Note-7] 
+* 2022-Apr-27: v2.0.4 released [See Note-7] 
 
 __NOTE-1:__ Starting with v1.5.1, releases of mddf-lib are available via the Maven Central Repository. Refer to
 the [mddf-lib README](./mddf-lib/README.md) for information on adding dependancy information to pom files.
@@ -201,7 +201,7 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">7) Release History:</a>
-* **2022-Apr-20**: mddf-tool v2.0.3.1 released
+* **2022-Apr-27**: mddf-tool v2.0.4 released
 
 * **2022-Feb-07**: mddf-tool v2.0.1 released.
 

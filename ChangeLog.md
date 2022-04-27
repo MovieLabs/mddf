@@ -5,6 +5,9 @@
 
 ## Versioning
 
+### mddf-lib 2.0.4
+* Version Name Change: Same thing as 2.0.3.1, just shorter name and updated changelog, readme, and status.json
+
 ### mddf-lib 2.0.3.1
 * SECURITY: Updated dependencies to remove flagged vulnerabilities in several plugins.
 
