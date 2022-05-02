@@ -5,13 +5,35 @@
 
 ## Versioning
 
-### mddd-lib 2.0.2
+### mddf-lib 2.0.4
+* Version Name Change: Same thing as 2.0.3.1, just shorter name and updated changelog, readme, and status.json
 
-* Enhancement: updated Ratings DB to v2.4.8 
+### mddf-lib 2.0.3.1
+* SECURITY: Updated dependencies to remove flagged vulnerabilities in several plugins.
 
-### mddd-lib 2.0
+### mddf-lib 2.0.3
 
-* SECURITY: Removed vulnerabilities associated with use of Apache libraries LOG4J and XMLBEANS .
+* Enhancement: Upgraded to support
+  - Manifest v1.11
+  - Media Ent. Core v2.10
+  - Asset Order and Deliver v1.2
+  - Common Metadata v2.10
+  - Avails v2.6
+* Warning: Does not support (but does flag)
+  - SequenceParsing-type
+  - Automated Review of Multiple TargetAudience-types in multiple LocalizedInfo types.
+
+### mddf-lib 2.0.2
+
+* Enhancement: updated Ratings DB to v2.4.8
+
+### mddf-lib 2.0.1
+
+* SECURITY: Removed vulnerabilities associated with use of Apache libraries LOG4J.
+
+### mddf-lib 2.0
+
+* SECURITY: Removed vulnerabilities associated with use of Apache libraries LOG4J and XMLBEANS.
 * Enhancement: updated Ratings DB to v2.4.7
 
 ### mddf-lib 1.9.01

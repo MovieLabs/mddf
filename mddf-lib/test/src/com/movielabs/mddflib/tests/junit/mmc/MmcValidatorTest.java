@@ -152,7 +152,7 @@ public class MmcValidatorTest extends MMCoreValidator {
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_ERR));
 			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
-			assertEquals(1, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+			assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
 		} catch (AssertionFailedError e) {
 			dumpLog();
 			throw e;

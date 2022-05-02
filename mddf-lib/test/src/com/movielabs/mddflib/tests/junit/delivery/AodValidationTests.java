@@ -84,11 +84,19 @@ class AodValidationTests {
 	}
 
 	@Test
-	void test() {
+	void testV11() {
 		validateFile("AssetAvailability_v1.1_no-errors.xml");
 		int errCnt = iLog.getCountForLevel(LogMgmt.LEV_ERR);
 		assertEquals(0, errCnt);
 	}
+	
+	@Test
+	void testV12() {
+		validateFile("AssetAvailability_no-errors_v1.2.xml");
+		int errCnt = iLog.getCountForLevel(LogMgmt.LEV_ERR);
+		assertEquals(0, errCnt);
+	}
+	
 
 	protected boolean validateFile(String filePath) {
 		String srcFilePath = rsrcPath + filePath;

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ERROR TEST: Use of invalid ID syntax (lines #16, 23) -->
+<manifest:MediaManifest 
+	xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.11/manifest" 
+	xmlns:md="http://www.movielabs.com/schema/md/v2.10/md" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V" 
+	xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.11/manifest https://movielabs.com/schema/manifest/v1.11/manifest-v1.11.xsd">
+	<manifest:Compatibility>
+		<manifest:SpecVersion>1.5</manifest:SpecVersion>
+		<manifest:System>HTML5</manifest:System>
+		<manifest:System>Roku</manifest:System>
+		<manifest:Profile>DemVal</manifest:Profile>
+	</manifest:Compatibility>
+	<manifest:Inventory>
+		<!-- ERROR - extra whitespace in ID... -->
+		<manifest:Audio AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0 E574 V">
+			<md:Language>en</md:Language>
+			<manifest:ContainerReference>
+			<manifest:SequenceParsing>
+				<md:StartsWith>0</md:StartsWith>
+				<!-- ERROR - location attribute has bad controlled vocab... -->
+				<md:FilenameEmbedding location="something">True</md:FilenameEmbedding>
+			</manifest:SequenceParsing>
+				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Audio>
+		<!-- ERROR - missing SSID in ID... -->
+		<manifest:Video VideoTrackID="md:vidtrackid:eidr-s">
+			<md:Picture/>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Video>
+		<manifest:Image ImageID="md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:background.1">
+			<md:Width>1280</md:Width>
+			<md:Height>720</md:Height>
+			<md:Encoding>jpg</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>http://www.criticalarchitectures.com/projects/cpe/bbb/images/background_v2.jpg
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<manifest:Image ImageID="md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:poster.1">
+			<md:Width>425</md:Width>
+			<md:Height>601</md:Height>
+			<md:Encoding>jpg</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>http://www.criticalarchitectures.com/projects/cpe/bbb/images/Big_buck_bunny_poster.jpg
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<!-- horizontal thumb -->
+		<manifest:Image ImageID="md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:thumb.h">
+			<md:Width>300</md:Width>
+			<md:Height>171</md:Height>
+			<md:Encoding>png</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>http://www.criticalarchitectures.com/projects/cpe/bbb/images/thumb_h.png
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<!-- vertical thumb -->
+		<manifest:Image ImageID="md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:thumb.v">
+			<md:Width>225</md:Width>
+			<md:Height>300</md:Height>
+			<md:Encoding>png</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>http://www.criticalarchitectures.com/projects/cpe/bbb/images/thumb_v.png
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<!-- avatar -->
+		<manifest:Image ImageID="md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:avatar80x80">
+			<md:Width>80</md:Width>
+			<md:Height>80</md:Height>
+			<md:Encoding>png</md:Encoding>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>http://www.criticalarchitectures.com/projects/cpe/bbb/images/bbb_avatar_80x80.png
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Image>
+		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:BasicMetadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+				<md:LocalizedInfo language="en" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>A large but peaceful bunny is harrased by three
+						trouble-making rodents
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+				</md:LocalizedInfo>
+				<md:RunLength>PT10M00.0S</md:RunLength>
+				<md:ReleaseYear>2008</md:ReleaseYear>
+				<md:WorkType>Movie</md:WorkType>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Director</md:JobFunction>
+						<md:JobDisplay>Director</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Job>
+						<md:JobFunction>Writer</md:JobFunction>
+						<md:JobDisplay>Writer</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Sacha Goedegebure</md:DisplayName>
+					</md:Name>
+				</md:People>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Producer</md:JobFunction>
+						<md:JobDisplay>Producer</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Ton Roosendaal</md:DisplayName>
+					</md:Name>
+				</md:People>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Art Director</md:JobFunction>
+						<md:JobDisplay>Art Director</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Andy Goralczyk</md:DisplayName>
+					</md:Name>
+				</md:People>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Music and sound design</md:JobFunction>
+						<md:JobDisplay>Music and sound design</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Jan Morgenstern</md:DisplayName>
+					</md:Name>
+				</md:People>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Lead Artist</md:JobFunction>
+						<md:JobDisplay>Lead Artist</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Job>
+						<md:JobFunction>Animator</md:JobFunction>
+						<md:JobDisplay>Animator</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Enrico Valenza</md:DisplayName>
+					</md:Name>
+				</md:People>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Animator</md:JobFunction>
+						<md:JobDisplay>Animator</md:JobDisplay>
+						<md:BillingBlockOrder>2</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Nathan Vegdahl</md:DisplayName>
+					</md:Name>
+				</md:People>
+			</manifest:BasicMetadata>
+		</manifest:Metadata>
+	</manifest:Inventory>
+	<manifest:Presentations>
+		<!-- the movie -->
+		<manifest:Presentation PresentationID="md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:TrackMetadata>
+				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
+				<manifest:VideoTrackReference>
+					<!-- the vidtrackid must match the one used in the inventory. -->
+					<manifest:VideoTrackID>md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:VideoTrackID>
+				</manifest:VideoTrackReference>
+				<manifest:AudioTrackReference>
+					<manifest:AudioTrackID>md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:AudioTrackID>
+				</manifest:AudioTrackReference>
+			</manifest:TrackMetadata>
+		</manifest:Presentation>
+	</manifest:Presentations>
+	<manifest:PictureGroups>
+		<!-- Picture group used by CPEx 'Manifest+' experience builder. The PictureGroupID 
+			must end the value specified by the ManifestIngester's CPE_PIC_GROUP_ID_SUFFIX 
+			constant. USAGE: specifies graphics used to create displays linked to specific 
+			ALIDs or Presentations. If group is for an ALID a poster should be provided. -->
+		<!-- 1st group: 'basic' ALID -->
+		<manifest:PictureGroup PictureGroupID="md:picturegroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:_CPEx">
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:background
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:background.1
+				</manifest:ImageID>
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:poster
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:poster.1
+				</manifest:ImageID>
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:v-thumb
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:thumb.v
+				</manifest:ImageID>
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:h-thumb
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:thumb.h
+				</manifest:ImageID>
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:avatar
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:avatar80x80
+				</manifest:ImageID>
+			</manifest:Picture>
+			<manifest:Type>Retail</manifest:Type>
+		</manifest:PictureGroup>
+		<!-- main feature Presentation. Note that we are using the same images 
+			specified in the 'basic' ALID's picture group but that is not a requirement. -->
+		<manifest:PictureGroup PictureGroupID="md:picturegroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:_CPEx">
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:poster
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:poster.1
+				</manifest:ImageID>
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:v-thumb
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:thumb.v
+				</manifest:ImageID>
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:h-thumb
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:thumb.h
+				</manifest:ImageID>
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:avatar
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:avatar80x80
+				</manifest:ImageID>
+			</manifest:Picture>
+		</manifest:PictureGroup>
+		<!-- DEFAULT PictureGroup -->
+		<manifest:PictureGroup PictureGroupID="md:picturegroupid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:Default_CPEx">
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:background
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:background.1
+				</manifest:ImageID>
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:poster
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:poster.1
+				</manifest:ImageID>
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:v-thumb
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:thumb.v
+				</manifest:ImageID>
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:h-thumb
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:thumb.h
+				</manifest:ImageID>
+			</manifest:Picture>
+			<manifest:Picture>
+				<manifest:PictureID>md:pictureid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:avatar80x80
+				</manifest:PictureID>
+				<manifest:ImageID>md:imageid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:avatar80x80
+				</manifest:ImageID>
+			</manifest:Picture>
+		</manifest:PictureGroup>
+	</manifest:PictureGroups>
+	<manifest:Experiences>
+		<manifest:Experience version="0.1" ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq">
+			<!-- this links the metadata from the movie's inventory entry to the experience -->
+			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+			</manifest:ContentID>
+			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+				<!-- feature movie -->
+				<manifest:Type>Main</manifest:Type>
+				<manifest:SubType>Feature</manifest:SubType>
+				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				</manifest:PresentationID>
+			</manifest:Audiovisual>
+		</manifest:Experience>
+	</manifest:Experiences>
+	<manifest:ALIDExperienceMaps>
+		<manifest:ALIDExperienceMap>
+			<manifest:ALID>md:alid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02
+			</manifest:ALID>
+			<manifest:ExperienceID condition="Acquired">md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq
+			</manifest:ExperienceID>
+		</manifest:ALIDExperienceMap>
+	</manifest:ALIDExperienceMaps>
+</manifest:MediaManifest>

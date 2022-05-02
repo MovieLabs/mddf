@@ -234,5 +234,4 @@ public class CMValidatorTest extends AbstractCmmTester {
 	}
 
 
-
 }

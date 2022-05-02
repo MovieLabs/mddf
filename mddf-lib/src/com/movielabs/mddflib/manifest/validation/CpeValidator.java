@@ -346,12 +346,12 @@ public class CpeValidator extends ManifestValidator implements ProfileValidator 
 
 	/**
 	 * The following rules apply to top-level grouping nodes (i.e., those that are
-	 * not presented to the user), such as “in-movie” and “out-of-movie” in the
+	 * not presented to the user), such as in-movie and out-of-movie in the
 	 * examples above:
 	 * <ul>
 	 * <li>There is only one instance of LocalizedInfo</li>
 	 * <li>That instance has TitleSort set to the name of the grouping category
-	 * (e.g., “in-movie” or “out-of-movie”).</li>
+	 * (e.g., in-movie or out-of-movie).</li>
 	 * <li>LocalizedInfo@language may contain any language code, and it is
 	 * ignored.</li>
 	 * <li>No other metadata is present unless it is a required element or attribute

@@ -487,7 +487,7 @@ public class XlsxBuilder {
 	 * only territorial info in an Avails is part of a Transaction. The problem is
 	 * that there can be multiple Transactions and a single Transaction may specify
 	 * zero or many Territories. Thus, if there is <b>any</b> Transaction row with
-	 * “US” in-scope, then <tt>CaptionIncluded</tt> should be set.
+	 * US in-scope, then <tt>CaptionIncluded</tt> should be set.
 	 * 
 	 * </p>
 	 * 

@@ -97,7 +97,7 @@ public class CpeIP1Validator {
 		ExperienceNode mainExpNode = kinder.get(0);
 		validateRoot(mainExpNode);
 		/*
-		 * Level 2: the main grouping nodes (i.e., “in-movie” or“out-of-movie”).
+		 * Level 2: the main grouping nodes (i.e., in-movie or out-of-movie).
 		 */
 		List<ExperienceNode> mainGroupNodes = mainExpNode.getChildren();
 		if (mainGroupNodes.size() != 2) {
@@ -116,7 +116,7 @@ public class CpeIP1Validator {
 	/**
 	 * 
 	 * Validates 2nd level of the IP-1 Info Model: the main grouping nodes
-	 * (i.e., “in-movie” or“out-of-movie”).
+	 * (i.e., in-movie orout-of-movie).
 	 * 
 	 * @param mainGroupNode
 	 */
@@ -277,13 +277,13 @@ public class CpeIP1Validator {
 	/**
 	 * Validates time-oriented (tied to the video timeline) collections of
 	 * material that is displayed in conjunction with playback. This is referred
-	 * to as ‘in movie’.
+	 * to as �in movie�.
 	 * <p>
 	 * Requirements (Sec 2.2):
 	 * <ul>
 	 * <li>Contains a ContentID referencing Basic Metadata in the Inventory that
 	 * contains TitleDisplayUnlimited and TitleSort with the name of the tab
-	 * (e.g., “Shorts”).</li>
+	 * (e.g., Shorts).</li>
 	 * <li>Contains a TimedEventSequence referencing Presentations, Media
 	 * Applications, Galleries and Text Groups. Note that these objects will be
 	 * displayed in the order corresponding with TimedEvent/StartTimecode in
@@ -458,7 +458,7 @@ public class CpeIP1Validator {
 	 * <p>
 	 * According to Section 2.3 of <tt>TR-CPE-IP v1.0</tt>:
 	 * <ul>
-	 * <li>Each “Features” Presentation must include Chapters.</li>
+	 * <li>Each Features Presentation must include Chapters.</li>
 	 * <li>Chapters should not be included in bonus content</li>
 	 * </ul>
 	 * Both of these statements are incorrect. Thus, the only actual additional

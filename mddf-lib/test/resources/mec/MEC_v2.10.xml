@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdmec:CoreMetadata xmlns:md="http://www.movielabs.com/schema/md/v2.10/md" 
+		    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		    xmlns:mdmec="http://www.movielabs.com/schema/mdmec/v2.10" 
+		    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <mdmec:Basic ContentID="md:cid:org:TEST:TEST">
+        <md:LocalizedInfo default="true" language="en">
+            <md:ArtReference purpose="poster" resolution="1000x1440">md:imageid:org:TEST:TEST:poster.en</md:ArtReference>
+        </md:LocalizedInfo>
+        <md:ReleaseYear>2016</md:ReleaseYear>
+        <md:ReleaseDate>2018-09-11</md:ReleaseDate>
+        <md:ReleaseHistory>
+            <md:ReleaseType>original</md:ReleaseType>
+            <md:DistrTerritory>
+                <md:country>US</md:country>
+            </md:DistrTerritory>
+            <md:Date>2018-09-11</md:Date>
+        </md:ReleaseHistory>
+        <md:WorkType>Movie</md:WorkType>
+        <md:AltIdentifier>
+            <md:Namespace>ORG</md:Namespace>
+            <md:Identifier>TEST</md:Identifier>
+        </md:AltIdentifier>
+        <md:RatingSet>
+            <md:Rating>
+                <md:Region>
+                    <md:country>US</md:country>
+                </md:Region>
+                <md:System>MPAA</md:System>
+                <md:Value>UNRATED</md:Value>
+            </md:Rating>
+        </md:RatingSet>
+        <md:CountryOfOrigin>
+            <md:country>US</md:country>
+        </md:CountryOfOrigin>
+        <md:OriginalLanguage>en</md:OriginalLanguage>
+        <md:AssociatedOrg organizationID="TEST" role="licensor"/>
+    </mdmec:Basic>
+    <mdmec:Source organizationID="TEST" idType="Sony DADC Request Line Item"/>
+    <mdmec:CompanyDisplayCredit>
+        <md:DisplayString>Stadium Media</md:DisplayString>
+    </mdmec:CompanyDisplayCredit>
+</mdmec:CoreMetadata>

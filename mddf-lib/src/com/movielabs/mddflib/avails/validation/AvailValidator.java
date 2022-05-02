@@ -183,6 +183,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateUsage();
 
 		switch (availSchemaVer) {
+		case "2.6":
 		case "2.5":
 		case "2.4":
 			/* Validate indexed sequences that must be continuously increasing */
@@ -381,6 +382,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 */
 		String structVer = null;
 		switch (availSchemaVer) {
+		case "2.6":
+			structVer = "2.6";
+			break;
 		case "2.5":
 			structVer = "2.5";
 			break;

@@ -90,6 +90,12 @@
 				<RelURL></RelURL>
 			</Version>
 		</Ref>
+		<Ref id="cm_LocalInfo_mult">
+			<Version id="2.10">
+				<Label>Section 4.1.2</Label>
+				<RelURL></RelURL>
+			</Version>
+		</Ref>
 	</Specification>
 	<Specification id="MMM" label="TR-META-MMM" versions="1.5, 1.6">
 		<!-- Used by ManifestValidator -->

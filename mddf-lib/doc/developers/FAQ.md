@@ -23,6 +23,7 @@ require modification. The specific classes and methods to check are:
 * for Avails:
   * `AvailValidator.validateConstraints()`
   * `AvailValidator.validateUsage()`
+  * `OfferStatusValidator.process()`
   
 * for Manifests:
   * `ManifestValidator.validateUsage()`
