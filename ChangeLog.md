@@ -5,6 +5,9 @@
 
 ## Versioning
 
+### mddf-lib 2.0.5
+* Enhancement: updated Ratings DB to v2.4.9
+
 ### mddf-lib 2.0.4
 * Version Name Change: Same thing as 2.0.3.1, just shorter name and updated changelog, readme, and status.json
 

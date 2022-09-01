@@ -6,7 +6,7 @@
 
 	<groupId>com.movielabs</groupId>
 	<artifactId>mddf-tools</artifactId>
-	<version>2.0.4</version>
+	<version>2.0.5</version>
 
 	<name>mddf-tools</name>
 	<description>Desk-top MDDF services</description>
@@ -16,7 +16,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<mddf.lib.version>2.0.4</mddf.lib.version>
+		<mddf.lib.version>2.0.5</mddf.lib.version>
 		<mddf.tool.version>${project.version}</mddf.tool.version>
 		<mddf.tool.build>A</mddf.tool.build>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
