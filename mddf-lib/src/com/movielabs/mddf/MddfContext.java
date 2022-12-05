@@ -81,12 +81,12 @@ public class MddfContext {
 
 	static {
 		// --- Supported versions of standards (in order) ---
-		String[] CM_VER = {"2.10","2.9",  "2.8", "2.7.1", "2.7", "2.6", "2.5", "2.4" };
-		String[] MANIFEST_VER = { "1.11","1.10", "1.9", "1.8.1", "1.8", "1.7", "1.6.1", "1.6", "1.5" };
+		String[] CM_VER = {"2.11","2.10","2.9",  "2.8", "2.7.1", "2.7", "2.6", "2.5", "2.4" };
+		String[] MANIFEST_VER = { "1.12","1.11","1.10", "1.9", "1.8.1", "1.8", "1.7", "1.6.1", "1.6", "1.5" };
 		String[] MEC_VER = { "2.10", "2.9", "2.8", "2.7.1", "2.7", "2.6", "2.5", "2.4" };
 		String[] AVAILS_X_VER = {"2.6", "2.5.2",  "2.5", "2.4", "2.3", "2.2.2", "2.2.1", "2.2", "2.1" };
 		String[] AVAILS_E_VER = { "1.9", "1.8", "1.7.3", "1.7.2", "1.7", "1.6" };
-		String[] AOD_VER = { "1.0", "1.1", "1.2" };
+		String[] AOD_VER = { "1.3", "1.2", "1.1", "1.0" };
 		String[] MMM_BP = { "1.0" };
 
 		stdsVersions = new HashMap<String, String[]>();
@@ -119,11 +119,11 @@ public class MddfContext {
 		MANIFEST_1_6_1("Manifest", "1.6.1", "xml"), MANIFEST_1_7("Manifest", "1.7", "xml"),
 		MANIFEST_1_8("Manifest", "1.8", "xml"), MANIFEST_1_8_1("Manifest", "1.8.1", "xml"),
 		MANIFEST_1_9("Manifest", "1.9", "xml"), MANIFEST_1_10("Manifest", "1.10", "xml"),
-		MANIFEST_1_11("Manifest", "1.11", "xml"),
+		MANIFEST_1_11("Manifest", "1.11", "xml"), MANIFEST_1_12("Manifest", "1.12", "xml")
 		MDMEC_2_4("MEC", "2.4", "xml"), MDMEC_2_5("MEC", "2.5", "xml"), MDMEC_2_6("MEC", "2.6", "xml"),
 		MDMEC_2_7("MEC", "2.7", "xml"), MDMEC_2_7_1("MEC", "2.7.1", "xml"), MDMEC_2_9("MEC", "2.9", "xml"),
 		MDMEC_2_10("MEC", "2.10", "xml"), MDMEC_2_8("MEC", "2.8", "xml"), AOD_1_0("AOD", "1.0", "xml"), 
-		AOD_1_1("AOD", "1.1", "xml"), AOD_1_2("AOD", "1.2", "xml");
+		AOD_1_1("AOD", "1.1", "xml"), AOD_1_2("AOD", "1.2", "xml"), AOD_1_3("AOD", "1.3", "xml");
 
 		private String standard;
 		private String ver;
@@ -217,6 +217,8 @@ public class MddfContext {
 				return FILE_FMT.MANIFEST_1_10;
 			case "1.11":
 				return FILE_FMT.MANIFEST_1_11;
+			case "1.12":
+				return FILE_FMT.MANIFEST_1_12;
 			}
 			break;
 		case "avails":
@@ -281,6 +283,8 @@ public class MddfContext {
 				return FILE_FMT.AOD_1_1;
 			case "1.2":
 				return FILE_FMT.AOD_1_2;
+			case "1.3":
+				return FILE_FMT.AOD_1_3;
 			}
 			break;
 		}
@@ -393,6 +397,9 @@ public class MddfContext {
 		case MANIFEST_1_11:
 			uses.put("MD", "2.10");
 			break;
+		case MANIFEST_1_12:
+			uses.put("MD", "2.11");
+			break;
 		case MDMEC_2_10:
 			uses.put("MD", "2.10");
 			break;
@@ -428,6 +435,10 @@ public class MddfContext {
 		case AOD_1_2:
 			uses.put("MD", "2.10");
 			uses.put("MANIFEST", "1.11");
+			break;
+		case AOD_1_3:
+			uses.put("MD", "2.11");
+			uses.put("MANIFEST", "1.12");
 			break;
 		default:
 			System.out.println("Bugger!!! Who is " + standard.label + "?");
@@ -564,6 +575,11 @@ public class MddfContext {
 					MddfContext.NSPACE_MANIFEST_PREFIX + "1.11" + MddfContext.NSPACE_MANIFEST_SUFFIX));
 			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.10/md"));
 			break;
+		case MANIFEST_1_12:
+			uses.put("MANIFEST", Namespace.getNamespace("manifest",
+					MddfContext.NSPACE_MANIFEST_PREFIX + "1.12" + MddfContext.NSPACE_MANIFEST_SUFFIX));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.11/md"));
+			break;
 		case MDMEC_2_10:
 			uses.put("MDMEC", Namespace.getNamespace("mdmec", "http://www.movielabs.com/schema/mdmec/v2.10"));
 			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.10/md"));
@@ -597,6 +613,12 @@ public class MddfContext {
 			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.4/md"));
 			break;
 //			*********************************** 
+		case AOD_1_3:
+			uses.put("AOD", Namespace.getNamespace("delivery", "http://www.movielabs.com/schema/md/delivery/v1.3"));
+			uses.put("MANIFEST", Namespace.getNamespace("manifest",
+					MddfContext.NSPACE_MANIFEST_PREFIX + "1.11" + MddfContext.NSPACE_MANIFEST_SUFFIX));
+			uses.put("MD", Namespace.getNamespace("md", "http://www.movielabs.com/schema/md/v2.11/md"));
+			break;
 		case AOD_1_2:
 			uses.put("AOD", Namespace.getNamespace("delivery", "http://www.movielabs.com/schema/md/delivery/v1.2"));
 			uses.put("MANIFEST", Namespace.getNamespace("manifest",
