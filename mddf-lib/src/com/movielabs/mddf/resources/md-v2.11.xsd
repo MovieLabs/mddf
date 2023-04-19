@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2023 (x64) (http://www.altova.com) by Pixelogic Media (Pixelogic Media) -->
+<!-- edited with XMLSpy v2023 sp1 (x64) (http://www.altova.com) by Craig Seidel -->
 <xs:schema xmlns:md="http://www.movielabs.com/schema/md/v2.11/md" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.movielabs.com/schema/md/v2.11/md" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.11">
 	<!--Common Metadata-->
-	<!--Verson 2.11 DRAFT-->
+	<!--Verson 2.11-->
 	<!-- *** Metadata References ***-->
 	<xs:simpleType name="id-type">
 		<xs:restriction base="xs:anyURI"/>
@@ -1871,13 +1871,13 @@
 	</xs:complexType>
 	<xs:complexType name="AncillaryDescription-type">
 		<xs:sequence>
-			<xs:element name="Type"/>
-			<xs:element name="SubType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Type" type="xs:string"/>
+			<xs:element name="SubType" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="Description" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:string">
-							<xs:attribute name="language"/>
+							<xs:attribute name="language" type="xs:language"/>
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>

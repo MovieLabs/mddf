@@ -201,6 +201,8 @@ steps to install or run. The `.msi` formatted distro is not supported.
 Linux executables are provided in both`rpm` and `deb` distro formats.
 
 ## <a name="h_History">7) Release History:</a>
+* **2023-Apr-19**: mddf-tool v2.0.6 released
+
 * **2022-Sep-1**: mddf-tool v2.0.5 released
 
 * **2022-Apr-27**: mddf-tool v2.0.4 released

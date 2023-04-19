@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2023 (x64) (http://www.altova.com) by Pixelogic Media (Pixelogic Media) -->
+<!-- edited with XMLSpy v2023 sp1 (x64) (http://www.altova.com) by Craig Seidel -->
 <xs:schema xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.12/manifest" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:md="http://www.movielabs.com/schema/md/v2.11/md" targetNamespace="http://www.movielabs.com/schema/manifest/v1.12/manifest" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	<xs:import namespace="http://www.movielabs.com/schema/md/v2.11/md" schemaLocation="md-v2.11-DRAFT-20221027.xsd"/>
-	<!--Manifest v1.12 DRAFT-->
+	<xs:import namespace="http://www.movielabs.com/schema/md/v2.11/md" schemaLocation="md-v2.11.xsd"/>
+	<!--Manifest v1.12-->
 	<!-- *************** D A T A   D E F I N I T I O N S ****************-->
 	<!--*** IDENTIFIERS ***-->
 	<xs:simpleType name="ExperienceID-type">
@@ -448,6 +448,46 @@
 			<xs:element name="ContainerReference" type="manifest:ContainerReference-type" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:complexType name="PresentationTimeline-type">
+		<xs:sequence>
+			<xs:element name="PresentationStart" type="manifest:Timecode-type" minOccurs="0"/>
+			<xs:element name="AudioTrackStart" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="manifest:Timecode-type">
+							<xs:attribute name="audioTrackID" type="manifest:AudioTrackID-type" use="required"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="VideoTrackStart" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="manifest:Timecode-type">
+							<xs:attribute name="videoTrackID" type="manifest:VideoTrackID-type" use="required"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SubtitleTrackStart" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="manifest:Timecode-type">
+							<xs:attribute name="subtitleTrackID" type="manifest:SubtitleTrackID-type" use="required"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="framerate" type="xs:int"/>
+		<xs:attribute name="multiplier" type="xs:string"/>
+		<xs:attribute name="dropframe" type="xs:boolean"/>
+		<xs:attribute name="format" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>"seconds" or "hh:mm:ss:ff"</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
 	<xs:complexType name="Presentation-type">
 		<xs:sequence>
 			<xs:element name="TrackMetadata" maxOccurs="unbounded">
@@ -461,7 +501,7 @@
 			<xs:element name="Chapters" type="manifest:ChapterList-type" minOccurs="0"/>
 			<xs:element name="Markers" type="manifest:MarkerList-type" minOccurs="0"/>
 			<xs:element name="IMFRef" type="manifest:PresentationIMFRef-type" minOccurs="0"/>
-			<xs:element name="StartTimecode" type="md:Timecode-type" minOccurs="0"/>
+			<xs:element name="PresentationTimeline" type="manifest:PresentationTimeline-type" minOccurs="0"/>
 		</xs:sequence>
 		<xs:attribute name="PresentationID" type="manifest:PresentationID-type" use="required"/>
 	</xs:complexType>
@@ -683,6 +723,7 @@
 			<xs:element name="Clip" type="manifest:AudiovisualClipRef-type" maxOccurs="unbounded"/>
 			<xs:element name="ImageClip" type="manifest:ImageClipRef-type" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="ReferenceID" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="SequenceTimeline" type="manifest:PresentationTimeline-type" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="PlayableSequenceList-type">
