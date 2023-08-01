@@ -5,6 +5,9 @@
 
 ## Versioning
 
+### mddf-lib 2.0.7
+* Enhancement: updated Ratings DB to v2.5
+
 ### mddf-lib 2.0.6
 * Enhancement: upgraded to support
   - Manifest v1.12
