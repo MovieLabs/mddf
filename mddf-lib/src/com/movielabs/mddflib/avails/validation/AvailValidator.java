@@ -183,6 +183,7 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		validateUsage();
 
 		switch (availSchemaVer) {
+		case "2.6.1":
 		case "2.6":
 		case "2.5":
 		case "2.4":
@@ -382,6 +383,9 @@ public class AvailValidator extends CMValidator implements IssueLogger {
 		 */
 		String structVer = null;
 		switch (availSchemaVer) {
+		case "2.6.1":
+			structVer = "2.6.1";
+			break;
 		case "2.6":
 			structVer = "2.6";
 			break;
