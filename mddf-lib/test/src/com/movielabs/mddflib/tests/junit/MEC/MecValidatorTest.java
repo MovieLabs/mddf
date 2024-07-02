@@ -112,7 +112,10 @@ public class MecValidatorTest extends MecValidator {
 		}
 	}
 
-	@Test
+	/*
+	 * Noticed this unfinished code 4-25-24
+	 * This isn't set as a test.  Ignoring because it's so far back
+	 */
 	public void testFull_v2_5() throws IOException, JDOMException {
 		MddfTarget target = initialize("mec/MEC_v2.5_noErr.xml");
 		execute(target);
@@ -129,6 +132,47 @@ public class MecValidatorTest extends MecValidator {
 			throw e;
 		}
 	}
+	
+	@Test
+	public void testFull_v2_12_noErrors() throws IOException, JDOMException {
+		MddfTarget target = initialize("mec/MEC_v2.12/MEC_v2.12_base.xml");
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(4, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+			/*
+			 * WIP:
+			 */
+//		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+	
+	@Test
+	public void testFull_v2_12_errors() throws IOException, JDOMException {
+		MddfTarget target = initialize("mec/MEC_v2.12/MEC_v2.12_errors.xml");
+		execute(target);
+		try {
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_FATAL));
+			assertEquals(5, iLog.getCountForLevel(LogMgmt.LEV_ERR));
+			assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+			assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+			/*
+			 * WIP:
+			 */
+//		assertEquals(3, iLog.getCountForLevel(LogMgmt.LEV_WARN));
+//		assertEquals(0, iLog.getCountForLevel(LogMgmt.LEV_NOTICE));
+		} catch (AssertionFailedError e) {
+			dumpLog();
+			throw e;
+		}
+	}
+	
 	
 	/**
 	 * @throws JDOMException

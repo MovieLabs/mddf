@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2024 (x64) (http://www.altova.com) by Pixelogic Media (Pixelogic Media) -->
+<xs:schema xmlns:delivery="http://www.movielabs.com/schema/md/delivery/v1.4/delivery" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:md="http://www.movielabs.com/schema/md/v2.12/md" xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.13/manifest" xmlns:ns1="http://www.movielabs.com/schema/md/v2.12/md" xmlns:ns2="http://www.movielabs.com/schema/manifest/v1.13/manifest" targetNamespace="http://www.movielabs.com/schema/md/delivery/v1.4/delivery" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--ASSET ORDERING,  DELIVERY AND TRACKING-->
+	<!--Version 1.4 DRAFT-->
+	<!---->
+	<xs:import namespace="http://www.movielabs.com/schema/md/v2.12/md" schemaLocation="md-v2.12.xsd"/>
+	<xs:import namespace="http://www.movielabs.com/schema/manifest/v1.13/manifest" schemaLocation="manifest-v1.13.xsd"/>
+	<!-- *************** D A T A   D E F I N I T I O N S ****************-->
+	<!---->
+	<!--*** ATTRIBUTE GROUPS ***-->
+	<xs:attributeGroup name="LanguageAssets-attr">
+		<xs:attribute name="audio" type="xs:string"/>
+		<xs:attribute name="video" type="xs:string"/>
+		<xs:attribute name="timedText" type="xs:string"/>
+		<xs:attribute name="SDH" type="xs:string"/>
+		<xs:attribute name="descriptive" type="xs:string"/>
+		<xs:attribute name="signed" type="xs:string"/>
+		<xs:attribute name="metadata" type="xs:string"/>
+		<xs:attribute name="subdubPreferred" type="xs:boolean"/>
+	</xs:attributeGroup>
+	<!--*** GENERAL TYPES  ***-->
+	<xs:complexType name="ExpectedDate-type">
+		<xs:simpleContent>
+			<xs:extension base="md:YearDateOrTime-type">
+				<xs:attribute name="dateIsTarget" type="xs:boolean"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="LeadTime-type">
+		<xs:simpleContent>
+			<xs:extension base="xs:duration">
+				<xs:attribute name="durationIsTarget" type="xs:boolean"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="DeliveryPublisher-type">
+		<xs:sequence>
+			<xs:element name="Publisher" type="md:OrgName-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ServiceProvider" type="md:OrgName-type" minOccurs="0"/>
+			<xs:element name="Contact" type="md:ContactInfo-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeliveryPlatform-type">
+		<xs:sequence>
+			<xs:element name="Platform" type="md:OrgName-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ServiceProvider" type="md:OrgName-type" minOccurs="0"/>
+			<xs:element name="Contact" type="md:ContactInfo-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeliveryInstructions-type">
+		<xs:sequence>
+			<xs:element name="Comments" type="xs:string" minOccurs="0"/>
+			<xs:element name="ExceptionFlag" type="xs:boolean" default="true" minOccurs="0"/>
+			<xs:element name="Priority" type="xs:nonNegativeInteger" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="ResponseDate" type="delivery:ExpectedDate-type"/>
+				<xs:element name="LeadTime" type="delivery:LeadTime-type"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeliveryScope-type">
+		<xs:sequence>
+			<xs:element name="ALID" type="md:id-type" minOccurs="0"/>
+			<xs:element name="AlternateID" type="md:ContentIdentifier-type" minOccurs="0"/>
+			<xs:element name="TransactionID" type="md:id-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="EIDRURN" type="md:EIDRURN-type" minOccurs="0"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="Region" type="md:Region-type" maxOccurs="unbounded"/>
+				<xs:element name="ExcludedRegion" type="md:Region-type" maxOccurs="unbounded"/>
+			</xs:choice>
+			<xs:element name="Language" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:language">
+							<xs:attribute name="asset" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FormatProfile" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="HDR" type="xs:string"/>
+							<xs:attribute name="WCG" type="xs:string"/>
+							<xs:attribute name="HFR" type="xs:string"/>
+							<xs:attribute name="NGAudio" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DeliveryProgressCode-type">
+		<xs:simpleContent>
+			<xs:extension base="delivery:string-ProgressCode">
+				<xs:attribute name="media" type="delivery:string-ProgressCode"/>
+				<xs:attribute name="artwork" type="delivery:string-ProgressCode"/>
+				<xs:attribute name="metadata" type="delivery:string-ProgressCode"/>
+				<xs:attribute name="other" type="delivery:string-ProgressCode"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!--*** Content Reference Types ***-->
+	<xs:complexType name="DeliveryMDDFID-type">
+		<xs:choice>
+			<xs:element name="AudioTrackID" type="manifest:AudioTrackID-type"/>
+			<xs:element name="VideoTrackID" type="manifest:VideoTrackID-type"/>
+			<xs:element name="SubtitleTrackID" type="manifest:SubtitleTrackID-type"/>
+			<xs:element name="ImageID" type="manifest:ImageID-type"/>
+			<xs:element name="InteractiveTrackID" type="manifest:InteractiveTrackID-type"/>
+			<xs:element name="ContentID" type="md:ContentID-type"/>
+			<xs:element name="AncillaryTrackID" type="manifest:AncillaryTrackID-type"/>
+			<xs:element name="TextObjectID" type="manifest:TextObjectID-type"/>
+			<xs:element name="PresentationID" type="manifest:PresentationID-type"/>
+			<xs:element name="PlayableSequenceID" type="manifest:PlayableSequenceID-type"/>
+			<xs:element name="PictureGroupID" type="manifest:PictureGroupID-type"/>
+			<xs:element name="AppGroupID" type="manifest:AppGroupID-type"/>
+			<xs:element name="TextGroupID" type="manifest:TextGroupID-type"/>
+			<xs:element name="ExperienceID" type="manifest:ExperienceID-type"/>
+			<xs:element name="TimedSequenceID" type="manifest:TimedSequenceID-type"/>
+			<xs:element name="TransactionID" type="md:id-type"/>
+			<xs:element name="ManifestID" type="md:id-type"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="DeliveryIMFRef-type">
+		<xs:complexContent>
+			<xs:extension base="manifest:PresentationIMFRef-type">
+				<xs:sequence>
+					<xs:element name="VirtualTrackID" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="DeliveryAssetReference-type">
+		<xs:sequence>
+			<xs:element name="TrackReference" type="md:string-TrackReference" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TrackIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="EIDRURN" type="md:EIDRURN-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="MDDFID" type="delivery:DeliveryMDDFID-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="MDDFTrack" type="manifest:InventorySingleTrack-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="FileInfo" type="manifest:FileInfo-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Container" type="manifest:ContainerReference-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="IMFRef" type="delivery:DeliveryIMFRef-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="OtherIdentifier" type="md:ContentIdentifier-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!---->
+	<!--*** ASSET AVAILABILITY  ***-->
+	<xs:complexType name="AssetAvailabilityObject-type">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="Language">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:language">
+								<xs:attributeGroup ref="delivery:LanguageAssets-attr"/>
+								<xs:attribute name="subdub" type="xs:boolean"/>
+								<xs:attribute name="OV" type="xs:boolean"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Track" type="manifest:InventorySingleTrack-type"/>
+			</xs:choice>
+			<xs:element name="StatusCode" type="xs:string"/>
+			<xs:element name="ErrorReference" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ExpectedDate" type="md:YearDateOrTime-type" minOccurs="0"/>
+			<xs:element name="BusinessTerms" type="md:Terms-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TechnicalTerms" type="md:Terms-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Instructions" type="delivery:DeliveryInstructions-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AssetAvailability-type">
+		<xs:sequence>
+			<xs:element name="Compatibility" type="md:Compatibility-type"/>
+			<xs:element name="Source" type="delivery:DeliveryPublisher-type" minOccurs="0"/>
+			<xs:element name="Destination" type="delivery:DeliveryPlatform-type" minOccurs="0"/>
+			<xs:element name="AssetAvailabilityID" type="md:id-type" minOccurs="0"/>
+			<xs:element name="OrderID" type="md:id-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+			<xs:element name="Scope" type="delivery:DeliveryScope-type"/>
+			<xs:element name="AssetDisposition" type="delivery:AssetAvailabilityObject-type" maxOccurs="unbounded"/>
+			<xs:element name="Instructions" type="delivery:DeliveryInstructions-type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="md:Workflow-attr"/>
+	</xs:complexType>
+	<xs:element name="AssetAvailability" type="delivery:AssetAvailability-type"/>
+	<!--*** END: ASSET AVAILABILITY ***-->
+	<!---->
+	<!--*** ASSET ORDER ***-->
+	<xs:complexType name="AssetOrderObject-type">
+		<xs:complexContent>
+			<xs:extension base="delivery:AssetOrderTerms-type">
+				<xs:sequence>
+					<xs:choice maxOccurs="unbounded">
+						<xs:element name="Language">
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:language">
+										<xs:attributeGroup ref="delivery:LanguageAssets-attr"/>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="OV">
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attributeGroup ref="delivery:LanguageAssets-attr"/>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Description" type="manifest:Inventory-type"/>
+						<xs:element name="Reference" type="delivery:DeliveryAssetReference-type"/>
+					</xs:choice>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AssetOrderTerms-type">
+		<xs:sequence>
+			<xs:element name="RequestCode" type="xs:string"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="ExpectedDate" type="delivery:ExpectedDate-type"/>
+				<xs:element name="LeadTime" type="delivery:LeadTime-type"/>
+			</xs:choice>
+			<xs:element name="BusinessTerms" type="md:Terms-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="TechnicalTerms" type="md:Terms-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Instructions" type="delivery:DeliveryInstructions-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AssetOrder-type">
+		<xs:sequence>
+			<xs:element name="Compatibility" type="md:Compatibility-type"/>
+			<xs:element name="Source" type="delivery:DeliveryPlatform-type" minOccurs="0"/>
+			<xs:element name="Destination" type="delivery:DeliveryPublisher-type" minOccurs="0"/>
+			<xs:element name="OrderID" type="md:id-type" minOccurs="0"/>
+			<xs:element name="AssetAvailabilityID" type="md:id-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+			<xs:element name="Scope" type="delivery:DeliveryScope-type"/>
+			<xs:choice>
+				<xs:element name="Asset" type="delivery:AssetOrderObject-type" maxOccurs="unbounded"/>
+				<xs:element name="RequestCode" type="xs:string"/>
+			</xs:choice>
+			<xs:element name="TermsAcrossAssets" type="delivery:AssetOrderTerms-type" minOccurs="0"/>
+			<xs:element name="Instructions" type="delivery:DeliveryInstructions-type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="md:Workflow-attr"/>
+	</xs:complexType>
+	<xs:element name="AssetOrder" type="delivery:AssetOrder-type"/>
+	<!--*** END: ASSET ORDER ***-->
+	<!---->
+	<!--*** PRODUCT STATUS ***-->
+	<!--*** QC data ***-->
+	<xs:complexType name="QCTimeRange-type">
+		<xs:sequence>
+			<xs:element name="StartTimecode" type="manifest:Timecode-type"/>
+			<xs:element name="EndTimecode" type="manifest:Timecode-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QCXMLError-type">
+		<xs:sequence>
+			<xs:element name="XPath" type="xs:anyURI" minOccurs="0"/>
+			<xs:element name="LineNumber" type="xs:positiveInteger" minOccurs="0"/>
+			<xs:element name="ValidatorLevel" type="xs:string" minOccurs="0"/>
+			<xs:element name="ValidatorTag" type="xs:string" minOccurs="0"/>
+			<xs:element name="ValidatorSummary" type="xs:string" minOccurs="0"/>
+			<xs:element name="ValidatorFile" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QCArea-type">
+		<xs:sequence>
+			<xs:element name="XOffset" type="xs:integer"/>
+			<xs:element name="YOffset" type="xs:integer"/>
+			<xs:element name="Width" type="xs:integer"/>
+			<xs:element name="Height" type="xs:integer"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QCErrorAudio-type">
+		<xs:sequence>
+			<xs:element name="TimeRange" type="delivery:QCTimeRange-type" minOccurs="0"/>
+			<xs:element name="TimeOffset" type="xs:duration" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QCErrorVideo-type">
+		<xs:sequence>
+			<xs:element name="TimeRange" type="delivery:QCTimeRange-type" minOccurs="0"/>
+			<xs:element name="Area" type="delivery:QCArea-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QCErrorTimedText-type">
+		<xs:sequence>
+			<xs:element name="TimeRange" type="delivery:QCTimeRange-type" minOccurs="0"/>
+			<xs:element name="TimeOffset" type="xs:duration" minOccurs="0"/>
+			<xs:element name="Text" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QCErrorMetadata-type">
+		<xs:sequence>
+			<xs:element name="XMLError" type="delivery:QCXMLError-type"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QCErrorArtwork-type">
+		<xs:sequence>
+			<xs:element name="Area" type="delivery:QCArea-type" minOccurs="0"/>
+			<xs:element name="Text" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QCErrorPackage-type">
+		<xs:sequence>
+			<xs:element name="ObjectInError" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="disposition" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QCErrorExcel-type">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="Row" type="xs:nonNegativeInteger"/>
+				<xs:element name="Column">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern value="[A-Z]+"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Cell">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="endCell">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:pattern value="pattern: [A-Z]+[0-9]+"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="ValidatorLevel" type="xs:string" minOccurs="0"/>
+			<xs:element name="ValidatorTag" type="xs:string" minOccurs="0"/>
+			<xs:element name="ValidatorSummary" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="QCCategoryError-type">
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="Audio">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="delivery:QCErrorAudio-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Video">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="delivery:QCErrorVideo-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TimedText">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="delivery:QCErrorTimedText-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Artwork">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="delivery:QCErrorArtwork-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Package" type="delivery:QCErrorPackage-type"/>
+			<xs:element name="Metadata">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="delivery:QCErrorMetadata-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="XML" type="delivery:QCXMLError-type"/>
+			<xs:element name="Excel" type="delivery:QCErrorExcel-type"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="QCErrorDescription-type">
+		<xs:sequence>
+			<xs:element name="ErrorReference" type="xs:string" minOccurs="0"/>
+			<xs:element name="ErrorCategory" type="xs:string"/>
+			<xs:element name="ErrorTerm" type="xs:string"/>
+			<xs:element name="CategorySpecificInfo" type="delivery:QCCategoryError-type" minOccurs="0"/>
+			<xs:element name="Comments" type="xs:string" minOccurs="0"/>
+			<xs:element name="FullOrPartialQC" type="xs:string" minOccurs="0"/>
+			<xs:element name="QCReportLocation" type="xs:anyURI" minOccurs="0"/>
+			<xs:element name="Severity" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="resolution" type="xs:string"/>
+							<xs:attribute name="originalSeverity" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** Logs ***-->
+	<xs:complexType name="ProductLogEvent-type">
+		<xs:sequence>
+			<xs:element name="EventType" type="xs:string"/>
+			<xs:element name="Timestamp" type="md:YearDateOrTime-type"/>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+			<xs:element name="ErrorReference" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="EventTerm" type="md:Terms-type" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProductLog-type">
+		<xs:sequence>
+			<xs:element name="Event" type="delivery:ProductLogEvent-type" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--*** Product Status ***-->
+	<xs:complexType name="ProductObjectStatus-type">
+		<xs:sequence>
+			<xs:element name="Category" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="purpose" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Progress" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="delivery:ProductProgress-type"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Comments" type="xs:string" minOccurs="0"/>
+			<xs:element name="Log" type="delivery:ProductLog-type" minOccurs="0"/>
+			<xs:element name="Instructions" type="delivery:DeliveryInstructions-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProductProgress-type">
+		<xs:sequence>
+			<xs:element name="ProgressCode">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="delivery:string-ProgressCode">
+							<xs:attribute name="essential" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProgressDetail" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ExpectedDate" type="delivery:ExpectedDate-type" minOccurs="0"/>
+			<xs:element name="Log" type="delivery:ProductLog-type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="language" type="xs:language"/>
+		<xs:attribute name="component" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="ProductAssetStatus-type">
+		<xs:sequence>
+			<xs:element name="AssetReference" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="delivery:DeliveryAssetReference-type">
+							<xs:attribute name="essential" type="xs:boolean"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProgressCode">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="delivery:string-ProgressCode">
+							<xs:attribute name="essential" type="xs:boolean"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ProgressDetail" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="ExpectedDate" type="delivery:ExpectedDate-type" minOccurs="0"/>
+			<xs:element name="ErrorDescription" type="delivery:QCErrorDescription-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Log" type="delivery:ProductLog-type" minOccurs="0"/>
+			<xs:element name="Instructions" type="delivery:DeliveryInstructions-type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProductStatus-type">
+		<xs:sequence>
+			<xs:element name="Compatibility" type="md:Compatibility-type"/>
+			<xs:element name="Source" type="delivery:DeliveryPlatform-type" minOccurs="0"/>
+			<xs:element name="Destination" type="delivery:DeliveryPublisher-type" minOccurs="0"/>
+			<xs:element name="OrderID" type="md:id-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="AssetAvailabilityID" type="md:id-type" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="Description" type="xs:string" minOccurs="0"/>
+			<xs:element name="Scope" type="delivery:DeliveryScope-type" minOccurs="0"/>
+			<xs:element name="OverallProgressCode" type="delivery:DeliveryProgressCode-type" minOccurs="0"/>
+			<xs:element name="ProgressDetail" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="ObjectStatus" type="delivery:ProductObjectStatus-type" maxOccurs="unbounded"/>
+				<xs:element name="AssetStatus" type="delivery:ProductAssetStatus-type" maxOccurs="unbounded"/>
+			</xs:choice>
+			<xs:element name="Instructions" type="delivery:DeliveryInstructions-type" minOccurs="0"/>
+			<xs:element name="Log" type="delivery:ProductLog-type" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="md:Workflow-attr"/>
+	</xs:complexType>
+	<xs:element name="ProductStatus" type="delivery:ProductStatus-type"/>
+	<!--*** END: STATUS ***-->
+	<!---->
+	<!--*** REDEFINES ***-->
+	<xs:simpleType name="string-ProgressCode">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="string-rangeCondition">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+</xs:schema>
