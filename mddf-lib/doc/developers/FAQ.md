@@ -10,6 +10,7 @@ Step 3:  Three methods in `MddfContext` also needs to be updated:
   - `getReferencedXsdVersions()`: to link the _primary_ mddf standards (i.e., Avails, Manifest, and MEC) to the correct version of the Common Metadata standard
   - `identifyMddfFormat()`: to provide a wrapper for passing schema-related info
   - `getRequiredNamespaces()`: to create the correct namespaces
+  - `getReferencedXsdVersions()`: May not be necessary but updated
 
 Step 4: if the new version is backwards compatible with a previous version's _vocab_ file, the linkage needs to specified in `com.movielabs.mddflib.util.xml.XmlIngester.getVocabResource()`. If it is not backwards compatible, a new JSON file with
 version-specific terminology must be added to the resource package (see Step 1 above)

@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TEST ARTIFACT: This file defines an error-free base-case that can be 
+	used to create artifacts supporting specific JUnit tests relating to the 
+	Common Metadata specification. -->
+<manifest:MediaManifest xmlns:manifest="http://www.movielabs.com/schema/manifest/v1.13/manifest" xmlns:md="http://www.movielabs.com/schema/md/v2.12/md" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ManifestID="md:manifestidx:eidr-s:E6CA-AB58-E298-7BA0-E574-V" xsi:schemaLocation="http://www.movielabs.com/schema/manifest/v1.13/manifest file:///C:/Users/damon/Downloads/schemas-and-schemadocs.zip|zip/schemas-and-schemadocs/manifest-v1.13.xsd">
+	<manifest:Compatibility>
+		<manifest:SpecVersion>18</manifest:SpecVersion>
+		<manifest:System>HTML5</manifest:System>
+		<manifest:System>Roku</manifest:System>
+		<manifest:Profile>none</manifest:Profile>
+	</manifest:Compatibility>
+	<manifest:Inventory>
+		<manifest:Audio AudioTrackID="md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<!-- Test: that lectoring is correctly added to encoding type -->
+			<md:Type>lectoring</md:Type>
+			<md:Encoding>
+				<md:Codec>DOLBY-TRUEHD</md:Codec>
+				<md:VBR>2-pass VBR</md:VBR>
+				<!-- Test: That whether bad channel works -->
+				<md:ChannelMapping>NSC001</md:ChannelMapping>
+			</md:Encoding>
+			<!-- Test: That disposition works -->
+			<md:Language disposition="verified">en</md:Language>
+			<md:Channels>1</md:Channels>
+			<md:Compliance>
+				<md:Category>EPS</md:Category>
+				<md:Disposition>pass</md:Disposition>
+			</md:Compliance>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Audio>
+		<manifest:Video VideoTrackID="md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Encoding>
+				<md:Codec>H.264</md:Codec>
+				<md:MPEGProfile>Hi444P</md:MPEGProfile>
+				<md:MPEGLevel>3.1</md:MPEGLevel>
+			</md:Encoding>
+			<md:Picture>
+			<md:ColorEncoding>
+				<!-- Test: That new vocab is working. Other values randomnly picked from their controlled vocab -->
+				<md:Primaries>opRGB</md:Primaries>
+				<md:TransferFunction>BT1886</md:TransferFunction>
+				<md:ColorDifferencing>BT601</md:ColorDifferencing>
+			</md:ColorEncoding>
+			</md:Picture>
+			<!-- Test: That new vocab is working -->
+			<md:CaptureMethod>TrueCut</md:CaptureMethod>
+			<manifest:ContainerReference>
+				<manifest:ContainerLocation>https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4
+				</manifest:ContainerLocation>
+			</manifest:ContainerReference>
+		</manifest:Video>
+		<manifest:Subtitle SubtitleTrackID="md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Type>normal</md:Type>
+			<!-- Test: That new format type vocab works -->
+			<md:FormatType>CEA-708</md:FormatType>
+			<!-- Test: That disposition works -->
+			<md:Language disposition="verified">en</md:Language>
+			<!-- Test: make sure timecode-type works and that format can be switched to have frames instead of microseconds -->
+			<md:AdditionalOffset format="hh:mm:ss:ff">01:22:33:23</md:AdditionalOffset>
+		</manifest:Subtitle>
+		<manifest:Image ImageID="md:imageid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<md:Width>200</md:Width>
+			<md:Height>500</md:Height>
+			<md:Encoding>image/jpeg</md:Encoding>
+			<!-- Test: That disposition works -->
+			<md:Language disposition="verified">en</md:Language>
+		</manifest:Image>
+		<manifest:Metadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:BasicMetadata ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+				<md:LocalizedInfo language="en" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>A large but peaceful bunny is harassed by three
+						trouble-making rodents in Florida
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+					<md:Region>
+						<md:country>US</md:country>
+					</md:Region>
+				</md:LocalizedInfo>
+				<!-- Test: Multiple Localized Info allowed if region/@language/excludedregion unique combo.  Testing that it's true -->
+				<md:LocalizedInfo language="en" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>A large but peaceful bunny is harassed by three
+						trouble-making rodents in Canada
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+					<md:Region>
+						<md:country>CA</md:country>
+					</md:Region>
+					<!-- TargetAudience should not cause warning if used once -->
+					<md:TargetAudience>
+						<md:Who>Young Folks</md:Who>
+					</md:TargetAudience>
+				</md:LocalizedInfo>
+				<!-- Test: Multiple Localized Info allowed if region/@language/excludedregion unique combo.  Testing that it's true -->
+				<md:LocalizedInfo language="es" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>Un binny pacífico de gran trasero es acosado por tres
+						Roedores problemáticos en Florida 
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+					<md:Region>
+						<md:country>US</md:country>
+					</md:Region>
+				</md:LocalizedInfo>
+				<!-- Test: Multiple Localized Info allowed if region/@language/excludedregion unique combo.  Testing that it's true -->
+				<md:LocalizedInfo language="es" default="true">
+					<md:TitleDisplay60>Big Buck Bunny</md:TitleDisplay60>
+					<md:TitleDisplayUnlimited>Big Buck Bunny</md:TitleDisplayUnlimited>
+					<md:TitleSort>Big Buck Bunny</md:TitleSort>
+					<md:Summary190>Un binny pacífico de gran trasero es acosado por tres
+						Roedores problemáticos en Florida 
+					</md:Summary190>
+					<md:Summary400>Buck, a large but peaceful bunny wakes up one sunny
+						day and tries to enjoy nature, only to be pestered by three
+						trouble-making rodents, Gimera, Frank, and Rinky. When Gimera
+						kills a butterfly, Buck decides it's payback time and unleashes
+						his inner warrior.
+					</md:Summary400>
+					<md:Genre>Animation</md:Genre>
+					<md:Genre>Short</md:Genre>
+					<md:Genre>Comedy</md:Genre>
+					<md:ExcludedRegion>
+						<md:countryRegion>US-CA</md:countryRegion>
+					</md:ExcludedRegion>
+				</md:LocalizedInfo>
+				<md:RunLength>PT10M00.0S</md:RunLength>
+				<md:ReleaseYear>2008</md:ReleaseYear>
+				<md:ReleaseHistory>
+					<md:ReleaseType>original</md:ReleaseType>
+					<md:DistrTerritory>
+						<md:country>DE</md:country>
+					</md:DistrTerritory>
+					<md:Date>2016-05-22</md:Date>
+					<!-- Test: make sure roleCategory works -->
+					<md:ReleaseOrg roleCategory="independent">
+						<md:DisplayName>ExampleOrg</md:DisplayName>
+					</md:ReleaseOrg>
+				</md:ReleaseHistory>
+				<md:ReleaseHistory>
+					<md:ReleaseType>original</md:ReleaseType>
+					<md:DistrTerritory>
+						<md:country>US</md:country>
+					</md:DistrTerritory>
+					<md:Date>2016-09-24</md:Date>
+				</md:ReleaseHistory>
+				<md:WorkType>Tournament</md:WorkType>
+				<md:RatingSet>
+					<md:Rating>
+						<md:Region>
+							<md:country>DE</md:country>
+						</md:Region>
+						<md:System>FSK</md:System>
+						<md:Value>16</md:Value>
+					</md:Rating>
+					<md:Rating>
+						<md:Region>
+							<md:country>US</md:country>
+						</md:Region>
+						<md:System>MPAA</md:System>
+						<md:Value>G</md:Value>
+					</md:Rating>
+					<md:Rating>
+						<md:Region>
+							<md:country>DE</md:country>
+						</md:Region>
+						<md:System>FSK</md:System>
+						<md:Value>16</md:Value>
+					</md:Rating>
+					<md:Rating>
+						<md:Region>
+							<md:country>ZA</md:country>
+						</md:Region>
+						<md:System>FPB</md:System>
+						<md:Value>16</md:Value>
+						<md:Reason>D</md:Reason>
+						<md:Reason>H</md:Reason>
+						<md:Reason>N</md:Reason>
+					</md:Rating>
+				</md:RatingSet>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Director</md:JobFunction>
+						<md:JobDisplay>Director</md:JobDisplay>
+						<!-- Test that multiple billing block orders work -->
+						<md:BillingBlockOrder region="US">1</md:BillingBlockOrder>
+						<md:BillingBlockOrder region="CA">2</md:BillingBlockOrder>
+					</md:Job>
+					<md:Job>
+						<md:JobFunction>Writer</md:JobFunction>
+						<md:JobDisplay>Writer</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Sacha Goedegebure</md:DisplayName>
+					</md:Name>
+					<!-- Test: noPronouns works -->
+					<md:Pronouns noProunouns="true"/>
+				</md:People>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Producer</md:JobFunction>
+						<md:JobDisplay>Producer</md:JobDisplay>
+						<md:BillingBlockOrder>1</md:BillingBlockOrder>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Ton Roosendaal</md:DisplayName>
+					</md:Name>
+					<!-- Test: pronoun children work -->
+					<md:Pronouns>
+						<md:Subjective>she</md:Subjective>
+						<md:Objective>her</md:Objective>
+						<md:Adjective>her</md:Adjective>
+						<md:Possessive>hers</md:Possessive>
+						<md:Reflexive>herself</md:Reflexive>
+					</md:Pronouns>
+					<!-- Test: ImageReference works in People -->
+					<md:ImageReference purpose="promotional" resolution="800x300">http://fake.movielabs.com/bunny.jpg</md:ImageReference>
+				</md:People>
+				<md:People>
+					<md:Job>
+						<md:JobFunction>Actor</md:JobFunction>
+						<md:CharacterInfo>
+							<md:CharacterName>Bunny</md:CharacterName>
+							<md:ImageReference purpose="promotional" resolution="800x300">http://fake.movielabs.com/bunny.jpg</md:ImageReference>
+						</md:CharacterInfo>
+					</md:Job>
+					<md:Name>
+						<md:DisplayName>Fake Actor</md:DisplayName>
+					</md:Name>
+				</md:People>
+				<!-- Test: make sure Group works -->
+				<md:Group>
+					<md:DisplayName>San Francisco 49ers</md:DisplayName>
+					<md:Level>0</md:Level>
+					<md:Description>Football Team</md:Description>
+					<md:People>
+						<md:Job>
+							<md:JobFunction>Quarterback</md:JobFunction>
+						</md:Job>
+						<md:Name>
+							<md:DisplayName>Joe Montana</md:DisplayName>
+						</md:Name>
+					</md:People>
+					<md:ParentGroup>
+						<md:DisplayName>West</md:DisplayName>
+						<md:Level>1</md:Level>
+						<md:Description>NFC Region</md:Description>
+						<md:ParentGroup>
+							<md:DisplayName>NFC</md:DisplayName>
+							<md:Description>NFL Division</md:Description>
+							<md:ParentGroup>
+								<md:DisplayName>NFL</md:DisplayName>
+								<md:Level>2</md:Level>
+								<md:Description>Football League</md:Description>
+							</md:ParentGroup>
+						</md:ParentGroup>
+					</md:ParentGroup>
+				</md:Group>
+				<md:Place>
+					<md:Name></md:Name>
+					<md:Location>
+							<md:City>Santa Clara</md:City>
+							<md:StateOrProvince>CA</md:StateOrProvince>
+							<md:Country>US</md:Country>
+							<md:AstronomicalObject>Earth</md:AstronomicalObject>
+							<!-- Test: made up coordinate to see if it works -->
+							<md:CoordinateOther system="imaginary">
+								<md:Coordinate label="world">12345</md:Coordinate>
+							</md:CoordinateOther>
+					</md:Location>
+				</md:Place>
+				<md:Activity>
+					<md:Type>football</md:Type>
+					<!-- Test: not sure this is behaving as expected -->
+					<md:Name language="en" preferred="true"></md:Name>
+				</md:Activity>
+				<!-- Test: Making sure CountryOfOrigin and intepretation work as expected -->
+				<md:CountryOfOrigin intepretation="creative">
+					<md:country>US</md:country>
+				</md:CountryOfOrigin>
+				<md:PrimarySpokenLanguage>de-DE</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>en-DE</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>en</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>en-1694acad</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>yee-HK</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>cmn-Hans-CN</md:PrimarySpokenLanguage>
+				<md:PrimarySpokenLanguage>sr-Latn-RS</md:PrimarySpokenLanguage>
+			</manifest:BasicMetadata>
+		</manifest:Metadata>
+	</manifest:Inventory>
+	<manifest:Presentations>
+		<!-- the movie -->
+		<manifest:Presentation PresentationID="md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+			<manifest:TrackMetadata>
+				<manifest:TrackSelectionNumber>0</manifest:TrackSelectionNumber>
+				<manifest:VideoTrackReference>
+					<!-- the vidtrackid must match the one used in the inventory. -->
+					<manifest:VideoTrackID>md:vidtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:VideoTrackID>
+				</manifest:VideoTrackReference>
+				<manifest:AudioTrackReference>
+					<manifest:AudioTrackID>md:audtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:AudioTrackID>
+				</manifest:AudioTrackReference>
+				<manifest:SubtitleTrackReference>
+					<manifest:SubtitleTrackID>md:subtrackid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+					</manifest:SubtitleTrackID>
+				</manifest:SubtitleTrackReference>
+			</manifest:TrackMetadata>
+			<manifest:Chapters>
+				<manifest:Chapter index="0">
+					<manifest:EntryTimecode>01:22:33:23</manifest:EntryTimecode>
+					<manifest:ImageID>md:imageid:eidr-s:E6CA-AB58-E298-7BA0-E574-V</manifest:ImageID>
+				</manifest:Chapter>
+			</manifest:Chapters>
+		</manifest:Presentation>
+	</manifest:Presentations>
+	<manifest:Experiences>
+		<manifest:Experience version="0.1" ExperienceID="md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq">
+			<manifest:ContentID>md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+			</manifest:ContentID>
+			<manifest:Audiovisual ContentID="md:cid:eidr-s:E6CA-AB58-E298-7BA0-E574-V">
+				<!-- feature movie -->
+				<manifest:Type>Main</manifest:Type>
+				<manifest:SubType>Feature</manifest:SubType>
+				<manifest:PresentationID>md:presentationid:eidr-s:E6CA-AB58-E298-7BA0-E574-V
+				</manifest:PresentationID>
+			</manifest:Audiovisual>
+		</manifest:Experience>
+	</manifest:Experiences>
+	<manifest:ALIDExperienceMaps>
+		<manifest:ALIDExperienceMap>
+			<manifest:ALID>md:alid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02
+			</manifest:ALID>
+			<manifest:ExperienceID condition="Acquired">md:experienceid:eidr-x:E6CA-AB58-E298-7BA0-E574-V:mlab-si-02:acq
+			</manifest:ExperienceID>
+		</manifest:ALIDExperienceMap>
+	</manifest:ALIDExperienceMaps>
+</manifest:MediaManifest>

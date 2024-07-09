@@ -209,6 +209,7 @@ public class AvailsValidatorTest extends AvailValidator {
 		}
 	}
 
+
 	/**
 	 * @throws JDOMException
 	 * @throws IOException

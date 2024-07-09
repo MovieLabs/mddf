@@ -277,7 +277,7 @@ public class CpeIP1Validator {
 	/**
 	 * Validates time-oriented (tied to the video timeline) collections of
 	 * material that is displayed in conjunction with playback. This is referred
-	 * to as ˜in movie™.
+	 * to as in movie.
 	 * <p>
 	 * Requirements (Sec 2.2):
 	 * <ul>

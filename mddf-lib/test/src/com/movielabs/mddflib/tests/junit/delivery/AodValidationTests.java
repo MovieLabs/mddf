@@ -43,6 +43,7 @@ import com.movielabs.mddflib.util.xml.MddfTarget;
 /**
  * @author L. Levin, Critical Architectures LLC
  *
+ * TODO Automate this test so it runs on build
  */
 class AodValidationTests {
 
@@ -96,6 +97,7 @@ class AodValidationTests {
 		int errCnt = iLog.getCountForLevel(LogMgmt.LEV_ERR);
 		assertEquals(0, errCnt);
 	}
+
 	
 
 	protected boolean validateFile(String filePath) {
