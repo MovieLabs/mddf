@@ -5,6 +5,18 @@
 
 ## Versioning
 
+
+### mddf-lib 2.0.9
+* Enhancement: updated Ratings DB to v2.5.1
+
+### mddf-lib 2.0.8
+* Enhancement: upgraded to support
+  - Manifest v1.13
+  - Media Ent. Core v2.12
+  - Asset Order and Deliver v1.4
+  - Common Metadata v2.12
+  - Avails v2.7
+
 ### mddf-lib 2.0.7
 * Enhancement: updated Ratings DB to v2.5
 
