@@ -1,0 +1,601 @@
+{
+	"COMMENT": "refer to Javadoc for com.movielabs.mddflib.util.CMValidator.validateDigitalAsset() before editing",
+	"Audio": {
+		"Type": {
+			"targetPath": "./md:Type",
+			"ref": "Sec. 5.2.2.1",
+			"values": [
+				"primary",
+				"narration",
+				"dialogcentric",
+				"commentary",
+				"silent-omitted",
+				"silent",
+				"lectoring",
+				"other"
+			]
+		},
+		"SubType": {
+			"targetPath": "./md:SubType",
+			"ref": "Sec 5.2.2.2",
+			"values": [
+				"MandE",
+				"Music",
+				"Effects",
+				"Dialog-only",
+				"Voice-over",
+				"Director",
+				"ActorDirector",
+				"Actor"
+			]
+		},
+		"Codec": {
+			"targetPath": "./md:Encoding/md:Codec",
+			"ref": "Sec. 5.2.3.1",
+			"values": [
+				"AAC",
+				"AAC-LC",
+				"AAC-LC+MPS",
+				"AAC-SLS",
+				"AC-3",
+				"AC-4",
+				"ADMBWF",
+				"AIFF",
+				"ALAC",
+				"AMR",
+				"BWF",
+				"BWF-RF64",
+				"DAMF",
+				"DOLBY-ATMOS-ADM-BWF",
+				"DOLBY-E",
+				"DOLBY-DDPLUS-ATMOS",
+				"DOLBY-DDPLUS-ATMOS-B",
+				"DOLBY-TRUEHD",
+				"DOLBY-TRUEHD-ATMOS",
+				"DSD",
+				"DST",
+				"DTS",
+				"DTS-ES",
+				"DTS-EXPRESS",
+				"DTS-HRA",
+				"DTS-96/24",
+				"DTS-MA",
+				"DTS-X",
+				"DTS-X-ADMBWF",
+				"E-AC-3",
+				"FLAC",
+				"IAB",
+				"HE-ACCV2",
+				"LPAC",
+				"LTAC",
+				"MP3",
+				"MPEG1",
+				"MPEG-4-ALS",
+				"MPEG-H",
+				"MLP",
+				"PCM",
+				"QCELP",
+				"RealAudio-Lossless",
+				"Vorbis",
+				"WAV",
+				"WMA",
+				"WM9-lossless"
+			]
+		},
+		"VBR": {
+			"targetPath": "./md:Encoding/md:VBR",
+			"ref": "Sec. 5.2.3.3",
+			"values": [
+				"VBR",
+				"Constrained VBR",
+				"2-pass VBR"
+			]
+		},
+		"Ambisonic/Type": {
+			"targetPath": "./md:Encoding/md:Ambisonic/md:Type",
+			"ref": "Sec. 5.2.3.5",
+			"values": [
+				"Periphonic",
+				"Pantophonic",
+				"Mixed-order"
+			]
+		},
+		"Ambisonic/Normalization": {
+			"targetPath": "./md:Encoding/md:Ambisonic/md:Normalization",
+			"ref": "Sec. 5.2.3.5",
+			"values": [
+				"SN3D",
+				"SN2D",
+				"maxN",
+				"N3D",
+				"N2D"
+			]
+		}
+	},
+	"Video": {
+		"CaptureMethod": {
+			"targetPath": "./md:CaptureMethod",
+			"ref": "Sec. 5.2.4",
+			"values": [
+				"LiveAction",
+				"MotionCapture",
+				"Rotoscope",
+				"StopAction",
+				"Rendered",
+				"Animation",
+				"TrueCut"
+			]
+		},
+		"Type": {
+			"targetPath": "./md:Type",
+			"ref": "Sec. 5.2.4.1",
+			"values": [
+				"primary",
+				"overlay",
+				"angle",
+				"enhancement",
+				"other"
+			]
+		},
+		"Encoding/Codec": {
+			"targetPath": "./md:Encoding/md:Codec",
+			"ref": "Sec. 5.2.5.1",
+			"values": [
+				"AVI Uncompressed",
+				"CineForm HD",
+				"DIVX",
+				"DV",
+				"H.264",
+				"H.264 DolbyVision",
+				"H.265",
+				"H.265 DolbyVision",
+				"JPEG2000",
+				"MOBICLIP",
+				"MPEG1",
+				"MPEG2",
+				"On2",
+				"PHOTOJPEG",
+				"PRORES",
+				"PRORESHQ",
+				"PRORES422",
+				"PRORESXQ",
+				"PRORES4444",
+				"QT Uncompressed",
+				"REAL",
+				"Spark",
+				"SVQ",
+				"WMV",
+				"WMV7",
+				"WMV8",
+				"WMV9",
+				"VC1",
+				"VC-2",
+				"VC-3",
+				"VC-5",
+				"VC-6",
+				"VP6",
+				"VP7",
+				"VP8",
+				"VP9",
+				"XVID",
+				"OTHER"
+			]
+		},
+		"Picture": {
+			"targetPath": "./md:Picture",
+			"children": {
+				"PixelAspect": {
+					"targetPath": "./md:PixelAspect",
+					"ref": "Sec. 5.2.6",
+					"values": [
+						"square",
+						"NTSC",
+						"PAL",
+						"other"
+					]
+				},
+				"Type3D": {
+					"targetPath": "./md:Type3D",
+					"ref": "Sec. 5.2.6",
+					"values": [
+						"left-only",
+						"right-only",
+						"left-right",
+						"right-left",
+						"left-over-right",
+						"right-over-left",
+						"interlaced-left-first",
+						"interlaced-right-first",
+						"2D-plus-Delta",
+						"2D-plus-Depth",
+						"Anaglyph",
+						"Anaglyph-rg",
+						"Anaglyph-rc",
+						"Anaglyph-ab",
+						"Anaglyph-Anachrome",
+						"Anaglyph-super"
+					]
+				},
+				"FrameRate@timecode": {
+					"targetPath": "./md:FrameRate/@timecode",
+					"ref": "Sec. 5.2.6.1",
+					"values": [
+						"Drop",
+						"EBU",
+						"Other"
+					]
+				},
+				"Progressive@scanOrder": {
+					"targetPath": "./md:Progressive/@scanOrder",
+					"ref": "Sec. 5.2.6.2",
+					"values": [
+						"TFF",
+						"BFF",
+						"PPF"
+					]
+				},
+				"ColorSubsampling": {
+					"targetPath": "./md:ColorSubsampling",
+					"ref": "Sec. 5.2.6.3",
+					"values": [
+						"4:1:1",
+						"4:2:0",
+						"4:2:2",
+						"4:4:4"
+					]
+				},
+				"Colorimetry": {
+					"targetPath": "./md:Colorimetry",
+					"ref": "Sec. 5.2.6.4",
+					"values": [
+						"601",
+						"709",
+						"2020",
+						"P3",
+						"xvYCC709"
+					]
+				},
+				"ColorEncoding": {
+					"targetPath": "./md:ColorEncoding",
+					"children": {
+						"Primaries": {
+							"targetPath": "./md:Primaries",
+							"ref": "Sec. 5.2.6.6.1",
+							"values": [
+								"BT601",
+								"BT709",
+								"BT2020",
+								"DCIP3",
+								"XYZ",
+								"ACES",
+								"opRGB"
+							]
+						},
+						"TransferFunc": {
+							"targetPath": "./md:TransferFunc",
+							"ref": "Sec. 5.2.6.6.2",
+							"values": [
+								"BT1886",
+								"ST428-1",
+								"ST2084",
+								"BT2100HLG"
+							]
+						},
+						"ColorDiff": {
+							"targetPath": "./md:ColorDifferencing",
+							"ref": "Sec. 5.2.6.6.3",
+							"values": [
+								"BT601",
+								"BT709",
+								"BT2020",
+								"BT2020CL",
+								"BT2100CI",
+								"ST2085",
+								"xvYCC709",
+								"none"
+							]
+						}
+					}
+				},
+				"CMax@interpretation": {
+					"targetPath": "./md:LightLevel/md:ContentMax/@interpretation",
+					"ref": "Sec. 5.2.6.8",
+					"values": [
+						"MaxFALL",
+						"MaxCLL"
+					]
+				},
+				"SDRDownconversion": {
+					"targetPath": "./md:HDRPlaybackInfo/md:SDRDownconversion",
+					"ref": "Sec. 5.2.6.9",
+					"values": [
+						"Prohibited",
+						"ProhibitedAlways"
+					]
+				},
+				"360Projection": {
+					"targetPath": "./md:ThreeSixty/md:Projection",
+					"ref": "Sec. 5.2.6.10",
+					"values": [
+						"equirectangular",
+						"cube32",
+						"cube43"
+					]
+				},
+				"360Rendering": {
+					"targetPath": "./md:ThreeSixty/md:Rendering",
+					"ref": "Sec. 5.2.6.10",
+					"values": [
+						"sphere",
+						"cylinder",
+						"cube"
+					]
+				},
+				"ColorVolXForm": {
+					"targetPath": "./md:ColorTransformMetadata/md:ColorVolumeTransform",
+					"ref": "Sec. 5.2.6.13",
+					"values": [
+						"DolbyVision",
+						"SL-HDR",
+						"HDR10PLUS"
+					]
+				}
+			}
+		}
+	},
+	"Subtitle": {
+		"Type": {
+			"targetPath": "./md:Type",
+			"ref": "Sec. 5.2.7.1",
+			"values": [
+				"normal",
+				"SDH",
+				"large",
+				"forced",
+				"noforced",
+				"commentary",
+				"easyreader",
+				"singalong",
+				"samelanguage",
+				"script",
+				"template",
+				"other"
+			]
+		},
+		"Format": {
+			"targetPath": "./md:Format",
+			"ref": "Sec. 5.2.7.2",
+			"values": [
+				"Text",
+				"Image",
+				"Combined"
+			]
+		},
+		"FormatType": {
+			"targetPath": "./md:FormatType",
+			"ref": "Sec. 5.2.7.3",
+			"values": [
+				"3GPP",
+				"Blu-Ray",
+				"CAP",
+				"CEA-708",
+				"EIA-608",
+				"LCAP",
+				"DCI",
+				"DLP",
+				"DLP1",
+				"DLP1.1",
+				"DVB",
+				"DVD",
+				"Excel",
+				"SMPTE 2052-1 Timed Text",
+				"SBV",
+				"SCC",
+				"SRT",
+				"STL",
+				"Teletext",
+				"TTML",
+				"TTML1",
+				"TTML2",
+				"CFF-TT",
+				"DXFP",
+				"EBU-TT",
+				"IMSC1",
+				"IMSC1.1",
+				"ITT",
+				"WebVTT"
+			]
+		}
+	},
+	"Image": {
+		"DynamicRangeProfile": {
+			"targetPath": "./md:DynamicRangeProfile",
+			"ref": "Sec. 5.2.8",
+			"values": [
+				"SDR",
+				"HDR",
+				"SDR-HDR"
+			]
+		},
+		"Picture": {
+			"targetPath": "./md:Picture",
+			"link": "Video>Picture"
+		},
+		"Encoding": {
+			"targetPath": "./md:Encoding",
+			"ref": "Sec. 3.14",
+			"values": [
+				"image/aces",
+				"image/avci",
+				"image/avcs",
+				"image/bmp",
+				"image/cgm",
+				"image/dicom-rle",
+				"image/emf",
+				"image/example",
+				"image/fits",
+				"image/g3fax",
+				"image/gif",
+				"image/heic",
+				"image/heic-sequence",
+				"image/heif",
+				"image/heif-sequence",
+				"image/hej2k",
+				"image/hsj2",
+				"image/ief",
+				"image/jls",
+				"image/jp2",
+				"image/jpeg",
+				"image/jph",
+				"image/jphc",
+				"image/jpm",
+				"image/jpx",
+				"image/jxr",
+				"image/jxrA",
+				"image/jxrS",
+				"image/jxs",
+				"image/jxsc",
+				"image/jxsi",
+				"image/jxss",
+				"image/ktx",
+				"image/ktx2",
+				"image/naplps",
+				"image/png",
+				"image/prs.btif",
+				"image/prs.pti",
+				"image/pwg-raster",
+				"image/svg+xml",
+				"image/t38",
+				"image/tiff",
+				"image/tiff-fx",
+				"image/vnd.adobe.photoshop",
+				"image/vnd.airzip.accelerator.azv",
+				"image/vnd.cns.inf2",
+				"image/vnd.dece.graphic",
+				"image/vnd.djvu",
+				"image/vnd.dwg",
+				"image/vnd.dxf",
+				"image/vnd.dvb.subtitle",
+				"image/vnd.fastbidsheet",
+				"image/vnd.fpx",
+				"image/vnd.fst",
+				"image/vnd.fujixerox.edmics-mmr",
+				"image/vnd.fujixerox.edmics-rlc",
+				"image/vnd.globalgraphics.pgb",
+				"image/vnd.microsoft.icon",
+				"image/vnd.mix",
+				"image/vnd.ms-modi",
+				"image/vnd.mozilla.apng",
+				"image/vnd.net-fpx",
+				"image/vnd.pco.b16",
+				"image/vnd.radiance",
+				"image/vnd.sealed.png",
+				"image/vnd.sealedmedia.softseal.gif",
+				"image/vnd.sealedmedia.softseal.jpg",
+				"image/vnd.svf",
+				"image/vnd.tencent.tap",
+				"image/vnd.valve.source.texture",
+				"image/vnd.wap.wbmp",
+				"image/vnd.xiff",
+				"image/vnd.zbrush.pcx",
+				"image/wmf"
+			]
+		}
+	},
+	"Interactive": {
+		"Type": {
+			"targetPath": "./md:Type",
+			"ref": "Sec. 5.2.9.1",
+			"values": [
+				"Menu",
+				"Mixed-Media",
+				"Standalone Game",
+				"Overlay Game",
+				"Skins",
+				"Interactivity",
+				"Image",
+				"Commerce",
+				"Location",
+				"Live",
+				"Comic",
+				"VR",
+				"AR",
+				"MR",
+				"360",
+				"Other"
+			]
+		},
+		"FormatType": {
+			"targetPath": "./md:FormatType",
+			"ref": "Sec. 5.2.9.2",
+			"values": [
+				"Text",
+				"Executable",
+				"Metadata"
+			]
+		},
+		"RuntimeEnvironment": {
+			"targetPath": "./md:RuntimeEnvironment",
+			"ref": "Sec. 5.2.9.3",
+			"values": [
+				"Flash",
+				"BD-J",
+				"MHEG",
+				"HTML5",
+				"Android",
+				"iOS",
+				"tvOS",
+				"MacOS",
+				"Windows",
+				"BrightScript",
+				"Linux",
+				"Default",
+				"Other"
+			]
+		}
+	},
+	"CardsetList": {
+		"Type": {
+			"targetPath": "./md:Type",
+			"ref": "Sec. 5.2.11.1",
+			"values": [
+				"Theatrical",
+				"Broadcast",
+				"Hospitality",
+				"Rental",
+				"EST"
+			]
+		},
+		"Cardset": {
+			"targetPath": "./md:Cardset",
+			"children": {
+				"Type": {
+					"targetPath": "./md:Type",
+					"ref": "Sec. 5.2.11.2",
+					"values": [
+						"AntiPiracy",
+						"DistributionLogo",
+						"Rating",
+						"DubbingCredit",
+						"Intermission",
+						"EditNotice",
+						"Health",
+						"Other"
+					]
+				}
+			}
+		}
+	},
+	"Ancillary": {
+		"Type": {
+			"targetPath": "./md:Type",
+			"ref": "Sec. 5.2.12.2",
+			"values": [
+				"enhancement",
+				"metadata",
+				"variation",
+				"other"
+			]
+		}
+	}
+}
