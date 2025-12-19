@@ -380,6 +380,7 @@ public abstract class CMValidator extends XmlIngester {
 		 */
 		String structVer = null;
 		switch (CM_VER) {
+		case "2.25":
 		case "2.12":
 			structVer = "2.12";
 			break;
@@ -1363,6 +1364,7 @@ public abstract class CMValidator extends XmlIngester {
 	protected void validateDigitalAssets() {
 		String vocabVer = null;
 		switch (CM_VER) {
+		case "2.25":
 		case "2.12":
 		case "2.11":
 		case "2.10":

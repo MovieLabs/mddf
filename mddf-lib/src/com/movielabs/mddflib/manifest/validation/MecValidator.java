@@ -192,6 +192,9 @@ public class MecValidator extends CMValidator {
 		case "2.12":
 			structVer = "2.8";
 			break;
+		case "2.25":
+			structVer = "2.8";
+			break;
 		default:
 			// Not supported for the version
 			String msg = "Unable to process; missing structure definitions for MEC v" + MDMEC_VER;

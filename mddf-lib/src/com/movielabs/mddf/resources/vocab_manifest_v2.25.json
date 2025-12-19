@@ -1,0 +1,52 @@
+{
+	"manifest": 
+	{
+		"Timecode@dropframe": 
+		[
+			"true",
+			"false"
+		],
+		"Timecode@format": 
+		[
+			"seconds",
+			"hh:mm:ss:ff"
+		],
+
+		"PictureGroupType": 
+		[
+			"Retail",
+			"App",
+			"Gallery"
+		],
+
+		"TimedEventType": 
+		[
+			"Synchronous",
+			"Pause",
+			"Stop",
+			"Substitution"
+		],
+		
+		"ExperienceType": 
+		[
+			"external"
+		],
+
+		"AudiovisualType": 
+		[
+			"Main",
+			"Promotion",
+			"Bonus",
+			"Other"
+		],
+
+		"ExperienceAppType": 
+		[
+			"nav",
+			"game",
+			"Immersive",
+			"Mixed-Media",
+			"other"
+		]
+	}
+}

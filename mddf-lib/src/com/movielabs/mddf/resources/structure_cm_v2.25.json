@@ -1,0 +1,385 @@
+{
+	"COMMENT": "refer to Javadoc for com.movielabs.mddflib.util.xml.StructureValidation before editing",
+	"StrucRqmts": 
+	{
+		"MultiChannelAudio": 
+		{
+			"targetPath": ".//{md}Channels[. > 1]",
+			"constraint": 
+			[
+				{
+					"xpath": 
+					[
+						"../{md}Encoding/{md}ChannelMapping"
+					],
+
+					"filter": 
+					{
+						"values": 
+						[
+							"Mono",
+							"Left",
+							"Center",
+							"Right",
+							"LFE screen",
+							"Left surround",
+							"Right surround",
+							"Center surround",
+							"Left center",
+							"Right center",
+							"LFE 2",
+							"Vertical height front",
+							"Top center surround",
+							"Left wide",
+							"Right wide",
+							"Rear surround left",
+							"Rear surround right",
+							"Left surround direct",
+							"Right surround direct"
+						],
+
+						"negated": "false"
+					},
+
+					"max": "0",
+					"severity": "Error",
+					"msg": "ChannelMapping is not valid for multi-channel Audio"
+				}
+			]
+		},
+
+		"SingleChannelAudio": 
+		{
+			"targetPath": ".//{md}Channels[. < 2]",
+			"constraint": 
+			[
+				{
+					"xpath": 
+					[
+						"../{md}Encoding/{md}ChannelMapping"
+					],
+
+					"filter": 
+					{
+						"values": 
+						[
+							"Mono",
+							"Left",
+							"Center",
+							"Right",
+							"LFE screen",
+							"Left surround",
+							"Right surround",
+							"Center surround",
+							"Left center",
+							"Right center",
+							"LFE 2",
+							"Vertical height front",
+							"Top center surround",
+							"Left wide",
+							"Right wide",
+							"Rear surround left",
+							"Rear surround right",
+							"Left surround direct",
+							"Right surround direct"
+						],
+
+						"negated": "true"
+					},
+
+					"max": "0",
+					"severity": "Error",
+					"msg": "ChannelMapping is not valid for single-channel Audio"
+				}
+			]
+		},
+
+		"Compliance": 
+		{
+			"targetPath": ".//{md}Compliance",
+			"constraint": 
+			[
+				{
+					"xpath": 
+					[
+						"./{md}Category",
+						"./{md}Standard"
+					],
+
+					"min": "1",
+					"severity": "Error",
+					"msg": "At least one of Category and Standard must be specified for Compliance"
+				}
+			]
+		},
+
+		"Codec_H.264": 
+		{
+			"targetPath": ".//{md}Codec[. = 'H.264']",
+			"constraint": 
+			[
+				{
+					"xpath": 
+					[
+						"../{md}MPEGProfile"
+					],
+
+					"filter": 
+					{
+						"values": 
+						[
+							"BP",
+							"CBP",
+							"MP",
+							"XP",
+							"HiP",
+							"CHiP",
+							"PHiP",
+							"Hi10P",
+							"Hi422P",
+							"Hi444P",
+							"Hi444PP",
+							"Hi10IP",
+							"Hi422IP",
+							"Hi444IP",
+							"C444IP",
+							"SBP",
+							"SCBP",
+							"SHP",
+							"SHiP",
+							"SCHP",
+							"StereoHP",
+							"MultiviewHP"
+						],
+
+						"negated": "true"
+					},
+
+					"max": "0",
+					"severity": "Error",
+					"msg": "Invalid MPEGProfile for a H.264 CODEC"
+				},
+
+				{
+					"xpath": 
+					[
+						"../{md}MPEGLevel"
+					],
+
+					"filter": 
+					{
+						"values": 
+						[
+							"1",
+							"1b",
+							"1.1",
+							"1.2",
+							"1.3",
+							"2",
+							"2.1",
+							"2.2",
+							"3",
+							"3.1",
+							"3.2",
+							"4",
+							"4.1",
+							"4.2",
+							"5",
+							"5.1",
+							"5.2"
+						],
+
+						"negated": "true"
+					},
+
+					"max": "0",
+					"severity": "Error",
+					"msg": "Invalid MPEGLevel for a H.264 CODEC"
+				}
+			]
+		},
+
+		"Codec_MPEG2": 
+		{
+			"targetPath": ".//{md}Codec[. = 'MPEG2']",
+			"constraint": 
+			[
+				{
+					"xpath": 
+					[
+						"../{md}MPEGProfile"
+					],
+
+					"filter": 
+					{
+						"values": 
+						[
+							"SP",
+							"MP",
+							"SNR",
+							"Spatial",
+							"HP",
+							"422",
+							"MVP"
+						],
+
+						"negated": "true"
+					},
+
+					"max": "0",
+					"severity": "Error",
+					"msg": "Invalid MPEGProfile for a MPEG.2 CODEC"
+				},
+
+				{
+					"xpath": 
+					[
+						"../{md}MPEGLevel"
+					],
+
+					"filter": 
+					{
+						"values": 
+						[
+							"LL",
+							"ML",
+							"H.14",
+							"HL"
+						],
+
+						"negated": "true"
+					},
+
+					"max": "0",
+					"severity": "Error",
+					"msg": "Invalid MPEGLevel for a MPEG.2 CODEC"
+				}
+			]
+		},
+
+		"Codec_H.265": 
+		{
+			"targetPath": ".//{md}Codec[. = 'H.265']",
+			"constraint": 
+			[
+				{
+					"xpath": 
+					[
+						"../{md}MPEGProfile"
+					],
+
+					"filter": 
+					{
+						"values": 
+						[
+							"M",
+							"M10",
+							"MSP",
+							"M12",
+							"M42210",
+							"M42212",
+							"M42216",
+							"SM",
+							"SM10",
+							"MM",
+							"3DM",
+							"SEM",
+							"SEM10",
+							"SEHT",
+							"SEHT10",
+							"SEHT14",
+							"HT",
+							"HT10",
+							"HT14",
+							"SM",
+							"SM10",
+							"SM10",
+							"SM16",
+							"SM444"
+						],
+
+						"negated": "true"
+					},
+
+					"max": "0",
+					"severity": "Error",
+					"msg": "Invalid MPEGProfile for a H.265 CODEC"
+				},
+
+				{
+					"xpath": 
+					[
+						"../{md}MPEGLevel"
+					],
+
+					"filter": 
+					{
+						"values": 
+						[
+							"1",
+							"2",
+							"2.1",
+							"3",
+							"3.1",
+							"4",
+							"4.1",
+							"5",
+							"5.1",
+							"6",
+							"6.1",
+							"6.2"
+						],
+
+						"negated": "true"
+					},
+
+					"max": "0",
+					"severity": "Error",
+					"msg": "Invalid MPEGLevel for specified Video CODEC"
+				}
+			]
+		},
+
+		"Interlaced_scanOrder": 
+		{
+			"targetPath": ".//{md}Picture/{md}Progressive[. = 'false']",
+			"constraint": 
+			[
+				{
+					"max": "0",
+					"severity": "Error",
+					"xpath": "./@scanOrder[. = 'PFF']",
+					"msg": "Invalid scanOrder when Progressive='false'"
+				}
+			]
+		},
+
+		"Progressive_scanOrder": 
+		{
+			"targetPath": ".//{md}Picture/{md}Progressive[. = 'true']",
+			"constraint": 
+			[
+				{
+					"max": "0",
+					"severity": "Error",
+					"xpath": "./@scanOrder[. = 'TFF' or . = 'BFF']",
+					"msg": "Invalid scanOrder when Progressive='true'"
+				}
+			]
+		},
+
+		"SubType_commentary": 
+		{
+			"targetPath": ".//{md}Audio/{md}SubType[. = 'Director' or . = 'Actor' or . = 'ActorDirector']",
+			"constraint": 
+			[
+				{					
+					"min": "1",
+					"severity": "Error",
+					"xpath": "../{md}Type[. = 'commentary']",
+					"msg": "Specified SubType is only valid when Type is 'commentary'"
+				}
+			]
+		}
+	}
+}
